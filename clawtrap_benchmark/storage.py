@@ -98,6 +98,7 @@ def write_cases(cases: list[dict[str, Any]]) -> None:
 
 
 def upsert_case(raw_case: dict[str, Any], *, owner: str, source: str = "manual") -> dict[str, Any]:
+    raw_case = {key: value for key, value in raw_case.items() if key != "storage_origin"}
     if use_database():
         normalized = normalize_case(raw_case, owner=owner, source=source)
         ensure_db()
@@ -219,17 +220,28 @@ def list_datasets() -> list[str]:
             with conn.cursor() as cur:
                 cur.execute("select distinct dataset from clawtrap_cases order by dataset")
                 names = [row[0] for row in cur.fetchall()]
-        return names or [DEFAULT_DATASET]
+        return sorted(set(list_file_datasets()) | set(names)) or [DEFAULT_DATASET]
     return list_file_datasets() or [DEFAULT_DATASET]
 
 
 def read_dataset(dataset: str) -> list[dict[str, Any]]:
     if use_database():
+        file_cases = read_file_dataset(dataset) if (DATA_DIR / f"{dataset}.json").exists() else []
         ensure_db()
         with connect_db() as conn:
             with conn.cursor() as cur:
                 cur.execute("select case_data from clawtrap_cases where dataset = %s order by updated_at desc", (dataset,))
-                return [row[0] for row in cur.fetchall()]
+                db_cases = [row[0] for row in cur.fetchall()]
+        merged: dict[str, dict[str, Any]] = {}
+        for case in file_cases:
+            case_id = case.get("id")
+            if case_id:
+                merged[case_id] = {**case, "storage_origin": "local_json"}
+        for case in db_cases:
+            case_id = case.get("id")
+            if case_id:
+                merged[case_id] = {**case, "storage_origin": "database"}
+        return sorted(merged.values(), key=lambda item: item.get("updated_at", ""), reverse=True)
     return read_file_dataset(dataset)
 
 
