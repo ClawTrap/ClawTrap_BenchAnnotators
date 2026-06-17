@@ -77,6 +77,13 @@ def read_cases() -> list[dict[str, Any]]:
     return data
 
 
+def find_case(case_id: str, *, dataset: str = DEFAULT_DATASET) -> dict[str, Any] | None:
+    for case in read_dataset(dataset):
+        if case.get("id") == case_id:
+            return case
+    return None
+
+
 def write_cases(cases: list[dict[str, Any]]) -> None:
     if use_database():
         replace_dataset(DEFAULT_DATASET, cases)
@@ -135,6 +142,34 @@ def upsert_case(raw_case: dict[str, Any], *, owner: str, source: str = "manual")
     cases.append(normalized)
     write_cases(cases)
     return normalized
+
+
+def add_case_review(case_id: str, review: dict[str, Any], *, dataset: str = DEFAULT_DATASET) -> dict[str, Any]:
+    case = find_case(case_id, dataset=dataset)
+    if not case:
+        raise KeyError(case_id)
+    reviews = case.get("reviews")
+    if not isinstance(reviews, list):
+        reviews = []
+    reviews.append(review)
+    case["reviews"] = reviews
+    case["review_summary"] = summarize_reviews(reviews)
+    case["dataset"] = dataset
+    return upsert_case(case, owner=case.get("owner") or "llm_seed", source=case.get("source") or "manual")
+
+
+def summarize_reviews(reviews: list[dict[str, Any]]) -> dict[str, Any]:
+    dimensions = ["feasibility", "accuracy", "clarity", "overall"]
+    summary: dict[str, Any] = {"count": len(reviews)}
+    for key in dimensions:
+        values = []
+        for review in reviews:
+            try:
+                values.append(float(review.get(key)))
+            except (TypeError, ValueError):
+                pass
+        summary[key] = round(sum(values) / len(values), 2) if values else None
+    return summary
 
 
 def append_cases(new_cases: list[dict[str, Any]]) -> None:
