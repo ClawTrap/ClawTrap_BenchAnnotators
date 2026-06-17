@@ -74,7 +74,7 @@ def read_cases() -> list[dict[str, Any]]:
         data = json.load(f)
     if not isinstance(data, list):
         raise ValueError(f"{CASES_PATH} must contain a JSON array")
-    return data
+    return [enrich_case(case) for case in data]
 
 
 def find_case(case_id: str, *, dataset: str = DEFAULT_DATASET) -> dict[str, Any] | None:
@@ -159,6 +159,17 @@ def add_case_review(case_id: str, review: dict[str, Any], *, dataset: str = DEFA
     return upsert_case(case, owner=case.get("owner") or "llm_seed", source=case.get("source") or "manual")
 
 
+def set_benchmark_selected(case_id: str, selected: bool, *, selected_by: str, dataset: str = DEFAULT_DATASET) -> dict[str, Any]:
+    case = find_case(case_id, dataset=dataset)
+    if not case:
+        raise KeyError(case_id)
+    case["benchmark_selected"] = bool(selected)
+    case["benchmark_selected_by"] = selected_by if selected else ""
+    case["benchmark_selected_at"] = utc_now() if selected else ""
+    case["dataset"] = dataset
+    return upsert_case(case, owner=case.get("owner") or "llm_seed", source=case.get("source") or "manual")
+
+
 def summarize_reviews(reviews: list[dict[str, Any]]) -> dict[str, Any]:
     dimensions = ["feasibility", "accuracy", "clarity", "overall"]
     summary: dict[str, Any] = {"count": len(reviews)}
@@ -170,7 +181,21 @@ def summarize_reviews(reviews: list[dict[str, Any]]) -> dict[str, Any]:
             except (TypeError, ValueError):
                 pass
         summary[key] = round(sum(values) / len(values), 2) if values else None
+    score_values = [summary[key] for key in dimensions if summary[key] is not None]
+    summary["total_score"] = round(sum(score_values) / len(score_values), 2) if score_values else None
     return summary
+
+
+def enrich_case(case: dict[str, Any], *, storage_origin: str | None = None) -> dict[str, Any]:
+    enriched = dict(case)
+    if storage_origin:
+        enriched["storage_origin"] = storage_origin
+    reviews = enriched.get("reviews")
+    if isinstance(reviews, list):
+        summary = enriched.get("review_summary")
+        if not isinstance(summary, dict) or summary.get("total_score") is None:
+            enriched["review_summary"] = summarize_reviews(reviews)
+    return enriched
 
 
 def append_cases(new_cases: list[dict[str, Any]]) -> None:
@@ -210,7 +235,7 @@ def read_file_dataset(dataset: str) -> list[dict[str, Any]]:
     data = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(data, list):
         raise ValueError(f"{path} must contain a JSON array")
-    return data
+    return [enrich_case(case) for case in data]
 
 
 def list_datasets() -> list[str]:
@@ -236,13 +261,13 @@ def read_dataset(dataset: str) -> list[dict[str, Any]]:
         for case in file_cases:
             case_id = case.get("id")
             if case_id:
-                merged[case_id] = {**case, "storage_origin": "local_json"}
+                merged[case_id] = enrich_case(case, storage_origin="local_json")
         for case in db_cases:
             case_id = case.get("id")
             if case_id:
-                merged[case_id] = {**case, "storage_origin": "database"}
+                merged[case_id] = enrich_case(case, storage_origin="database")
         return sorted(merged.values(), key=lambda item: item.get("updated_at", ""), reverse=True)
-    return read_file_dataset(dataset)
+    return [enrich_case(case, storage_origin="local_json") for case in read_file_dataset(dataset)]
 
 
 def replace_dataset(dataset: str, cases: list[dict[str, Any]]) -> None:

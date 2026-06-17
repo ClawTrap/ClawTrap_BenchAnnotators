@@ -11,7 +11,7 @@ from flask import Flask, jsonify, redirect, request, session
 from .constants import ATTACK_TYPES, INTERACTIVE_FORMS, TASK_TYPES
 from .schema import normalize_case, validate_case
 from .schema import utc_now
-from .storage import DEFAULT_DATASET, add_case_review, list_datasets, read_cases, read_dataset, upsert_case
+from .storage import DEFAULT_DATASET, add_case_review, list_datasets, read_dataset, set_benchmark_selected, upsert_case
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -209,12 +209,12 @@ def page(title: str, body: str) -> str:
     .login-note {{ margin:18px 0 20px; padding:13px 14px; color:var(--muted); background:rgba(255,254,250,.68); border:1px solid var(--line); border-radius:8px; font-size:13px; line-height:1.65; font-weight:650; }}
     .admin-main {{ max-width:1480px; }}
     .toolbar {{
-      display:grid; grid-template-columns:180px 130px 180px 180px 150px minmax(240px,1fr);
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
       gap:11px; align-items:end; padding:15px; box-shadow:none; position:relative; z-index:5; overflow:visible;
     }}
     .toolbar label {{ margin-top:0; }}
     .toolbar-actions {{ grid-column:1/-1; }}
-    .review-toolbar {{ grid-template-columns:minmax(260px,1fr) auto; margin-bottom:14px; }}
+    .review-toolbar {{ grid-template-columns:minmax(260px,1fr) 180px auto; margin-bottom:14px; }}
     .form-actions {{ margin-top:14px; padding-top:14px; border-top:1px solid var(--line); }}
     .stats {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(128px,1fr)); gap:10px; margin:14px 0; }}
     .stat {{ padding:14px 15px; box-shadow:none; background:rgba(255,254,250,.74); }}
@@ -227,12 +227,20 @@ def page(title: str, body: str) -> str:
     .result-heading span {{ color:var(--muted); font-size:12px; font-weight:800; }}
     .review-list {{ max-height:calc(100vh - 120px); overflow:auto; padding:3px; }}
     .review-list {{ display:flex; flex-direction:column; gap:9px; }}
+    .origin-divider {{ display:flex; align-items:center; gap:10px; margin:7px 0 2px; color:var(--muted); font-size:11px; font-weight:900; letter-spacing:.12em; text-transform:uppercase; }}
+    .origin-divider::after {{ content:''; flex:1; height:1px; background:var(--line); }}
     .review-item {{
-      width:100%; text-align:left; color:var(--text); padding:15px; cursor:pointer; box-shadow:none; background:rgba(255,254,250,.78);
-      transition:border-color .12s, transform .12s, box-shadow .12s;
+      position:relative; width:100%; text-align:left; color:var(--text); padding:15px 15px 15px 18px; cursor:pointer; box-shadow:none; background:rgba(255,254,250,.78);
+      transition:border-color .18s ease, transform .18s ease, box-shadow .18s ease, background .18s ease;
     }}
+    .review-item::before {{ content:''; position:absolute; left:-1px; top:10px; bottom:10px; width:3px; border-radius:99px; background:transparent; transition:background .18s ease, top .18s ease, bottom .18s ease; }}
     .review-item:hover {{ border-color:var(--line-strong); transform:translateY(-1px); box-shadow:0 10px 24px rgba(23,34,52,.06); background:#fffefa; }}
-    .review-item.active {{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(148,104,61,.12); }}
+    .review-item.active {{ border-color:rgba(148,104,61,.5); background:linear-gradient(90deg,rgba(242,231,215,.82),rgba(255,254,250,.92)); box-shadow:0 12px 26px rgba(23,34,52,.08); transform:translateX(2px); }}
+    .review-item.active::before {{ top:6px; bottom:6px; background:var(--accent); }}
+    .review-item.origin-database::before {{ background:rgba(15,118,110,.28); }}
+    .review-item.origin-local_json::before {{ background:rgba(148,104,61,.22); }}
+    .review-item.active.origin-database::before {{ background:var(--green); }}
+    .review-item.active.origin-local_json::before {{ background:var(--accent); }}
     .review-item-title {{ display:block; font-size:14px; font-weight:800; line-height:1.52; }}
     .review-item-attack {{
       display:-webkit-box; margin-top:8px; color:var(--muted); font-size:12px; line-height:1.55; font-weight:600;
@@ -241,6 +249,15 @@ def page(title: str, body: str) -> str:
     .review-tags {{ display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }}
     .pill {{ flex:none; border:1px solid var(--line); border-radius:999px; padding:4px 8px; font-size:11px; color:var(--muted); background:var(--panel-soft); font-weight:800; }}
     .pill.strong {{ color:var(--accent-strong); border-color:rgba(138,98,61,.28); background:var(--accent-soft); }}
+    .pill.origin-local {{ color:var(--accent-strong); border-color:rgba(148,104,61,.32); background:rgba(242,231,215,.78); }}
+    .pill.origin-cloud {{ color:#0f5f59; border-color:rgba(15,118,110,.28); background:rgba(15,118,110,.08); }}
+    .pill.selected-mark {{ color:#0f5f59; border-color:rgba(15,118,110,.32); background:rgba(15,118,110,.1); }}
+    .rank-line {{ display:flex; align-items:center; gap:8px; margin:9px 0 0; }}
+    .rank-badge {{ min-width:46px; display:inline-flex; align-items:center; justify-content:center; padding:5px 9px; border-radius:7px; background:var(--navy); color:#fffefa; font-size:12px; font-weight:900; }}
+    .score-badge {{ display:inline-flex; align-items:center; justify-content:center; padding:5px 9px; border:1px solid rgba(148,104,61,.24); border-radius:7px; background:var(--accent-soft); color:var(--accent-strong); font-size:12px; font-weight:900; }}
+    .benchmark-action {{ width:100%; margin-top:15px; display:flex; justify-content:center; }}
+    .benchmark-action button {{ width:100%; }}
+    .benchmark-action .selected {{ background:rgba(255,253,250,.72); color:#0f5f59; border-color:rgba(15,118,110,.35); box-shadow:none; }}
     .detail-panel {{ position:sticky; top:82px; padding:22px; max-height:calc(100vh - 108px); overflow:auto; background:linear-gradient(180deg,rgba(255,254,250,.98),rgba(249,244,236,.92)); border-top:3px solid rgba(148,104,61,.42); }}
     .detail-panel h2 {{ font-size:21px; line-height:1.38; margin:0 0 9px; }}
     .detail-empty {{ color:var(--muted); padding:42px 28px; text-align:center; background:var(--panel-soft); border:1px dashed var(--line-strong); border-radius:8px; font-weight:700; }}
@@ -456,7 +473,7 @@ def create_app() -> Flask:
         if session.get("role") != "annotator":
             return jsonify({"error": "not logged in"}), 401
         username = session["username"]
-        cases = [case for case in read_cases() if case.get("owner") in (username, "llm_seed")]
+        cases = [case for case in read_dataset(DEFAULT_DATASET) if case.get("owner") in (username, "llm_seed")]
         cases.sort(key=lambda item: item.get("updated_at", ""), reverse=True)
         return jsonify({"cases": cases})
 
@@ -483,7 +500,7 @@ def create_app() -> Flask:
     def api_all_cases():
         if session.get("role") != "annotator":
             return jsonify({"error": "not logged in"}), 401
-        cases = read_cases()
+        cases = read_dataset(DEFAULT_DATASET)
         cases.sort(key=lambda item: item.get("updated_at", ""), reverse=True)
         return jsonify({"cases": cases})
 
@@ -511,6 +528,19 @@ def create_app() -> Flask:
             return jsonify({"errors": errors}), 400
         try:
             saved = add_case_review(case_id, review)
+        except KeyError:
+            return jsonify({"error": "case not found"}), 404
+        except RuntimeError as exc:
+            return jsonify({"error": str(exc)}), 503
+        return jsonify({"case": saved})
+
+    @app.post("/api/cases/<case_id>/benchmark-selection")
+    def save_benchmark_selection(case_id: str):
+        if session.get("role") not in ("annotator", "admin"):
+            return jsonify({"error": "login required"}), 401
+        raw = request.get_json(silent=True) or {}
+        try:
+            saved = set_benchmark_selected(case_id, bool(raw.get("selected")), selected_by=session.get("username") or "unknown")
         except KeyError:
             return jsonify({"error": "case not found"}), 404
         except RuntimeError as exc:
@@ -592,7 +622,7 @@ def menu_page(user: str) -> str:
     <div class="overview-stats" id="menuStats">
       <div class="mini-stat"><strong>-</strong><span>全部场景</span></div>
       <div class="mini-stat"><strong>-</strong><span>已有评分</span></div>
-      <div class="mini-stat"><strong>-</strong><span>标注员数</span></div>
+      <div class="mini-stat"><strong>-</strong><span>已选 benchmark</span></div>
     </div>
   </article>
 </section>
@@ -614,11 +644,11 @@ async function loadMenuStats() {
     const data = await res.json();
     const cases = data.cases || [];
     const reviewed = cases.filter(item => item.review_summary?.count).length;
-    const owners = new Set(cases.map(item => item.owner || '').filter(Boolean)).size;
+    const selected = cases.filter(item => item.benchmark_selected).length;
     el.innerHTML = [
       stat(cases.length, '全部场景'),
       stat(reviewed, '已有评分'),
-      stat(owners, '标注员数')
+      stat(selected, '已选 benchmark')
     ].join('');
   } catch (error) {
     el.innerHTML = [
@@ -696,6 +726,7 @@ def review_page(user: str) -> str:
   </section>
   <section class="panel toolbar review-toolbar">
     <div><label>搜索</label><input id="reviewSearch" placeholder="task / target / attack_method / owner / id"></div>
+    <div><label>来源</label><div class="select-shell"><select id="reviewOriginFilter"><option value="">全部</option><option value="local_json">本地 JSON</option><option value="database">云端数据库</option></select></div></div>
     <div class="row"><button type="button" onclick="loadReviewCases()">刷新</button></div>
   </section>
   <section class="review-layout">
@@ -717,6 +748,8 @@ def scenes_page(user: str) -> str:
   </section>
   <section class="panel toolbar">
     <div><label>状态</label><div class="select-shell"><select id="statusFilter"><option value="">全部</option><option value="draft">draft</option><option value="submitted">submitted</option></select></div></div>
+    <div><label>来源</label><div class="select-shell"><select id="originFilter"><option value="">全部</option><option value="local_json">本地 JSON</option><option value="database">云端数据库</option></select></div></div>
+    <div><label>Benchmark</label><div class="select-shell"><select id="selectedFilter"><option value="">全部</option><option value="selected">已选中</option><option value="unselected">未选中</option></select></div></div>
     <div><label>攻击类型</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
     <div><label>植入形式</label><div class="select-shell"><select id="formFilter"><option value="">全部</option>{options(INTERACTIVE_FORMS)}</select></div></div>
@@ -744,6 +777,8 @@ def admin_page(admin: str) -> str:
   <section class="panel toolbar">
     <div><label>数据集</label><div class="select-shell"><select id="dataset"></select></div></div>
     <div><label>状态</label><div class="select-shell"><select id="statusFilter"><option value="">全部</option><option value="draft">draft</option><option value="submitted">submitted</option></select></div></div>
+    <div><label>来源</label><div class="select-shell"><select id="originFilter"><option value="">全部</option><option value="local_json">本地 JSON</option><option value="database">云端数据库</option></select></div></div>
+    <div><label>Benchmark</label><div class="select-shell"><select id="selectedFilter"><option value="">全部</option><option value="selected">已选中</option><option value="unselected">未选中</option></select></div></div>
     <div><label>攻击类型</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
     <div><label>植入形式</label><div class="select-shell"><select id="formFilter"><option value="">全部</option>{options(INTERACTIVE_FORMS)}</select></div></div>
@@ -811,17 +846,65 @@ let allCases = []; let filteredCases = []; let selectedId = null;
 function summaryText(item) {
   const s = item.review_summary || {};
   if (!s.count) return '暂无评分';
-  return `评分 ${s.overall ?? '-'} · 可实现 ${s.feasibility ?? '-'} · 准确 ${s.accuracy ?? '-'} · 清晰 ${s.clarity ?? '-'} · ${s.count} 条`;
+  return `总分 ${totalScore(item) ?? '-'} · 综合 ${s.overall ?? '-'} · 可实现 ${s.feasibility ?? '-'} · 准确 ${s.accuracy ?? '-'} · 清晰 ${s.clarity ?? '-'} · ${s.count} 条`;
+}
+function totalScore(item) {
+  const s = item.review_summary || {};
+  if (s.total_score !== undefined && s.total_score !== null) return Number(s.total_score);
+  const values = ['overall','feasibility','accuracy','clarity'].map(key => Number(s[key])).filter(value => Number.isFinite(value));
+  if (!values.length) return null;
+  return Math.round((values.reduce((sum, value) => sum + value, 0) / values.length) * 100) / 100;
+}
+function rankSort(a, b) {
+  const scoreA = totalScore(a), scoreB = totalScore(b);
+  if (scoreA !== null || scoreB !== null) return (scoreB ?? -1) - (scoreA ?? -1);
+  return String(b.updated_at || '').localeCompare(String(a.updated_at || ''));
+}
+function applyRanks(items) {
+  const ranked = [...items].sort(rankSort);
+  ranked.forEach((item, index) => { item.__rank = totalScore(item) === null ? null : index + 1; });
+  return ranked;
+}
+function originValue(item) {
+  return item.storage_origin || 'local_json';
+}
+function originLabel(origin) {
+  return origin === 'database' ? '云端数据库' : '本地 JSON';
+}
+function originPill(item) {
+  const origin = originValue(item);
+  const cls = origin === 'database' ? 'origin-cloud' : 'origin-local';
+  return `<span class="pill ${cls}">${originLabel(origin)}</span>`;
 }
 function caseTags(item) {
-  return `<span class="pill strong">${escapeHtml(item.status || 'draft')}</span><span class="pill">${escapeHtml(item.task_type)}</span><span class="pill">${escapeHtml(item.attack_type)}</span><span class="pill">${escapeHtml((item.interactive_form || []).join('/'))}</span>`;
+  const selected = item.benchmark_selected ? '<span class="pill selected-mark">已选入 benchmark</span>' : '';
+  return `${selected}${originPill(item)}<span class="pill strong">${escapeHtml(item.status || 'draft')}</span><span class="pill">${escapeHtml(item.task_type)}</span><span class="pill">${escapeHtml(item.attack_type)}</span><span class="pill">${escapeHtml((item.interactive_form || []).join('/'))}</span>`;
+}
+function groupedCaseList(onClickName='selectCase') {
+  const rankedCases = applyRanks(filteredCases);
+  const groups = [
+    ['database', rankedCases.filter(item => originValue(item) === 'database')],
+    ['local_json', rankedCases.filter(item => originValue(item) !== 'database')],
+  ];
+  return groups.filter(([, items]) => items.length).map(([origin, items]) => {
+    const cards = items.map(item => {
+      const originClass = `origin-${originValue(item)}`;
+      return `<button class="review-item ${originClass} ${item.id === selectedId ? 'active' : ''}" data-case-id="${escapeHtml(item.id)}" type="button" onclick="${onClickName}('${escapeAttr(item.id)}')"><span class="review-item-title">${escapeHtml(item.task || '(未命名任务)')}</span><span class="review-item-attack">${escapeHtml(item.attack_method || '')}</span><span class="rank-line"><span class="rank-badge">#${escapeHtml(item.__rank ?? '-')}</span><span class="score-badge">总分 ${escapeHtml(totalScore(item) ?? '-')}</span></span><span class="meta">${escapeHtml(summaryText(item))}</span><span class="review-tags">${caseTags(item)}</span></button>`;
+    }).join('');
+    return `<div class="origin-divider">${originLabel(origin)} · ${items.length}</div>${cards}`;
+  }).join('');
 }
 function renderCaseList(onClickName='selectCase') {
   if (!filteredCases.some(item => item.id === selectedId)) selectedId = filteredCases[0]?.id || null;
   const countEl = document.getElementById('resultCount') || document.getElementById('reviewCount');
   if (countEl) countEl.textContent = `${filteredCases.length} 条`;
   const list = document.getElementById('reviewList');
-  list.innerHTML = filteredCases.map(item => `<button class="review-item ${item.id === selectedId ? 'active' : ''}" type="button" onclick="${onClickName}('${escapeAttr(item.id)}')"><span class="review-item-title">${escapeHtml(item.task || '(未命名任务)')}</span><span class="review-item-attack">${escapeHtml(item.attack_method || '')}</span><span class="meta">${escapeHtml(summaryText(item))}</span><span class="review-tags">${caseTags(item)}</span></button>`).join('') || '<div class="detail-empty">没有匹配的数据</div>';
+  list.innerHTML = groupedCaseList(onClickName) || '<div class="detail-empty">没有匹配的数据</div>';
+}
+function updateActiveListItem() {
+  document.querySelectorAll('.review-item[data-case-id]').forEach(node => {
+    node.classList.toggle('active', node.dataset.caseId === selectedId);
+  });
 }
 function detailFields(item, includeReviews=true) {
   const reviews = Array.isArray(item.reviews) ? item.reviews : [];
@@ -829,7 +912,20 @@ function detailFields(item, includeReviews=true) {
   return `<dl><dt>Attack Method</dt><dd>${escapeHtml(item.attack_method)}</dd><dt>Target</dt><dd>${escapeHtml(item.target)}</dd><dt>Success States</dt><dd>${listText(item.success_states)}</dd><dt>Failure States</dt><dd>${listText(item.failure_states)}</dd><dt>Metadata</dt><dd>${listText(item.metadata)}</dd><dt>Logic</dt><dd>${escapeHtml(item.logic)}</dd>${reviewHtml}</dl>`;
 }
 function baseDetail(item) {
-  return `<h2>${escapeHtml(item.task || '(未命名任务)')}</h2><div class="meta">${escapeHtml(item.id)} · ${escapeHtml(item.owner)} · ${escapeHtml(item.created_at || '')}</div><div class="review-tags">${caseTags(item)}<span class="pill">${escapeHtml(summaryText(item))}</span></div>`;
+  return `<h2>${escapeHtml(item.task || '(未命名任务)')}</h2><div class="meta">${escapeHtml(item.id)} · ${escapeHtml(item.owner)} · ${escapeHtml(item.created_at || '')}</div><div class="rank-line"><span class="rank-badge">#${escapeHtml(item.__rank ?? '-')}</span><span class="score-badge">总分 ${escapeHtml(totalScore(item) ?? '-')}</span></div><div class="review-tags">${caseTags(item)}<span class="pill">${escapeHtml(summaryText(item))}</span></div>`;
+}
+async function toggleBenchmarkSelection(id, selected) {
+  const res = await fetch(`/api/cases/${encodeURIComponent(id)}/benchmark-selection`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({selected})});
+  const data = await res.json();
+  if (!res.ok) throw new Error((data.errors || [data.error || '更新选中状态失败']).join('\n'));
+  const index = allCases.findIndex(item => item.id === data.case.id);
+  if (index >= 0) allCases[index] = data.case;
+  selectedId = data.case.id;
+  return data.case;
+}
+function benchmarkButton(item, handlerName='toggleSelectedCase') {
+  const selected = Boolean(item.benchmark_selected);
+  return `<div class="benchmark-action"><button type="button" class="${selected ? 'selected' : ''}" onclick="${handlerName}('${escapeAttr(item.id)}', ${selected ? 'false' : 'true'})">${selected ? '取消选中 benchmark' : '选中进入 benchmark'}</button></div>`;
 }
 function listText(items) { return Array.isArray(items) ? `<ul>${items.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : escapeHtml(items || ''); }
 function escapeHtml(value) { return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
@@ -847,16 +943,17 @@ async function loadReviewCases() {
 }
 function filterReviewCases() {
   const q = (document.getElementById('reviewSearch')?.value || '').trim().toLowerCase();
-  filteredCases = allCases.filter(item => !q || JSON.stringify(item).toLowerCase().includes(q));
+  const origin = document.getElementById('reviewOriginFilter')?.value || '';
+  filteredCases = applyRanks(allCases.filter(item => (!origin || originValue(item) === origin) && (!q || JSON.stringify(item).toLowerCase().includes(q))));
   renderCaseList();
   renderDetail();
 }
-function selectCase(id) { selectedId = id; renderCaseList(); renderDetail(); }
+function selectCase(id) { selectedId = id; updateActiveListItem(); renderDetail(); }
 function renderDetail() {
   const panel = document.getElementById('detailPanel');
   const item = filteredCases.find(candidate => candidate.id === selectedId);
   if (!item) { panel.innerHTML = '<div class="detail-empty">选择左侧条目进行审核</div>'; return; }
-  panel.innerHTML = `${baseDetail(item)}${detailFields(item, false)}
+  panel.innerHTML = `${baseDetail(item)}${benchmarkButton(item)}${detailFields(item, false)}
     <form id="reviewForm" style="margin-top:18px">
       <div class="section-heading"><div><p class="section-kicker">Scoring</p><h2>审核评分</h2></div></div>
       <div class="score-grid">
@@ -869,6 +966,15 @@ function renderDetail() {
       <div class="errors" id="reviewErrors"></div>
       <div class="row" style="margin-top:14px"><button type="button" onclick="submitReview()">提交评分</button></div>
     </form>`;
+}
+async function toggleSelectedCase(id, selected) {
+  const panel = document.getElementById('detailPanel');
+  try {
+    await toggleBenchmarkSelection(id, selected);
+    filterReviewCases();
+  } catch (error) {
+    panel.insertAdjacentHTML('afterbegin', `<div class="errors">${escapeHtml(error.message)}</div>`);
+  }
 }
 async function submitReview() {
   const item = filteredCases.find(candidate => candidate.id === selectedId);
@@ -883,13 +989,14 @@ async function submitReview() {
   filterReviewCases();
 }
 document.getElementById('reviewSearch')?.addEventListener('input', filterReviewCases);
+document.getElementById('reviewOriginFilter')?.addEventListener('input', filterReviewCases);
 loadReviewCases();
 """
 
 
 def scenes_js() -> str:
     return shared_case_js() + r"""
-const controls = ['statusFilter','attackFilter','taskFilter','formFilter','search'].map(id => document.getElementById(id));
+const controls = ['statusFilter','originFilter','selectedFilter','attackFilter','taskFilter','formFilter','search'].map(id => document.getElementById(id));
 async function loadCases() {
   const res = await fetch('/api/all-cases');
   const data = await res.json();
@@ -897,21 +1004,32 @@ async function loadCases() {
   render();
 }
 function render() {
-  const status = document.getElementById('statusFilter').value, attack = document.getElementById('attackFilter').value, task = document.getElementById('taskFilter').value, form = document.getElementById('formFilter').value, q = document.getElementById('search').value.trim().toLowerCase();
-  filteredCases = allCases.filter(item => (!status || item.status === status) && (!attack || item.attack_type === attack) && (!task || item.task_type === task) && (!form || (item.interactive_form || []).includes(form)) && (!q || JSON.stringify(item).toLowerCase().includes(q)));
+  const status = document.getElementById('statusFilter').value, origin = document.getElementById('originFilter').value, selected = document.getElementById('selectedFilter').value, attack = document.getElementById('attackFilter').value, task = document.getElementById('taskFilter').value, form = document.getElementById('formFilter').value, q = document.getElementById('search').value.trim().toLowerCase();
+  filteredCases = applyRanks(allCases.filter(item => (!status || item.status === status) && (!origin || originValue(item) === origin) && (!selected || (selected === 'selected') === Boolean(item.benchmark_selected)) && (!attack || item.attack_type === attack) && (!task || item.task_type === task) && (!form || (item.interactive_form || []).includes(form)) && (!q || JSON.stringify(item).toLowerCase().includes(q))));
   renderStats(); renderCaseList(); renderDetail();
 }
 function renderStats() {
   const reviewed = filteredCases.filter(c => c.review_summary?.count).length;
-  document.getElementById('stats').innerHTML = [stat('当前筛选', filteredCases.length), stat('已有评分', reviewed), stat('未评分', filteredCases.length - reviewed), stat('标注员数', new Set(filteredCases.map(c => c.owner || '')).size)].join('');
+  const cloud = filteredCases.filter(c => originValue(c) === 'database').length;
+  const local = filteredCases.length - cloud;
+  document.getElementById('stats').innerHTML = [stat('当前筛选', filteredCases.length), stat('云端数据', cloud), stat('本地数据', local), stat('已选 benchmark', filteredCases.filter(c => c.benchmark_selected).length), stat('已有评分', reviewed), stat('未评分', filteredCases.length - reviewed), stat('标注员数', new Set(filteredCases.map(c => c.owner || '')).size)].join('');
 }
 function stat(label, value) { return `<article class="stat"><strong>${value}</strong><span>${escapeHtml(label)}</span></article>`; }
-function selectCase(id) { selectedId = id; renderCaseList(); renderDetail(); }
+function selectCase(id) { selectedId = id; updateActiveListItem(); renderDetail(); }
 function renderDetail() {
   const panel = document.getElementById('detailPanel');
   const item = filteredCases.find(candidate => candidate.id === selectedId);
   if (!item) { panel.innerHTML = '<div class="detail-empty">选择左侧条目查看评分</div>'; return; }
-  panel.innerHTML = `${baseDetail(item)}<div class="score-summary">${['overall','feasibility','accuracy','clarity'].map(k => `<span class="pill strong">${k}: ${escapeHtml(item.review_summary?.[k] ?? '-')}</span>`).join('')}</div>${detailFields(item, true)}`;
+  panel.innerHTML = `${baseDetail(item)}${benchmarkButton(item)}<div class="score-summary">${['total_score','overall','feasibility','accuracy','clarity'].map(k => `<span class="pill strong">${k}: ${escapeHtml(k === 'total_score' ? totalScore(item) ?? '-' : item.review_summary?.[k] ?? '-')}</span>`).join('')}</div>${detailFields(item, true)}`;
+}
+async function toggleSelectedCase(id, selected) {
+  const panel = document.getElementById('detailPanel');
+  try {
+    await toggleBenchmarkSelection(id, selected);
+    render();
+  } catch (error) {
+    panel.insertAdjacentHTML('afterbegin', `<div class="errors">${escapeHtml(error.message)}</div>`);
+  }
 }
 controls.forEach(el => el.addEventListener('input', render));
 loadCases();
@@ -922,7 +1040,7 @@ def admin_js() -> str:
     return r"""
 let allCases = []; let filteredCases = []; let selectedId = null;
 const dataset = document.getElementById('dataset');
-const controls = ['statusFilter','attackFilter','taskFilter','formFilter','search'].map(id => document.getElementById(id));
+const controls = ['statusFilter','originFilter','selectedFilter','attackFilter','taskFilter','formFilter','search'].map(id => document.getElementById(id));
 async function init() {
   const res = await fetch('/api/admin/cases'); const data = await res.json();
   dataset.innerHTML = data.datasets.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
@@ -937,31 +1055,93 @@ async function loadCases() {
   const data = await res.json(); allCases = data.cases || []; window.syncClawTrapSelects?.(); render();
 }
 function render() {
-  const status = document.getElementById('statusFilter').value, attack = document.getElementById('attackFilter').value, task = document.getElementById('taskFilter').value, form = document.getElementById('formFilter').value, q = document.getElementById('search').value.trim().toLowerCase();
-  filteredCases = allCases.filter(item => (!status || item.status === status) && (!attack || item.attack_type === attack) && (!task || item.task_type === task) && (!form || (item.interactive_form || []).includes(form)) && (!q || JSON.stringify(item).toLowerCase().includes(q)));
+  const status = document.getElementById('statusFilter').value, origin = document.getElementById('originFilter').value, selected = document.getElementById('selectedFilter').value, attack = document.getElementById('attackFilter').value, task = document.getElementById('taskFilter').value, form = document.getElementById('formFilter').value, q = document.getElementById('search').value.trim().toLowerCase();
+  filteredCases = applyRanks(allCases.filter(item => (!status || item.status === status) && (!origin || originValue(item) === origin) && (!selected || (selected === 'selected') === Boolean(item.benchmark_selected)) && (!attack || item.attack_type === attack) && (!task || item.task_type === task) && (!form || (item.interactive_form || []).includes(form)) && (!q || JSON.stringify(item).toLowerCase().includes(q))));
   renderStats(); renderList(); renderDetail();
 }
 function renderStats() {
   document.getElementById('stats').innerHTML = [
     stat('当前筛选', filteredCases.length), stat('全部数据', allCases.length),
+    stat('云端数据', filteredCases.filter(c => originValue(c) === 'database').length),
+    stat('本地数据', filteredCases.filter(c => originValue(c) !== 'database').length),
+    stat('已选 benchmark', filteredCases.filter(c => c.benchmark_selected).length),
     stat('submitted', filteredCases.filter(c => c.status === 'submitted').length),
     stat('draft', filteredCases.filter(c => c.status === 'draft').length),
     stat('标注员数', new Set(filteredCases.map(c => c.owner || '')).size)
   ].join('');
 }
 function stat(label, value) { return `<article class="stat"><strong>${value}</strong><span>${escapeHtml(label)}</span></article>`; }
+function originValue(item) { return item.storage_origin || 'local_json'; }
+function originLabel(origin) { return origin === 'database' ? '云端数据库' : '本地 JSON'; }
+function totalScore(item) {
+  const s = item.review_summary || {};
+  if (s.total_score !== undefined && s.total_score !== null) return Number(s.total_score);
+  const values = ['overall','feasibility','accuracy','clarity'].map(key => Number(s[key])).filter(value => Number.isFinite(value));
+  if (!values.length) return null;
+  return Math.round((values.reduce((sum, value) => sum + value, 0) / values.length) * 100) / 100;
+}
+function rankSort(a, b) {
+  const scoreA = totalScore(a), scoreB = totalScore(b);
+  if (scoreA !== null || scoreB !== null) return (scoreB ?? -1) - (scoreA ?? -1);
+  return String(b.updated_at || '').localeCompare(String(a.updated_at || ''));
+}
+function applyRanks(items) {
+  const ranked = [...items].sort(rankSort);
+  ranked.forEach((item, index) => { item.__rank = totalScore(item) === null ? null : index + 1; });
+  return ranked;
+}
+function originPill(item) {
+  const origin = originValue(item);
+  const cls = origin === 'database' ? 'origin-cloud' : 'origin-local';
+  return `<span class="pill ${cls}">${originLabel(origin)}</span>`;
+}
+function adminTags(item) {
+  const selected = item.benchmark_selected ? '<span class="pill selected-mark">已选入 benchmark</span>' : '';
+  return `${selected}${originPill(item)}<span class="pill strong">${escapeHtml(item.status || 'draft')}</span><span class="pill">${escapeHtml(item.task_type)}</span><span class="pill">${escapeHtml(item.attack_type)}</span><span class="pill">${escapeHtml((item.interactive_form || []).join('/'))}</span>`;
+}
 function renderList() {
   if (!filteredCases.some(item => item.id === selectedId)) selectedId = filteredCases[0]?.id || null;
   const countEl = document.getElementById('resultCount');
   if (countEl) countEl.textContent = `${filteredCases.length} 条`;
   const list = document.getElementById('reviewList');
-  list.innerHTML = filteredCases.map(item => `<button class="review-item ${item.id === selectedId ? 'active' : ''}" type="button" onclick="selectCase('${escapeAttr(item.id)}')"><span class="review-item-title">${escapeHtml(item.task || '(未命名任务)')}</span><span class="review-item-attack">${escapeHtml(item.attack_method || '')}</span><span class="review-tags"><span class="pill strong">${escapeHtml(item.status || 'draft')}</span><span class="pill">${escapeHtml(item.task_type)}</span><span class="pill">${escapeHtml(item.attack_type)}</span><span class="pill">${escapeHtml((item.interactive_form || []).join('/'))}</span></span></button>`).join('') || '<div class="detail-empty">没有匹配的数据</div>';
+  const rankedCases = applyRanks(filteredCases);
+  const groups = [
+    ['database', rankedCases.filter(item => originValue(item) === 'database')],
+    ['local_json', rankedCases.filter(item => originValue(item) !== 'database')],
+  ];
+  list.innerHTML = groups.filter(([, items]) => items.length).map(([origin, items]) => {
+    const cards = items.map(item => `<button class="review-item origin-${originValue(item)} ${item.id === selectedId ? 'active' : ''}" data-case-id="${escapeHtml(item.id)}" type="button" onclick="selectCase('${escapeAttr(item.id)}')"><span class="review-item-title">${escapeHtml(item.task || '(未命名任务)')}</span><span class="review-item-attack">${escapeHtml(item.attack_method || '')}</span><span class="rank-line"><span class="rank-badge">#${escapeHtml(item.__rank ?? '-')}</span><span class="score-badge">总分 ${escapeHtml(totalScore(item) ?? '-')}</span></span><span class="review-tags">${adminTags(item)}</span></button>`).join('');
+    return `<div class="origin-divider">${originLabel(origin)} · ${items.length}</div>${cards}`;
+  }).join('') || '<div class="detail-empty">没有匹配的数据</div>';
 }
-function selectCase(id) { selectedId = id; renderList(); renderDetail(); }
+function updateActiveListItem() {
+  document.querySelectorAll('.review-item[data-case-id]').forEach(node => {
+    node.classList.toggle('active', node.dataset.caseId === selectedId);
+  });
+}
+function selectCase(id) { selectedId = id; updateActiveListItem(); renderDetail(); }
 function renderDetail() {
   const panel = document.getElementById('detailPanel'); const item = filteredCases.find(candidate => candidate.id === selectedId);
   if (!item) { panel.innerHTML = '<div class="detail-empty">选择左侧条目查看详情</div>'; return; }
-  panel.innerHTML = `<h2>${escapeHtml(item.task || '(未命名任务)')}</h2><div class="meta">${escapeHtml(item.id)} · ${escapeHtml(item.owner)} · ${escapeHtml(item.created_at || '')}</div><div class="review-tags"><span class="pill strong">${escapeHtml(item.status || 'draft')}</span><span class="pill">${escapeHtml(item.task_type)}</span><span class="pill">${escapeHtml(item.attack_type)}</span><span class="pill">${escapeHtml((item.interactive_form || []).join('/'))}</span></div><dl><dt>Attack Method</dt><dd>${escapeHtml(item.attack_method)}</dd><dt>Success States</dt><dd>${listText(item.success_states)}</dd><dt>Failure States</dt><dd>${listText(item.failure_states)}</dd><dt>Metadata</dt><dd>${listText(item.metadata)}</dd><dt>Target</dt><dd>${escapeHtml(item.target)}</dd><dt>Logic</dt><dd>${escapeHtml(item.logic)}</dd></dl>`;
+  panel.innerHTML = `<h2>${escapeHtml(item.task || '(未命名任务)')}</h2><div class="meta">${escapeHtml(item.id)} · ${escapeHtml(item.owner)} · ${escapeHtml(item.created_at || '')}</div><div class="rank-line"><span class="rank-badge">#${escapeHtml(item.__rank ?? '-')}</span><span class="score-badge">总分 ${escapeHtml(totalScore(item) ?? '-')}</span></div><div class="review-tags">${adminTags(item)}</div>${benchmarkButton(item)}<div class="score-summary">${['total_score','overall','feasibility','accuracy','clarity'].map(k => `<span class="pill strong">${k}: ${escapeHtml(k === 'total_score' ? totalScore(item) ?? '-' : item.review_summary?.[k] ?? '-')}</span>`).join('')}</div><dl><dt>Attack Method</dt><dd>${escapeHtml(item.attack_method)}</dd><dt>Success States</dt><dd>${listText(item.success_states)}</dd><dt>Failure States</dt><dd>${listText(item.failure_states)}</dd><dt>Metadata</dt><dd>${listText(item.metadata)}</dd><dt>Target</dt><dd>${escapeHtml(item.target)}</dd><dt>Logic</dt><dd>${escapeHtml(item.logic)}</dd></dl>`;
+}
+async function toggleSelectedCase(id, selected) {
+  const panel = document.getElementById('detailPanel');
+  try {
+    const res = await fetch(`/api/cases/${encodeURIComponent(id)}/benchmark-selection`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({selected})});
+    const data = await res.json();
+    if (!res.ok) throw new Error((data.errors || [data.error || '更新选中状态失败']).join('\n'));
+    const index = allCases.findIndex(item => item.id === data.case.id);
+    if (index >= 0) allCases[index] = data.case;
+    selectedId = data.case.id;
+    render();
+  } catch (error) {
+    panel.insertAdjacentHTML('afterbegin', `<div class="errors">${escapeHtml(error.message)}</div>`);
+  }
+}
+function benchmarkButton(item) {
+  const selected = Boolean(item.benchmark_selected);
+  return `<div class="benchmark-action"><button type="button" class="${selected ? 'selected' : ''}" onclick="toggleSelectedCase('${escapeAttr(item.id)}', ${selected ? 'false' : 'true'})">${selected ? '取消选中 benchmark' : '选中进入 benchmark'}</button></div>`;
 }
 function listText(items) { return Array.isArray(items) ? `<ul>${items.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : escapeHtml(items || ''); }
 function downloadFiltered() { const blob = new Blob([JSON.stringify(filteredCases, null, 2)], {type:'application/json;charset=utf-8'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `clawtrap-filtered-${dataset.value}.json`; a.click(); URL.revokeObjectURL(url); }
