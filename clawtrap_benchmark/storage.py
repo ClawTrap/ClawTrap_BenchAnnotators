@@ -21,6 +21,15 @@ def use_database() -> bool:
     return bool(database_url())
 
 
+def is_vercel_runtime() -> bool:
+    return os.environ.get("VERCEL") == "1"
+
+
+def require_writable_storage() -> None:
+    if is_vercel_runtime() and not use_database():
+        raise RuntimeError("Persistent writes on Vercel require DATABASE_URL or POSTGRES_URL.")
+
+
 def connect_db():
     import psycopg
 
@@ -72,6 +81,7 @@ def write_cases(cases: list[dict[str, Any]]) -> None:
     if use_database():
         replace_dataset(DEFAULT_DATASET, cases)
         return
+    require_writable_storage()
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     tmp = CASES_PATH.with_suffix(".json.tmp")
     with tmp.open("w", encoding="utf-8") as f:
@@ -112,6 +122,7 @@ def upsert_case(raw_case: dict[str, Any], *, owner: str, source: str = "manual")
                 row = cur.fetchone()
                 return row[0] if row else normalized
 
+    require_writable_storage()
     cases = read_cases()
     normalized = normalize_case(raw_case, owner=owner, source=source)
     for index, existing in enumerate(cases):
@@ -133,6 +144,7 @@ def append_cases(new_cases: list[dict[str, Any]]) -> None:
             upsert_case(case, owner=case.get("owner") or "llm_seed", source=case.get("source") or "llm")
         return
 
+    require_writable_storage()
     cases = read_cases()
     seen_ids = {case.get("id") for case in cases}
     for case in new_cases:
@@ -212,6 +224,7 @@ def replace_dataset(dataset: str, cases: list[dict[str, Any]]) -> None:
                     )
         return
 
+    require_writable_storage()
     path = DATA_DIR / f"{dataset}.json"
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(".json.tmp")

@@ -94,4 +94,81 @@ ADMIN_PASSWORD="换成强密码"
 APP_HOST="0.0.0.0"
 APP_PORT="8000"
 ```
+
+## Vercel 部署
+
+这个项目现在包含两套入口：
+
+- `app.py`：本地标准库开发入口。
+- `api/index.py`：Vercel 使用的 Flask Serverless 入口。
+
+Vercel 部署会通过 `vercel.json` 把所有请求转发到 `api/index.py`。
+
+### 1. 推到 GitHub
+
+```bash
+git init
+git add .
+git commit -m "Initial ClawTrap benchmark app"
+git branch -M main
+git remote add origin <你的 GitHub repo URL>
+git push -u origin main
+```
+
+### 2. 在 Vercel 导入 Repo
+
+在 Vercel 新建 Project，选择刚才的 GitHub repo。默认构建设置即可，Vercel 会读取：
+
+- `requirements.txt`
+- `vercel.json`
+- `api/index.py`
+
+### 3. 配置环境变量
+
+在 Vercel Project Settings -> Environment Variables 添加：
+
+```bash
+ADMIN_USERNAME="admin"
+ADMIN_PASSWORD="换成强密码"
+SECRET_KEY="一串很长的随机字符串"
+OPENAI_API_KEY="..."
+OPENAI_BASE_URL="..."
+OPENAI_MODEL="gpt-4.1"
+```
+
+如果要在线保存标注员提交，必须添加 PostgreSQL 连接串：
+
+```bash
+DATABASE_URL="postgresql://..."
+```
+
+也可以使用 Vercel Marketplace 里的 Neon/Vercel Postgres。没有 `DATABASE_URL` 时，Vercel 上仍可读取 repo 内的 `data/*.json`，但保存接口会返回明确错误，避免误以为数据已持久保存。
+
+### 4. 初始化数据库数据
+
+本地 `.env` 中临时放入线上数据库的 `DATABASE_URL` 后执行：
+
+```bash
+. .venv/bin/activate
+python scripts/seed_database.py data/cases.json --dataset cases
+python scripts/seed_database.py data/demo_cases_gpt41.json --dataset demo_cases_gpt41
+```
+
+之后 Vercel 管理员页面会从数据库读取这些数据集。
+
+### 5. 绑定 clawtrap.cn
+
+在 Vercel Project Settings -> Domains 添加：
+
+```text
+clawtrap.cn
+www.clawtrap.cn
+```
+
+然后去域名注册商处按 Vercel 给出的提示配置 DNS。通常是：
+
+- `clawtrap.cn` 配 `A` 记录到 Vercel 指定 IP。
+- `www.clawtrap.cn` 配 `CNAME` 到 Vercel 指定域名。
+
+DNS 生效后，Vercel 会自动签发 HTTPS 证书。
 # ClawTrap_BenchAnnotators
