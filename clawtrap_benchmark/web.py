@@ -47,43 +47,97 @@ def page(title: str, body: str) -> str:
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{title}</title>
   <style>
-    :root {{ --bg:#f6f7f9; --panel:#fff; --text:#20242a; --muted:#667085; --line:#d9dee7; --accent:#0f766e; --danger:#b42318; }}
+    :root {{
+      --bg:#f4f6f8; --panel:#ffffff; --panel-soft:#fafbfc; --text:#17212b; --muted:#667085;
+      --line:#d9e0e8; --line-strong:#bdc8d5; --accent:#0f766e; --accent-strong:#0b5f59;
+      --accent-soft:#e8f6f3; --blue:#2563eb; --blue-soft:#eef4ff; --amber:#b7791f;
+      --amber-soft:#fff7e6; --danger:#b42318; --shadow:0 10px 30px rgba(15,23,42,.07);
+    }}
     * {{ box-sizing:border-box; }}
-    body {{ margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:var(--bg); color:var(--text); }}
-    header {{ display:flex; justify-content:space-between; align-items:center; padding:14px 24px; border-bottom:1px solid var(--line); background:var(--panel); position:sticky; top:0; z-index:2; }}
-    main {{ max-width:1180px; margin:0 auto; padding:22px; }}
-    h1 {{ font-size:22px; margin:0; }} h2 {{ font-size:18px; margin:0 0 12px; }}
-    .button, button {{ border:1px solid var(--accent); background:var(--accent); color:white; padding:9px 12px; border-radius:6px; cursor:pointer; text-decoration:none; font-size:14px; }}
-    .secondary {{ background:white; color:var(--accent); }}
-    .panel,.case {{ background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:16px; }}
-    .grid {{ display:grid; grid-template-columns:320px 1fr; gap:16px; align-items:start; }}
-    .case {{ margin-bottom:10px; }} .case h3 {{ margin:0 0 8px; font-size:15px; }}
-    .meta {{ color:var(--muted); font-size:12px; line-height:1.5; }}
-    label {{ display:block; font-weight:600; margin:12px 0 6px; font-size:13px; }}
-    input,select,textarea {{ width:100%; border:1px solid var(--line); border-radius:6px; padding:9px; font:inherit; background:white; }}
-    textarea {{ min-height:74px; resize:vertical; }}
+    html {{ background:var(--bg); }}
+    body {{
+      margin:0; min-height:100vh; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        linear-gradient(180deg, rgba(238,244,255,.95) 0, rgba(244,246,248,0) 260px),
+        var(--bg);
+      color:var(--text);
+    }}
+    header {{
+      display:flex; justify-content:space-between; align-items:center; gap:16px; padding:16px 28px;
+      border-bottom:1px solid rgba(217,224,232,.86); background:rgba(255,255,255,.88);
+      backdrop-filter:blur(12px); position:sticky; top:0; z-index:2;
+    }}
+    main {{ max-width:1180px; margin:0 auto; padding:24px; }}
+    h1 {{ font-size:21px; margin:0; font-weight:750; }} h2 {{ font-size:17px; margin:0 0 14px; font-weight:720; }}
+    .button, button {{
+      border:1px solid var(--accent); background:var(--accent); color:white; padding:9px 13px;
+      border-radius:7px; cursor:pointer; text-decoration:none; font-size:14px; font-weight:650;
+      box-shadow:0 1px 0 rgba(15,23,42,.04);
+    }}
+    button:hover,.button:hover {{ background:var(--accent-strong); }}
+    .secondary {{ background:white; color:var(--accent); box-shadow:none; }}
+    .secondary:hover {{ background:var(--accent-soft); color:var(--accent-strong); }}
+    .panel,.case,.login,.detail-panel,.stat,.review-item {{
+      background:var(--panel); border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow);
+    }}
+    .panel {{ padding:18px; }}
+    .grid {{ display:grid; grid-template-columns:340px minmax(0,1fr); gap:18px; align-items:start; }}
+    .case {{ margin-bottom:10px; padding:13px; box-shadow:none; }}
+    .case h3 {{ margin:0 0 8px; font-size:14px; line-height:1.45; }}
+    .meta {{ color:var(--muted); font-size:12px; line-height:1.55; }}
+    label {{ display:block; font-weight:680; margin:12px 0 6px; font-size:12px; color:#344054; }}
+    input,select,textarea {{
+      width:100%; border:1px solid var(--line); border-radius:7px; padding:9px 10px; font:inherit;
+      background:white; outline:none; transition:border-color .12s, box-shadow .12s;
+    }}
+    input:focus,select:focus,textarea:focus {{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(15,118,110,.12); }}
+    textarea {{ min-height:78px; resize:vertical; }}
     .checks {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:8px; }}
-    .checks label {{ display:flex; align-items:center; gap:6px; margin:0; font-weight:500; }} .checks input {{ width:auto; }}
+    .checks label {{ display:flex; align-items:center; gap:7px; margin:0; font-weight:560; background:var(--panel-soft); border:1px solid var(--line); border-radius:7px; padding:8px; }}
+    .checks input {{ width:auto; }}
     .row {{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }}
-    .errors {{ color:var(--danger); font-size:13px; white-space:pre-wrap; }}
-    .login {{ max-width:380px; margin:12vh auto; background:var(--panel); padding:24px; border:1px solid var(--line); border-radius:8px; }}
-    .admin-main {{ max-width:1440px; }}
-    .toolbar {{ display:grid; grid-template-columns:180px 130px 180px 180px 140px minmax(220px,1fr); gap:10px; align-items:end; padding:12px; }}
-    .toolbar-actions {{ grid-column:1/-1; }} .stats {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:8px; margin:12px 0; }}
-    .stat {{ background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:10px 12px; }} .stat strong {{ display:block; font-size:20px; }} .stat span {{ color:var(--muted); font-size:12px; }}
-    .review-layout {{ display:grid; grid-template-columns:minmax(360px,.95fr) minmax(520px,1.35fr); gap:12px; align-items:start; }}
-    .review-list {{ display:flex; flex-direction:column; gap:8px; }}
-    .review-item {{ width:100%; text-align:left; background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius:8px; padding:12px; cursor:pointer; }}
-    .review-item:hover,.review-item.active {{ border-color:var(--accent); }}
-    .review-item-title {{ display:block; font-size:14px; font-weight:700; line-height:1.45; }}
-    .review-item-attack {{ display:-webkit-box; margin-top:8px; color:var(--muted); font-size:12px; line-height:1.45; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }}
-    .review-tags {{ display:flex; flex-wrap:wrap; gap:6px; margin-top:9px; }}
-    .pill {{ flex:none; border:1px solid var(--line); border-radius:999px; padding:2px 8px; font-size:12px; color:var(--muted); background:white; }}
-    .pill.strong {{ color:var(--accent); border-color:#99d4cd; background:#effaf8; }}
-    .detail-panel {{ position:sticky; top:78px; background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:18px; max-height:calc(100vh - 100px); overflow:auto; }}
-    .detail-panel h2 {{ font-size:18px; line-height:1.45; margin-bottom:8px; }} .detail-empty {{ color:var(--muted); padding:32px; text-align:center; }}
-    dl {{ margin:16px 0 0; }} dt {{ font-size:12px; color:var(--muted); font-weight:700; margin-top:10px; }} dd {{ margin:4px 0 0; font-size:13px; line-height:1.55; }} dd ul {{ margin:4px 0 0; padding-left:18px; }}
-    @media (max-width:980px) {{ .grid,.toolbar,.review-layout {{ grid-template-columns:1fr; }} header {{ padding:12px 16px; }} main {{ padding:16px; }} .toolbar-actions {{ grid-column:auto; }} .detail-panel {{ position:static; max-height:none; }} }}
+    .errors {{ color:var(--danger); font-size:13px; white-space:pre-wrap; margin-top:8px; }}
+    .login {{ max-width:400px; margin:12vh auto; padding:26px; }}
+    .login h1 {{ margin-bottom:18px; }}
+    .admin-main {{ max-width:1480px; }}
+    .toolbar {{
+      display:grid; grid-template-columns:180px 130px 180px 180px 140px minmax(220px,1fr);
+      gap:10px; align-items:end; padding:14px; box-shadow:none;
+    }}
+    .toolbar label {{ margin-top:0; }}
+    .toolbar-actions {{ grid-column:1/-1; }}
+    .stats {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(128px,1fr)); gap:10px; margin:14px 0; }}
+    .stat {{ padding:13px 14px; box-shadow:none; background:linear-gradient(180deg,#fff,#fbfcfd); }}
+    .stat strong {{ display:block; font-size:22px; line-height:1; }}
+    .stat span {{ display:block; color:var(--muted); font-size:12px; margin-top:6px; }}
+    .review-layout {{ display:grid; grid-template-columns:minmax(380px,.92fr) minmax(540px,1.35fr); gap:14px; align-items:start; }}
+    .review-list {{ display:flex; flex-direction:column; gap:9px; }}
+    .review-item {{
+      width:100%; text-align:left; color:var(--text); padding:14px; cursor:pointer; box-shadow:none;
+      transition:border-color .12s, transform .12s, box-shadow .12s;
+    }}
+    .review-item:hover {{ border-color:var(--line-strong); transform:translateY(-1px); box-shadow:0 8px 22px rgba(15,23,42,.06); background:#fff; }}
+    .review-item.active {{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(15,118,110,.12); }}
+    .review-item-title {{ display:block; font-size:14px; font-weight:720; line-height:1.5; }}
+    .review-item-attack {{
+      display:-webkit-box; margin-top:8px; color:var(--muted); font-size:12px; line-height:1.5;
+      -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+    }}
+    .review-tags {{ display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }}
+    .pill {{ flex:none; border:1px solid var(--line); border-radius:999px; padding:3px 8px; font-size:11px; color:var(--muted); background:var(--panel-soft); }}
+    .pill.strong {{ color:var(--accent-strong); border-color:#99d4cd; background:var(--accent-soft); }}
+    .detail-panel {{ position:sticky; top:82px; padding:20px; max-height:calc(100vh - 108px); overflow:auto; }}
+    .detail-panel h2 {{ font-size:19px; line-height:1.48; margin:0 0 8px; }}
+    .detail-empty {{ color:var(--muted); padding:40px 28px; text-align:center; background:var(--panel-soft); border:1px dashed var(--line-strong); border-radius:8px; }}
+    dl {{ margin:18px 0 0; display:grid; gap:12px; }}
+    dt {{ font-size:11px; color:var(--muted); font-weight:760; text-transform:uppercase; margin:0; }}
+    dd {{ margin:4px 0 0; font-size:13px; line-height:1.62; background:var(--panel-soft); border:1px solid var(--line); border-radius:8px; padding:10px 12px; }}
+    dd ul {{ margin:0; padding-left:18px; }}
+    @media (max-width:980px) {{
+      .grid,.toolbar,.review-layout {{ grid-template-columns:1fr; }}
+      header {{ padding:12px 16px; }} main {{ padding:16px; }}
+      .toolbar-actions {{ grid-column:auto; }} .detail-panel {{ position:static; max-height:none; }}
+    }}
   </style>
 </head>
 <body>{body}</body>
