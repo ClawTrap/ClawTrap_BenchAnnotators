@@ -126,6 +126,8 @@ def page(title: str, body: str) -> str:
     .panel {{ padding:20px; background:linear-gradient(180deg,rgba(255,254,250,.96),rgba(250,246,239,.9)); overflow:visible; }}
     .grid {{ display:grid; grid-template-columns:340px minmax(0,1fr); gap:18px; align-items:start; }}
     .design-grid {{ display:grid; grid-template-columns:360px minmax(0,1fr); gap:18px; align-items:start; }}
+    .design-grid.design-only {{ grid-template-columns:minmax(0,1fr); max-width:980px; }}
+    .design-editor {{ width:100%; }}
     .sticky-panel {{ position:sticky; top:92px; }}
     .case {{ margin-bottom:10px; padding:14px; box-shadow:none; background:rgba(255,254,250,.84); }}
     .case h3 {{ margin:0 0 8px; font-size:13px; line-height:1.5; }}
@@ -199,6 +201,8 @@ def page(title: str, body: str) -> str:
     .score-summary {{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }}
     .row {{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }}
     .errors {{ color:var(--danger); font-size:13px; white-space:pre-wrap; margin-top:8px; }}
+    .status-message {{ color:var(--accent-strong); font-size:13px; white-space:pre-wrap; margin-top:8px; font-weight:700; }}
+    .status-message.error {{ color:var(--danger); }}
     .login-main {{ min-height:100vh; display:grid; place-items:center; padding:28px; }}
     .login {{ width:min(460px,100%); margin:0 auto; padding:30px; background:linear-gradient(135deg,rgba(255,254,250,.97),rgba(246,240,230,.88)); }}
     .login h1 {{ margin-bottom:4px; }}
@@ -245,7 +249,7 @@ def page(title: str, body: str) -> str:
     dd {{ margin:5px 0 0; font-size:13px; line-height:1.66; background:rgba(246,240,230,.72); border:1px solid var(--line); border-radius:8px; padding:11px 12px; }}
     dd ul {{ margin:0; padding-left:18px; }}
     @media (max-width:980px) {{
-      .grid,.design-grid,.toolbar,.review-layout,.choice-grid,.overview-grid,.overview-stats,.score-grid,.field-grid {{ grid-template-columns:1fr; }}
+      .grid,.design-grid,.design-grid.design-only,.toolbar,.review-layout,.choice-grid,.overview-grid,.overview-stats,.score-grid,.field-grid {{ grid-template-columns:1fr; max-width:none; }}
       header {{ width:calc(100vw - 28px); padding:10px; align-items:flex-start; border-radius:8px; flex-direction:column; }}
       main {{ padding:16px; }}
       .top-nav,.app-nav {{ width:100%; flex-wrap:wrap; }}
@@ -643,12 +647,8 @@ def design_page(user: str) -> str:
   <h2 class="hero-title">设计一个具体、可执行的攻击场景</h2>
   <p class="hero-copy">选择固定攻击类别与任务类型，描述真实任务、MITM 植入方式、判定状态和必要 metadata。草稿可以反复编辑，提交时会检查字段完整性。</p>
 </section>
-<div class="design-grid">
-  <section class="panel sticky-panel">
-    <div class="section-heading"><div><p class="section-kicker">Library</p><h2>我的场景</h2></div></div>
-    <div id="caseList"></div>
-  </section>
-  <section class="panel">
+<div class="design-grid design-only">
+  <section class="panel design-editor">
     <div class="section-heading"><div><p class="section-kicker">Editor</p><h2>场景编辑</h2></div></div>
     <form id="caseForm">
       <input type="hidden" name="id">
@@ -673,7 +673,7 @@ def design_page(user: str) -> str:
         <label>攻击逻辑 logic</label><textarea name="logic" required></textarea>
         <label>Metadata（每行一条）</label><textarea name="metadata" required></textarea>
       </section>
-      <div class="errors" id="errors"></div>
+      <div class="status-message" id="errors"></div>
       <div class="row form-actions">
         <button type="button" onclick="saveCase('draft')">保存草稿</button>
         <button type="button" class="secondary" onclick="saveCase('submitted')">提交</button>
@@ -758,7 +758,6 @@ def admin_page(admin: str) -> str:
 
 def annotator_js() -> str:
     return r"""
-const listEl = document.getElementById('caseList');
 const form = document.getElementById('caseForm');
 const errors = document.getElementById('errors');
 function lines(value) { return value.split('\n').map(v => v.trim()).filter(Boolean); }
@@ -776,6 +775,7 @@ function clearForm() {
   form.reset();
   form.id.value = '';
   errors.textContent = '';
+  errors.classList.remove('error');
   requestAnimationFrame(() => window.syncClawTrapSelects?.());
 }
 function editCase(item) {
@@ -788,27 +788,20 @@ function editCase(item) {
   window.syncClawTrapSelects?.();
   window.scrollTo({top: 0, behavior: 'smooth'});
 }
-async function loadCases() {
-  const res = await fetch('/api/cases'); const data = await res.json(); listEl.innerHTML = '';
-  if (!data.cases || !data.cases.length) {
-    listEl.innerHTML = '<div class="empty-note">暂无可编辑场景。右侧填写后可先保存为草稿。</div>';
-    return;
-  }
-  for (const item of data.cases) {
-    const node = document.createElement('article'); node.className = 'case';
-    node.innerHTML = `<h3>${escapeHtml(item.task || '(未命名任务)')}</h3><div class="meta">${escapeHtml(item.status)} · ${escapeHtml(item.task_type)} · ${escapeHtml(item.attack_type)}<br>${escapeHtml((item.interactive_form || []).join(' / '))}</div><div style="height:10px"></div><button type="button" class="secondary">编辑</button>`;
-    node.querySelector('button').onclick = () => editCase(item); listEl.appendChild(node);
-  }
-}
 async function saveCase(status) {
   errors.textContent = '';
+  errors.classList.remove('error');
   const res = await fetch('/api/cases', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(formData(status))});
   const data = await res.json();
-  if (!res.ok) { errors.textContent = (data.errors || [data.error || '保存失败']).join('\n'); return; }
-  editCase(data.case); await loadCases();
+  if (!res.ok) {
+    errors.classList.add('error');
+    errors.textContent = (data.errors || [data.error || '保存失败']).join('\n');
+    return;
+  }
+  editCase(data.case);
+  errors.textContent = `已${status === 'submitted' ? '提交' : '保存草稿'}：${data.case.id}`;
 }
 function escapeHtml(value) { return String(value || '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
-loadCases();
 """
 
 
