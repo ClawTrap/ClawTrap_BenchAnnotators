@@ -47,38 +47,64 @@ def page(title: str, body: str) -> str:
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{title}</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap');
     :root {{
-      --bg:#f4f6f8; --panel:#ffffff; --panel-soft:#fafbfc; --text:#17212b; --muted:#667085;
-      --line:#d9e0e8; --line-strong:#bdc8d5; --accent:#0f766e; --accent-strong:#0b5f59;
-      --accent-soft:#e8f6f3; --blue:#2563eb; --blue-soft:#eef4ff; --amber:#b7791f;
-      --amber-soft:#fff7e6; --danger:#b42318; --shadow:0 10px 30px rgba(15,23,42,.07);
+      --paper:#fbfaf7; --paper-deep:#f3efe6; --panel:#ffffff; --panel-soft:#f8f6f1;
+      --text:#132033; --ink:#213149; --muted:#667386; --line:rgba(19,32,51,.12);
+      --line-strong:rgba(19,32,51,.22); --navy:#162236; --navy-soft:#253750;
+      --accent:#8a623d; --accent-strong:#6e4e2d; --accent-soft:#f5eee5;
+      --teal:#0f766e; --danger:#b42318; --shadow:0 14px 34px rgba(19,32,51,.07);
     }}
     * {{ box-sizing:border-box; }}
-    html {{ background:var(--bg); }}
+    html {{ background:var(--paper); }}
     body {{
-      margin:0; min-height:100vh; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      margin:0; min-height:100vh; font-family:'Source Sans 3',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
       background:
-        linear-gradient(180deg, rgba(238,244,255,.95) 0, rgba(244,246,248,0) 260px),
-        var(--bg);
-      color:var(--text);
+        radial-gradient(circle at 10% 8%, rgba(138,98,61,.09), transparent 30%),
+        radial-gradient(circle at 88% 10%, rgba(22,34,53,.08), transparent 34%),
+        linear-gradient(180deg, var(--paper) 0%, var(--paper-deep) 54%, var(--paper) 100%);
+      color:var(--ink); letter-spacing:.005em;
+    }}
+    body::before {{
+      content:''; position:fixed; inset:0; z-index:-1; pointer-events:none;
+      background-image:linear-gradient(rgba(19,32,51,.026) 1px, transparent 1px),linear-gradient(90deg, rgba(19,32,51,.026) 1px, transparent 1px);
+      background-size:24px 24px; mask-image:linear-gradient(180deg,rgba(0,0,0,.2),transparent 68%);
     }}
     header {{
-      display:flex; justify-content:space-between; align-items:center; gap:16px; padding:16px 28px;
-      border-bottom:1px solid rgba(217,224,232,.86); background:rgba(255,255,255,.88);
-      backdrop-filter:blur(12px); position:sticky; top:0; z-index:2;
+      width:min(1480px,calc(100vw - 44px)); margin:16px auto 0; display:flex; justify-content:space-between;
+      align-items:center; gap:18px; padding:12px 18px; border:1px solid var(--line); border-radius:999px;
+      background:rgba(255,255,255,.9); backdrop-filter:blur(12px); position:sticky; top:12px; z-index:2;
+      box-shadow:0 14px 36px rgba(19,32,51,.08);
     }}
-    main {{ max-width:1180px; margin:0 auto; padding:24px; }}
-    h1 {{ font-size:21px; margin:0; font-weight:750; }} h2 {{ font-size:17px; margin:0 0 14px; font-weight:720; }}
+    main {{ max-width:1180px; margin:0 auto; padding:28px 24px 48px; }}
+    h1,h2,h3 {{ color:var(--text); }}
+    h1 {{ font-family:'Cormorant Garamond',Georgia,serif; font-size:29px; margin:0; font-weight:600; font-style:italic; letter-spacing:-.02em; }}
+    h2 {{ font-family:'Cormorant Garamond',Georgia,serif; font-size:27px; margin:0 0 14px; font-weight:600; letter-spacing:-.02em; }}
+    .brand-lockup {{ display:flex; align-items:center; gap:12px; min-width:0; }}
+    .brand-mark {{ width:36px; height:36px; border-radius:999px; display:grid; place-items:center; background:linear-gradient(150deg,var(--navy),var(--navy-soft)); color:#f8f4ee; font-family:'Cormorant Garamond',Georgia,serif; font-size:20px; font-weight:700; font-style:italic; }}
+    .brand-subtitle {{ color:var(--muted); font-size:12px; line-height:1; margin-top:2px; }}
+    .top-nav {{ display:flex; align-items:center; gap:8px; }}
+    .hero {{
+      position:relative; margin:28px 0 18px; padding:26px; border:1px solid var(--line); border-radius:8px;
+      background:linear-gradient(135deg,rgba(255,255,255,.94),rgba(248,246,241,.88)); box-shadow:var(--shadow); overflow:hidden;
+    }}
+    .hero::after {{ content:''; position:absolute; right:-80px; top:-90px; width:240px; height:240px; border-radius:50%; background:radial-gradient(circle,rgba(138,98,61,.14),transparent 68%); pointer-events:none; }}
+    .hero.compact {{ padding:24px 26px; }}
+    .eyebrow {{ display:inline-flex; padding:0 0 5px; border-bottom:1px solid rgba(138,98,61,.28); color:var(--accent-strong); font-family:'Source Sans 3',sans-serif; font-size:11px; font-weight:700; letter-spacing:.11em; text-transform:uppercase; }}
+    .hero-title {{ max-width:900px; margin:12px 0 10px; font-family:'Cormorant Garamond',Georgia,serif; font-size:clamp(2rem,4.2vw,3.6rem); line-height:1.02; letter-spacing:-.035em; color:var(--text); font-weight:600; }}
+    .hero-copy {{ max-width:780px; color:var(--muted); font-size:16px; line-height:1.75; margin:0; }}
+    .section-heading {{ display:flex; justify-content:space-between; align-items:flex-end; gap:12px; margin-bottom:14px; }}
+    .section-kicker {{ margin:0; color:var(--accent-strong); font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }}
     .button, button {{
-      border:1px solid var(--accent); background:var(--accent); color:white; padding:9px 13px;
-      border-radius:7px; cursor:pointer; text-decoration:none; font-size:14px; font-weight:650;
+      border:1px solid var(--navy); background:var(--navy); color:#fffefa; padding:9px 13px;
+      border-radius:999px; cursor:pointer; text-decoration:none; font-size:14px; font-weight:650;
       box-shadow:0 1px 0 rgba(15,23,42,.04);
     }}
-    button:hover,.button:hover {{ background:var(--accent-strong); }}
-    .secondary {{ background:white; color:var(--accent); box-shadow:none; }}
-    .secondary:hover {{ background:var(--accent-soft); color:var(--accent-strong); }}
+    button:hover,.button:hover {{ background:var(--navy-soft); }}
+    .secondary {{ background:transparent; color:var(--navy); border-color:var(--line-strong); box-shadow:none; }}
+    .secondary:hover {{ background:var(--panel-soft); color:var(--navy); }}
     .panel,.case,.login,.detail-panel,.stat,.review-item {{
-      background:var(--panel); border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow);
+      background:rgba(255,255,255,.92); border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow);
     }}
     .panel {{ padding:18px; }}
     .grid {{ display:grid; grid-template-columns:340px minmax(0,1fr); gap:18px; align-items:start; }}
@@ -88,26 +114,26 @@ def page(title: str, body: str) -> str:
     label {{ display:block; font-weight:680; margin:12px 0 6px; font-size:12px; color:#344054; }}
     input,select,textarea {{
       width:100%; border:1px solid var(--line); border-radius:7px; padding:9px 10px; font:inherit;
-      background:white; outline:none; transition:border-color .12s, box-shadow .12s;
+      background:rgba(255,255,255,.92); outline:none; transition:border-color .12s, box-shadow .12s;
     }}
-    input:focus,select:focus,textarea:focus {{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(15,118,110,.12); }}
+    input:focus,select:focus,textarea:focus {{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(138,98,61,.13); }}
     textarea {{ min-height:78px; resize:vertical; }}
     .checks {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:8px; }}
     .checks label {{ display:flex; align-items:center; gap:7px; margin:0; font-weight:560; background:var(--panel-soft); border:1px solid var(--line); border-radius:7px; padding:8px; }}
     .checks input {{ width:auto; }}
     .row {{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }}
     .errors {{ color:var(--danger); font-size:13px; white-space:pre-wrap; margin-top:8px; }}
-    .login {{ max-width:400px; margin:12vh auto; padding:26px; }}
+    .login {{ max-width:430px; margin:12vh auto; padding:30px; background:linear-gradient(135deg,rgba(255,255,255,.96),rgba(248,246,241,.9)); }}
     .login h1 {{ margin-bottom:18px; }}
     .admin-main {{ max-width:1480px; }}
     .toolbar {{
       display:grid; grid-template-columns:180px 130px 180px 180px 140px minmax(220px,1fr);
-      gap:10px; align-items:end; padding:14px; box-shadow:none;
+      gap:10px; align-items:end; padding:14px; box-shadow:0 10px 26px rgba(19,32,51,.045);
     }}
     .toolbar label {{ margin-top:0; }}
     .toolbar-actions {{ grid-column:1/-1; }}
     .stats {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(128px,1fr)); gap:10px; margin:14px 0; }}
-    .stat {{ padding:13px 14px; box-shadow:none; background:linear-gradient(180deg,#fff,#fbfcfd); }}
+    .stat {{ padding:13px 14px; box-shadow:none; background:linear-gradient(180deg,#fffefa,#f9f5ed); }}
     .stat strong {{ display:block; font-size:22px; line-height:1; }}
     .stat span {{ display:block; color:var(--muted); font-size:12px; margin-top:6px; }}
     .review-layout {{ display:grid; grid-template-columns:minmax(380px,.92fr) minmax(540px,1.35fr); gap:14px; align-items:start; }}
@@ -116,8 +142,8 @@ def page(title: str, body: str) -> str:
       width:100%; text-align:left; color:var(--text); padding:14px; cursor:pointer; box-shadow:none;
       transition:border-color .12s, transform .12s, box-shadow .12s;
     }}
-    .review-item:hover {{ border-color:var(--line-strong); transform:translateY(-1px); box-shadow:0 8px 22px rgba(15,23,42,.06); background:#fff; }}
-    .review-item.active {{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(15,118,110,.12); }}
+    .review-item:hover {{ border-color:var(--line-strong); transform:translateY(-1px); box-shadow:0 12px 28px rgba(19,32,51,.07); background:#fff; }}
+    .review-item.active {{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(138,98,61,.12); }}
     .review-item-title {{ display:block; font-size:14px; font-weight:720; line-height:1.5; }}
     .review-item-attack {{
       display:-webkit-box; margin-top:8px; color:var(--muted); font-size:12px; line-height:1.5;
@@ -125,8 +151,8 @@ def page(title: str, body: str) -> str:
     }}
     .review-tags {{ display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }}
     .pill {{ flex:none; border:1px solid var(--line); border-radius:999px; padding:3px 8px; font-size:11px; color:var(--muted); background:var(--panel-soft); }}
-    .pill.strong {{ color:var(--accent-strong); border-color:#99d4cd; background:var(--accent-soft); }}
-    .detail-panel {{ position:sticky; top:82px; padding:20px; max-height:calc(100vh - 108px); overflow:auto; }}
+    .pill.strong {{ color:var(--accent-strong); border-color:rgba(138,98,61,.28); background:var(--accent-soft); }}
+    .detail-panel {{ position:sticky; top:82px; padding:20px; max-height:calc(100vh - 108px); overflow:auto; background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(250,248,244,.92)); }}
     .detail-panel h2 {{ font-size:19px; line-height:1.48; margin:0 0 8px; }}
     .detail-empty {{ color:var(--muted); padding:40px 28px; text-align:center; background:var(--panel-soft); border:1px dashed var(--line-strong); border-radius:8px; }}
     dl {{ margin:18px 0 0; display:grid; gap:12px; }}
@@ -159,7 +185,10 @@ def create_app() -> Flask:
     def login_page():
         return page("ClawTrap 登录", """
 <main><section class="login">
-  <h1>ClawTrap Benchmark</h1>
+  <div class="brand-lockup" style="margin-bottom:18px">
+    <div class="brand-mark">C</div>
+    <div><h1>ClawTrap</h1><div class="brand-subtitle">Benchmark annotation workspace</div></div>
+  </div>
   <form method="post" action="/login">
     <label>标注员用户名</label><input name="username" required autocomplete="username" autofocus>
     <div style="height:14px"></div><button type="submit">登录</button>
@@ -255,7 +284,10 @@ def render_admin_login(error: str = "") -> str:
     error_html = f'<div class="errors">{error}</div>' if error else ""
     return page("ClawTrap 管理员登录", f"""
 <main><section class="login">
-  <h1>管理员审阅</h1>
+  <div class="brand-lockup" style="margin-bottom:18px">
+    <div class="brand-mark">C</div>
+    <div><h1>ClawTrap</h1><div class="brand-subtitle">Administrator review console</div></div>
+  </div>
   <form method="post" action="/admin/login">
     <label>管理员账号</label><input name="username" required autocomplete="username" autofocus>
     <label>密码</label><input name="password" type="password" required autocomplete="current-password">
@@ -267,10 +299,23 @@ def render_admin_login(error: str = "") -> str:
 
 def annotator_page(user: str) -> str:
     return page("ClawTrap Benchmark 标注", f"""
-<header><h1>ClawTrap Benchmark 标注</h1><div class="row"><span class="meta">{user}</span><a class="button secondary" href="/logout">退出</a></div></header>
-<main><div class="grid">
-  <section class="panel"><h2>我的场景</h2><div id="caseList"></div></section>
-  <section class="panel"><h2>设计场景</h2>
+<header>
+  <div class="brand-lockup"><div class="brand-mark">C</div><div><h1>ClawTrap</h1><div class="brand-subtitle">MITM benchmark annotation</div></div></div>
+  <div class="top-nav"><span class="meta">{user}</span><a class="button secondary" href="/logout">退出</a></div>
+</header>
+<main>
+<section class="hero compact">
+  <div class="eyebrow">Annotation Workspace</div>
+  <h2 class="hero-title">Design concrete attack cases for agentic MITM evaluation.</h2>
+  <p class="hero-copy">选择固定攻击类别与任务类型，描述可执行场景、判定状态和所需 metadata。草稿可以反复编辑，提交时会检查字段完整性。</p>
+</section>
+<div class="grid">
+  <section class="panel">
+    <div class="section-heading"><div><p class="section-kicker">Library</p><h2>我的场景</h2></div></div>
+    <div id="caseList"></div>
+  </section>
+  <section class="panel">
+    <div class="section-heading"><div><p class="section-kicker">Configuration</p><h2>设计场景</h2></div></div>
     <form id="caseForm">
       <input type="hidden" name="id">
       <label>任务类型</label><select name="task_type" required>{options(TASK_TYPES)}</select>
@@ -297,8 +342,16 @@ def annotator_page(user: str) -> str:
 
 def admin_page(admin: str) -> str:
     return page("ClawTrap 数据审阅", f"""
-<header><h1>ClawTrap 数据审阅</h1><div class="row"><span class="meta">admin: {admin}</span><a class="button secondary" href="/admin/logout">退出</a></div></header>
+<header>
+  <div class="brand-lockup"><div class="brand-mark">C</div><div><h1>ClawTrap</h1><div class="brand-subtitle">Benchmark data review</div></div></div>
+  <div class="top-nav"><span class="meta">admin: {admin}</span><a class="button secondary" href="/admin/logout">退出</a></div>
+</header>
 <main class="admin-main">
+  <section class="hero compact">
+    <div class="eyebrow">Review Console</div>
+    <h2 class="hero-title">Inspect generated and submitted MITM benchmark cases.</h2>
+    <p class="hero-copy">筛选数据集、攻击类型和任务类型，在左侧快速浏览 case，在右侧查看完整判定逻辑与 metadata。</p>
+  </section>
   <section class="panel toolbar">
     <div><label>数据集</label><select id="dataset"></select></div>
     <div><label>状态</label><select id="statusFilter"><option value="">全部</option><option value="draft">draft</option><option value="submitted">submitted</option></select></div>
