@@ -66,10 +66,49 @@ python scripts/generate_cases.py --limit 3 --per-combo 3 --batch-size 3 --no-wri
 ## 启动标注页面
 
 ```bash
-python app.py
+python -m flask --app clawtrap_benchmark.web run --host 127.0.0.1 --port 5055
 ```
 
-打开 `http://127.0.0.1:8000`，输入任意标注员用户名即可登录。页面会展示该用户自己的 case 和 LLM seed case。
+打开 `http://127.0.0.1:5055`，使用已配置的账号 ID 和密码登录。未配置在账户表中的 ID 不能进入系统。
+
+### 账号与权限
+
+生产部署必须配置账号密码。最简单的方式是在 `.env` 或 Vercel Environment Variables 中配置：
+
+```bash
+SECRET_KEY="一串很长的随机字符串"
+
+# 管理员账号 1
+ADMIN_USERNAME="admin"
+ADMIN_PASSWORD="换成强密码"
+
+# 管理员账号 2
+ADMIN_USERNAME_2="admin2"
+ADMIN_PASSWORD_2="换成另一个强密码"
+
+# 标注员账号，多个账号用逗号、分号或换行分隔
+ANNOTATOR_ACCOUNTS="reviewer01:强密码,reviewer02:强密码"
+```
+
+管理员账号拥有完整权限：可以进入普通工作台，也可以进入 `/admin` 管理台。标注员账号只能进入设计、审核和总览页面。
+
+也可以使用一个 JSON 账户表集中管理：
+
+```bash
+CLAWTRAP_ACCOUNTS_JSON='{
+  "admin": {"password": "换成强密码", "role": "admin"},
+  "admin2": {"password": "换成另一个强密码", "role": "admin"},
+  "reviewer01": {"password": "强密码", "role": "annotator"}
+}'
+```
+
+`CLAWTRAP_ACCOUNTS_JSON` 也支持 `password_hash` 字段；如果提供 hash，会优先按 hash 校验。未配置任何账户时，仅本地非 Vercel 开发环境会临时开放 `admin/admin` 和 `admin2/admin2` 两个开发管理员账号。
+
+生成密码 hash 的方式：
+
+```bash
+python -c "from werkzeug.security import generate_password_hash; import getpass; print(generate_password_hash(getpass.getpass('Password: ')))"
+```
 
 ## 管理员审阅页面
 
@@ -84,9 +123,11 @@ http://127.0.0.1:8000/admin
 ```bash
 ADMIN_USERNAME="admin"
 ADMIN_PASSWORD="换成强密码"
+ADMIN_USERNAME_2="admin2"
+ADMIN_PASSWORD_2="换成另一个强密码"
 ```
 
-未设置 `ADMIN_PASSWORD` 时，本地开发默认账号密码为 `admin/admin`。管理员页面支持选择数据集、按状态/攻击类型/任务类型/植入形式筛选、全文搜索、查看详情和导出当前筛选结果。
+管理员页面支持选择数据集、按状态/攻击类型/任务类型/植入形式筛选、全文搜索、查看详情和导出当前筛选结果。
 
 部署到域名时可通过环境变量调整监听地址：
 
@@ -128,9 +169,12 @@ git push -u origin main
 在 Vercel Project Settings -> Environment Variables 添加：
 
 ```bash
+SECRET_KEY="一串很长的随机字符串"
 ADMIN_USERNAME="admin"
 ADMIN_PASSWORD="换成强密码"
-SECRET_KEY="一串很长的随机字符串"
+ADMIN_USERNAME_2="admin2"
+ADMIN_PASSWORD_2="换成另一个强密码"
+ANNOTATOR_ACCOUNTS="reviewer01:强密码,reviewer02:强密码"
 OPENAI_API_KEY="..."
 OPENAI_BASE_URL="..."
 OPENAI_MODEL="gpt-4.1"

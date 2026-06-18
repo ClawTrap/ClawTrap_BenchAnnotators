@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import json
 import os
-import secrets
 from pathlib import Path
 from typing import Any
 
 from flask import Flask, jsonify, redirect, request, session
 
+from .auth import authenticate
 from .constants import ATTACK_TYPES, INTERACTIVE_FORMS, TASK_TYPES
 from .schema import normalize_case, validate_case
 from .schema import utc_now
@@ -28,10 +28,6 @@ def load_dotenv(path: Path = ROOT / ".env") -> None:
         os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
 
 
-def admin_credentials() -> tuple[str, str]:
-    return os.environ.get("ADMIN_USERNAME", "admin"), os.environ.get("ADMIN_PASSWORD", "admin")
-
-
 def options(values: list[str]) -> str:
     return "".join(f'<option value="{value}">{value}</option>' for value in values)
 
@@ -42,6 +38,14 @@ def checkboxes(values: list[str]) -> str:
 
 def js_value(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False).replace("</", "<\\/")
+
+
+def can_access_workspace() -> bool:
+    return session.get("role") in ("annotator", "admin")
+
+
+def can_access_admin() -> bool:
+    return session.get("role") == "admin"
 
 
 def page(title: str, body: str) -> str:
@@ -508,51 +512,45 @@ def create_app() -> Flask:
 
     @app.get("/")
     def index():
-        if session.get("role") != "annotator":
+        if not can_access_workspace():
             return redirect("/login")
         return menu_page(session["username"])
 
     @app.get("/design")
     def design():
-        if session.get("role") != "annotator":
+        if not can_access_workspace():
             return redirect("/login")
         return design_page(session["username"])
 
     @app.get("/review")
     def review():
-        if session.get("role") != "annotator":
+        if not can_access_workspace():
             return redirect("/login")
         return review_page(session["username"])
 
     @app.get("/scenes")
     def scenes():
-        if session.get("role") != "annotator":
+        if not can_access_workspace():
             return redirect("/login")
         return scenes_page(session["username"])
 
     @app.get("/login")
     def login_page():
-        return page("ClawTrap 登录", """
-<main class="login-main"><section class="login">
-  <div class="brand-lockup" style="margin-bottom:18px">
-    <div class="brand-mark">C</div>
-    <div><h1>ClawTrap</h1><div class="brand-subtitle">Benchmark annotation workspace</div></div>
-  </div>
-  <div class="login-note">输入标注员用户名即可进入工作台。场景创建和审核评分会记录到当前账户名下。</div>
-  <form method="post" action="/login">
-    <label>标注员用户名</label><input name="username" required autocomplete="username" autofocus>
-    <div class="row form-actions"><button type="submit">进入工作台</button></div>
-  </form>
-</section></main>""")
+        return render_login()
 
     @app.post("/login")
     def login():
         username = request.form.get("username", "").strip()
-        if not username:
-            return login_page(), 400
+        password = request.form.get("password", "")
+        try:
+            account = authenticate(username, password)
+        except ValueError:
+            return render_login("账户配置错误，请联系管理员"), 500
+        if not account:
+            return render_login("账号或密码不正确"), 401
         session.clear()
-        session["role"] = "annotator"
-        session["username"] = username
+        session["role"] = account.role
+        session["username"] = account.username
         return redirect("/")
 
     @app.get("/logout")
@@ -562,7 +560,7 @@ def create_app() -> Flask:
 
     @app.get("/admin")
     def admin():
-        if session.get("role") != "admin":
+        if not can_access_admin():
             return redirect("/admin/login")
         return admin_page(session["username"])
 
@@ -574,12 +572,15 @@ def create_app() -> Flask:
     def admin_login():
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "")
-        expected_username, expected_password = admin_credentials()
-        if not secrets.compare_digest(username, expected_username) or not secrets.compare_digest(password, expected_password):
-            return render_admin_login("账号或密码不正确"), 401
+        try:
+            account = authenticate(username, password)
+        except ValueError:
+            return render_admin_login("账户配置错误，请联系管理员"), 500
+        if not account or account.role != "admin":
+            return render_admin_login("管理员账号或密码不正确"), 401
         session.clear()
-        session["role"] = "admin"
-        session["username"] = username
+        session["role"] = account.role
+        session["username"] = account.username
         return redirect("/admin")
 
     @app.get("/admin/logout")
@@ -589,7 +590,7 @@ def create_app() -> Flask:
 
     @app.get("/api/cases")
     def api_cases():
-        if session.get("role") != "annotator":
+        if not can_access_workspace():
             return jsonify({"error": "not logged in"}), 401
         username = session["username"]
         cases = [case for case in read_dataset(DEFAULT_DATASET) if case.get("owner") in (username, "llm_seed")]
@@ -598,7 +599,7 @@ def create_app() -> Flask:
 
     @app.post("/api/cases")
     def save_case():
-        if session.get("role") != "annotator":
+        if not can_access_workspace():
             return jsonify({"error": "not logged in"}), 401
         raw = request.get_json(silent=True) or {}
         status = raw.get("status", "draft")
@@ -617,7 +618,7 @@ def create_app() -> Flask:
 
     @app.get("/api/all-cases")
     def api_all_cases():
-        if session.get("role") != "annotator":
+        if not can_access_workspace():
             return jsonify({"error": "not logged in"}), 401
         cases = read_dataset(DEFAULT_DATASET)
         cases.sort(key=lambda item: item.get("updated_at", ""), reverse=True)
@@ -625,7 +626,7 @@ def create_app() -> Flask:
 
     @app.post("/api/cases/<case_id>/reviews")
     def save_review(case_id: str):
-        if session.get("role") != "annotator":
+        if not can_access_workspace():
             return jsonify({"error": "not logged in"}), 401
         raw = request.get_json(silent=True) or {}
         errors = []
@@ -657,7 +658,7 @@ def create_app() -> Flask:
 
     @app.post("/api/cases/<case_id>/expert-decision")
     def save_expert_decision(case_id: str):
-        if session.get("role") != "annotator":
+        if not can_access_workspace():
             return jsonify({"error": "not logged in"}), 401
         raw = request.get_json(silent=True) or {}
         try:
@@ -677,7 +678,7 @@ def create_app() -> Flask:
 
     @app.patch("/api/cases/<case_id>/expert-edit")
     def save_expert_edit(case_id: str):
-        if session.get("role") != "annotator":
+        if not can_access_workspace():
             return jsonify({"error": "not logged in"}), 401
         raw = request.get_json(silent=True) or {}
         try:
@@ -692,7 +693,7 @@ def create_app() -> Flask:
 
     @app.post("/api/cases/<case_id>/benchmark-selection")
     def save_benchmark_selection(case_id: str):
-        if session.get("role") not in ("annotator", "admin"):
+        if not can_access_workspace():
             return jsonify({"error": "login required"}), 401
         raw = request.get_json(silent=True) or {}
         try:
@@ -705,7 +706,7 @@ def create_app() -> Flask:
 
     @app.get("/api/admin/cases")
     def api_admin_cases():
-        if session.get("role") != "admin":
+        if not can_access_admin():
             return jsonify({"error": "admin login required"}), 401
         datasets = list_datasets()
         dataset = request.args.get("dataset") or (DEFAULT_DATASET if DEFAULT_DATASET in datasets else datasets[0])
@@ -718,6 +719,24 @@ def create_app() -> Flask:
     return app
 
 
+def render_login(error: str = "") -> str:
+    error_html = f'<div class="errors">{error}</div>' if error else ""
+    return page("ClawTrap 登录", f"""
+<main class="login-main"><section class="login">
+  <div class="brand-lockup" style="margin-bottom:18px">
+    <div class="brand-mark">C</div>
+    <div><h1>ClawTrap</h1><div class="brand-subtitle">Benchmark annotation workspace</div></div>
+  </div>
+  <div class="login-note">请输入已分配的账号 ID 和密码。未配置在账户表中的 ID 不能进入标注或审核工作台。</div>
+  <form method="post" action="/login">
+    <label>账号 ID</label><input name="username" required autocomplete="username" autofocus>
+    <label>密码</label><input name="password" type="password" required autocomplete="current-password">
+    {error_html}
+    <div class="row form-actions"><button type="submit">进入工作台</button></div>
+  </form>
+</section></main>""")
+
+
 def render_admin_login(error: str = "") -> str:
     error_html = f'<div class="errors">{error}</div>' if error else ""
     return page("ClawTrap 管理员登录", f"""
@@ -726,7 +745,7 @@ def render_admin_login(error: str = "") -> str:
     <div class="brand-mark">C</div>
     <div><h1>ClawTrap</h1><div class="brand-subtitle">Administrator review console</div></div>
   </div>
-  <div class="login-note">管理员入口用于查看完整数据集、筛选生成结果和导出当前筛选内容。</div>
+  <div class="login-note">管理员入口只接受 role=admin 的账号。管理员账号也可以进入普通标注、审核和总览页面。</div>
   <form method="post" action="/admin/login">
     <label>管理员账号</label><input name="username" required autocomplete="username" autofocus>
     <label>密码</label><input name="password" type="password" required autocomplete="current-password">
@@ -739,6 +758,7 @@ def render_admin_login(error: str = "") -> str:
 def app_header(user: str, subtitle: str, active: str = "") -> str:
     def active_class(name: str) -> str:
         return "active" if active == name else ""
+    admin_link = '<a href="/admin">管理台</a>' if can_access_admin() else ""
     return f"""
 <header>
   <div class="brand-lockup"><div class="brand-mark">C</div><div><h1>ClawTrap</h1><div class="brand-subtitle">{subtitle}</div></div></div>
@@ -748,6 +768,7 @@ def app_header(user: str, subtitle: str, active: str = "") -> str:
       <a class="{active_class('design')}" href="/design">设计</a>
       <a class="{active_class('review')}" href="/review">审核</a>
       <a class="{active_class('scenes')}" href="/scenes">总览</a>
+      {admin_link}
     </nav>
     <span class="user-chip">{user}</span>
     <a class="button secondary" href="/logout">退出</a>
@@ -756,6 +777,7 @@ def app_header(user: str, subtitle: str, active: str = "") -> str:
 
 
 def menu_page(user: str) -> str:
+    role = session.get("role", "annotator")
     return page("ClawTrap 工作台", f"""
 {app_header(user, "Benchmark annotation workspace", "menu")}
 <main>
@@ -769,7 +791,7 @@ def menu_page(user: str) -> str:
     <p class="section-kicker">Account</p>
     <h2>当前标注员</h2>
     <p>账户名和当前工作空间会显示在每个页面顶部。新建场景、提交评分和后续查询都会关联到当前账户。</p>
-    <div class="account-row"><span class="pill strong">{user}</span><span class="pill">annotator</span><span class="pill">workspace ready</span></div>
+    <div class="account-row"><span class="pill strong">{user}</span><span class="pill">{role}</span><span class="pill">workspace ready</span></div>
   </article>
   <article class="overview-card">
     <p class="section-kicker">Dataset</p>
