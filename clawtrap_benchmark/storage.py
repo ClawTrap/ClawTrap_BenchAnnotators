@@ -278,12 +278,14 @@ def summarize_reviews(reviews: list[dict[str, Any]]) -> dict[str, Any]:
     return summary
 
 
-def enrich_case(case: dict[str, Any], *, storage_origin: str | None = None, data_file: str | None = None) -> dict[str, Any]:
+def enrich_case(case: dict[str, Any], *, storage_origin: str | None = None, data_file: str | None = None, dataset: str | None = None) -> dict[str, Any]:
     enriched = dict(case)
     if storage_origin:
         enriched["storage_origin"] = storage_origin
     if data_file:
         enriched["data_file"] = data_file
+    if dataset:
+        enriched["dataset"] = dataset
     reviews = enriched.get("reviews")
     if isinstance(reviews, list):
         summary = enriched.get("review_summary")
@@ -329,7 +331,7 @@ def read_file_dataset(dataset: str) -> list[dict[str, Any]]:
     data = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(data, list):
         raise ValueError(f"{path} must contain a JSON array")
-    return [enrich_case(case, storage_origin="local_json", data_file=path.name) for case in data]
+    return [enrich_case(case, storage_origin="local_json", data_file=path.name, dataset=dataset) for case in data]
 
 
 def read_persisted_case_map(dataset: str = DEFAULT_DATASET) -> dict[str, dict[str, Any]]:
@@ -358,9 +360,9 @@ def read_local_dataset(dataset: str = DEFAULT_DATASET) -> list[dict[str, Any]]:
             merged = {**case, **persisted[str(case_id)]}
             merged["id"] = case_id
             merged["data_file"] = case.get("data_file") or f"{dataset}.json"
-            merged_cases.append(enrich_case(merged, storage_origin="local_json", data_file=merged["data_file"]))
+            merged_cases.append(enrich_case(merged, storage_origin="local_json", data_file=merged["data_file"], dataset=dataset))
         else:
-            merged_cases.append(enrich_case(case, storage_origin="local_json", data_file=case.get("data_file") or f"{dataset}.json"))
+            merged_cases.append(enrich_case(case, storage_origin="local_json", data_file=case.get("data_file") or f"{dataset}.json", dataset=dataset))
     return merged_cases
 
 

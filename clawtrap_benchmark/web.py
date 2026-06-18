@@ -309,7 +309,9 @@ def page(title: str, body: str) -> str:
     .review-focus .review-item-attack,.review-focus .review-item .meta,.review-focus .review-item .review-tags {{ display:none; }}
     .review-focus .rank-line {{ margin-top:8px; }}
     .review-focus .rank-badge {{ min-width:38px; padding:4px 7px; }}
-    .pill {{ flex:none; border:1px solid var(--line); border-radius:999px; padding:4px 8px; font-size:11px; color:var(--muted); background:rgba(255,253,250,.72); font-weight:800; }}
+    .pill {{ flex:none; min-width:0; max-width:100%; border:1px solid var(--line); border-radius:999px; padding:4px 8px; font-size:11px; color:var(--muted); background:rgba(255,253,250,.72); font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }}
+    .rank-row > div {{ min-width:0; }}
+    .rank-row > div > .pill {{ display:inline-block; max-width:100%; vertical-align:middle; }}
     .pill.strong {{ color:var(--accent-strong); border-color:rgba(157,37,44,.28); background:var(--accent-soft); }}
     .pill.selected-mark {{ color:#0f5f59; border-color:rgba(15,118,110,.32); background:rgba(15,118,110,.1); }}
     .pill.decision-accepted {{ color:#0f5f59; border-color:rgba(15,118,110,.32); background:rgba(15,118,110,.1); }}
@@ -635,12 +637,19 @@ def create_app() -> Flask:
     def api_benchmark_cases():
         if not can_access_workspace():
             return jsonify({"error": "not logged in"}), 401
-        dataset, error = requested_dataset()
-        if error:
-            return jsonify({"error": error}), 400
-        cases = [case for case in read_local_dataset(dataset or DEFAULT_DATASET) if case.get("benchmark_selected")]
+        dataset_arg = request.args.get("dataset", "").strip()
+        if dataset_arg:
+            dataset, error = requested_dataset()
+            if error:
+                return jsonify({"error": error}), 400
+            datasets = [dataset or DEFAULT_DATASET]
+        else:
+            datasets = available_datasets()
+        cases = []
+        for dataset in datasets:
+            cases.extend(case for case in read_local_dataset(dataset) if case.get("benchmark_selected"))
         cases.sort(key=lambda item: item.get("benchmark_selected_at") or item.get("expert_decision_at") or item.get("updated_at", ""), reverse=True)
-        return jsonify({"cases": cases, "dataset": dataset})
+        return jsonify({"cases": cases, "datasets": datasets})
 
     @app.post("/api/cases/<case_id>/reviews")
     def save_review(case_id: str):
@@ -939,9 +948,9 @@ def benchmark_page(user: str) -> str:
     <p class="hero-copy">这里专门展示已保留进 benchmark 的 case。审核页做裁决，这里检查最终集合的规模、类型分布和具体内容。</p>
   </section>
   <section class="panel toolbar">
-    <div><label>数据文件</label><div class="select-shell"><select id="datasetFilter"></select></div></div>
     <div><label>攻击类型</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
+    <div><label>数据来源</label><div class="select-shell"><select id="sourceFilter"><option value="">全部</option></select></div></div>
     <div><label>搜索</label><input id="search"></div>
     <div class="row toolbar-actions"><button type="button" onclick="loadCases()">刷新</button></div>
   </section>
@@ -1017,6 +1026,24 @@ function applyRanks(items) {
 function dataSourceLabel(item) {
   return item.data_file || item.data_source || (item.dataset ? `${item.dataset}.json` : '') || item.source_file || 'unknown';
 }
+function dataSourceMatches(item, value) {
+  return !value || dataSourceLabel(item) === value;
+}
+function populateSourceFilter(selectId, cases) {
+  const select = document.getElementById(selectId);
+  if (!select) return;
+  const current = select.value;
+  const sources = [...new Set(cases.map(dataSourceLabel).filter(Boolean))].sort();
+  select.innerHTML = '<option value="">全部</option>' + sources.map(source => `<option value="${escapeHtml(source)}">${escapeHtml(source)}</option>`).join('');
+  select.value = sources.includes(current) ? current : '';
+  window.refreshClawTrapSelects?.();
+  window.syncClawTrapSelects?.();
+}
+function datasetName(item) {
+  if (item.dataset) return item.dataset;
+  const file = item.data_file || '';
+  return file.endsWith('.json') ? file.slice(0, -5) : (file || 'cases');
+}
 function requestedDatasetFromUrl() {
   return new URLSearchParams(window.location.search).get('dataset') || '';
 }
@@ -1079,8 +1106,8 @@ function detailFields(item, includeReviews=true) {
 function baseDetail(item) {
   return `<h2>${escapeHtml(item.task || '(未命名任务)')}</h2><div class="review-tags">${caseTags(item)}<span class="pill">${escapeHtml(summaryText(item))}</span></div>`;
 }
-async function toggleBenchmarkSelection(id, selected) {
-  const res = await fetch(`/api/cases/${encodeURIComponent(id)}/benchmark-selection`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({selected, dataset:selectedDataset()})});
+async function toggleBenchmarkSelection(id, selected, dataset=null) {
+  const res = await fetch(`/api/cases/${encodeURIComponent(id)}/benchmark-selection`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({selected, dataset:dataset || selectedDataset()})});
   const data = await res.json();
   if (!res.ok) throw new Error((data.errors || [data.error || '更新选中状态失败']).join('\n'));
   const index = allCases.findIndex(item => item.id === data.case.id);
@@ -1376,7 +1403,6 @@ async function loadCases() {
   const res = await fetch(`/api/all-cases?${datasetQuery()}`);
   const data = await res.json();
   allCases = data.cases || [];
-  populateSourceFilter('sourceFilter', allCases);
   render();
 }
 function render() {
@@ -1442,11 +1468,9 @@ loadCases();
 
 def benchmark_js() -> str:
     return shared_case_js() + r"""
-const controls = ['datasetFilter','attackFilter','taskFilter','search'].map(id => document.getElementById(id));
+const controls = ['attackFilter','taskFilter','sourceFilter','search'].map(id => document.getElementById(id));
 async function loadCases() {
-  await ensureDatasetOptions();
-  updateDatasetInUrl();
-  const res = await fetch(`/api/benchmark-cases?${datasetQuery()}`);
+  const res = await fetch('/api/benchmark-cases');
   const data = await res.json();
   allCases = data.cases || [];
   populateSourceFilter('sourceFilter', allCases);
@@ -1455,10 +1479,12 @@ async function loadCases() {
 function render() {
   const attack = document.getElementById('attackFilter').value;
   const task = document.getElementById('taskFilter').value;
+  const source = document.getElementById('sourceFilter').value;
   const q = document.getElementById('search').value.trim().toLowerCase();
   filteredCases = allCases.filter(item =>
     (!attack || item.attack_type === attack) &&
     (!task || item.task_type === task) &&
+    dataSourceMatches(item, source) &&
     (!q || [item.id, item.owner, item.task, benchmarkReviewer(item), dataSourceLabel(item)].join(' ').toLowerCase().includes(q))
   );
   renderStats();
@@ -1492,7 +1518,7 @@ function renderRows() {
     <div><span class="pill">${escapeHtml(benchmarkReviewer(item) || '-')}</span></div>
     <div><span class="pill">${escapeHtml(item.attack_type || '-')}</span></div>
     <div><span class="pill strong">${escapeHtml(item.task_type || '-')}</span></div>
-    <div class="rank-actions"><a class="button secondary" href="/review?mode=view&case=${encodeURIComponent(item.id)}&dataset=${encodeURIComponent(selectedDataset())}">查看</a><button type="button" class="danger" onclick="removeFromBenchmark('${escapeAttr(item.id)}')">移除</button></div>
+    <div class="rank-actions"><a class="button secondary" href="/review?mode=view&case=${encodeURIComponent(item.id)}&dataset=${encodeURIComponent(datasetName(item))}">查看</a><button type="button" class="danger" onclick="removeFromBenchmark('${escapeAttr(item.id)}')">移除</button></div>
   </article>`).join('');
 }
 async function removeFromBenchmark(id) {
@@ -1500,14 +1526,14 @@ async function removeFromBenchmark(id) {
   const ok = window.confirm(`确认从 ClawTrap Bench 移除这条 case？\n\n${item?.task || id}`);
   if (!ok) return;
   try {
-    await toggleBenchmarkSelection(id, false);
+    await toggleBenchmarkSelection(id, false, datasetName(item || {}));
     allCases = allCases.filter(candidate => candidate.id !== id);
     render();
   } catch (error) {
     window.alert(error.message || '移除失败');
   }
 }
-controls.forEach(el => el.addEventListener('input', el?.id === 'datasetFilter' ? loadCases : render));
+controls.forEach(el => el.addEventListener('input', render));
 loadCases();
 """
 
