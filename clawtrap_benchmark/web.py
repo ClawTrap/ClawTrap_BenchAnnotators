@@ -341,13 +341,13 @@ def page(title: str, body: str) -> str:
     .review-edit-field.compact textarea {{ min-height:54px; }}
     .review-edit-field.tall textarea {{ min-height:98px; }}
     .review-edit-field.short textarea {{ min-height:66px; }}
-    .list-review-field {{ display:grid; grid-template-rows:auto 1fr auto; gap:10px; align-self:stretch; }}
+    .list-review-field {{ display:grid; align-content:start; gap:10px; align-self:start; }}
     .list-review-field.full {{ grid-column:1 / -1; }}
     .list-review-field.metadata-field .list-review-items {{ min-height:104px; }}
     .list-review-field > label {{ margin:0; color:var(--accent-strong); font-size:20px; font-weight:900; letter-spacing:0; line-height:1.18; }}
     .list-review-items {{ display:grid; gap:8px; }}
-    .list-review-item {{ display:grid; grid-template-columns:1fr auto; align-items:stretch; gap:8px; padding:8px; border:1px solid var(--line); border-radius:8px; background:rgba(255,253,250,.78); transition:border-color .16s ease, background .16s ease, opacity .16s ease; }}
-    .list-review-item textarea {{ min-height:42px; height:100%; border:0; background:transparent; padding:4px 2px; box-shadow:none; resize:vertical; font-size:14px; line-height:1.5; font-weight:520; }}
+    .list-review-item {{ display:grid; grid-template-columns:1fr auto; align-items:start; gap:8px; padding:8px; border:1px solid var(--line); border-radius:8px; background:rgba(255,253,250,.78); transition:border-color .16s ease, background .16s ease, opacity .16s ease; }}
+    .list-review-item textarea {{ min-height:42px; height:auto; border:0; background:transparent; padding:4px 2px; box-shadow:none; resize:vertical; font-size:14px; line-height:1.5; font-weight:520; }}
     .list-review-item textarea:focus {{ box-shadow:none; background:transparent; }}
     .list-review-actions {{ display:flex; align-items:flex-start; gap:5px; padding-top:1px; }}
     .list-review-actions button,.list-add-button {{ width:30px; min-width:30px; height:30px; min-height:30px; padding:0; border-radius:8px; font-size:14px; font-weight:900; line-height:1; }}
