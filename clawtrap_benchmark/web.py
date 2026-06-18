@@ -317,13 +317,14 @@ def page(title: str, body: str) -> str:
     .detail-empty {{ color:var(--muted); padding:42px 28px; text-align:center; background:var(--panel-soft); border:1px dashed var(--line-strong); border-radius:8px; font-weight:700; }}
     .review-focus .detail-panel {{ position:static; padding:0; background:transparent; border:0; box-shadow:none; max-height:none; overflow:visible; }}
     .focus-case {{ display:grid; gap:10px; }}
-    .focus-card {{ border:1px solid var(--line); border-radius:8px; background:rgba(255,253,250,.86); box-shadow:none; padding:18px; }}
+    .focus-card {{ border:1px solid var(--line); border-radius:8px; background:rgba(255,253,250,.86); box-shadow:none; padding:22px; }}
     .focus-header {{ border-top:2px solid rgba(20,116,134,.48); background:rgba(255,253,250,.9); color:var(--text); }}
     .focus-title {{ margin:0; color:var(--text); font-size:22px; line-height:1.25; letter-spacing:0; font-weight:900; }}
     .focus-header .focus-title {{ color:var(--text); }}
     .focus-header .meta {{ color:var(--muted); }}
-    .focus-meta {{ display:flex; flex-wrap:wrap; gap:7px; margin-top:9px; }}
-    .focus-header .review-edit-form {{ margin-top:12px; }}
+    .focus-meta {{ display:flex; flex-wrap:wrap; gap:7px; margin-top:0; justify-content:flex-end; }}
+    .focus-header .section-heading {{ align-items:center; padding-bottom:12px; border-bottom:1px solid var(--line); margin-bottom:18px; }}
+    .focus-header .review-edit-form {{ margin-top:0; }}
     .focus-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }}
     .focus-block {{ border:1px solid var(--line); border-radius:8px; background:rgba(247,247,242,.74); padding:16px; }}
     .focus-block.full {{ grid-column:1 / -1; }}
@@ -331,10 +332,10 @@ def page(title: str, body: str) -> str:
     .focus-text {{ margin:0; color:var(--ink); font-size:15px; line-height:1.72; font-weight:650; }}
     .focus-attack {{ border-color:rgba(157,37,44,.22); background:rgba(255,248,248,.76); }}
     .focus-attack .focus-label {{ color:var(--accent); }}
-    .review-edit-form {{ display:grid; gap:10px; }}
-    .review-edit-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }}
+    .review-edit-form {{ display:grid; gap:14px; }}
+    .review-edit-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }}
     .review-edit-grid .full {{ grid-column:1 / -1; }}
-    .review-edit-field {{ display:grid; gap:5px; }}
+    .review-edit-field {{ display:grid; gap:8px; }}
     .review-edit-field label {{ margin:0; color:var(--accent-strong); font-size:20px; font-weight:900; letter-spacing:0; line-height:1.18; }}
     .review-edit-field textarea {{ min-height:82px; background:rgba(255,253,250,.78); line-height:1.5; font-size:14px; font-weight:520; }}
     .review-edit-field.compact textarea {{ min-height:54px; }}
@@ -352,7 +353,7 @@ def page(title: str, body: str) -> str:
     .judgement ul,.metadata-list {{ margin:0; padding-left:19px; color:var(--ink); font-size:14px; line-height:1.65; }}
     .metadata-strip {{ display:flex; flex-wrap:wrap; gap:7px; }}
     .metadata-token {{ display:inline-flex; max-width:100%; padding:6px 9px; border:1px solid var(--line); border-radius:999px; background:rgba(255,253,250,.72); color:var(--muted); font-size:12px; font-weight:750; line-height:1.45; }}
-    .decision-panel {{ display:grid; gap:12px; }}
+    .decision-panel {{ display:grid; gap:12px; margin-top:20px; padding-top:18px; border-top:1px solid var(--line); }}
     .decision-actions {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:9px; }}
     .decision-actions button {{ min-height:42px; }}
     .decision-actions .accept {{ background:var(--green); border-color:var(--green); }}
@@ -1115,10 +1116,13 @@ function editField(name, label, value, className='') {
   const readonly = typeof readOnlyReview !== 'undefined' && readOnlyReview;
   return `<div class="review-edit-field ${className}"><label>${escapeHtml(label)}</label><textarea name="${escapeAttr(name)}" required ${readonly ? 'readonly' : ''}>${escapeTextarea(value || '')}</textarea></div>`;
 }
-function focusedReviewDetail(item) {
+function focusedReviewDetail(item, includeDecision=false) {
   return `<div class="focus-case">
     <section class="focus-card focus-header">
-      <div class="focus-meta">${compactTags(item)}</div>
+      <div class="section-heading">
+        <div><p class="section-kicker">Attack Scenario</p><h2>攻击场景</h2></div>
+        <div class="focus-meta">${compactTags(item)}</div>
+      </div>
       <form id="expertEditForm" class="review-edit-form">
         <div class="review-edit-grid">
           ${editField('task', '用户任务 task', item.task, 'tall')}
@@ -1134,12 +1138,13 @@ function focusedReviewDetail(item) {
           <button type="button" onclick="saveExpertEdit()">保存修改</button>
         </div>
       </form>
+      ${includeDecision ? expertDecisionPanel(item) : ''}
     </section>
   </div>`;
 }
 function expertDecisionPanel(item) {
-  return `<section class="focus-card decision-panel">
-    <div class="section-heading"><div><p class="section-kicker">Expert Decision</p><h2>专家裁决</h2></div><span>${decisionPill(item)}</span></div>
+  return `<div class="decision-panel">
+    <div class="section-heading"><div><p class="section-kicker">Expert Decision</p><h2>专家裁决</h2></div></div>
     <textarea id="decisionComment" placeholder="Mark notes 或裁决备注。保留和 Discard 可不填；Mark notes 建议写明需要其他人确认的点。">${escapeTextarea(item.expert_decision_comment || '')}</textarea>
     <div class="errors" id="decisionErrors"></div>
     <div class="decision-actions">
@@ -1148,7 +1153,7 @@ function expertDecisionPanel(item) {
       <button type="button" class="mark" onclick="submitDecision('needs_discussion')">Mark notes</button>
       <button type="button" class="clear" onclick="skipCase()">Skip</button>
     </div>
-  </section>`;
+  </div>`;
 }
 function listText(items) { return Array.isArray(items) ? `<ul>${items.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : escapeHtml(items || ''); }
 function escapeHtml(value) { return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
@@ -1215,8 +1220,7 @@ function renderDetail() {
   const panel = document.getElementById('detailPanel');
   const item = filteredCases.find(candidate => candidate.id === selectedId);
   if (!item) { panel.innerHTML = `<div class="detail-empty">${readOnlyReview ? '没有找到对应场景' : '当前筛选池没有可审核场景'}</div>`; return; }
-  panel.innerHTML = `${focusedReviewDetail(item)}
-    ${readOnlyReview ? '' : expertDecisionPanel(item)}`;
+  panel.innerHTML = focusedReviewDetail(item, !readOnlyReview);
 }
 async function toggleSelectedCase(id, selected) {
   const panel = document.getElementById('detailPanel');
