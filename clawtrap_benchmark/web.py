@@ -199,7 +199,7 @@ def page(title: str, body: str) -> str:
       width:100%; min-height:42px; display:flex; align-items:center; justify-content:space-between; gap:10px;
       padding:9px 11px; border:1px solid var(--line); border-radius:8px;
       background:rgba(255,253,250,.82); color:var(--text); box-shadow:none;
-      font-size:13px; font-weight:800; text-align:left;
+      font-size:13px; font-weight:800; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
     }}
     .select-card-trigger:hover,.select-shell.open .select-card-trigger {{ background:#fff; border-color:rgba(20,116,134,.42); color:var(--text); }}
     .select-card-trigger::after {{ content:'⌄'; color:var(--accent-strong); font-weight:900; transition:transform .12s; }}
@@ -213,7 +213,7 @@ def page(title: str, body: str) -> str:
     .select-shell.open .select-card-menu {{ display:grid; }}
     .select-card-option {{
       width:100%; min-height:36px; padding:8px 10px; border:1px solid transparent; border-radius:6px;
-      background:transparent; color:var(--ink); box-shadow:none; text-align:left; font-size:13px; font-weight:750;
+      background:transparent; color:var(--ink); box-shadow:none; text-align:left; font-size:13px; font-weight:750; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
     }}
     .select-card-option:hover {{ background:rgba(20,116,134,.07); border-color:rgba(20,116,134,.16); color:var(--text); }}
     .select-card-option.active {{ background:rgba(157,37,44,.1); border-color:rgba(157,37,44,.28); color:var(--accent); }}
