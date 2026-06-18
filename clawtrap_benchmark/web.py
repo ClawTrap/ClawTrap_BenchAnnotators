@@ -341,7 +341,7 @@ def page(title: str, body: str) -> str:
     .review-edit-field.compact textarea {{ min-height:54px; }}
     .review-edit-field.tall textarea {{ min-height:98px; }}
     .review-edit-field.short textarea {{ min-height:66px; }}
-    .review-edit-actions {{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding-top:2px; flex-wrap:wrap; }}
+    .review-edit-actions {{ display:flex; justify-content:flex-end; align-items:center; gap:12px; padding-top:2px; flex-wrap:wrap; }}
     .review-edit-actions .meta {{ max-width:640px; }}
     .judgement-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }}
     .judgement {{ min-height:150px; border:1px solid var(--line); border-radius:8px; padding:16px 16px 14px; background:rgba(255,253,250,.86); box-shadow:none; }}
