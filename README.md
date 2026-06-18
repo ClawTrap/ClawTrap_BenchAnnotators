@@ -20,9 +20,9 @@
 - `interactive_form`
 - `metadata`
 
-审核页、原始库和 Benchmark 页面会显示并筛选数据来源。来源优先级为：
+审核页、原始库和 Benchmark 页面会显示并筛选数据来源。这里的数据来源指 JSON 文件来源，来源优先级为：
 
-`data_source` -> `generation_batch` -> `dataset` -> `batch` -> `source` -> `owner`
+`data_file` -> `data_source` -> `dataset + ".json"` -> `source_file`
 
 提交时会校验核心字段非空、枚举值合法、成功/失败状态至少各 2 条。
 

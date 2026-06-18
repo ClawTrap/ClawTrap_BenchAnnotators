@@ -977,7 +977,7 @@ function applyRanks(items) {
   return [...items];
 }
 function dataSourceLabel(item) {
-  return item.data_source || item.generation_batch || item.dataset || item.batch || item.source || item.owner || 'unknown';
+  return item.data_file || item.data_source || (item.dataset ? `${item.dataset}.json` : '') || item.source_file || 'unknown';
 }
 function dataSourceMatches(item, value) {
   return !value || dataSourceLabel(item) === value;
