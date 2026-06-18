@@ -239,6 +239,24 @@ def page(title: str, body: str) -> str:
     .stat {{ padding:14px 15px; box-shadow:none; background:rgba(255,253,250,.82); }}
     .stat strong {{ display:block; font-size:23px; line-height:1; color:var(--text); }}
     .stat span {{ display:block; color:var(--muted); font-size:12px; margin-top:7px; font-weight:700; }}
+    .rank-dashboard {{ display:grid; gap:18px; }}
+    .rank-summary {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1px; border:1px solid var(--line); background:var(--line); }}
+    .rank-summary .stat {{ border:0; border-radius:0; background:rgba(255,253,250,.88); padding:18px; }}
+    .rank-board {{ border:1px solid var(--line); border-radius:8px; background:rgba(255,253,250,.84); overflow:hidden; }}
+    .rank-head,.rank-row {{ display:grid; grid-template-columns:72px minmax(0,1fr) 136px 160px 148px; gap:14px; align-items:center; padding:14px 18px; border-bottom:1px solid var(--line); }}
+    .rank-head {{ background:rgba(247,247,242,.82); color:var(--muted); font-size:11px; font-weight:900; text-transform:uppercase; }}
+    .rank-row {{ color:var(--ink); transition:background .14s ease; }}
+    .rank-row:last-child {{ border-bottom:0; }}
+    .rank-row:hover {{ background:#fff; }}
+    .rank-index {{ color:var(--accent-strong); font-size:13px; font-weight:900; }}
+    .rank-case-title {{ display:block; color:var(--text); font-size:14px; font-weight:850; line-height:1.52; }}
+    .rank-case-meta {{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }}
+    .score-stack strong {{ display:block; color:var(--text); font-size:22px; line-height:1; }}
+    .score-stack span {{ display:block; color:var(--muted); font-size:11px; font-weight:800; margin-top:6px; }}
+    .rank-meter {{ height:4px; margin-top:9px; background:rgba(20,20,20,.08); border-radius:999px; overflow:hidden; }}
+    .rank-meter span {{ display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--teal)); }}
+    .rank-actions {{ display:flex; justify-content:flex-end; }}
+    .rank-empty {{ padding:34px 20px; color:var(--muted); text-align:center; font-weight:800; }}
     .review-layout {{ display:grid; grid-template-columns:minmax(390px,.92fr) minmax(560px,1.35fr); gap:15px; align-items:start; }}
     .review-focus {{ max-width:1440px; }}
     .review-focus .hero {{ margin-bottom:16px; }}
@@ -359,7 +377,7 @@ def page(title: str, body: str) -> str:
     dd {{ margin:5px 0 0; font-size:13px; line-height:1.66; background:rgba(247,247,242,.72); border:1px solid var(--line); border-radius:8px; padding:11px 12px; }}
     dd ul {{ margin:0; padding-left:18px; }}
     @media (max-width:980px) {{
-      .grid,.design-grid,.design-grid.design-only,.toolbar,.review-layout,.choice-grid,.overview-grid,.overview-stats,.score-grid,.field-grid {{ grid-template-columns:1fr; max-width:none; }}
+      .grid,.design-grid,.design-grid.design-only,.toolbar,.review-layout,.choice-grid,.overview-grid,.overview-stats,.score-grid,.field-grid,.rank-head,.rank-row {{ grid-template-columns:1fr; max-width:none; }}
       header {{ width:100%; padding:10px 14px; align-items:flex-start; border-radius:0; flex-direction:column; }}
       main {{ padding:16px; }}
       .top-nav,.app-nav {{ width:100%; flex-wrap:wrap; }}
@@ -372,6 +390,8 @@ def page(title: str, body: str) -> str:
       .focus-header,.focus-grid,.judgement-grid,.review-focus .review-layout,.review-focus .review-toolbar,.review-poolbar,.review-case-picker,.review-score-panel .score-grid,.decision-actions,.expert-edit-grid {{ grid-template-columns:1fr; }}
       .focus-action {{ min-width:0; }}
       .review-nav-actions {{ justify-content:flex-start; }}
+      .rank-head {{ display:none; }}
+      .rank-actions {{ justify-content:flex-start; }}
     }}
   </style>
 </head>
@@ -727,7 +747,7 @@ def app_header(user: str, subtitle: str, active: str = "") -> str:
       <a class="{active_class('menu')}" href="/">菜单</a>
       <a class="{active_class('design')}" href="/design">设计</a>
       <a class="{active_class('review')}" href="/review">审核</a>
-      <a class="{active_class('scenes')}" href="/scenes">查看</a>
+      <a class="{active_class('scenes')}" href="/scenes">总览</a>
     </nav>
     <span class="user-chip">{user}</span>
     <a class="button secondary" href="/logout">退出</a>
@@ -764,8 +784,8 @@ def menu_page(user: str) -> str:
 </section>
 <section class="choice-grid">
   <a class="choice-card" href="/design"><div class="choice-number">01</div><strong>设计新场景</strong><span>填写 task、target、攻击方式、判定状态和 metadata，保存为草稿或提交。</span></a>
-  <a class="choice-card" href="/review"><div class="choice-number">02</div><strong>审核与打分</strong><span>从已有 case 中选择，按可实现性、准确性、描述清晰度和综合质量评分。</span></a>
-  <a class="choice-card" href="/scenes"><div class="choice-number">03</div><strong>查看场景评分</strong><span>浏览所有场景、筛选类别，并查看每条 case 的评分均值和历史审核记录。</span></a>
+  <a class="choice-card" href="/review"><div class="choice-number">02</div><strong>审核与打分</strong><span>聚焦单条 case，完成专家裁决、轻量修改、评分和评论。</span></a>
+  <a class="choice-card" href="/scenes"><div class="choice-number">03</div><strong>评分总览</strong><span>只读查看场景排名、来源分布、裁决状态和 benchmark 入选情况。</span></a>
 </section>
 <script>{menu_js()}</script>
 </main>""")
@@ -889,26 +909,30 @@ def review_page(user: str) -> str:
 
 
 def scenes_page(user: str) -> str:
-    return page("ClawTrap 场景与评分", f"""
-{app_header(user, "Scene library and scores", "scenes")}
+    return page("ClawTrap 评分总览", f"""
+{app_header(user, "Score overview", "scenes")}
 <main class="admin-main">
   <section class="hero compact">
-    <div class="eyebrow">Scene Library</div>
-    <h2 class="hero-title">查看已有场景与评分记录</h2>
-    <p class="hero-copy">查看已有场景、评分均值和审核记录。评分会保存在 case 的 <code>reviews</code> 字段里。</p>
+    <div class="eyebrow">Score Overview</div>
+    <h2 class="hero-title">只读查看场景排名与入选状态</h2>
+    <p class="hero-copy">这里不做审核和编辑，只用于快速掌握 case 池的评分分布、裁决状态、来源划分和 benchmark 候选情况。</p>
   </section>
   <section class="panel toolbar">
-    <div><label>状态</label><div class="select-shell"><select id="statusFilter"><option value="">全部</option><option value="draft">draft</option><option value="submitted">submitted</option></select></div></div>
     <div><label>来源</label><div class="select-shell"><select id="originFilter"><option value="">全部</option><option value="local_json">本地 JSON</option><option value="database">云端数据库</option></select></div></div>
     <div><label>Benchmark</label><div class="select-shell"><select id="selectedFilter"><option value="">全部</option><option value="selected">已选中</option><option value="unselected">未选中</option></select></div></div>
+    <div><label>裁决状态</label><div class="select-shell"><select id="decisionFilter"><option value="">全部</option><option value="none">未裁决</option><option value="accepted">已保留</option><option value="discarded">Discard</option><option value="needs_discussion">存疑 Mark</option></select></div></div>
     <div><label>攻击类型</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
-    <div><label>植入形式</label><div class="select-shell"><select id="formFilter"><option value="">全部</option>{options(INTERACTIVE_FORMS)}</select></div></div>
-    <div><label>搜索</label><input id="search" placeholder="task / target / id / owner"></div>
+    <div><label>搜索</label><input id="search" placeholder="task / id / owner"></div>
     <div class="row toolbar-actions"><button type="button" onclick="loadCases()">刷新</button></div>
   </section>
-  <section class="stats" id="stats"></section>
-  <section class="review-layout"><div class="review-column"><div class="result-heading"><div><p class="section-kicker">Cases</p><h2>场景列表</h2></div><span id="resultCount">-</span></div><div class="review-list" id="reviewList"></div></div><aside class="detail-panel" id="detailPanel"></aside></section>
+  <section class="rank-dashboard">
+    <section class="rank-summary" id="stats"></section>
+    <section class="rank-board">
+      <div class="rank-head"><span>Rank</span><span>Case</span><span>Score</span><span>Status</span><span></span></div>
+      <div id="rankRows"></div>
+    </section>
+  </section>
 </main>
 <script>{scenes_js()}</script>""")
 
@@ -1211,6 +1235,8 @@ async function loadReviewCases() {
   const res = await fetch('/api/all-cases');
   const data = await res.json();
   allCases = data.cases || [];
+  const requestedId = new URLSearchParams(window.location.search).get('case');
+  if (requestedId && allCases.some(item => item.id === requestedId)) selectedId = requestedId;
   filterReviewCases();
 }
 function filterReviewCases() {
@@ -1363,7 +1389,7 @@ loadReviewCases();
 
 def scenes_js() -> str:
     return shared_case_js() + r"""
-const controls = ['statusFilter','originFilter','selectedFilter','attackFilter','taskFilter','formFilter','search'].map(id => document.getElementById(id));
+const controls = ['originFilter','selectedFilter','decisionFilter','attackFilter','taskFilter','search'].map(id => document.getElementById(id));
 async function loadCases() {
   const res = await fetch('/api/all-cases');
   const data = await res.json();
@@ -1371,32 +1397,68 @@ async function loadCases() {
   render();
 }
 function render() {
-  const status = document.getElementById('statusFilter').value, origin = document.getElementById('originFilter').value, selected = document.getElementById('selectedFilter').value, attack = document.getElementById('attackFilter').value, task = document.getElementById('taskFilter').value, form = document.getElementById('formFilter').value, q = document.getElementById('search').value.trim().toLowerCase();
-  filteredCases = applyRanks(allCases.filter(item => (!status || item.status === status) && (!origin || originValue(item) === origin) && (!selected || (selected === 'selected') === Boolean(item.benchmark_selected)) && (!attack || item.attack_type === attack) && (!task || item.task_type === task) && (!form || (item.interactive_form || []).includes(form)) && (!q || JSON.stringify(item).toLowerCase().includes(q))));
-  renderStats(); renderCaseList(); renderDetail();
+  const origin = document.getElementById('originFilter').value;
+  const selected = document.getElementById('selectedFilter').value;
+  const decision = document.getElementById('decisionFilter').value;
+  const attack = document.getElementById('attackFilter').value;
+  const task = document.getElementById('taskFilter').value;
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  filteredCases = applyRanks(allCases.filter(item =>
+    (!origin || originValue(item) === origin) &&
+    (!selected || (selected === 'selected') === Boolean(item.benchmark_selected)) &&
+    matchesDecision(item, decision) &&
+    (!attack || item.attack_type === attack) &&
+    (!task || item.task_type === task) &&
+    (!q || [item.id, item.owner, item.task].join(' ').toLowerCase().includes(q))
+  ));
+  renderStats();
+  renderRankRows();
+}
+function matchesDecision(item, decision) {
+  if (!decision) return true;
+  if (decision === 'none') return !item.expert_decision;
+  return item.expert_decision === decision;
 }
 function renderStats() {
   const reviewed = filteredCases.filter(c => c.review_summary?.count).length;
-  const cloud = filteredCases.filter(c => originValue(c) === 'database').length;
-  const local = filteredCases.length - cloud;
-  document.getElementById('stats').innerHTML = [stat('当前筛选', filteredCases.length), stat('云端数据', cloud), stat('本地数据', local), stat('已选 benchmark', filteredCases.filter(c => c.benchmark_selected).length), stat('已有评分', reviewed), stat('未评分', filteredCases.length - reviewed), stat('标注员数', new Set(filteredCases.map(c => c.owner || '')).size)].join('');
+  const scores = filteredCases.map(totalScore).filter(score => score !== null);
+  const avgScore = scores.length ? Math.round((scores.reduce((sum, score) => sum + score, 0) / scores.length) * 100) / 100 : '-';
+  document.getElementById('stats').innerHTML = [
+    stat('当前筛选', filteredCases.length),
+    stat('平均总分', avgScore),
+    stat('已选 benchmark', filteredCases.filter(c => c.benchmark_selected).length),
+    stat('已有评分', reviewed),
+    stat('存疑', filteredCases.filter(c => c.expert_decision === 'needs_discussion').length),
+    stat('未裁决', filteredCases.filter(c => !c.expert_decision).length)
+  ].join('');
 }
 function stat(label, value) { return `<article class="stat"><strong>${value}</strong><span>${escapeHtml(label)}</span></article>`; }
-function selectCase(id) { selectedId = id; updateActiveListItem(); renderDetail(); }
-function renderDetail() {
-  const panel = document.getElementById('detailPanel');
-  const item = filteredCases.find(candidate => candidate.id === selectedId);
-  if (!item) { panel.innerHTML = '<div class="detail-empty">选择左侧条目查看评分</div>'; return; }
-  panel.innerHTML = `${baseDetail(item)}${benchmarkButton(item)}<div class="score-summary">${['total_score','overall','feasibility','accuracy','clarity'].map(k => `<span class="pill strong">${k}: ${escapeHtml(k === 'total_score' ? totalScore(item) ?? '-' : item.review_summary?.[k] ?? '-')}</span>`).join('')}</div>${detailFields(item, true)}`;
-}
-async function toggleSelectedCase(id, selected) {
-  const panel = document.getElementById('detailPanel');
-  try {
-    await toggleBenchmarkSelection(id, selected);
-    render();
-  } catch (error) {
-    panel.insertAdjacentHTML('afterbegin', `<div class="errors">${escapeHtml(error.message)}</div>`);
+function renderRankRows() {
+  const rows = document.getElementById('rankRows');
+  if (!filteredCases.length) {
+    rows.innerHTML = '<div class="rank-empty">没有匹配的数据</div>';
+    return;
   }
+  rows.innerHTML = filteredCases.map((item, index) => rankRow(item, index)).join('');
+}
+function overviewTags(item) {
+  const selected = item.benchmark_selected ? '<span class="pill selected-mark">已选入 benchmark</span>' : '';
+  return `${selected}${originPill(item)}<span class="pill strong">${escapeHtml(item.task_type || '-')}</span><span class="pill">${escapeHtml(item.attack_type || '-')}</span>`;
+}
+function rankRow(item, index) {
+  const score = totalScore(item);
+  const width = score === null ? 0 : Math.max(0, Math.min(100, score * 20));
+  const reviewCount = reviewsFor(item).length;
+  return `<article class="rank-row">
+    <div class="rank-index">#${escapeHtml(score === null ? '-' : index + 1)}</div>
+    <div>
+      <span class="rank-case-title">${escapeHtml(item.task || '(未命名任务)')}</span>
+      <div class="rank-case-meta">${overviewTags(item)}<span class="pill">${escapeHtml(item.owner || 'unknown')}</span></div>
+    </div>
+    <div class="score-stack"><strong>${escapeHtml(score ?? '-')}</strong><span>${escapeHtml(reviewCount)} 条评分</span><div class="rank-meter"><span style="width:${width}%"></span></div></div>
+    <div>${decisionPill(item)}<div style="height:6px"></div><span class="pill">${escapeHtml(item.status || 'draft')}</span></div>
+    <div class="rank-actions"><a class="button secondary" href="/review?case=${encodeURIComponent(item.id)}">去审核</a></div>
+  </article>`;
 }
 controls.forEach(el => el.addEventListener('input', render));
 loadCases();
