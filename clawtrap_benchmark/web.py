@@ -243,6 +243,7 @@ def page(title: str, body: str) -> str:
     .rank-index {{ color:var(--accent-strong); font-size:13px; font-weight:900; }}
     .rank-case-title {{ display:block; color:var(--text); font-size:14px; font-weight:850; line-height:1.52; }}
     .rank-case-meta {{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }}
+    .benchmark-board .rank-head,.benchmark-board .rank-row {{ grid-template-columns:72px minmax(0,1fr) 132px 136px 156px 148px; }}
     .rank-meter {{ height:4px; margin-top:9px; background:rgba(20,20,20,.08); border-radius:999px; overflow:hidden; }}
     .rank-meter span {{ display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--teal)); }}
     .rank-actions {{ display:flex; justify-content:flex-end; gap:8px; flex-wrap:wrap; }}
@@ -971,8 +972,8 @@ def benchmark_page(user: str) -> str:
   </section>
   <section class="rank-dashboard">
     <section class="rank-summary" id="stats"></section>
-    <section class="rank-board">
-      <div class="rank-head"><span>#</span><span>Benchmark Case</span><span>Attack</span><span>Task</span><span></span></div>
+    <section class="rank-board benchmark-board">
+      <div class="rank-head"><span>#</span><span>Benchmark Case</span><span>Reviewer</span><span>Attack</span><span>Task</span><span></span></div>
       <div id="rankRows"></div>
     </section>
   </section>
@@ -1497,8 +1498,8 @@ function renderRows() {
     <div class="rank-index">#${index + 1}</div>
     <div>
       <span class="rank-case-title">${escapeHtml(item.task || '(未命名任务)')}</span>
-      <div class="rank-case-meta"><span class="pill">Reviewer: ${escapeHtml(benchmarkReviewer(item) || '-')}</span></div>
     </div>
+    <div><span class="pill">${escapeHtml(benchmarkReviewer(item) || '-')}</span></div>
     <div><span class="pill">${escapeHtml(item.attack_type || '-')}</span></div>
     <div><span class="pill strong">${escapeHtml(item.task_type || '-')}</span></div>
     <div class="rank-actions"><a class="button secondary" href="/review?mode=view&case=${encodeURIComponent(item.id)}">查看</a><button type="button" class="danger" onclick="removeFromBenchmark('${escapeAttr(item.id)}')">移除</button></div>
