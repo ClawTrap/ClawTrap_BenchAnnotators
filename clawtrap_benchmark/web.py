@@ -11,7 +11,7 @@ from flask import Flask, jsonify, redirect, request, session
 from .constants import ATTACK_TYPES, INTERACTIVE_FORMS, TASK_TYPES
 from .schema import normalize_case, validate_case
 from .schema import utc_now
-from .storage import DEFAULT_DATASET, add_case_review, list_datasets, read_dataset, set_benchmark_selected, upsert_case
+from .storage import DEFAULT_DATASET, add_case_review, list_datasets, read_dataset, set_benchmark_selected, set_expert_decision, update_case_fields, upsert_case
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -73,9 +73,9 @@ def page(title: str, body: str) -> str:
     }}
     ::selection {{ background:rgba(37,99,235,.18); color:var(--text); }}
     *::-webkit-scrollbar {{ width:10px; height:10px; }}
-    *::-webkit-scrollbar-track {{ background:rgba(246,239,227,.64); border-radius:999px; }}
-    *::-webkit-scrollbar-thumb {{ background:rgba(148,104,61,.28); border:2px solid rgba(246,239,227,.72); border-radius:999px; }}
-    *::-webkit-scrollbar-thumb:hover {{ background:rgba(148,104,61,.42); }}
+    *::-webkit-scrollbar-track {{ background:rgba(226,232,240,.64); border-radius:999px; }}
+    *::-webkit-scrollbar-thumb {{ background:rgba(100,116,139,.32); border:2px solid rgba(241,245,249,.84); border-radius:999px; }}
+    *::-webkit-scrollbar-thumb:hover {{ background:rgba(37,99,235,.42); }}
     body::before {{ content:''; position:fixed; inset:0; z-index:-1; pointer-events:none; background:linear-gradient(180deg,rgba(255,255,255,.8),rgba(255,255,255,.25) 42%,transparent); }}
     header {{
       width:min(1480px,calc(100vw - 40px)); margin:18px auto 0; display:flex; justify-content:space-between;
@@ -85,81 +85,82 @@ def page(title: str, body: str) -> str:
     }}
     main {{ max-width:1260px; margin:0 auto; padding:24px 24px 54px; }}
     h1,h2,h3 {{ color:var(--text); }}
-    h1 {{ font-size:29px; margin:0; font-weight:900; letter-spacing:-.04em; line-height:.96; }}
-    h2 {{ font-size:27px; margin:0 0 14px; font-weight:900; letter-spacing:-.035em; }}
+    h1 {{ font-size:29px; margin:0; font-weight:900; letter-spacing:0; line-height:.98; }}
+    h2 {{ font-size:26px; margin:0 0 14px; font-weight:900; letter-spacing:0; }}
     .brand-lockup {{ display:flex; align-items:center; gap:12px; min-width:0; }}
     .brand-mark {{ width:38px; height:38px; border-radius:8px; display:grid; place-items:center; background:linear-gradient(145deg,#0f172a,#2563eb); color:#fff; font-size:21px; font-weight:900; box-shadow:inset 0 0 0 1px rgba(255,255,255,.18),0 10px 22px rgba(37,99,235,.18); }}
-    .brand-subtitle {{ color:var(--muted); font-size:11px; line-height:1.15; margin-top:4px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }}
+    .brand-subtitle {{ color:var(--muted); font-size:11px; line-height:1.15; margin-top:4px; font-weight:800; letter-spacing:0; text-transform:uppercase; }}
     .top-nav {{ display:flex; align-items:center; gap:8px; }}
     .app-nav {{ display:flex; align-items:center; gap:3px; padding:3px; border:1px solid var(--line); border-radius:8px; background:rgba(248,250,252,.82); }}
     .app-nav a {{ display:inline-flex; align-items:center; min-height:34px; padding:7px 12px; border-radius:6px; color:var(--muted); text-decoration:none; font-size:13px; font-weight:800; }}
     .app-nav a:hover,.app-nav a.active {{ background:var(--panel); color:var(--text); box-shadow:0 8px 18px rgba(15,23,42,.07); }}
     .user-chip {{ display:inline-flex; align-items:center; min-height:36px; padding:7px 12px; border:1px solid var(--line); border-radius:8px; background:rgba(255,255,255,.78); color:var(--text); font-size:12px; font-weight:850; }}
     .hero {{
-      position:relative; margin:10px 0 20px; padding:18px 0 20px; border:0; border-bottom:1px solid var(--line);
+      position:relative; margin:12px 0 24px; padding:30px 0 26px; border:0; border-bottom:1px solid var(--line);
       background:transparent; box-shadow:none; overflow:hidden;
     }}
     .hero::before {{ content:''; position:absolute; left:0; bottom:0; width:96px; height:2px; background:var(--accent); pointer-events:none; }}
     .hero > * {{ position:relative; }}
-    .hero.compact {{ padding:14px 0 18px; }}
-    .eyebrow {{ display:inline-flex; padding:0; color:var(--accent-strong); font-size:10px; font-weight:900; letter-spacing:.14em; text-transform:uppercase; }}
-    .hero-title {{ max-width:930px; margin:9px 0 8px; font-size:clamp(2.2rem,4.1vw,3.8rem); line-height:1.02; letter-spacing:-.055em; color:var(--text); font-weight:950; }}
-    .hero.compact .hero-title {{ font-size:clamp(1.85rem,3vw,2.7rem); max-width:880px; }}
+    .hero.compact {{ padding:22px 0 22px; }}
+    .eyebrow {{ display:inline-flex; padding:0; color:var(--accent-strong); font-size:10px; font-weight:900; letter-spacing:0; text-transform:uppercase; }}
+    .hero-title {{ max-width:930px; margin:10px 0 10px; font-size:52px; line-height:1.03; letter-spacing:0; color:var(--text); font-weight:950; }}
+    .hero.compact .hero-title {{ font-size:36px; max-width:880px; }}
     .hero-copy {{ max-width:840px; color:var(--muted); font-size:15px; line-height:1.75; margin:0; }}
-    code {{ font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace; font-size:.92em; color:var(--accent-strong); background:rgba(148,104,61,.1); border:1px solid rgba(148,104,61,.16); border-radius:5px; padding:1px 5px; }}
+    code {{ font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace; font-size:.92em; color:var(--accent-strong); background:rgba(239,246,255,.9); border:1px solid rgba(37,99,235,.16); border-radius:5px; padding:1px 5px; }}
     .section-heading {{ display:flex; justify-content:space-between; align-items:flex-end; gap:12px; margin-bottom:14px; }}
-    .section-kicker {{ margin:0 0 5px; color:var(--accent-strong); font-size:10px; font-weight:900; letter-spacing:.13em; text-transform:uppercase; }}
+    .section-kicker {{ margin:0 0 5px; color:var(--accent-strong); font-size:10px; font-weight:900; letter-spacing:0; text-transform:uppercase; }}
     .button, button {{
-      border:1px solid var(--navy); background:var(--navy); color:#fffefa; padding:9px 14px;
+      border:1px solid var(--navy); background:var(--navy); color:#fff; padding:9px 14px;
       border-radius:7px; cursor:pointer; text-decoration:none; font-size:13px; font-weight:800;
-      box-shadow:0 12px 24px rgba(15,23,42,.12); letter-spacing:.01em; transition:transform .14s ease, box-shadow .14s ease, background .14s ease, border-color .14s ease;
+      box-shadow:0 12px 24px rgba(15,23,42,.12); letter-spacing:0; transition:transform .14s ease, box-shadow .14s ease, background .14s ease, border-color .14s ease;
     }}
     button:hover,.button:hover {{ background:var(--navy-soft); box-shadow:0 14px 30px rgba(15,23,42,.16); transform:translateY(-1px); }}
     button:active,.button:active {{ transform:translateY(1px); }}
     button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,.select-card-trigger:focus-visible,.choice-pill input:focus-visible + span {{
-      outline:3px solid rgba(148,104,61,.22); outline-offset:2px;
+      outline:3px solid rgba(37,99,235,.20); outline-offset:2px;
     }}
     .secondary {{ background:rgba(255,255,255,.76); color:var(--navy); border-color:var(--line-strong); box-shadow:none; }}
     .secondary:hover {{ background:var(--panel-soft); color:var(--navy); }}
     .panel,.case,.login,.detail-panel,.stat,.review-item {{
-      background:rgba(255,253,250,.94); border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow);
+      background:rgba(255,255,255,.96); border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow);
     }}
-    .panel {{ padding:20px; background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(248,250,252,.9)); overflow:visible; }}
+    .panel {{ padding:20px; background:rgba(255,255,255,.94); overflow:visible; }}
     .grid {{ display:grid; grid-template-columns:340px minmax(0,1fr); gap:18px; align-items:start; }}
     .design-grid {{ display:grid; grid-template-columns:360px minmax(0,1fr); gap:18px; align-items:start; }}
     .design-grid.design-only {{ grid-template-columns:minmax(0,1fr); max-width:980px; }}
     .design-editor {{ width:100%; }}
     .sticky-panel {{ position:sticky; top:92px; }}
-    .case {{ margin-bottom:10px; padding:14px; box-shadow:none; background:rgba(255,254,250,.84); }}
+    .case {{ margin-bottom:10px; padding:14px; box-shadow:none; background:rgba(255,255,255,.86); }}
     .case h3 {{ margin:0 0 8px; font-size:13px; line-height:1.5; }}
     .meta {{ color:var(--muted); font-size:12px; line-height:1.55; font-weight:600; }}
-    .empty-note {{ color:var(--muted); padding:20px; text-align:center; background:rgba(246,239,227,.64); border:1px dashed var(--line-strong); border-radius:8px; font-size:13px; font-weight:700; line-height:1.65; }}
+    .empty-note {{ color:var(--muted); padding:20px; text-align:center; background:rgba(248,250,252,.84); border:1px dashed var(--line-strong); border-radius:8px; font-size:13px; font-weight:700; line-height:1.65; }}
     label {{ display:block; font-weight:800; margin:12px 0 6px; font-size:12px; color:#344054; }}
     input,select,textarea {{
       width:100%; border:1px solid var(--line); border-radius:7px; padding:10px 11px; font:inherit;
       background:rgba(255,255,255,.96); outline:none; transition:border-color .12s, box-shadow .12s, background .12s;
     }}
-    input:focus,select:focus,textarea:focus {{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(148,104,61,.13); background:#fff; }}
+    input:focus,select:focus,textarea:focus {{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(37,99,235,.12); background:#fff; }}
     textarea {{ min-height:88px; resize:vertical; line-height:1.6; }}
     .checks {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(158px,1fr)); gap:9px; }}
-    .form-section {{ margin-top:16px; padding:17px; border:1px solid var(--line); border-radius:8px; background:rgba(255,254,250,.58); overflow:visible; }}
+    .form-section {{ margin-top:16px; padding:18px; border:1px solid rgba(15,23,42,.08); border-radius:8px; background:rgba(248,250,252,.72); overflow:visible; }}
     .form-section:first-of-type {{ margin-top:0; }}
-    .form-section-title {{ display:flex; align-items:center; gap:9px; margin:0 0 12px; color:var(--text); font-family:Georgia,"Times New Roman","Songti SC",serif; font-size:24px; line-height:1; font-weight:700; }}
-    .form-section-title::before {{ content:''; width:22px; height:1px; background:var(--accent); }}
+    .form-section-title {{ display:flex; align-items:center; gap:9px; margin:0 0 12px; color:var(--text); font-size:18px; line-height:1.15; font-weight:900; }}
+    .form-section-title::before {{ content:''; width:5px; height:18px; border-radius:999px; background:var(--accent); }}
     .field-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }}
     .field-grid .full {{ grid-column:1 / -1; }}
-    .choice-grid {{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }}
-    .choice-card {{ display:grid; grid-template-rows:auto auto 1fr; min-height:168px; padding:18px; color:var(--ink); text-decoration:none; background:linear-gradient(180deg,rgba(255,254,250,.96),rgba(247,240,229,.78)); border:1px solid var(--line); border-top:3px solid rgba(148,104,61,.45); border-radius:8px; box-shadow:var(--shadow); transition:transform .14s, border-color .14s, box-shadow .14s; }}
-    .choice-card:hover {{ transform:translateY(-3px); border-color:rgba(148,104,61,.34); border-top-color:var(--accent); box-shadow:0 20px 44px rgba(23,34,52,.1); }}
-    .choice-card strong {{ display:block; margin:13px 0 8px; color:var(--text); font-family:Georgia,"Times New Roman","Songti SC",serif; font-size:29px; line-height:1.02; letter-spacing:-.02em; }}
+    .choice-grid {{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }}
+    .choice-card {{ position:relative; display:grid; grid-template-rows:auto auto 1fr; min-height:190px; padding:22px; color:var(--ink); text-decoration:none; background:rgba(255,255,255,.96); border:1px solid rgba(15,23,42,.09); border-radius:8px; box-shadow:0 1px 0 rgba(255,255,255,.9) inset,0 18px 38px rgba(15,23,42,.07); transition:transform .14s, border-color .14s, box-shadow .14s, background .14s; overflow:hidden; }}
+    .choice-card::before {{ content:''; position:absolute; left:0; top:0; width:100%; height:3px; background:linear-gradient(90deg,var(--accent),rgba(37,99,235,.08)); opacity:.82; }}
+    .choice-card:hover {{ transform:translateY(-3px); border-color:rgba(37,99,235,.25); background:#fff; box-shadow:0 24px 52px rgba(15,23,42,.11); }}
+    .choice-card strong {{ display:block; margin:18px 0 9px; color:var(--text); font-size:27px; line-height:1.08; letter-spacing:0; font-weight:950; }}
     .choice-card span {{ color:var(--muted); font-size:13px; line-height:1.62; font-weight:600; }}
-    .choice-number {{ width:34px; height:28px; display:grid; place-items:center; color:#fffefa; background:var(--navy); border-radius:6px; font-size:12px; font-weight:900; }}
-    .overview-grid {{ display:grid; grid-template-columns:1.05fr .95fr; gap:14px; margin-bottom:14px; }}
-    .overview-card {{ min-height:150px; padding:18px; background:linear-gradient(180deg,rgba(255,254,250,.96),rgba(247,240,229,.78)); border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow); overflow:visible; }}
+    .choice-number {{ width:38px; height:30px; display:grid; place-items:center; color:var(--accent-strong); background:var(--accent-soft); border:1px solid rgba(37,99,235,.18); border-radius:6px; font-size:12px; font-weight:900; }}
+    .overview-grid {{ display:grid; grid-template-columns:minmax(0,1.12fr) minmax(320px,.88fr); gap:18px; margin-bottom:18px; }}
+    .overview-card {{ min-height:168px; padding:22px; background:rgba(255,255,255,.94); border:1px solid rgba(15,23,42,.09); border-radius:8px; box-shadow:0 16px 34px rgba(15,23,42,.06); overflow:visible; }}
     .overview-card h2 {{ margin-bottom:8px; }}
     .overview-card p {{ margin:0; color:var(--muted); font-size:14px; line-height:1.7; font-weight:600; }}
     .overview-stats {{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:16px; }}
-    .mini-stat {{ padding:12px; border:1px solid var(--line); border-radius:8px; background:rgba(255,254,250,.68); }}
+    .mini-stat {{ padding:13px; border:1px solid var(--line); border-radius:8px; background:rgba(248,250,252,.84); }}
     .mini-stat strong {{ display:block; color:var(--text); font-size:24px; line-height:1; }}
     .mini-stat span {{ display:block; color:var(--muted); font-size:11px; font-weight:800; margin-top:7px; }}
     .account-row {{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }}
@@ -176,7 +177,7 @@ def page(title: str, body: str) -> str:
     .select-shell.enhanced select {{ position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; overflow:hidden; }}
     .select-card-trigger {{
       width:100%; min-height:42px; display:flex; align-items:center; justify-content:space-between; gap:10px;
-      padding:9px 11px; border:1px solid rgba(148,104,61,.18); border-radius:7px;
+      padding:9px 11px; border:1px solid rgba(15,23,42,.10); border-radius:7px;
       background:linear-gradient(180deg,#fff,#f8fafc); color:var(--text); box-shadow:none;
       font-size:13px; font-weight:800; text-align:left;
     }}
@@ -197,48 +198,51 @@ def page(title: str, body: str) -> str:
     .select-card-option:hover {{ background:rgba(37,99,235,.06); border-color:rgba(37,99,235,.14); color:var(--text); }}
     .select-card-option.active {{ background:var(--accent-soft); border-color:rgba(37,99,235,.32); color:var(--accent-strong); }}
     .score-grid {{ display:grid; grid-template-columns:repeat(2,minmax(220px,1fr)); gap:12px; }}
-    .score-control {{ margin:0; padding:12px; border:1px solid var(--line); border-radius:8px; background:rgba(248,250,252,.7); }}
+    .score-control {{ margin:0; padding:13px; border:1px solid rgba(15,23,42,.09); border-radius:8px; background:#fff; box-shadow:0 8px 20px rgba(15,23,42,.04); }}
     .score-control legend {{ padding:0 4px; color:var(--text); font-size:12px; font-weight:900; }}
-    .score-scale {{ display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-top:9px; }}
+    .score-scale {{ display:grid; grid-template-columns:repeat(6,1fr); gap:6px; margin-top:9px; }}
     .score-option {{ position:relative; margin:0; }}
     .score-option input {{ position:absolute; opacity:0; pointer-events:none; }}
     .score-option span {{ min-height:38px; display:grid; place-items:center; border:1px solid var(--line); border-radius:7px; background:#fff; color:var(--muted); font-size:13px; font-weight:900; cursor:pointer; transition:background .12s,border-color .12s,color .12s,box-shadow .12s,transform .12s; }}
     .score-option:hover span {{ transform:translateY(-1px); border-color:rgba(37,99,235,.28); }}
     .score-option input:checked + span {{ color:#fff; border-color:var(--accent); background:linear-gradient(145deg,#2563eb,#1d4ed8); box-shadow:0 10px 20px rgba(37,99,235,.2); }}
+    .score-option.skip span {{ color:var(--muted); font-size:12px; }}
+    .score-option.skip input:checked + span {{ color:var(--accent-strong); background:var(--accent-soft); border-color:rgba(37,99,235,.24); box-shadow:none; }}
     .score-summary {{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }}
     .row {{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }}
     .errors {{ color:var(--danger); font-size:13px; white-space:pre-wrap; margin-top:8px; }}
     .status-message {{ color:var(--accent-strong); font-size:13px; white-space:pre-wrap; margin-top:8px; font-weight:700; }}
     .status-message.error {{ color:var(--danger); }}
     .login-main {{ min-height:100vh; display:grid; place-items:center; padding:28px; }}
-    .login {{ width:min(460px,100%); margin:0 auto; padding:30px; background:linear-gradient(135deg,rgba(255,255,255,.97),rgba(248,250,252,.9)); }}
+    .login {{ width:min(460px,100%); margin:0 auto; padding:30px; background:linear-gradient(135deg,rgba(255,255,255,.98),rgba(248,250,252,.94)); }}
     .login h1 {{ margin-bottom:4px; }}
-    .login-note {{ margin:18px 0 20px; padding:13px 14px; color:var(--muted); background:rgba(255,254,250,.68); border:1px solid var(--line); border-radius:8px; font-size:13px; line-height:1.65; font-weight:650; }}
+    .login-note {{ margin:18px 0 20px; padding:13px 14px; color:var(--muted); background:rgba(248,250,252,.82); border:1px solid var(--line); border-radius:8px; font-size:13px; line-height:1.65; font-weight:650; }}
     .admin-main {{ max-width:1480px; }}
     .toolbar {{
       display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-      gap:11px; align-items:end; padding:15px; box-shadow:none; position:relative; z-index:5; overflow:visible;
+      gap:12px; align-items:end; padding:16px; box-shadow:0 14px 32px rgba(15,23,42,.06); position:relative; z-index:5; overflow:visible;
     }}
     .toolbar label {{ margin-top:0; }}
     .toolbar-actions {{ grid-column:1/-1; }}
     .review-toolbar {{ grid-template-columns:minmax(260px,1fr) 180px auto; margin-bottom:14px; }}
     .form-actions {{ margin-top:14px; padding-top:14px; border-top:1px solid var(--line); }}
     .stats {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(128px,1fr)); gap:10px; margin:14px 0; }}
-    .stat {{ padding:14px 15px; box-shadow:none; background:rgba(255,255,255,.82); }}
+    .stat {{ padding:14px 15px; box-shadow:none; background:rgba(255,255,255,.9); }}
     .stat strong {{ display:block; font-size:23px; line-height:1; color:var(--text); }}
     .stat span {{ display:block; color:var(--muted); font-size:12px; margin-top:7px; font-weight:700; }}
     .review-layout {{ display:grid; grid-template-columns:minmax(390px,.92fr) minmax(560px,1.35fr); gap:15px; align-items:start; }}
     .review-focus {{ max-width:1440px; }}
-    .review-focus .hero {{ margin-bottom:14px; }}
+    .review-focus .hero {{ margin-bottom:16px; }}
     .review-focus .hero-title {{ max-width:760px; }}
     .review-focus .hero-copy {{ max-width:720px; }}
     .review-focus .review-toolbar {{ grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); padding:12px; margin-bottom:12px; }}
     .review-focus .review-layout {{ display:block; }}
-    .review-poolbar {{ display:grid; grid-template-columns:minmax(260px,1fr) auto; gap:12px; align-items:end; margin-bottom:14px; }}
+    .review-poolbar {{ display:grid; grid-template-columns:minmax(260px,1fr) auto; gap:12px; align-items:end; margin-bottom:16px; padding:14px; border:1px solid rgba(15,23,42,.08); border-radius:8px; background:rgba(255,255,255,.92); box-shadow:0 12px 28px rgba(15,23,42,.05); }}
     .review-poolbar .select-shell {{ min-width:0; }}
+    .review-poolbar .review-case-picker {{ margin-bottom:0; }}
     .review-nav-actions {{ display:flex; align-items:flex-end; gap:8px; justify-content:flex-end; flex-wrap:wrap; }}
     .review-case-picker {{ display:grid; grid-template-columns:minmax(240px,1fr) auto; gap:12px; align-items:end; margin-bottom:14px; }}
-    .pool-count {{ display:inline-flex; align-items:center; min-height:42px; padding:9px 11px; border:1px solid var(--line); border-radius:7px; background:rgba(255,255,255,.82); color:var(--muted); font-size:12px; font-weight:850; white-space:nowrap; }}
+    .pool-count {{ display:inline-flex; align-items:center; min-height:42px; padding:9px 11px; border:1px solid var(--line); border-radius:7px; background:rgba(248,250,252,.9); color:var(--muted); font-size:12px; font-weight:850; white-space:nowrap; }}
     .review-stage {{ max-width:1080px; margin:0 auto; }}
     .review-context-line {{ display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; }}
     .review-column {{ min-width:0; }}
@@ -247,18 +251,18 @@ def page(title: str, body: str) -> str:
     .result-heading span {{ color:var(--muted); font-size:12px; font-weight:800; }}
     .review-list {{ max-height:calc(100vh - 120px); overflow:auto; padding:3px; }}
     .review-list {{ display:flex; flex-direction:column; gap:9px; }}
-    .origin-divider {{ display:flex; align-items:center; gap:10px; margin:7px 0 2px; color:var(--muted); font-size:11px; font-weight:900; letter-spacing:.12em; text-transform:uppercase; }}
+    .origin-divider {{ display:flex; align-items:center; gap:10px; margin:7px 0 2px; color:var(--muted); font-size:11px; font-weight:900; letter-spacing:0; text-transform:uppercase; }}
     .origin-divider::after {{ content:''; flex:1; height:1px; background:var(--line); }}
     .review-item {{
-      position:relative; width:100%; text-align:left; color:var(--text); padding:15px 15px 15px 18px; cursor:pointer; box-shadow:none; background:rgba(255,254,250,.78);
+      position:relative; width:100%; text-align:left; color:var(--text); padding:15px 15px 15px 18px; cursor:pointer; box-shadow:none; background:rgba(255,255,255,.86);
       transition:border-color .18s ease, transform .18s ease, box-shadow .18s ease, background .18s ease;
     }}
     .review-item::before {{ content:''; position:absolute; left:-1px; top:10px; bottom:10px; width:3px; border-radius:99px; background:transparent; transition:background .18s ease, top .18s ease, bottom .18s ease; }}
-    .review-item:hover {{ border-color:var(--line-strong); transform:translateY(-1px); box-shadow:0 10px 24px rgba(23,34,52,.06); background:#fffefa; }}
-    .review-item.active {{ border-color:rgba(148,104,61,.5); background:linear-gradient(90deg,rgba(242,231,215,.82),rgba(255,254,250,.92)); box-shadow:0 12px 26px rgba(23,34,52,.08); transform:translateX(2px); }}
+    .review-item:hover {{ border-color:var(--line-strong); transform:translateY(-1px); box-shadow:0 10px 24px rgba(23,34,52,.06); background:#fff; }}
+    .review-item.active {{ border-color:rgba(37,99,235,.38); background:linear-gradient(90deg,rgba(239,246,255,.92),rgba(255,255,255,.96)); box-shadow:0 12px 26px rgba(37,99,235,.10); transform:translateX(2px); }}
     .review-item.active::before {{ top:6px; bottom:6px; background:var(--accent); }}
     .review-item.origin-database::before {{ background:rgba(15,118,110,.28); }}
-    .review-item.origin-local_json::before {{ background:rgba(148,104,61,.22); }}
+    .review-item.origin-local_json::before {{ background:rgba(37,99,235,.20); }}
     .review-item.active.origin-database::before {{ background:var(--green); }}
     .review-item.active.origin-local_json::before {{ background:var(--accent); }}
     .review-item-title {{ display:block; font-size:14px; font-weight:800; line-height:1.52; }}
@@ -267,7 +271,7 @@ def page(title: str, body: str) -> str:
       -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
     }}
     .review-tags {{ display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }}
-    .review-focus .review-item {{ padding:13px 13px 13px 16px; background:rgba(255,254,250,.72); }}
+    .review-focus .review-item {{ padding:13px 13px 13px 16px; background:rgba(255,255,255,.82); }}
     .review-focus .review-item-title {{ font-size:13px; -webkit-line-clamp:3; display:-webkit-box; -webkit-box-orient:vertical; overflow:hidden; }}
     .review-focus .review-item-attack,.review-focus .review-item .meta,.review-focus .review-item .review-tags {{ display:none; }}
     .review-focus .rank-line {{ margin-top:8px; }}
@@ -278,36 +282,39 @@ def page(title: str, body: str) -> str:
     .pill.origin-local {{ color:var(--accent-strong); border-color:rgba(37,99,235,.24); background:rgba(239,246,255,.78); }}
     .pill.origin-cloud {{ color:#0f5f59; border-color:rgba(15,118,110,.28); background:rgba(15,118,110,.08); }}
     .pill.selected-mark {{ color:#0f5f59; border-color:rgba(15,118,110,.32); background:rgba(15,118,110,.1); }}
+    .pill.decision-accepted {{ color:#0f5f59; border-color:rgba(15,118,110,.32); background:rgba(15,118,110,.1); }}
+    .pill.decision-discarded {{ color:#9b2c22; border-color:rgba(180,35,24,.24); background:rgba(255,241,242,.9); }}
+    .pill.decision-needs_discussion {{ color:#9a5b13; border-color:rgba(217,119,6,.26); background:rgba(255,251,235,.9); }}
     .rank-line {{ display:flex; align-items:center; gap:8px; margin:9px 0 0; }}
     .rank-badge {{ min-width:46px; display:inline-flex; align-items:center; justify-content:center; padding:5px 9px; border-radius:7px; background:var(--navy); color:#fff; font-size:12px; font-weight:900; }}
     .score-badge {{ display:inline-flex; align-items:center; justify-content:center; padding:5px 9px; border:1px solid rgba(37,99,235,.24); border-radius:7px; background:var(--accent-soft); color:var(--accent-strong); font-size:12px; font-weight:900; }}
     .benchmark-action {{ width:100%; margin-top:15px; display:flex; justify-content:center; }}
     .benchmark-action button {{ width:100%; }}
     .benchmark-action .selected {{ background:rgba(255,255,255,.72); color:#0f5f59; border-color:rgba(15,118,110,.35); box-shadow:none; }}
-    .detail-panel {{ position:sticky; top:82px; padding:22px; max-height:calc(100vh - 108px); overflow:auto; background:linear-gradient(180deg,rgba(255,254,250,.98),rgba(249,244,236,.92)); border-top:3px solid rgba(148,104,61,.42); }}
+    .detail-panel {{ position:sticky; top:82px; padding:22px; max-height:calc(100vh - 108px); overflow:auto; background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(248,250,252,.94)); border-top:3px solid rgba(37,99,235,.40); }}
     .detail-panel h2 {{ font-size:21px; line-height:1.38; margin:0 0 9px; }}
     .detail-empty {{ color:var(--muted); padding:42px 28px; text-align:center; background:var(--panel-soft); border:1px dashed var(--line-strong); border-radius:8px; font-weight:700; }}
     .review-focus .detail-panel {{ position:static; padding:0; background:transparent; border:0; box-shadow:none; max-height:none; overflow:visible; }}
-    .focus-case {{ display:grid; gap:12px; }}
-    .focus-card {{ border:1px solid rgba(15,23,42,.09); border-radius:8px; background:rgba(255,255,255,.94); box-shadow:var(--shadow); padding:18px; }}
+    .focus-case {{ display:grid; gap:14px; }}
+    .focus-card {{ border:1px solid rgba(15,23,42,.08); border-radius:8px; background:rgba(255,255,255,.96); box-shadow:0 18px 42px rgba(15,23,42,.07); padding:22px; }}
     .focus-header {{ display:grid; grid-template-columns:minmax(0,1fr) auto; gap:14px; align-items:start; border-top:3px solid rgba(37,99,235,.55); }}
-    .focus-title {{ margin:0; color:var(--text); font-size:26px; line-height:1.25; letter-spacing:-.035em; font-weight:900; }}
+    .focus-title {{ margin:0; color:var(--text); font-size:26px; line-height:1.28; letter-spacing:0; font-weight:900; }}
     .focus-meta {{ display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }}
     .focus-action {{ min-width:190px; }}
     .focus-action .benchmark-action {{ margin-top:0; }}
     .focus-action .benchmark-action button {{ min-height:38px; }}
     .focus-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }}
-    .focus-block {{ border:1px solid var(--line); border-radius:8px; background:rgba(248,250,252,.78); padding:14px; }}
+    .focus-block {{ border:1px solid rgba(15,23,42,.08); border-radius:8px; background:rgba(248,250,252,.78); padding:16px; }}
     .focus-block.full {{ grid-column:1 / -1; }}
-    .focus-label {{ display:block; margin-bottom:7px; color:var(--accent-strong); font-size:10px; font-weight:900; letter-spacing:.12em; text-transform:uppercase; }}
+    .focus-label {{ display:block; margin-bottom:7px; color:var(--accent-strong); font-size:10px; font-weight:900; letter-spacing:0; text-transform:uppercase; }}
     .focus-text {{ margin:0; color:var(--ink); font-size:15px; line-height:1.72; font-weight:650; }}
     .focus-attack {{ border-color:rgba(180,35,24,.16); background:linear-gradient(180deg,rgba(255,241,242,.82),rgba(255,255,255,.78)); }}
     .focus-attack .focus-label {{ color:#9b2c22; }}
     .judgement-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }}
-    .judgement {{ min-height:150px; border:1px solid var(--line); border-radius:8px; padding:14px 14px 12px; background:rgba(255,255,255,.84); box-shadow:0 8px 18px rgba(15,23,42,.045); }}
+    .judgement {{ min-height:150px; border:1px solid rgba(15,23,42,.08); border-radius:8px; padding:16px 16px 14px; background:rgba(255,255,255,.9); box-shadow:0 10px 22px rgba(15,23,42,.045); }}
     .judgement.success {{ border-color:rgba(15,118,110,.2); background:linear-gradient(180deg,rgba(240,253,250,.9),rgba(255,255,255,.82)); }}
     .judgement.failure {{ border-color:rgba(180,35,24,.18); background:linear-gradient(180deg,rgba(255,241,242,.86),rgba(255,255,255,.82)); }}
-    .judgement h3 {{ margin:0 0 10px; font-size:13px; letter-spacing:.04em; text-transform:uppercase; }}
+    .judgement h3 {{ margin:0 0 10px; font-size:13px; letter-spacing:0; text-transform:uppercase; }}
     .judgement.success h3 {{ color:#0f5f59; }}
     .judgement.failure h3 {{ color:#9b2c22; }}
     .judgement ul,.metadata-list {{ margin:0; padding-left:19px; color:var(--ink); font-size:14px; line-height:1.65; }}
@@ -315,24 +322,39 @@ def page(title: str, body: str) -> str:
     .metadata-token {{ display:inline-flex; max-width:100%; padding:6px 9px; border:1px solid var(--line); border-radius:7px; background:rgba(248,250,252,.82); color:var(--muted); font-size:12px; font-weight:750; line-height:1.45; }}
     .review-history {{ margin-top:10px; padding:10px 12px; border:1px solid var(--line); border-radius:8px; background:rgba(248,250,252,.72); color:var(--muted); font-size:12px; line-height:1.6; font-weight:700; }}
     .review-history strong {{ color:var(--text); }}
+    .decision-panel {{ display:grid; gap:12px; }}
+    .decision-actions {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:9px; }}
+    .decision-actions button {{ min-height:42px; box-shadow:none; }}
+    .decision-actions .accept {{ background:var(--green); border-color:var(--green); }}
+    .decision-actions .discard {{ background:#fff; color:var(--danger); border-color:rgba(180,35,24,.28); }}
+    .decision-actions .mark {{ background:#fff; color:#9a5b13; border-color:rgba(217,119,6,.32); }}
+    .decision-actions .clear {{ background:#fff; color:var(--muted); border-color:var(--line-strong); }}
+    .expert-editor {{ margin:0; }}
+    .expert-editor summary {{ cursor:pointer; list-style:none; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:0; color:var(--text); font-size:18px; font-weight:900; }}
+    .expert-editor summary::-webkit-details-marker {{ display:none; }}
+    .expert-editor summary::after {{ content:'展开'; color:var(--accent-strong); font-size:12px; font-weight:900; }}
+    .expert-editor[open] summary::after {{ content:'收起'; }}
+    .expert-edit-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px; }}
+    .expert-edit-grid .full {{ grid-column:1 / -1; }}
     .review-score-panel {{ margin-top:0; }}
     .review-score-panel .section-heading {{ margin-bottom:10px; }}
     .review-score-panel textarea {{ min-height:74px; }}
     .review-score-panel .score-grid {{ grid-template-columns:repeat(2,minmax(220px,1fr)); }}
     .review-score-actions {{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:14px; flex-wrap:wrap; }}
     dl {{ margin:18px 0 0; display:grid; gap:12px; }}
-    dt {{ font-size:10px; color:var(--accent-strong); font-weight:900; text-transform:uppercase; letter-spacing:.12em; margin:0; }}
-    dd {{ margin:5px 0 0; font-size:13px; line-height:1.66; background:rgba(246,240,230,.72); border:1px solid var(--line); border-radius:8px; padding:11px 12px; }}
+    dt {{ font-size:10px; color:var(--accent-strong); font-weight:900; text-transform:uppercase; letter-spacing:0; margin:0; }}
+    dd {{ margin:5px 0 0; font-size:13px; line-height:1.66; background:rgba(248,250,252,.84); border:1px solid var(--line); border-radius:8px; padding:11px 12px; }}
     dd ul {{ margin:0; padding-left:18px; }}
     @media (max-width:980px) {{
       .grid,.design-grid,.design-grid.design-only,.toolbar,.review-layout,.choice-grid,.overview-grid,.overview-stats,.score-grid,.field-grid {{ grid-template-columns:1fr; max-width:none; }}
       header {{ width:calc(100vw - 28px); padding:10px; align-items:flex-start; border-radius:8px; flex-direction:column; }}
       main {{ padding:16px; }}
       .top-nav,.app-nav {{ width:100%; flex-wrap:wrap; }}
-      .hero-title {{ font-size:2.1rem; }}
+      .hero-title {{ font-size:34px; }}
+      .hero.compact .hero-title {{ font-size:30px; }}
       .select-card-menu {{ max-height:42vh; }}
       .toolbar-actions {{ grid-column:auto; }} .detail-panel,.sticky-panel {{ position:static; max-height:none; }}
-      .focus-header,.focus-grid,.judgement-grid,.review-focus .review-layout,.review-focus .review-toolbar,.review-poolbar,.review-case-picker,.review-score-panel .score-grid {{ grid-template-columns:1fr; }}
+      .focus-header,.focus-grid,.judgement-grid,.review-focus .review-layout,.review-focus .review-toolbar,.review-poolbar,.review-case-picker,.review-score-panel .score-grid,.decision-actions,.expert-edit-grid {{ grid-template-columns:1fr; }}
       .focus-action {{ min-width:0; }}
       .review-nav-actions {{ justify-content:flex-start; }}
     }}
@@ -578,6 +600,8 @@ def create_app() -> Flask:
             "comment": str(raw.get("comment", "")).strip(),
         }
         for key in ("feasibility", "accuracy", "clarity", "overall"):
+            if raw.get(key) in (None, ""):
+                continue
             try:
                 score = int(raw.get(key))
             except (TypeError, ValueError):
@@ -592,6 +616,41 @@ def create_app() -> Flask:
             saved = add_case_review(case_id, review)
         except KeyError:
             return jsonify({"error": "case not found"}), 404
+        except RuntimeError as exc:
+            return jsonify({"error": str(exc)}), 503
+        return jsonify({"case": saved})
+
+    @app.post("/api/cases/<case_id>/expert-decision")
+    def save_expert_decision(case_id: str):
+        if session.get("role") != "annotator":
+            return jsonify({"error": "not logged in"}), 401
+        raw = request.get_json(silent=True) or {}
+        try:
+            saved = set_expert_decision(
+                case_id,
+                str(raw.get("decision", "")).strip(),
+                decided_by=session["username"],
+                comment=str(raw.get("comment", "")).strip(),
+            )
+        except KeyError:
+            return jsonify({"error": "case not found"}), 404
+        except ValueError as exc:
+            return jsonify({"error": str(exc)}), 400
+        except RuntimeError as exc:
+            return jsonify({"error": str(exc)}), 503
+        return jsonify({"case": saved})
+
+    @app.patch("/api/cases/<case_id>/expert-edit")
+    def save_expert_edit(case_id: str):
+        if session.get("role") != "annotator":
+            return jsonify({"error": "not logged in"}), 401
+        raw = request.get_json(silent=True) or {}
+        try:
+            saved = update_case_fields(case_id, raw, edited_by=session["username"])
+        except KeyError:
+            return jsonify({"error": "case not found"}), 404
+        except ValueError as exc:
+            return jsonify({"error": str(exc)}), 400
         except RuntimeError as exc:
             return jsonify({"error": str(exc)}), 503
         return jsonify({"case": saved})
@@ -789,6 +848,7 @@ def review_page(user: str) -> str:
   <section class="panel toolbar review-toolbar">
     <div><label>搜索</label><input id="reviewSearch" placeholder="task / target / attack_method / owner / id"></div>
     <div><label>评分状态</label><div class="select-shell"><select id="reviewStatusFilter"><option value="">全部</option><option value="unreviewed_by_me">我未评分</option><option value="reviewed_by_me">我已评分</option><option value="unreviewed">全局未评分</option><option value="reviewed">已有评分</option></select></div></div>
+    <div><label>裁决状态</label><div class="select-shell"><select id="reviewDecisionFilter"><option value="">全部</option><option value="none">未裁决</option><option value="accepted">已保留</option><option value="discarded">Discard</option><option value="needs_discussion">存疑 Mark</option></select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="reviewTaskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
     <div><label>攻击类型</label><div class="select-shell"><select id="reviewAttackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>植入形式</label><div class="select-shell"><select id="reviewFormFilter"><option value="">全部</option>{options(INTERACTIVE_FORMS)}</select></div></div>
@@ -952,9 +1012,17 @@ function originPill(item) {
   const cls = origin === 'database' ? 'origin-cloud' : 'origin-local';
   return `<span class="pill ${cls}">${originLabel(origin)}</span>`;
 }
+function decisionLabel(decision) {
+  return ({accepted:'已保留', discarded:'Discard', needs_discussion:'存疑 Mark', clear:'未裁决'})[decision] || '未裁决';
+}
+function decisionPill(item) {
+  const decision = item.expert_decision || '';
+  if (!decision) return '<span class="pill">未裁决</span>';
+  return `<span class="pill decision-${escapeHtml(decision)}">${escapeHtml(decisionLabel(decision))}</span>`;
+}
 function caseTags(item) {
   const selected = item.benchmark_selected ? '<span class="pill selected-mark">已选入 benchmark</span>' : '';
-  return `${selected}${originPill(item)}<span class="pill strong">${escapeHtml(item.status || 'draft')}</span><span class="pill">${escapeHtml(item.task_type)}</span><span class="pill">${escapeHtml(item.attack_type)}</span><span class="pill">${escapeHtml((item.interactive_form || []).join('/'))}</span>`;
+  return `${selected}${decisionPill(item)}${originPill(item)}<span class="pill strong">${escapeHtml(item.status || 'draft')}</span><span class="pill">${escapeHtml(item.task_type)}</span><span class="pill">${escapeHtml(item.attack_type)}</span><span class="pill">${escapeHtml((item.interactive_form || []).join('/'))}</span>`;
 }
 function groupedCaseList(onClickName='selectCase') {
   const rankedCases = applyRanks(filteredCases);
@@ -1004,7 +1072,7 @@ function benchmarkButton(item, handlerName='toggleSelectedCase') {
   return `<div class="benchmark-action"><button type="button" class="${selected ? 'selected' : ''}" onclick="${handlerName}('${escapeAttr(item.id)}', ${selected ? 'false' : 'true'})">${selected ? '取消选中 benchmark' : '选中进入 benchmark'}</button></div>`;
 }
 function compactTags(item) {
-  return `<span class="pill strong">${escapeHtml(item.task_type || '-')}</span><span class="pill">${escapeHtml(item.attack_type || '-')}</span><span class="pill">${escapeHtml((item.interactive_form || []).join(' / ') || '-')}</span>${originPill(item)}${item.benchmark_selected ? '<span class="pill selected-mark">已选入 benchmark</span>' : ''}`;
+  return `${decisionPill(item)}<span class="pill strong">${escapeHtml(item.task_type || '-')}</span><span class="pill">${escapeHtml(item.attack_type || '-')}</span><span class="pill">${escapeHtml((item.interactive_form || []).join(' / ') || '-')}</span>${originPill(item)}${item.benchmark_selected ? '<span class="pill selected-mark">已选入 benchmark</span>' : ''}`;
 }
 function currentReviewer() {
   return window.CLAWTRAP_REVIEWER || '';
@@ -1024,9 +1092,13 @@ function reviewStatusPill(item) {
 }
 function reviewHistory(item) {
   const reviews = reviewsFor(item);
-  if (!reviews.length) return '<div class="review-history">暂无历史评分</div>';
-  const latest = reviews.slice(-3).reverse().map(review => `${escapeHtml(review.reviewer || 'unknown')}：综合 ${escapeHtml(review.overall ?? '-')} / 可实现 ${escapeHtml(review.feasibility ?? '-')} / 准确 ${escapeHtml(review.accuracy ?? '-')} / 清晰 ${escapeHtml(review.clarity ?? '-')}`).join('<br>');
-  return `<div class="review-history"><strong>最近评分</strong><br>${latest}</div>`;
+  const decisions = Array.isArray(item.expert_decisions) ? item.expert_decisions : [];
+  const latestReviews = reviews.slice(-3).reverse().map(review => `${escapeHtml(review.reviewer || 'unknown')}：综合 ${escapeHtml(review.overall ?? '-')} / 可实现 ${escapeHtml(review.feasibility ?? '-')} / 准确 ${escapeHtml(review.accuracy ?? '-')} / 清晰 ${escapeHtml(review.clarity ?? '-')}${review.comment ? ` · ${escapeHtml(review.comment)}` : ''}`);
+  const latestDecisions = decisions.slice(-3).reverse().map(record => `${escapeHtml(record.reviewer || 'unknown')}：${escapeHtml(decisionLabel(record.decision))}${record.comment ? ` · ${escapeHtml(record.comment)}` : ''}`);
+  const parts = [];
+  if (latestDecisions.length) parts.push(`<strong>最近裁决</strong><br>${latestDecisions.join('<br>')}`);
+  if (latestReviews.length) parts.push(`<strong>最近评分</strong><br>${latestReviews.join('<br>')}`);
+  return `<div class="review-history">${parts.join('<br><br>') || '暂无历史裁决或评分'}</div>`;
 }
 function focusList(items) {
   if (!Array.isArray(items) || !items.length) return '<ul><li>-</li></ul>';
@@ -1035,6 +1107,15 @@ function focusList(items) {
 function metadataTokens(items) {
   if (!Array.isArray(items) || !items.length) return '<span class="metadata-token">无补充信息</span>';
   return items.map(item => `<span class="metadata-token">${escapeHtml(item)}</span>`).join('');
+}
+function lineText(items) {
+  return Array.isArray(items) ? items.join('\n') : String(items || '');
+}
+function splitLines(value) {
+  return String(value || '').split('\n').map(line => line.trim()).filter(Boolean);
+}
+function escapeTextarea(value) {
+  return escapeHtml(value);
 }
 function focusedReviewDetail(item) {
   return `<div class="focus-case">
@@ -1045,7 +1126,7 @@ function focusedReviewDetail(item) {
         <div class="rank-line"><span class="rank-badge">#${escapeHtml(item.__rank ?? '-')}</span><span class="score-badge">总分 ${escapeHtml(totalScore(item) ?? '-')}</span><span class="pill">${escapeHtml(summaryText(item))}</span></div>
         <div class="focus-meta">${compactTags(item)}${reviewStatusPill(item)}</div>
       </div>
-      <div class="focus-action">${benchmarkButton(item)}</div>
+      <div class="focus-action"><div class="review-history"><strong>当前裁决</strong><br>${escapeHtml(decisionLabel(item.expert_decision))}${item.expert_decision_by ? ` · ${escapeHtml(item.expert_decision_by)}` : ''}</div></div>
     </section>
     <section class="focus-card">
       <div class="focus-grid">
@@ -1067,9 +1148,41 @@ function focusedReviewDetail(item) {
     </section>
   </div>`;
 }
-function scoreControl(name, label, value=4) {
-  const options = [1, 2, 3, 4, 5].map(score => `<label class="score-option"><input type="radio" name="${escapeAttr(name)}" value="${score}" ${score === value ? 'checked' : ''} required><span>${score}</span></label>`).join('');
-  return `<fieldset class="score-control"><legend>${escapeHtml(label)}</legend><div class="score-scale">${options}</div></fieldset>`;
+function expertDecisionPanel(item) {
+  return `<section class="focus-card decision-panel">
+    <div class="section-heading"><div><p class="section-kicker">Expert Decision</p><h2>专家裁决</h2></div><span>${decisionPill(item)}</span></div>
+    <textarea id="decisionComment" placeholder="可选：说明保留、丢弃或存疑的理由">${escapeTextarea(item.expert_decision_comment || '')}</textarea>
+    <div class="errors" id="decisionErrors"></div>
+    <div class="decision-actions">
+      <button type="button" class="accept" onclick="submitDecision('accepted')">保留进 benchmark</button>
+      <button type="button" class="discard" onclick="submitDecision('discarded')">Discard</button>
+      <button type="button" class="mark" onclick="submitDecision('needs_discussion')">Mark 存疑</button>
+      <button type="button" class="clear" onclick="submitDecision('clear')">清除裁决</button>
+    </div>
+  </section>`;
+}
+function expertEditPanel(item) {
+  return `<details class="focus-card expert-editor">
+    <summary>专家轻量编辑</summary>
+    <form id="expertEditForm">
+      <div class="expert-edit-grid">
+        <div class="full"><label>用户任务 task</label><textarea name="task" required>${escapeTextarea(item.task || '')}</textarea></div>
+        <div class="full"><label>期望目标 target</label><textarea name="target" required>${escapeTextarea(item.target || '')}</textarea></div>
+        <div class="full"><label>MITM 攻击植入 attack_method</label><textarea name="attack_method" required>${escapeTextarea(item.attack_method || '')}</textarea></div>
+        <div><label>成功判定 success_states（每行一条）</label><textarea name="success_states" required>${escapeTextarea(lineText(item.success_states))}</textarea></div>
+        <div><label>失败判定 failure_states（每行一条）</label><textarea name="failure_states" required>${escapeTextarea(lineText(item.failure_states))}</textarea></div>
+        <div class="full"><label>攻击逻辑 logic</label><textarea name="logic" required>${escapeTextarea(item.logic || '')}</textarea></div>
+        <div class="full"><label>Metadata（每行一条）</label><textarea name="metadata" required>${escapeTextarea(lineText(item.metadata))}</textarea></div>
+      </div>
+      <div class="errors" id="editErrors"></div>
+      <div class="row form-actions"><button type="button" onclick="saveExpertEdit()">保存修改</button></div>
+    </form>
+  </details>`;
+}
+function scoreControl(name, label, value='') {
+  const skip = `<label class="score-option skip"><input type="radio" name="${escapeAttr(name)}" value="" ${value === '' ? 'checked' : ''}><span>跳过</span></label>`;
+  const options = [1, 2, 3, 4, 5].map(score => `<label class="score-option"><input type="radio" name="${escapeAttr(name)}" value="${score}" ${score === value ? 'checked' : ''}><span>${score}</span></label>`).join('');
+  return `<fieldset class="score-control"><legend>${escapeHtml(label)}</legend><div class="score-scale">${skip}${options}</div></fieldset>`;
 }
 function listText(items) { return Array.isArray(items) ? `<ul>${items.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : escapeHtml(items || ''); }
 function escapeHtml(value) { return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
@@ -1089,10 +1202,11 @@ function filterReviewCases() {
   const q = (document.getElementById('reviewSearch')?.value || '').trim().toLowerCase();
   const origin = document.getElementById('reviewOriginFilter')?.value || '';
   const status = document.getElementById('reviewStatusFilter')?.value || '';
+  const decision = document.getElementById('reviewDecisionFilter')?.value || '';
   const attack = document.getElementById('reviewAttackFilter')?.value || '';
   const task = document.getElementById('reviewTaskFilter')?.value || '';
   const form = document.getElementById('reviewFormFilter')?.value || '';
-  filteredCases = applyRanks(allCases.filter(item => (!origin || originValue(item) === origin) && matchesReviewStatus(item, status) && (!attack || item.attack_type === attack) && (!task || item.task_type === task) && (!form || (item.interactive_form || []).includes(form)) && (!q || JSON.stringify(item).toLowerCase().includes(q))));
+  filteredCases = applyRanks(allCases.filter(item => (!origin || originValue(item) === origin) && matchesReviewStatus(item, status) && matchesDecisionStatus(item, decision) && (!attack || item.attack_type === attack) && (!task || item.task_type === task) && (!form || (item.interactive_form || []).includes(form)) && (!q || JSON.stringify(item).toLowerCase().includes(q))));
   if (!filteredCases.some(item => item.id === selectedId)) selectedId = filteredCases[0]?.id || null;
   renderReviewPicker();
   renderDetail();
@@ -1105,6 +1219,11 @@ function matchesReviewStatus(item, status) {
   if (status === 'unreviewed') return reviewsFor(item).length === 0;
   return true;
 }
+function matchesDecisionStatus(item, decision) {
+  if (!decision) return true;
+  if (decision === 'none') return !item.expert_decision;
+  return item.expert_decision === decision;
+}
 function renderReviewPicker() {
   const picker = document.getElementById('reviewCaseSelect');
   const count = document.getElementById('reviewCount');
@@ -1114,7 +1233,7 @@ function renderReviewPicker() {
     const score = totalScore(item) ?? '-';
     const mine = hasReviewByMe(item) ? '我已评' : '我未评';
     const title = String(item.task || '(未命名任务)').replace(/\s+/g, ' ').slice(0, 92);
-    return `<option value="${escapeHtml(item.id)}">#${itemIndex + 1} · ${escapeHtml(mine)} · 总分 ${escapeHtml(score)} · ${escapeHtml(title)}</option>`;
+    return `<option value="${escapeHtml(item.id)}">#${itemIndex + 1} · ${escapeHtml(decisionLabel(item.expert_decision))} · ${escapeHtml(mine)} · 总分 ${escapeHtml(score)} · ${escapeHtml(title)}</option>`;
   }).join('');
   picker.value = selectedId || '';
   window.refreshClawTrapSelects?.();
@@ -1135,8 +1254,10 @@ function renderDetail() {
   const item = filteredCases.find(candidate => candidate.id === selectedId);
   if (!item) { panel.innerHTML = '<div class="detail-empty">当前筛选池没有可审核场景</div>'; return; }
   panel.innerHTML = `${focusedReviewDetail(item)}
+    ${expertDecisionPanel(item)}
+    ${expertEditPanel(item)}
     <form id="reviewForm" class="focus-card review-score-panel">
-      <div class="section-heading"><div><p class="section-kicker">Scoring</p><h2>审核评分</h2></div></div>
+      <div class="section-heading"><div><p class="section-kicker">Optional Scoring</p><h2>可选评分与评论</h2></div></div>
       <div class="score-grid">
         ${scoreControl('feasibility', '可实现性')}
         ${scoreControl('accuracy', '准确性')}
@@ -1160,6 +1281,45 @@ async function toggleSelectedCase(id, selected) {
     panel.insertAdjacentHTML('afterbegin', `<div class="errors">${escapeHtml(error.message)}</div>`);
   }
 }
+function mergeUpdatedCase(updated) {
+  const index = allCases.findIndex(item => item.id === updated.id);
+  if (index >= 0) allCases[index] = updated;
+  selectedId = updated.id;
+}
+async function submitDecision(decision) {
+  const item = filteredCases.find(candidate => candidate.id === selectedId);
+  const errorEl = document.getElementById('decisionErrors');
+  if (!item) return;
+  if (errorEl) errorEl.textContent = '';
+  const comment = document.getElementById('decisionComment')?.value || '';
+  const res = await fetch(`/api/cases/${encodeURIComponent(item.id)}/expert-decision`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({decision, comment})});
+  const data = await res.json();
+  if (!res.ok) {
+    if (errorEl) errorEl.textContent = (data.errors || [data.error || '裁决失败']).join('\n');
+    return;
+  }
+  mergeUpdatedCase(data.case);
+  filterReviewCases();
+}
+async function saveExpertEdit() {
+  const item = filteredCases.find(candidate => candidate.id === selectedId);
+  const form = document.getElementById('expertEditForm');
+  const errorEl = document.getElementById('editErrors');
+  if (!item || !form) return;
+  if (errorEl) errorEl.textContent = '';
+  const payload = Object.fromEntries(new FormData(form).entries());
+  payload.success_states = splitLines(form.success_states.value);
+  payload.failure_states = splitLines(form.failure_states.value);
+  payload.metadata = splitLines(form.metadata.value);
+  const res = await fetch(`/api/cases/${encodeURIComponent(item.id)}/expert-edit`, {method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+  const data = await res.json();
+  if (!res.ok) {
+    if (errorEl) errorEl.textContent = (data.errors || [data.error || '保存修改失败']).join('\n');
+    return;
+  }
+  mergeUpdatedCase(data.case);
+  filterReviewCases();
+}
 async function submitReview(advance=false) {
   const item = filteredCases.find(candidate => candidate.id === selectedId);
   const currentIndex = Math.max(0, filteredCases.findIndex(candidate => candidate.id === selectedId));
@@ -1169,8 +1329,7 @@ async function submitReview(advance=false) {
   const res = await fetch(`/api/cases/${encodeURIComponent(item.id)}/reviews`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
   const data = await res.json();
   if (!res.ok) { document.getElementById('reviewErrors').textContent = (data.errors || [data.error || '提交失败']).join('\n'); return; }
-  const index = allCases.findIndex(c => c.id === data.case.id);
-  if (index >= 0) allCases[index] = data.case;
+  mergeUpdatedCase(data.case);
   selectedId = advance ? (nextCandidate?.id || data.case.id) : data.case.id;
   filterReviewCases();
   if (advance) window.scrollTo({top: 0, behavior: 'smooth'});
@@ -1178,6 +1337,7 @@ async function submitReview(advance=false) {
 document.getElementById('reviewSearch')?.addEventListener('input', filterReviewCases);
 document.getElementById('reviewOriginFilter')?.addEventListener('input', filterReviewCases);
 document.getElementById('reviewStatusFilter')?.addEventListener('input', filterReviewCases);
+document.getElementById('reviewDecisionFilter')?.addEventListener('input', filterReviewCases);
 document.getElementById('reviewAttackFilter')?.addEventListener('input', filterReviewCases);
 document.getElementById('reviewTaskFilter')?.addEventListener('input', filterReviewCases);
 document.getElementById('reviewFormFilter')?.addEventListener('input', filterReviewCases);
@@ -1287,9 +1447,17 @@ function originPill(item) {
   const cls = origin === 'database' ? 'origin-cloud' : 'origin-local';
   return `<span class="pill ${cls}">${originLabel(origin)}</span>`;
 }
+function decisionLabel(decision) {
+  return ({accepted:'已保留', discarded:'Discard', needs_discussion:'存疑 Mark', clear:'未裁决'})[decision] || '未裁决';
+}
+function decisionPill(item) {
+  const decision = item.expert_decision || '';
+  if (!decision) return '<span class="pill">未裁决</span>';
+  return `<span class="pill decision-${escapeHtml(decision)}">${escapeHtml(decisionLabel(decision))}</span>`;
+}
 function adminTags(item) {
   const selected = item.benchmark_selected ? '<span class="pill selected-mark">已选入 benchmark</span>' : '';
-  return `${selected}${originPill(item)}<span class="pill strong">${escapeHtml(item.status || 'draft')}</span><span class="pill">${escapeHtml(item.task_type)}</span><span class="pill">${escapeHtml(item.attack_type)}</span><span class="pill">${escapeHtml((item.interactive_form || []).join('/'))}</span>`;
+  return `${selected}${decisionPill(item)}${originPill(item)}<span class="pill strong">${escapeHtml(item.status || 'draft')}</span><span class="pill">${escapeHtml(item.task_type)}</span><span class="pill">${escapeHtml(item.attack_type)}</span><span class="pill">${escapeHtml((item.interactive_form || []).join('/'))}</span>`;
 }
 function renderList() {
   if (!filteredCases.some(item => item.id === selectedId)) selectedId = filteredCases[0]?.id || null;

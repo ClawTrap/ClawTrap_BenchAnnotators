@@ -6,11 +6,25 @@ from pathlib import Path
 from typing import Any
 
 from .schema import normalize_case, utc_now
+from .schema import validate_case
 
 
 DATA_DIR = Path("data")
 CASES_PATH = DATA_DIR / "cases.json"
 DEFAULT_DATASET = "cases"
+EDITABLE_CASE_FIELDS = {
+    "task",
+    "target",
+    "task_type",
+    "attack_method",
+    "success_states",
+    "failure_states",
+    "logic",
+    "attack_type",
+    "interactive_form",
+    "metadata",
+}
+EXPERT_DECISIONS = {"accepted", "discarded", "needs_discussion", "clear"}
 
 
 def database_url() -> str | None:
@@ -168,6 +182,80 @@ def set_benchmark_selected(case_id: str, selected: bool, *, selected_by: str, da
     case["benchmark_selected_at"] = utc_now() if selected else ""
     case["dataset"] = dataset
     return upsert_case(case, owner=case.get("owner") or "llm_seed", source=case.get("source") or "manual")
+
+
+def set_expert_decision(case_id: str, decision: str, *, decided_by: str, comment: str = "", dataset: str = DEFAULT_DATASET) -> dict[str, Any]:
+    if decision not in EXPERT_DECISIONS:
+        raise ValueError(f"invalid expert decision: {decision}")
+    case = find_case(case_id, dataset=dataset)
+    if not case:
+        raise KeyError(case_id)
+    if decision == "accepted":
+        errors = validate_case(case, for_submit=True)
+        if errors:
+            raise ValueError("\n".join(errors))
+
+    now = utc_now()
+    history = case.get("expert_decisions")
+    if not isinstance(history, list):
+        history = []
+    history.append({
+        "decision": decision,
+        "reviewer": decided_by,
+        "comment": str(comment or "").strip(),
+        "created_at": now,
+    })
+
+    if decision == "clear":
+        case["expert_decision"] = ""
+        case["expert_decision_by"] = ""
+        case["expert_decision_at"] = ""
+        case["expert_decision_comment"] = ""
+        case["benchmark_selected"] = False
+        case["benchmark_selected_by"] = ""
+        case["benchmark_selected_at"] = ""
+    else:
+        case["expert_decision"] = decision
+        case["expert_decision_by"] = decided_by
+        case["expert_decision_at"] = now
+        case["expert_decision_comment"] = str(comment or "").strip()
+        case["benchmark_selected"] = decision == "accepted"
+        case["benchmark_selected_by"] = decided_by if decision == "accepted" else ""
+        case["benchmark_selected_at"] = now if decision == "accepted" else ""
+    case["expert_decisions"] = history
+    case["dataset"] = dataset
+    return upsert_case(case, owner=case.get("owner") or "llm_seed", source=case.get("source") or "manual")
+
+
+def update_case_fields(case_id: str, updates: dict[str, Any], *, edited_by: str, dataset: str = DEFAULT_DATASET) -> dict[str, Any]:
+    case = find_case(case_id, dataset=dataset)
+    if not case:
+        raise KeyError(case_id)
+
+    changed_fields = []
+    for key in EDITABLE_CASE_FIELDS:
+        if key in updates:
+            case[key] = updates[key]
+            changed_fields.append(key)
+    normalized = normalize_case(case, owner=case.get("owner") or "llm_seed", source=case.get("source") or "manual")
+    errors = validate_case(normalized, for_submit=False)
+    if errors:
+        raise ValueError("\n".join(errors))
+
+    now = utc_now()
+    history = normalized.get("edit_history")
+    if not isinstance(history, list):
+        history = []
+    history.append({
+        "editor": edited_by,
+        "changed_fields": sorted(changed_fields),
+        "created_at": now,
+    })
+    normalized["edit_history"] = history
+    normalized["last_edited_by"] = edited_by
+    normalized["last_edited_at"] = now
+    normalized["dataset"] = dataset
+    return upsert_case(normalized, owner=normalized.get("owner") or "llm_seed", source=normalized.get("source") or "manual")
 
 
 def summarize_reviews(reviews: list[dict[str, Any]]) -> dict[str, Any]:
