@@ -627,7 +627,7 @@ def create_app() -> Flask:
     def api_benchmark_cases():
         if not can_access_workspace():
             return jsonify({"error": "not logged in"}), 401
-        cases = [case for case in read_local_dataset(DEFAULT_DATASET) if case.get("benchmark_selected") or case.get("expert_decision") == "accepted"]
+        cases = [case for case in read_local_dataset(DEFAULT_DATASET) if case.get("benchmark_selected")]
         cases.sort(key=lambda item: item.get("benchmark_selected_at") or item.get("expert_decision_at") or item.get("updated_at", ""), reverse=True)
         return jsonify({"cases": cases})
 
@@ -1479,8 +1479,20 @@ function renderRows() {
     </div>
     <div><span class="pill">${escapeHtml(item.attack_type || '-')}</span></div>
     <div><span class="pill strong">${escapeHtml(item.task_type || '-')}</span></div>
-    <div class="rank-actions"><a class="button secondary" href="/review?case=${encodeURIComponent(item.id)}">查看</a></div>
+    <div class="rank-actions"><a class="button secondary" href="/review?case=${encodeURIComponent(item.id)}">查看</a><button type="button" class="danger" onclick="removeFromBenchmark('${escapeAttr(item.id)}')">移除</button></div>
   </article>`).join('');
+}
+async function removeFromBenchmark(id) {
+  const item = allCases.find(candidate => candidate.id === id);
+  const ok = window.confirm(`确认从 ClawTrap Bench 移除这条 case？\n\n${item?.task || id}`);
+  if (!ok) return;
+  try {
+    await toggleBenchmarkSelection(id, false);
+    allCases = allCases.filter(candidate => candidate.id !== id);
+    render();
+  } catch (error) {
+    window.alert(error.message || '移除失败');
+  }
 }
 controls.forEach(el => el.addEventListener('input', render));
 loadCases();
