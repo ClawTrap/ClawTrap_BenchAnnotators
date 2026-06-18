@@ -20,7 +20,7 @@
 - `interactive_form`
 - `metadata`
 
-审核页、原始库和 Benchmark 页面会显示并筛选数据来源。这里的数据来源指 JSON 文件来源，来源优先级为：
+审核页、原始库和 Benchmark 页面可以通过“数据文件”下拉框切换加载 `data/` 目录下的不同 JSON 文件。页面中的 Source 展示 JSON 文件来源，来源优先级为：
 
 `data_file` -> `data_source` -> `dataset + ".json"` -> `source_file`
 

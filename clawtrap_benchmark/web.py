@@ -10,7 +10,7 @@ from flask import Flask, jsonify, redirect, request, session
 from .auth import authenticate
 from .constants import ATTACK_TYPES, INTERACTIVE_FORMS, TASK_TYPES
 from .schema import normalize_case, validate_case
-from .storage import DEFAULT_DATASET, read_local_dataset, set_benchmark_selected, set_expert_decision, update_case_fields, upsert_case
+from .storage import DEFAULT_DATASET, list_file_datasets, read_local_dataset, set_benchmark_selected, set_expert_decision, update_case_fields, upsert_case
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -41,6 +41,17 @@ def js_value(value: Any) -> str:
 
 def can_access_workspace() -> bool:
     return session.get("role") in ("annotator", "admin")
+
+
+def available_datasets() -> list[str]:
+    return list_file_datasets() or [DEFAULT_DATASET]
+
+
+def requested_dataset(raw: dict[str, Any] | None = None) -> tuple[str | None, str | None]:
+    dataset = str(request.args.get("dataset") or (raw or {}).get("dataset") or DEFAULT_DATASET).strip()
+    if dataset not in available_datasets():
+        return None, f"unknown dataset: {dataset}"
+    return dataset, None
 
 
 def page(title: str, body: str) -> str:
@@ -570,14 +581,25 @@ def create_app() -> Flask:
         session.clear()
         return redirect("/login")
 
+    @app.get("/api/datasets")
+    def api_datasets():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        datasets = available_datasets()
+        default = DEFAULT_DATASET if DEFAULT_DATASET in datasets else datasets[0]
+        return jsonify({"datasets": datasets, "default": default})
+
     @app.get("/api/cases")
     def api_cases():
         if not can_access_workspace():
             return jsonify({"error": "not logged in"}), 401
+        dataset, error = requested_dataset()
+        if error:
+            return jsonify({"error": error}), 400
         username = session["username"]
-        cases = [case for case in read_local_dataset(DEFAULT_DATASET) if case.get("owner") in (username, "llm_seed")]
+        cases = [case for case in read_local_dataset(dataset or DEFAULT_DATASET) if case.get("owner") in (username, "llm_seed")]
         cases.sort(key=lambda item: item.get("updated_at", ""), reverse=True)
-        return jsonify({"cases": cases})
+        return jsonify({"cases": cases, "dataset": dataset})
 
     @app.post("/api/cases")
     def save_case():
@@ -602,17 +624,23 @@ def create_app() -> Flask:
     def api_all_cases():
         if not can_access_workspace():
             return jsonify({"error": "not logged in"}), 401
-        cases = read_local_dataset(DEFAULT_DATASET)
+        dataset, error = requested_dataset()
+        if error:
+            return jsonify({"error": error}), 400
+        cases = read_local_dataset(dataset or DEFAULT_DATASET)
         cases.sort(key=lambda item: item.get("updated_at", ""), reverse=True)
-        return jsonify({"cases": cases})
+        return jsonify({"cases": cases, "dataset": dataset})
 
     @app.get("/api/benchmark-cases")
     def api_benchmark_cases():
         if not can_access_workspace():
             return jsonify({"error": "not logged in"}), 401
-        cases = [case for case in read_local_dataset(DEFAULT_DATASET) if case.get("benchmark_selected")]
+        dataset, error = requested_dataset()
+        if error:
+            return jsonify({"error": error}), 400
+        cases = [case for case in read_local_dataset(dataset or DEFAULT_DATASET) if case.get("benchmark_selected")]
         cases.sort(key=lambda item: item.get("benchmark_selected_at") or item.get("expert_decision_at") or item.get("updated_at", ""), reverse=True)
-        return jsonify({"cases": cases})
+        return jsonify({"cases": cases, "dataset": dataset})
 
     @app.post("/api/cases/<case_id>/reviews")
     def save_review(case_id: str):
@@ -623,12 +651,16 @@ def create_app() -> Flask:
         if not can_access_workspace():
             return jsonify({"error": "not logged in"}), 401
         raw = request.get_json(silent=True) or {}
+        dataset, error = requested_dataset(raw)
+        if error:
+            return jsonify({"error": error}), 400
         try:
             saved = set_expert_decision(
                 case_id,
                 str(raw.get("decision", "")).strip(),
                 decided_by=session["username"],
                 comment=str(raw.get("comment", "")).strip(),
+                dataset=dataset or DEFAULT_DATASET,
             )
         except KeyError:
             return jsonify({"error": "case not found"}), 404
@@ -643,8 +675,11 @@ def create_app() -> Flask:
         if not can_access_workspace():
             return jsonify({"error": "not logged in"}), 401
         raw = request.get_json(silent=True) or {}
+        dataset, error = requested_dataset(raw)
+        if error:
+            return jsonify({"error": error}), 400
         try:
-            saved = update_case_fields(case_id, raw, edited_by=session["username"])
+            saved = update_case_fields(case_id, raw, edited_by=session["username"], dataset=dataset or DEFAULT_DATASET)
         except KeyError:
             return jsonify({"error": "case not found"}), 404
         except ValueError as exc:
@@ -658,8 +693,11 @@ def create_app() -> Flask:
         if not can_access_workspace():
             return jsonify({"error": "login required"}), 401
         raw = request.get_json(silent=True) or {}
+        dataset, error = requested_dataset(raw)
+        if error:
+            return jsonify({"error": error}), 400
         try:
-            saved = set_benchmark_selected(case_id, bool(raw.get("selected")), selected_by=session.get("username") or "unknown")
+            saved = set_benchmark_selected(case_id, bool(raw.get("selected")), selected_by=session.get("username") or "unknown", dataset=dataset or DEFAULT_DATASET)
         except KeyError:
             return jsonify({"error": "case not found"}), 404
         except RuntimeError as exc:
@@ -836,9 +874,9 @@ def review_page(user: str) -> str:
     <p class="hero-copy">{hero_copy}</p>
   </section>
   <section class="panel toolbar review-toolbar">
+    <div><label>数据文件</label><div class="select-shell"><select id="datasetFilter"></select></div></div>
     <div><label>搜索</label><input id="reviewSearch"></div>
     <div><label>裁决状态</label><div class="select-shell"><select id="reviewDecisionFilter"><option value="">全部</option><option value="none">未裁决</option><option value="needs_discussion">存疑 Mark</option></select></div></div>
-    <div><label>数据来源</label><div class="select-shell"><select id="reviewSourceFilter"><option value="">全部</option></select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="reviewTaskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
     <div><label>攻击类型</label><div class="select-shell"><select id="reviewAttackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>植入形式</label><div class="select-shell"><select id="reviewFormFilter"><option value="">全部</option>{options(INTERACTIVE_FORMS)}</select></div></div>
@@ -872,9 +910,9 @@ def scenes_page(user: str) -> str:
     <p class="hero-copy">这里只读取本地数据文件，不区分云端与本地来源。用于快速检查原始 case 的类型、裁决状态和字段内容。</p>
   </section>
   <section class="panel toolbar">
+    <div><label>数据文件</label><div class="select-shell"><select id="datasetFilter"></select></div></div>
     <div><label>Benchmark</label><div class="select-shell"><select id="selectedFilter"><option value="">全部</option><option value="selected">已选中</option><option value="unselected">未选中</option></select></div></div>
     <div><label>裁决状态</label><div class="select-shell"><select id="decisionFilter"><option value="">全部</option><option value="none">未裁决</option><option value="accepted">已保留</option><option value="discarded">Discard</option><option value="needs_discussion">存疑 Mark</option></select></div></div>
-    <div><label>数据来源</label><div class="select-shell"><select id="sourceFilter"><option value="">全部</option></select></div></div>
     <div><label>攻击类型</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
     <div><label>搜索</label><input id="search"></div>
@@ -901,9 +939,9 @@ def benchmark_page(user: str) -> str:
     <p class="hero-copy">这里专门展示已保留进 benchmark 的 case。审核页做裁决，这里检查最终集合的规模、类型分布和具体内容。</p>
   </section>
   <section class="panel toolbar">
+    <div><label>数据文件</label><div class="select-shell"><select id="datasetFilter"></select></div></div>
     <div><label>攻击类型</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
-    <div><label>数据来源</label><div class="select-shell"><select id="sourceFilter"><option value="">全部</option></select></div></div>
     <div><label>搜索</label><input id="search"></div>
     <div class="row toolbar-actions"><button type="button" onclick="loadCases()">刷新</button></div>
   </section>
@@ -979,18 +1017,34 @@ function applyRanks(items) {
 function dataSourceLabel(item) {
   return item.data_file || item.data_source || (item.dataset ? `${item.dataset}.json` : '') || item.source_file || 'unknown';
 }
-function dataSourceMatches(item, value) {
-  return !value || dataSourceLabel(item) === value;
+function requestedDatasetFromUrl() {
+  return new URLSearchParams(window.location.search).get('dataset') || '';
 }
-function populateSourceFilter(selectId, cases) {
+function selectedDataset(selectId='datasetFilter') {
   const select = document.getElementById(selectId);
-  if (!select) return;
-  const current = select.value;
-  const sources = [...new Set(cases.map(dataSourceLabel).filter(Boolean))].sort();
-  select.innerHTML = '<option value="">全部</option>' + sources.map(source => `<option value="${escapeHtml(source)}">${escapeHtml(source)}</option>`).join('');
-  select.value = sources.includes(current) ? current : '';
+  return select?.value || requestedDatasetFromUrl() || 'cases';
+}
+function datasetQuery(selectId='datasetFilter') {
+  return `dataset=${encodeURIComponent(selectedDataset(selectId))}`;
+}
+async function ensureDatasetOptions(selectId='datasetFilter') {
+  const select = document.getElementById(selectId);
+  if (!select || select.options.length > 0) return selectedDataset(selectId);
+  const res = await fetch('/api/datasets');
+  const data = await res.json();
+  const datasets = data.datasets || [];
+  const requested = requestedDatasetFromUrl();
+  const value = datasets.includes(requested) ? requested : (data.default || datasets[0] || 'cases');
+  select.innerHTML = datasets.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}.json</option>`).join('');
+  select.value = value;
   window.refreshClawTrapSelects?.();
   window.syncClawTrapSelects?.();
+  return value;
+}
+function updateDatasetInUrl(selectId='datasetFilter') {
+  const url = new URL(window.location.href);
+  url.searchParams.set('dataset', selectedDataset(selectId));
+  window.history.replaceState({}, '', url);
 }
 function decisionLabel(decision) {
   return ({accepted:'已保留', discarded:'Discard', needs_discussion:'存疑 Mark', clear:'未裁决'})[decision] || '未裁决';
@@ -1026,7 +1080,7 @@ function baseDetail(item) {
   return `<h2>${escapeHtml(item.task || '(未命名任务)')}</h2><div class="review-tags">${caseTags(item)}<span class="pill">${escapeHtml(summaryText(item))}</span></div>`;
 }
 async function toggleBenchmarkSelection(id, selected) {
-  const res = await fetch(`/api/cases/${encodeURIComponent(id)}/benchmark-selection`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({selected})});
+  const res = await fetch(`/api/cases/${encodeURIComponent(id)}/benchmark-selection`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({selected, dataset:selectedDataset()})});
   const data = await res.json();
   if (!res.ok) throw new Error((data.errors || [data.error || '更新选中状态失败']).join('\n'));
   const index = allCases.findIndex(item => item.id === data.case.id);
@@ -1173,10 +1227,11 @@ function collectListValues(name) {
     .filter(Boolean);
 }
 async function loadReviewCases() {
-  const res = await fetch('/api/all-cases');
+  await ensureDatasetOptions();
+  updateDatasetInUrl();
+  const res = await fetch(`/api/all-cases?${datasetQuery()}`);
   const data = await res.json();
   allCases = data.cases || [];
-  populateSourceFilter('reviewSourceFilter', allCases);
   if (readOnlyReview) {
     document.querySelector('.review-toolbar')?.remove();
     document.querySelector('.review-poolbar')?.remove();
@@ -1191,11 +1246,10 @@ async function loadReviewCases() {
 function filterReviewCases() {
   const q = (document.getElementById('reviewSearch')?.value || '').trim().toLowerCase();
   const decision = document.getElementById('reviewDecisionFilter')?.value || '';
-  const source = document.getElementById('reviewSourceFilter')?.value || '';
   const attack = document.getElementById('reviewAttackFilter')?.value || '';
   const task = document.getElementById('reviewTaskFilter')?.value || '';
   const form = document.getElementById('reviewFormFilter')?.value || '';
-  filteredCases = allCases.filter(item => isReviewCandidate(item) && matchesDecisionStatus(item, decision) && dataSourceMatches(item, source) && (!attack || item.attack_type === attack) && (!task || item.task_type === task) && (!form || (item.interactive_form || []).includes(form)) && (!q || JSON.stringify(item).toLowerCase().includes(q)));
+  filteredCases = allCases.filter(item => isReviewCandidate(item) && matchesDecisionStatus(item, decision) && (!attack || item.attack_type === attack) && (!task || item.task_type === task) && (!form || (item.interactive_form || []).includes(form)) && (!q || JSON.stringify(item).toLowerCase().includes(q)));
   if (!filteredCases.some(item => item.id === selectedId)) selectedId = filteredCases[0]?.id || null;
   renderReviewPicker();
   renderDetail();
@@ -1255,7 +1309,7 @@ async function submitDecision(decision) {
   const editSaved = await saveCurrentEdit({rerender:false});
   if (!editSaved) return;
   const comment = document.getElementById('decisionComment')?.value || '';
-  const res = await fetch(`/api/cases/${encodeURIComponent(item.id)}/expert-decision`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({decision, comment})});
+  const res = await fetch(`/api/cases/${encodeURIComponent(item.id)}/expert-decision`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({decision, comment, dataset:selectedDataset()})});
   const data = await res.json();
   if (!res.ok) {
     if (errorEl) errorEl.textContent = (data.errors || [data.error || '裁决失败']).join('\n');
@@ -1292,6 +1346,7 @@ async function saveCurrentEdit({rerender=true} = {}) {
   payload.success_states = collectListValues('success_states');
   payload.failure_states = collectListValues('failure_states');
   payload.metadata = collectListValues('metadata');
+  payload.dataset = selectedDataset();
   const res = await fetch(`/api/cases/${encodeURIComponent(item.id)}/expert-edit`, {method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
   const data = await res.json();
   if (!res.ok) {
@@ -1303,8 +1358,8 @@ async function saveCurrentEdit({rerender=true} = {}) {
   return true;
 }
 document.getElementById('reviewSearch')?.addEventListener('input', filterReviewCases);
+document.getElementById('datasetFilter')?.addEventListener('input', loadReviewCases);
 document.getElementById('reviewDecisionFilter')?.addEventListener('input', filterReviewCases);
-document.getElementById('reviewSourceFilter')?.addEventListener('input', filterReviewCases);
 document.getElementById('reviewAttackFilter')?.addEventListener('input', filterReviewCases);
 document.getElementById('reviewTaskFilter')?.addEventListener('input', filterReviewCases);
 document.getElementById('reviewFormFilter')?.addEventListener('input', filterReviewCases);
@@ -1314,9 +1369,11 @@ loadReviewCases();
 
 def scenes_js() -> str:
     return shared_case_js() + r"""
-const controls = ['selectedFilter','decisionFilter','sourceFilter','attackFilter','taskFilter','search'].map(id => document.getElementById(id));
+const controls = ['datasetFilter','selectedFilter','decisionFilter','attackFilter','taskFilter','search'].map(id => document.getElementById(id));
 async function loadCases() {
-  const res = await fetch('/api/all-cases');
+  await ensureDatasetOptions();
+  updateDatasetInUrl();
+  const res = await fetch(`/api/all-cases?${datasetQuery()}`);
   const data = await res.json();
   allCases = data.cases || [];
   populateSourceFilter('sourceFilter', allCases);
@@ -1325,14 +1382,12 @@ async function loadCases() {
 function render() {
   const selected = document.getElementById('selectedFilter').value;
   const decision = document.getElementById('decisionFilter').value;
-  const source = document.getElementById('sourceFilter').value;
   const attack = document.getElementById('attackFilter').value;
   const task = document.getElementById('taskFilter').value;
   const q = document.getElementById('search').value.trim().toLowerCase();
   filteredCases = allCases.filter(item =>
     (!selected || (selected === 'selected') === Boolean(item.benchmark_selected)) &&
     matchesDecision(item, decision) &&
-    dataSourceMatches(item, source) &&
     (!attack || item.attack_type === attack) &&
     (!task || item.task_type === task) &&
     (!q || [item.id, item.owner, item.task].join(' ').toLowerCase().includes(q))
@@ -1377,19 +1432,21 @@ function rankRow(item, index) {
     </div>
     <div>${decisionPill(item)}</div>
     <div><span class="pill">${escapeHtml(item.status || 'draft')}</span></div>
-    <div class="rank-actions"><a class="button secondary" href="/review?case=${encodeURIComponent(item.id)}">去审核</a></div>
+    <div class="rank-actions"><a class="button secondary" href="/review?case=${encodeURIComponent(item.id)}&dataset=${encodeURIComponent(selectedDataset())}">去审核</a></div>
   </article>`;
 }
-controls.forEach(el => el.addEventListener('input', render));
+controls.forEach(el => el.addEventListener('input', el?.id === 'datasetFilter' ? loadCases : render));
 loadCases();
 """
 
 
 def benchmark_js() -> str:
     return shared_case_js() + r"""
-const controls = ['attackFilter','taskFilter','sourceFilter','search'].map(id => document.getElementById(id));
+const controls = ['datasetFilter','attackFilter','taskFilter','search'].map(id => document.getElementById(id));
 async function loadCases() {
-  const res = await fetch('/api/benchmark-cases');
+  await ensureDatasetOptions();
+  updateDatasetInUrl();
+  const res = await fetch(`/api/benchmark-cases?${datasetQuery()}`);
   const data = await res.json();
   allCases = data.cases || [];
   populateSourceFilter('sourceFilter', allCases);
@@ -1398,12 +1455,10 @@ async function loadCases() {
 function render() {
   const attack = document.getElementById('attackFilter').value;
   const task = document.getElementById('taskFilter').value;
-  const source = document.getElementById('sourceFilter').value;
   const q = document.getElementById('search').value.trim().toLowerCase();
   filteredCases = allCases.filter(item =>
     (!attack || item.attack_type === attack) &&
     (!task || item.task_type === task) &&
-    dataSourceMatches(item, source) &&
     (!q || [item.id, item.owner, item.task, benchmarkReviewer(item), dataSourceLabel(item)].join(' ').toLowerCase().includes(q))
   );
   renderStats();
@@ -1437,7 +1492,7 @@ function renderRows() {
     <div><span class="pill">${escapeHtml(benchmarkReviewer(item) || '-')}</span></div>
     <div><span class="pill">${escapeHtml(item.attack_type || '-')}</span></div>
     <div><span class="pill strong">${escapeHtml(item.task_type || '-')}</span></div>
-    <div class="rank-actions"><a class="button secondary" href="/review?mode=view&case=${encodeURIComponent(item.id)}">查看</a><button type="button" class="danger" onclick="removeFromBenchmark('${escapeAttr(item.id)}')">移除</button></div>
+    <div class="rank-actions"><a class="button secondary" href="/review?mode=view&case=${encodeURIComponent(item.id)}&dataset=${encodeURIComponent(selectedDataset())}">查看</a><button type="button" class="danger" onclick="removeFromBenchmark('${escapeAttr(item.id)}')">移除</button></div>
   </article>`).join('');
 }
 async function removeFromBenchmark(id) {
@@ -1452,7 +1507,7 @@ async function removeFromBenchmark(id) {
     window.alert(error.message || '移除失败');
   }
 }
-controls.forEach(el => el.addEventListener('input', render));
+controls.forEach(el => el.addEventListener('input', el?.id === 'datasetFilter' ? loadCases : render));
 loadCases();
 """
 
