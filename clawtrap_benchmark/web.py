@@ -323,7 +323,7 @@ def page(title: str, body: str) -> str:
     .focus-header .focus-title {{ color:var(--text); }}
     .focus-header .meta {{ color:var(--muted); }}
     .focus-meta {{ display:flex; flex-wrap:wrap; gap:7px; margin-top:9px; }}
-    .focus-header .review-edit-form {{ margin-top:14px; }}
+    .focus-header .review-edit-form {{ margin-top:12px; }}
     .focus-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }}
     .focus-block {{ border:1px solid var(--line); border-radius:8px; background:rgba(247,247,242,.74); padding:16px; }}
     .focus-block.full {{ grid-column:1 / -1; }}
@@ -335,8 +335,8 @@ def page(title: str, body: str) -> str:
     .review-edit-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }}
     .review-edit-grid .full {{ grid-column:1 / -1; }}
     .review-edit-field {{ display:grid; gap:5px; }}
-    .review-edit-field label {{ margin:0; color:var(--accent-strong); font-size:10px; font-weight:900; letter-spacing:0; text-transform:uppercase; }}
-    .review-edit-field textarea {{ min-height:82px; background:rgba(255,253,250,.78); line-height:1.45; }}
+    .review-edit-field label {{ margin:0; color:var(--accent-strong); font-size:13px; font-weight:900; letter-spacing:0; }}
+    .review-edit-field textarea {{ min-height:82px; background:rgba(255,253,250,.78); line-height:1.5; font-size:14px; font-weight:520; }}
     .review-edit-field.compact textarea {{ min-height:54px; }}
     .review-edit-field.tall textarea {{ min-height:98px; }}
     .review-edit-field.short textarea {{ min-height:66px; }}
@@ -1118,10 +1118,7 @@ function editField(name, label, value, className='') {
 function focusedReviewDetail(item) {
   return `<div class="focus-case">
     <section class="focus-card focus-header">
-      <div>
-        <h2 class="focus-title">${escapeHtml(item.task || '(未命名任务)')}</h2>
-        <div class="focus-meta">${compactTags(item)}</div>
-      </div>
+      <div class="focus-meta">${compactTags(item)}</div>
       <form id="expertEditForm" class="review-edit-form">
         <div class="review-edit-grid">
           ${editField('task', '用户任务 task', item.task, 'tall')}
