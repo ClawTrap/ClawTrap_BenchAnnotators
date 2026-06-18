@@ -341,7 +341,7 @@ def page(title: str, body: str) -> str:
     .review-edit-field.compact textarea {{ min-height:54px; }}
     .review-edit-field.tall textarea {{ min-height:98px; }}
     .review-edit-field.short textarea {{ min-height:66px; }}
-    .list-review-field {{ display:grid; gap:10px; }}
+    .list-review-field {{ display:grid; grid-template-rows:auto 1fr auto; gap:10px; align-self:stretch; }}
     .list-review-field.full {{ grid-column:1 / -1; }}
     .list-review-field.metadata-field .list-review-items {{ min-height:104px; }}
     .list-review-field > label {{ margin:0; color:var(--accent-strong); font-size:20px; font-weight:900; letter-spacing:0; line-height:1.18; }}
@@ -351,6 +351,7 @@ def page(title: str, body: str) -> str:
     .list-review-item textarea:focus {{ box-shadow:none; background:transparent; }}
     .list-review-actions {{ display:flex; align-items:flex-start; gap:5px; padding-top:1px; }}
     .list-review-actions button,.list-add-button {{ width:30px; min-width:30px; height:30px; min-height:30px; padding:0; border-radius:8px; font-size:14px; font-weight:900; line-height:1; }}
+    .list-review-actions .trash {{ font-size:13px; }}
     .list-review-item.approved {{ border-color:rgba(15,118,110,.34); background:rgba(247,255,251,.9); }}
     .list-review-item.needs-revision {{ border-color:rgba(217,119,6,.34); background:rgba(255,251,235,.9); }}
     .list-review-item.removed {{ opacity:.48; background:rgba(255,241,242,.78); border-color:rgba(180,35,24,.28); }}
@@ -1135,7 +1136,7 @@ function listReviewField(name, label, items, className='') {
   const values = Array.isArray(items) ? items : splitLines(items);
   const controls = typeof readOnlyReview !== 'undefined' && readOnlyReview ? '' : `<div class="list-review-actions">
     <button type="button" class="secondary" title="Approve" onclick="approveListItem(this)">✓</button>
-    <button type="button" class="danger" title="Remove" onclick="removeListItem(this)">×</button>
+    <button type="button" class="danger trash" title="Delete" onclick="removeListItem(this)">🗑</button>
     <button type="button" class="secondary" title="Revise" onclick="reviseListItem(this)">✎</button>
   </div>`;
   const rows = (values.length ? values : ['']).map(value => `<div class="list-review-item" data-list-item>
@@ -1156,7 +1157,7 @@ function focusedReviewDetail(item, includeDecision=false) {
         <div class="review-edit-grid">
           ${editField('task', 'Task', item.task, 'tall')}
           ${editField('target', 'Target', item.target, 'tall')}
-          ${editField('attack_method', 'Attack Method', item.attack_method)}
+          ${editField('attack_method', 'Attack Method', item.attack_method, 'full')}
           ${listReviewField('success_states', 'Success States', item.success_states)}
           ${listReviewField('failure_states', 'Failure States', item.failure_states)}
           ${listReviewField('metadata', 'Metadata', item.metadata, 'full metadata-field')}
@@ -1209,10 +1210,8 @@ function approveListItem(button) {
 function removeListItem(button) {
   const item = listItemFromButton(button);
   if (!item) return;
-  item.classList.remove('approved', 'needs-revision');
-  item.classList.toggle('removed');
-  const input = item.querySelector('[data-list-input]');
-  if (input) input.setAttribute('readonly', '');
+  if (!window.confirm('确认删除这一条 state / metadata 吗？')) return;
+  item.remove();
 }
 function reviseListItem(button) {
   const item = listItemFromButton(button);
@@ -1235,7 +1234,7 @@ function addListItem(name) {
   row.setAttribute('data-list-item', '');
   row.innerHTML = `<textarea data-list-input></textarea><div class="list-review-actions">
     <button type="button" class="secondary" title="Approve" onclick="approveListItem(this)">✓</button>
-    <button type="button" class="danger" title="Remove" onclick="removeListItem(this)">×</button>
+    <button type="button" class="danger trash" title="Delete" onclick="removeListItem(this)">🗑</button>
     <button type="button" class="secondary" title="Revise" onclick="reviseListItem(this)">✎</button>
   </div>`;
   list.appendChild(row);
