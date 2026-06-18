@@ -31,6 +31,10 @@ def database_url() -> str | None:
     return os.environ.get("DATABASE_URL") or os.environ.get("POSTGRES_URL") or os.environ.get("POSTGRES_URL_NON_POOLING")
 
 
+def database_configured() -> bool:
+    return bool(database_url())
+
+
 def use_database() -> bool:
     return os.environ.get("CLAWTRAP_USE_DATABASE") == "1" and bool(database_url())
 
@@ -40,7 +44,7 @@ def is_vercel_runtime() -> bool:
 
 
 def require_writable_storage() -> None:
-    if is_vercel_runtime() and not use_database():
+    if is_vercel_runtime() and not database_configured():
         raise RuntimeError("Persistent writes on Vercel require DATABASE_URL or POSTGRES_URL.")
 
 
@@ -92,7 +96,7 @@ def read_cases() -> list[dict[str, Any]]:
 
 
 def find_case(case_id: str, *, dataset: str = DEFAULT_DATASET) -> dict[str, Any] | None:
-    for case in read_dataset(dataset):
+    for case in read_local_dataset(dataset):
         if case.get("id") == case_id:
             return case
     return None
@@ -113,7 +117,7 @@ def write_cases(cases: list[dict[str, Any]]) -> None:
 
 def upsert_case(raw_case: dict[str, Any], *, owner: str, source: str = "manual") -> dict[str, Any]:
     raw_case = {key: value for key, value in raw_case.items() if key != "storage_origin"}
-    if use_database():
+    if database_configured():
         normalized = normalize_case(raw_case, owner=owner, source=source)
         ensure_db()
         with connect_db() as conn:
@@ -326,8 +330,35 @@ def read_file_dataset(dataset: str) -> list[dict[str, Any]]:
     return [enrich_case(case) for case in data]
 
 
+def read_persisted_case_map(dataset: str = DEFAULT_DATASET) -> dict[str, dict[str, Any]]:
+    if not database_configured():
+        return {}
+    ensure_db()
+    with connect_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("select case_data from clawtrap_cases where dataset = %s", (dataset,))
+            rows = cur.fetchall()
+    persisted: dict[str, dict[str, Any]] = {}
+    for row in rows:
+        case = row[0]
+        if isinstance(case, dict) and case.get("id"):
+            persisted[str(case["id"])] = case
+    return persisted
+
+
 def read_local_dataset(dataset: str = DEFAULT_DATASET) -> list[dict[str, Any]]:
-    return [enrich_case(case, storage_origin="local_json") for case in read_file_dataset(dataset)]
+    local_cases = read_file_dataset(dataset)
+    persisted = read_persisted_case_map(dataset)
+    merged_cases = []
+    for case in local_cases:
+        case_id = case.get("id")
+        if case_id and str(case_id) in persisted:
+            merged = {**case, **persisted[str(case_id)]}
+            merged["id"] = case_id
+            merged_cases.append(enrich_case(merged, storage_origin="local_json"))
+        else:
+            merged_cases.append(enrich_case(case, storage_origin="local_json"))
+    return merged_cases
 
 
 def list_datasets() -> list[str]:
