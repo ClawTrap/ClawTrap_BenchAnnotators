@@ -221,6 +221,12 @@ def page(title: str, body: str) -> str:
     .stat strong {{ display:block; font-size:23px; line-height:1; color:var(--text); }}
     .stat span {{ display:block; color:var(--muted); font-size:12px; margin-top:7px; font-weight:700; }}
     .review-layout {{ display:grid; grid-template-columns:minmax(390px,.92fr) minmax(560px,1.35fr); gap:15px; align-items:start; }}
+    .review-focus {{ max-width:1440px; }}
+    .review-focus .hero {{ margin-bottom:14px; }}
+    .review-focus .hero-title {{ max-width:760px; }}
+    .review-focus .hero-copy {{ max-width:720px; }}
+    .review-focus .review-toolbar {{ grid-template-columns:minmax(260px,1fr) 176px auto; padding:12px; margin-bottom:12px; }}
+    .review-focus .review-layout {{ grid-template-columns:minmax(300px,.72fr) minmax(680px,1.68fr); gap:18px; }}
     .review-column {{ min-width:0; }}
     .result-heading {{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin:0 0 9px; padding:0 2px; }}
     .result-heading h2 {{ margin:0; font-size:22px; }}
@@ -247,6 +253,12 @@ def page(title: str, body: str) -> str:
       -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
     }}
     .review-tags {{ display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }}
+    .review-focus .review-item {{ padding:13px 13px 13px 16px; background:rgba(255,254,250,.72); }}
+    .review-focus .review-item-title {{ font-size:13px; -webkit-line-clamp:3; display:-webkit-box; -webkit-box-orient:vertical; overflow:hidden; }}
+    .review-focus .review-item-attack,.review-focus .review-item .meta,.review-focus .review-item .review-tags {{ display:none; }}
+    .review-focus .rank-line {{ margin-top:8px; }}
+    .review-focus .rank-badge {{ min-width:38px; padding:4px 7px; }}
+    .review-focus .score-badge {{ padding:4px 7px; }}
     .pill {{ flex:none; border:1px solid var(--line); border-radius:999px; padding:4px 8px; font-size:11px; color:var(--muted); background:var(--panel-soft); font-weight:800; }}
     .pill.strong {{ color:var(--accent-strong); border-color:rgba(138,98,61,.28); background:var(--accent-soft); }}
     .pill.origin-local {{ color:var(--accent-strong); border-color:rgba(148,104,61,.32); background:rgba(242,231,215,.78); }}
@@ -261,6 +273,38 @@ def page(title: str, body: str) -> str:
     .detail-panel {{ position:sticky; top:82px; padding:22px; max-height:calc(100vh - 108px); overflow:auto; background:linear-gradient(180deg,rgba(255,254,250,.98),rgba(249,244,236,.92)); border-top:3px solid rgba(148,104,61,.42); }}
     .detail-panel h2 {{ font-size:21px; line-height:1.38; margin:0 0 9px; }}
     .detail-empty {{ color:var(--muted); padding:42px 28px; text-align:center; background:var(--panel-soft); border:1px dashed var(--line-strong); border-radius:8px; font-weight:700; }}
+    .review-focus .detail-panel {{ padding:0; background:transparent; border:0; box-shadow:none; max-height:calc(100vh - 86px); }}
+    .focus-case {{ display:grid; gap:12px; }}
+    .focus-card {{ border:1px solid var(--line); border-radius:8px; background:rgba(255,254,250,.94); box-shadow:var(--shadow); padding:18px; }}
+    .focus-header {{ display:grid; grid-template-columns:minmax(0,1fr) auto; gap:14px; align-items:start; border-top:3px solid rgba(148,104,61,.42); }}
+    .focus-title {{ margin:0; color:var(--text); font-family:Georgia,"Times New Roman","Songti SC",serif; font-size:26px; line-height:1.25; letter-spacing:-.02em; }}
+    .focus-meta {{ display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }}
+    .focus-action {{ min-width:190px; }}
+    .focus-action .benchmark-action {{ margin-top:0; }}
+    .focus-action .benchmark-action button {{ min-height:38px; }}
+    .focus-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }}
+    .focus-block {{ border:1px solid var(--line); border-radius:8px; background:rgba(246,240,230,.48); padding:14px; }}
+    .focus-block.full {{ grid-column:1 / -1; }}
+    .focus-label {{ display:block; margin-bottom:7px; color:var(--accent-strong); font-size:10px; font-weight:900; letter-spacing:.12em; text-transform:uppercase; }}
+    .focus-text {{ margin:0; color:var(--ink); font-size:15px; line-height:1.72; font-weight:650; }}
+    .focus-attack {{ border-color:rgba(180,35,24,.16); background:rgba(180,35,24,.035); }}
+    .focus-attack .focus-label {{ color:#9b2c22; }}
+    .judgement-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }}
+    .judgement {{ min-height:150px; border:1px solid var(--line); border-radius:8px; padding:14px 14px 12px; background:rgba(255,254,250,.78); }}
+    .judgement.success {{ border-color:rgba(15,118,110,.2); background:rgba(15,118,110,.055); }}
+    .judgement.failure {{ border-color:rgba(180,35,24,.18); background:rgba(180,35,24,.045); }}
+    .judgement h3 {{ margin:0 0 10px; font-size:13px; letter-spacing:.04em; text-transform:uppercase; }}
+    .judgement.success h3 {{ color:#0f5f59; }}
+    .judgement.failure h3 {{ color:#9b2c22; }}
+    .judgement ul,.metadata-list {{ margin:0; padding-left:19px; color:var(--ink); font-size:14px; line-height:1.65; }}
+    .metadata-strip {{ display:flex; flex-wrap:wrap; gap:7px; }}
+    .metadata-token {{ display:inline-flex; max-width:100%; padding:6px 9px; border:1px solid var(--line); border-radius:7px; background:rgba(246,240,230,.62); color:var(--muted); font-size:12px; font-weight:750; line-height:1.45; }}
+    .review-score-panel {{ margin-top:0; }}
+    .review-score-panel .section-heading {{ margin-bottom:10px; }}
+    .review-score-panel textarea {{ min-height:74px; }}
+    .review-score-panel .score-grid {{ grid-template-columns:repeat(4,minmax(110px,1fr)); }}
+    .review-score-panel .score-grid label {{ padding:11px; border:1px solid var(--line); border-radius:8px; background:rgba(246,240,230,.42); color:var(--muted); }}
+    .review-score-panel .score-grid input {{ margin-top:6px; border-color:rgba(148,104,61,.2); }}
     dl {{ margin:18px 0 0; display:grid; gap:12px; }}
     dt {{ font-size:10px; color:var(--accent-strong); font-weight:900; text-transform:uppercase; letter-spacing:.12em; margin:0; }}
     dd {{ margin:5px 0 0; font-size:13px; line-height:1.66; background:rgba(246,240,230,.72); border:1px solid var(--line); border-radius:8px; padding:11px 12px; }}
@@ -273,6 +317,8 @@ def page(title: str, body: str) -> str:
       .hero-title {{ font-size:2.1rem; }}
       .select-card-menu {{ max-height:42vh; }}
       .toolbar-actions {{ grid-column:auto; }} .detail-panel,.sticky-panel {{ position:static; max-height:none; }}
+      .focus-header,.focus-grid,.judgement-grid,.review-focus .review-layout,.review-focus .review-toolbar,.review-score-panel .score-grid {{ grid-template-columns:1fr; }}
+      .focus-action {{ min-width:0; }}
     }}
   </style>
 </head>
@@ -718,11 +764,11 @@ def design_page(user: str) -> str:
 def review_page(user: str) -> str:
     return page("ClawTrap 场景审核", f"""
 {app_header(user, "Case review and scoring", "review")}
-<main class="admin-main">
+<main class="admin-main review-focus">
   <section class="hero compact">
     <div class="eyebrow">Review</div>
-    <h2 class="hero-title">审核已有场景并提交评分</h2>
-    <p class="hero-copy">选择左侧 case，在右侧查看任务、攻击方式、判定状态和 metadata，并从可实现性、准确性、描述清晰度和综合质量四个维度打分。</p>
+    <h2 class="hero-title">聚焦当前场景，完成质量评估</h2>
+    <p class="hero-copy">左侧用于快速定位 case；右侧只保留审核所需信息：任务、攻击、成功/失败判定和评分。</p>
   </section>
   <section class="panel toolbar review-toolbar">
     <div><label>搜索</label><input id="reviewSearch" placeholder="task / target / attack_method / owner / id"></div>
@@ -927,6 +973,47 @@ function benchmarkButton(item, handlerName='toggleSelectedCase') {
   const selected = Boolean(item.benchmark_selected);
   return `<div class="benchmark-action"><button type="button" class="${selected ? 'selected' : ''}" onclick="${handlerName}('${escapeAttr(item.id)}', ${selected ? 'false' : 'true'})">${selected ? '取消选中 benchmark' : '选中进入 benchmark'}</button></div>`;
 }
+function compactTags(item) {
+  return `<span class="pill strong">${escapeHtml(item.task_type || '-')}</span><span class="pill">${escapeHtml(item.attack_type || '-')}</span><span class="pill">${escapeHtml((item.interactive_form || []).join(' / ') || '-')}</span>${originPill(item)}${item.benchmark_selected ? '<span class="pill selected-mark">已选入 benchmark</span>' : ''}`;
+}
+function focusList(items) {
+  if (!Array.isArray(items) || !items.length) return '<ul><li>-</li></ul>';
+  return `<ul>${items.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`;
+}
+function metadataTokens(items) {
+  if (!Array.isArray(items) || !items.length) return '<span class="metadata-token">无补充信息</span>';
+  return items.map(item => `<span class="metadata-token">${escapeHtml(item)}</span>`).join('');
+}
+function focusedReviewDetail(item) {
+  return `<div class="focus-case">
+    <section class="focus-card focus-header">
+      <div>
+        <h2 class="focus-title">${escapeHtml(item.task || '(未命名任务)')}</h2>
+        <div class="meta">${escapeHtml(item.id)} · ${escapeHtml(item.owner || '')} · ${escapeHtml(item.created_at || '')}</div>
+        <div class="rank-line"><span class="rank-badge">#${escapeHtml(item.__rank ?? '-')}</span><span class="score-badge">总分 ${escapeHtml(totalScore(item) ?? '-')}</span><span class="pill">${escapeHtml(summaryText(item))}</span></div>
+        <div class="focus-meta">${compactTags(item)}</div>
+      </div>
+      <div class="focus-action">${benchmarkButton(item)}</div>
+    </section>
+    <section class="focus-card">
+      <div class="focus-grid">
+        <article class="focus-block"><span class="focus-label">User Task</span><p class="focus-text">${escapeHtml(item.task)}</p></article>
+        <article class="focus-block"><span class="focus-label">Expected Target</span><p class="focus-text">${escapeHtml(item.target)}</p></article>
+        <article class="focus-block focus-attack full"><span class="focus-label">MITM Attack</span><p class="focus-text">${escapeHtml(item.attack_method)}</p></article>
+      </div>
+    </section>
+    <section class="judgement-grid">
+      <article class="judgement success"><h3>Success Criteria</h3>${focusList(item.success_states)}</article>
+      <article class="judgement failure"><h3>Failure Criteria</h3>${focusList(item.failure_states)}</article>
+    </section>
+    <section class="focus-card">
+      <div class="focus-grid">
+        <article class="focus-block"><span class="focus-label">Implementation Notes</span><div class="metadata-strip">${metadataTokens(item.metadata)}</div></article>
+        <article class="focus-block"><span class="focus-label">Attack Logic</span><p class="focus-text">${escapeHtml(item.logic || '-')}</p></article>
+      </div>
+    </section>
+  </div>`;
+}
 function listText(items) { return Array.isArray(items) ? `<ul>${items.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : escapeHtml(items || ''); }
 function escapeHtml(value) { return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
 function escapeAttr(value) { return String(value ?? '').replace(/[\'\\]/g, ch => ch === '\\' ? '\\\\' : "\\'"); }
@@ -953,8 +1040,8 @@ function renderDetail() {
   const panel = document.getElementById('detailPanel');
   const item = filteredCases.find(candidate => candidate.id === selectedId);
   if (!item) { panel.innerHTML = '<div class="detail-empty">选择左侧条目进行审核</div>'; return; }
-  panel.innerHTML = `${baseDetail(item)}${benchmarkButton(item)}${detailFields(item, false)}
-    <form id="reviewForm" style="margin-top:18px">
+  panel.innerHTML = `${focusedReviewDetail(item)}
+    <form id="reviewForm" class="focus-card review-score-panel">
       <div class="section-heading"><div><p class="section-kicker">Scoring</p><h2>审核评分</h2></div></div>
       <div class="score-grid">
         <label>可实现性<input name="feasibility" type="number" min="1" max="5" value="4" required></label>
