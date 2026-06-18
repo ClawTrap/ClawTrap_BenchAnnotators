@@ -119,17 +119,18 @@ def page(title: str, body: str) -> str:
     .button, button {{
       border:1px solid var(--accent-strong); background:var(--accent-strong); color:#fff; padding:9px 15px;
       border-radius:999px; cursor:pointer; text-decoration:none; font-size:13px; font-weight:750;
-      box-shadow:none; letter-spacing:0; transition:background .14s ease, border-color .14s ease, color .14s ease, filter .14s ease;
+      box-shadow:0 1px 0 rgba(20,20,20,.08); letter-spacing:0;
+      transition:background .16s ease, border-color .16s ease, color .16s ease, box-shadow .16s ease, transform .12s ease, filter .16s ease;
     }}
-    button:hover,.button:hover {{ background:var(--accent); border-color:var(--accent); box-shadow:none; transform:none; filter:brightness(.98); }}
-    button:active,.button:active {{ transform:none; }}
+    button:hover,.button:hover {{ background:var(--accent); border-color:var(--accent); box-shadow:0 7px 18px rgba(157,37,44,.16); transform:translateY(-1px); filter:none; }}
+    button:active,.button:active {{ transform:translateY(1px) scale(.985); box-shadow:0 1px 4px rgba(20,20,20,.12); filter:brightness(.96); }}
     button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,.select-card-trigger:focus-visible,.choice-pill input:focus-visible + span {{
       outline:2px solid rgba(157,37,44,.38); outline-offset:2px;
     }}
-    .secondary {{ background:rgba(255,255,255,.55); color:var(--navy); border-color:var(--line-strong); box-shadow:none; }}
+    .secondary {{ background:rgba(255,255,255,.55); color:var(--navy); border-color:var(--line-strong); box-shadow:0 1px 0 rgba(20,20,20,.06); }}
     header .secondary {{ color:var(--navy); border-color:var(--line); }}
-    .secondary:hover {{ background:#fff; color:var(--navy); border-color:var(--line-strong); }}
-    header .secondary:hover {{ background:#fff; color:var(--navy); border-color:var(--line); }}
+    .secondary:hover {{ background:#fff; color:var(--navy); border-color:rgba(20,116,134,.42); box-shadow:0 7px 18px rgba(20,116,134,.12); }}
+    header .secondary:hover {{ background:#fff; color:var(--navy); border-color:rgba(20,116,134,.28); }}
     .panel,.case,.login,.detail-panel,.stat,.review-item {{
       background:rgba(255,253,250,.86); border:1px solid var(--line); border-radius:8px; box-shadow:none;
     }}
@@ -352,17 +353,25 @@ def page(title: str, body: str) -> str:
     .metadata-token {{ display:inline-flex; max-width:100%; padding:6px 9px; border:1px solid var(--line); border-radius:999px; background:rgba(255,253,250,.72); color:var(--muted); font-size:12px; font-weight:750; line-height:1.45; }}
     .decision-panel {{ display:grid; gap:12px; }}
     .decision-actions {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:9px; }}
-    .decision-actions button {{ min-height:42px; box-shadow:none; }}
+    .decision-actions button {{ min-height:42px; }}
     .decision-actions .accept {{ background:var(--green); border-color:var(--green); }}
+    .decision-actions .accept:hover {{ background:#0d6c66; border-color:#0d6c66; box-shadow:0 7px 18px rgba(15,118,110,.18); }}
     .decision-actions .discard {{ background:rgba(255,253,250,.72); color:var(--danger); border-color:rgba(180,35,24,.40); }}
+    .decision-actions .discard:hover {{ background:rgba(255,241,242,.95); color:var(--danger); border-color:rgba(180,35,24,.58); box-shadow:0 7px 18px rgba(180,35,24,.12); }}
     .decision-actions .mark {{ background:rgba(255,253,250,.72); color:#9a5b13; border-color:rgba(217,119,6,.44); }}
+    .decision-actions .mark:hover {{ background:rgba(255,251,235,.98); color:#8a4f0f; border-color:rgba(217,119,6,.62); box-shadow:0 7px 18px rgba(217,119,6,.12); }}
     .decision-actions .clear {{ background:rgba(255,253,250,.72); color:var(--muted); border-color:var(--line-strong); }}
-    .button.danger, button.danger {{ background:rgba(255,253,250,.72); color:var(--danger); border-color:rgba(180,35,24,.34); box-shadow:none; }}
-    .button.danger:hover, button.danger:hover {{ border-color:rgba(180,35,24,.52); background:rgba(255,241,242,.9); }}
+    .decision-actions .clear:hover {{ background:#fff; color:var(--navy); border-color:rgba(20,116,134,.36); box-shadow:0 7px 18px rgba(20,116,134,.1); }}
+    .button.danger, button.danger {{ background:rgba(255,253,250,.72); color:var(--danger); border-color:rgba(180,35,24,.34); box-shadow:0 1px 0 rgba(20,20,20,.06); }}
+    .button.danger:hover, button.danger:hover {{ color:var(--danger); border-color:rgba(180,35,24,.58); background:rgba(255,241,242,.95); box-shadow:0 7px 18px rgba(180,35,24,.12); }}
     dl {{ margin:18px 0 0; display:grid; gap:12px; }}
     dt {{ font-size:10px; color:var(--accent-strong); font-weight:900; text-transform:uppercase; letter-spacing:0; margin:0; }}
     dd {{ margin:5px 0 0; font-size:13px; line-height:1.66; background:rgba(247,247,242,.72); border:1px solid var(--line); border-radius:8px; padding:11px 12px; }}
     dd ul {{ margin:0; padding-left:18px; }}
+    @media (prefers-reduced-motion: reduce) {{
+      .button,button {{ transition:background .12s ease, border-color .12s ease, color .12s ease, box-shadow .12s ease; }}
+      button:hover,.button:hover,button:active,.button:active {{ transform:none; }}
+    }}
     @media (max-width:980px) {{
       .grid,.design-grid,.design-grid.design-only,.toolbar,.review-layout,.choice-grid,.overview-grid,.overview-stats,.field-grid,.rank-head,.rank-row {{ grid-template-columns:1fr; max-width:none; }}
       header {{ width:100%; padding:10px 14px; align-items:flex-start; border-radius:0; flex-direction:column; }}
