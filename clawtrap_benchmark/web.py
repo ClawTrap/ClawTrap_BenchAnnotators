@@ -264,14 +264,14 @@ def page(title: str, body: str) -> str:
     .review-focus .hero {{ margin-bottom:16px; }}
     .review-focus .hero-title {{ max-width:760px; }}
     .review-focus .hero-copy {{ max-width:720px; }}
-    .review-focus .review-toolbar {{ grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); padding:12px; margin-bottom:12px; }}
+    .review-focus .review-toolbar {{ grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); padding:12px; margin:0 auto 12px; max-width:1180px; width:100%; }}
     .review-focus .review-layout {{ display:block; }}
-    .review-poolbar {{ display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:16px; padding:12px 14px; border:1px solid var(--line); border-radius:8px; background:rgba(255,253,250,.72); box-shadow:none; }}
+    .review-poolbar {{ display:flex; justify-content:space-between; gap:12px; align-items:center; margin:0 auto 16px; max-width:1180px; width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:8px; background:rgba(255,253,250,.72); box-shadow:none; }}
     .review-nav-actions {{ display:flex; align-items:flex-end; gap:8px; justify-content:flex-end; flex-wrap:wrap; }}
     .review-case-picker {{ display:flex; align-items:center; gap:10px; margin-bottom:0; }}
     .review-pool-label {{ color:var(--muted); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:0; }}
     .pool-count {{ display:inline-flex; align-items:center; min-height:42px; padding:9px 11px; border:1px solid var(--line); border-radius:999px; background:rgba(247,247,242,.74); color:var(--muted); font-size:12px; font-weight:850; white-space:nowrap; }}
-    .review-stage {{ max-width:1080px; margin:0 auto; }}
+    .review-stage {{ max-width:1180px; width:100%; margin:0 auto; }}
     .review-context-line {{ display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; }}
     .review-column {{ min-width:0; }}
     .result-heading {{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin:0 0 9px; padding:0 2px; }}
@@ -315,13 +315,13 @@ def page(title: str, body: str) -> str:
     .detail-panel h2 {{ font-size:21px; line-height:1.38; margin:0 0 9px; }}
     .detail-empty {{ color:var(--muted); padding:42px 28px; text-align:center; background:var(--panel-soft); border:1px dashed var(--line-strong); border-radius:8px; font-weight:700; }}
     .review-focus .detail-panel {{ position:static; padding:0; background:transparent; border:0; box-shadow:none; max-height:none; overflow:visible; }}
-    .focus-case {{ display:grid; gap:14px; }}
-    .focus-card {{ border:1px solid var(--line); border-radius:8px; background:rgba(255,253,250,.86); box-shadow:none; padding:24px; }}
+    .focus-case {{ display:grid; gap:10px; }}
+    .focus-card {{ border:1px solid var(--line); border-radius:8px; background:rgba(255,253,250,.86); box-shadow:none; padding:18px; }}
     .focus-header {{ border-top:2px solid rgba(20,116,134,.48); background:rgba(255,253,250,.9); color:var(--text); }}
-    .focus-title {{ margin:0; color:var(--text); font-size:26px; line-height:1.28; letter-spacing:0; font-weight:900; }}
+    .focus-title {{ margin:0; color:var(--text); font-size:22px; line-height:1.25; letter-spacing:0; font-weight:900; }}
     .focus-header .focus-title {{ color:var(--text); }}
     .focus-header .meta {{ color:var(--muted); }}
-    .focus-meta {{ display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }}
+    .focus-meta {{ display:flex; flex-wrap:wrap; gap:7px; margin-top:9px; }}
     .focus-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }}
     .focus-block {{ border:1px solid var(--line); border-radius:8px; background:rgba(247,247,242,.74); padding:16px; }}
     .focus-block.full {{ grid-column:1 / -1; }}
@@ -329,14 +329,15 @@ def page(title: str, body: str) -> str:
     .focus-text {{ margin:0; color:var(--ink); font-size:15px; line-height:1.72; font-weight:650; }}
     .focus-attack {{ border-color:rgba(157,37,44,.22); background:rgba(255,248,248,.76); }}
     .focus-attack .focus-label {{ color:var(--accent); }}
-    .review-edit-form {{ display:grid; gap:14px; }}
-    .review-edit-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }}
+    .review-edit-form {{ display:grid; gap:10px; }}
+    .review-edit-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }}
     .review-edit-grid .full {{ grid-column:1 / -1; }}
-    .review-edit-field {{ display:grid; gap:7px; }}
+    .review-edit-field {{ display:grid; gap:5px; }}
     .review-edit-field label {{ margin:0; color:var(--accent-strong); font-size:10px; font-weight:900; letter-spacing:0; text-transform:uppercase; }}
-    .review-edit-field textarea {{ min-height:104px; background:rgba(255,253,250,.78); }}
-    .review-edit-field.compact textarea {{ min-height:74px; }}
-    .review-edit-field.tall textarea {{ min-height:142px; }}
+    .review-edit-field textarea {{ min-height:82px; background:rgba(255,253,250,.78); line-height:1.45; }}
+    .review-edit-field.compact textarea {{ min-height:54px; }}
+    .review-edit-field.tall textarea {{ min-height:98px; }}
+    .review-edit-field.short textarea {{ min-height:66px; }}
     .review-edit-actions {{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding-top:2px; flex-wrap:wrap; }}
     .review-edit-actions .meta {{ max-width:640px; }}
     .judgement-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }}
@@ -758,7 +759,7 @@ def menu_page(user: str) -> str:
     <p class="section-kicker">Account</p>
     <h2>当前标注员</h2>
   <p>账户名和当前工作空间会显示在每个页面顶部。审核裁决、Mark notes 和后续查询都会关联到当前账户。</p>
-    <div class="account-row"><span class="pill strong">{user}</span><span class="pill">{role}</span><span class="pill">workspace ready</span></div>
+    <div class="account-row"><span class="pill strong">{user}</span><span class="pill">{role}</span></div>
   </article>
   <article class="overview-card">
     <p class="section-kicker">Dataset</p>
@@ -870,7 +871,7 @@ def review_page(user: str) -> str:
     <p class="hero-copy">当前审核只显示未完成处理或存疑的 case。保留进 Benchmark 或 Discard 后会自动进入下一条。</p>
   </section>
   <section class="panel toolbar review-toolbar">
-    <div><label>搜索</label><input id="reviewSearch" placeholder="task / target / attack_method / owner / id"></div>
+    <div><label>搜索</label><input id="reviewSearch" placeholder="task / target / attack_method / id"></div>
     <div><label>裁决状态</label><div class="select-shell"><select id="reviewDecisionFilter"><option value="">全部</option><option value="none">未裁决</option><option value="needs_discussion">存疑 Mark</option></select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="reviewTaskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
     <div><label>攻击类型</label><div class="select-shell"><select id="reviewAttackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
@@ -909,7 +910,7 @@ def scenes_page(user: str) -> str:
     <div><label>裁决状态</label><div class="select-shell"><select id="decisionFilter"><option value="">全部</option><option value="none">未裁决</option><option value="accepted">已保留</option><option value="discarded">Discard</option><option value="needs_discussion">存疑 Mark</option></select></div></div>
     <div><label>攻击类型</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
-    <div><label>搜索</label><input id="search" placeholder="task / id / owner"></div>
+    <div><label>搜索</label><input id="search" placeholder="task / id"></div>
     <div class="row toolbar-actions"><button type="button" onclick="loadCases()">刷新</button></div>
   </section>
   <section class="rank-dashboard">
@@ -935,7 +936,7 @@ def benchmark_page(user: str) -> str:
   <section class="panel toolbar">
     <div><label>攻击类型</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
-    <div><label>搜索</label><input id="search" placeholder="task / id / owner"></div>
+    <div><label>搜索</label><input id="search" placeholder="task / id"></div>
     <div class="row toolbar-actions"><button type="button" onclick="loadCases()">刷新</button></div>
   </section>
   <section class="rank-dashboard">
@@ -969,7 +970,7 @@ def admin_page(admin: str) -> str:
     <div><label>攻击类型</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
     <div><label>植入形式</label><div class="select-shell"><select id="formFilter"><option value="">全部</option>{options(INTERACTIVE_FORMS)}</select></div></div>
-    <div><label>搜索</label><input id="search" placeholder="task / target / attack_method / id / owner"></div>
+    <div><label>搜索</label><input id="search" placeholder="task / target / attack_method / id"></div>
     <div class="row toolbar-actions"><button type="button" onclick="loadCases()">刷新</button><button type="button" class="secondary" onclick="downloadFiltered()">导出当前筛选</button></div>
   </section>
   <section class="stats" id="stats"></section>
@@ -1067,7 +1068,7 @@ function detailFields(item, includeReviews=true) {
   return `<dl><dt>Attack Method</dt><dd>${escapeHtml(item.attack_method)}</dd><dt>Target</dt><dd>${escapeHtml(item.target)}</dd><dt>Success States</dt><dd>${listText(item.success_states)}</dd><dt>Failure States</dt><dd>${listText(item.failure_states)}</dd><dt>Metadata</dt><dd>${listText(item.metadata)}</dd><dt>Logic</dt><dd>${escapeHtml(item.logic)}</dd></dl>`;
 }
 function baseDetail(item) {
-  return `<h2>${escapeHtml(item.task || '(未命名任务)')}</h2><div class="meta">${escapeHtml(item.id)} · ${escapeHtml(item.owner)} · ${escapeHtml(item.created_at || '')}</div><div class="review-tags">${caseTags(item)}<span class="pill">${escapeHtml(summaryText(item))}</span></div>`;
+  return `<h2>${escapeHtml(item.task || '(未命名任务)')}</h2><div class="meta">${escapeHtml(item.id)} · ${escapeHtml(item.created_at || '')}</div><div class="review-tags">${caseTags(item)}<span class="pill">${escapeHtml(summaryText(item))}</span></div>`;
 }
 async function toggleBenchmarkSelection(id, selected) {
   const res = await fetch(`/api/cases/${encodeURIComponent(id)}/benchmark-selection`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({selected})});
@@ -1105,7 +1106,7 @@ function focusedReviewDetail(item) {
     <section class="focus-card focus-header">
       <div>
         <h2 class="focus-title">${escapeHtml(item.task || '(未命名任务)')}</h2>
-        <div class="meta">${escapeHtml(item.id)} · ${escapeHtml(item.owner || '')} · ${escapeHtml(item.created_at || '')}</div>
+        <div class="meta">${escapeHtml(item.id)} · ${escapeHtml(item.created_at || '')}</div>
         <div class="focus-meta">${compactTags(item)}</div>
       </div>
     </section>
@@ -1113,12 +1114,12 @@ function focusedReviewDetail(item) {
       <form id="expertEditForm" class="review-edit-form">
         <div class="section-heading"><div><p class="section-kicker">Case Content</p><h2>场景内容</h2></div><span class="pill">可直接修改</span></div>
         <div class="review-edit-grid">
-          ${editField('task', '用户任务 task', item.task, 'full tall')}
-          ${editField('target', '期望目标 target', item.target, 'full')}
-          ${editField('attack_method', 'MITM 攻击植入 attack_method', item.attack_method, 'full tall')}
-          ${editField('success_states', '成功判定 success_states（每行一条）', lineText(item.success_states))}
-          ${editField('failure_states', '失败判定 failure_states（每行一条）', lineText(item.failure_states))}
-          ${editField('logic', '攻击逻辑 logic', item.logic, 'full')}
+          ${editField('task', '用户任务 task', item.task, 'tall')}
+          ${editField('target', '期望目标 target', item.target, 'tall')}
+          ${editField('attack_method', 'MITM 攻击植入 attack_method', item.attack_method)}
+          ${editField('logic', '攻击逻辑 logic', item.logic)}
+          ${editField('success_states', '成功判定 success_states（每行一条）', lineText(item.success_states), 'short')}
+          ${editField('failure_states', '失败判定 failure_states（每行一条）', lineText(item.failure_states), 'short')}
           ${editField('metadata', '实现提示 metadata（每行一条）', lineText(item.metadata), 'full compact')}
         </div>
         <div class="errors" id="editErrors"></div>
@@ -1340,7 +1341,7 @@ function rankRow(item, index) {
     <div class="rank-index">#${index + 1}</div>
     <div>
       <span class="rank-case-title">${escapeHtml(item.task || '(未命名任务)')}</span>
-      <div class="rank-case-meta">${overviewTags(item)}<span class="pill">${escapeHtml(item.owner || 'unknown')}</span></div>
+      <div class="rank-case-meta">${overviewTags(item)}</div>
     </div>
     <div>${decisionPill(item)}</div>
     <div><span class="pill">${escapeHtml(item.status || 'draft')}</span></div>
@@ -1392,7 +1393,7 @@ function renderRows() {
     <div class="rank-index">#${index + 1}</div>
     <div>
       <span class="rank-case-title">${escapeHtml(item.task || '(未命名任务)')}</span>
-      <div class="rank-case-meta"><span class="pill selected-mark">已选入 benchmark</span><span class="pill">${escapeHtml(item.owner || 'unknown')}</span><span class="pill">${escapeHtml(item.id || '')}</span></div>
+      <div class="rank-case-meta"><span class="pill selected-mark">已选入 benchmark</span><span class="pill">${escapeHtml(item.id || '')}</span></div>
     </div>
     <div><span class="pill">${escapeHtml(item.attack_type || '-')}</span></div>
     <div><span class="pill strong">${escapeHtml(item.task_type || '-')}</span></div>
@@ -1453,8 +1454,7 @@ function renderStats() {
     stat('Discard', filteredCases.filter(c => c.expert_decision === 'discarded').length),
     stat('存疑', filteredCases.filter(c => c.expert_decision === 'needs_discussion').length),
     stat('submitted', filteredCases.filter(c => c.status === 'submitted').length),
-    stat('draft', filteredCases.filter(c => c.status === 'draft').length),
-    stat('标注员数', new Set(filteredCases.map(c => c.owner || '')).size)
+    stat('draft', filteredCases.filter(c => c.status === 'draft').length)
   ].join('');
 }
 function stat(label, value) { return `<article class="stat"><strong>${value}</strong><span>${escapeHtml(label)}</span></article>`; }
@@ -1486,7 +1486,7 @@ function selectCase(id) { selectedId = id; updateActiveListItem(); renderDetail(
 function renderDetail() {
   const panel = document.getElementById('detailPanel'); const item = filteredCases.find(candidate => candidate.id === selectedId);
   if (!item) { panel.innerHTML = '<div class="detail-empty">选择左侧条目查看详情</div>'; return; }
-  panel.innerHTML = `<h2>${escapeHtml(item.task || '(未命名任务)')}</h2><div class="meta">${escapeHtml(item.id)} · ${escapeHtml(item.owner)} · ${escapeHtml(item.created_at || '')}</div><div class="review-tags">${adminTags(item)}</div>${benchmarkButton(item)}<dl><dt>Attack Method</dt><dd>${escapeHtml(item.attack_method)}</dd><dt>Success States</dt><dd>${listText(item.success_states)}</dd><dt>Failure States</dt><dd>${listText(item.failure_states)}</dd><dt>Metadata</dt><dd>${listText(item.metadata)}</dd><dt>Target</dt><dd>${escapeHtml(item.target)}</dd><dt>Logic</dt><dd>${escapeHtml(item.logic)}</dd></dl>`;
+  panel.innerHTML = `<h2>${escapeHtml(item.task || '(未命名任务)')}</h2><div class="meta">${escapeHtml(item.id)} · ${escapeHtml(item.created_at || '')}</div><div class="review-tags">${adminTags(item)}</div>${benchmarkButton(item)}<dl><dt>Attack Method</dt><dd>${escapeHtml(item.attack_method)}</dd><dt>Success States</dt><dd>${listText(item.success_states)}</dd><dt>Failure States</dt><dd>${listText(item.failure_states)}</dd><dt>Metadata</dt><dd>${listText(item.metadata)}</dd><dt>Target</dt><dd>${escapeHtml(item.target)}</dd><dt>Logic</dt><dd>${escapeHtml(item.logic)}</dd></dl>`;
 }
 async function toggleSelectedCase(id, selected) {
   const panel = document.getElementById('detailPanel');
