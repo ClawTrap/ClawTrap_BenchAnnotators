@@ -40,6 +40,10 @@ def checkboxes(values: list[str]) -> str:
     return "".join(f'<label class="choice-pill"><input type="checkbox" name="interactive_form" value="{value}"><span>{value}</span></label>' for value in values)
 
 
+def js_value(value: Any) -> str:
+    return json.dumps(value, ensure_ascii=False).replace("</", "<\\/")
+
+
 def page(title: str, body: str) -> str:
     return f"""<!doctype html>
 <html lang="zh-CN">
@@ -49,51 +53,48 @@ def page(title: str, body: str) -> str:
   <title>{title}</title>
   <style>
     :root {{
-      --paper:#f8f4ec; --paper-deep:#eee6d8; --panel:#fffefa; --panel-soft:#f6efe3;
-      --text:#111d2e; --ink:#263346; --muted:#687488; --line:rgba(38,51,70,.12);
-      --line-strong:rgba(38,51,70,.24); --navy:#172234; --navy-soft:#24344d;
-      --accent:#94683d; --accent-strong:#6f4c2b; --accent-soft:#f2e7d7;
-      --green:#0f766e; --danger:#b42318; --shadow:0 10px 28px rgba(23,34,52,.06);
+      --paper:#f6f8fb; --paper-deep:#e7edf6; --panel:#ffffff; --panel-soft:#f8fafc;
+      --text:#0b1020; --ink:#1d2939; --muted:#64748b; --line:rgba(15,23,42,.10);
+      --line-strong:rgba(15,23,42,.18); --navy:#101828; --navy-soft:#1d2939;
+      --accent:#2563eb; --accent-strong:#1d4ed8; --accent-soft:#eff6ff;
+      --green:#0f766e; --danger:#b42318; --shadow:0 14px 36px rgba(15,23,42,.08);
     }}
     * {{ box-sizing:border-box; }}
     html {{ background:var(--paper); color-scheme:light; scroll-behavior:smooth; }}
     body {{
       margin:0; min-height:100vh; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
       background:
-        linear-gradient(180deg, rgba(255,253,250,.9) 0%, rgba(248,244,236,.96) 40%, rgba(238,230,216,.92) 100%),
-        repeating-linear-gradient(90deg, rgba(23,34,52,.028) 0 1px, transparent 1px 96px);
+        linear-gradient(180deg, rgba(255,255,255,.96) 0%, rgba(246,248,251,.96) 48%, rgba(232,238,247,.9) 100%),
+        linear-gradient(90deg, rgba(37,99,235,.035) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(15,23,42,.035) 1px, transparent 1px);
+      background-size:100% 100%, 72px 72px, 72px 72px;
       color:var(--ink);
       line-height:1.45;
     }}
-    ::selection {{ background:rgba(148,104,61,.18); color:var(--text); }}
+    ::selection {{ background:rgba(37,99,235,.18); color:var(--text); }}
     *::-webkit-scrollbar {{ width:10px; height:10px; }}
     *::-webkit-scrollbar-track {{ background:rgba(246,239,227,.64); border-radius:999px; }}
     *::-webkit-scrollbar-thumb {{ background:rgba(148,104,61,.28); border:2px solid rgba(246,239,227,.72); border-radius:999px; }}
     *::-webkit-scrollbar-thumb:hover {{ background:rgba(148,104,61,.42); }}
-    body::before {{
-      content:''; position:fixed; inset:0; z-index:-1; pointer-events:none;
-      background:linear-gradient(180deg, rgba(255,255,255,.58), transparent 34%), linear-gradient(90deg, transparent 0, transparent calc(50% - 1px), rgba(23,34,52,.045) calc(50% - 1px), rgba(23,34,52,.045) 50%, transparent 50%);
-      background-size:100% 100%, 96px 100%;
-      mask-image:linear-gradient(180deg,rgba(0,0,0,.34),transparent 70%);
-    }}
+    body::before {{ content:''; position:fixed; inset:0; z-index:-1; pointer-events:none; background:linear-gradient(180deg,rgba(255,255,255,.8),rgba(255,255,255,.25) 42%,transparent); }}
     header {{
       width:min(1480px,calc(100vw - 40px)); margin:18px auto 0; display:flex; justify-content:space-between;
-      align-items:center; gap:18px; padding:12px 14px; border:1px solid var(--line); border-radius:8px;
-      background:rgba(255,253,250,.9); backdrop-filter:blur(14px); position:sticky; top:12px; z-index:2;
-      box-shadow:0 12px 30px rgba(23,34,52,.055);
+      align-items:center; gap:18px; padding:12px 14px; border:1px solid rgba(15,23,42,.08); border-radius:8px;
+      background:rgba(255,255,255,.82); backdrop-filter:blur(18px); position:sticky; top:12px; z-index:2;
+      box-shadow:0 18px 45px rgba(15,23,42,.08);
     }}
     main {{ max-width:1260px; margin:0 auto; padding:24px 24px 54px; }}
     h1,h2,h3 {{ color:var(--text); }}
-    h1 {{ font-family:Georgia,"Times New Roman","Songti SC",serif; font-size:30px; margin:0; font-weight:700; font-style:italic; letter-spacing:-.02em; line-height:.96; }}
-    h2 {{ font-family:Georgia,"Times New Roman","Songti SC",serif; font-size:27px; margin:0 0 14px; font-weight:700; letter-spacing:-.02em; }}
+    h1 {{ font-size:29px; margin:0; font-weight:900; letter-spacing:-.04em; line-height:.96; }}
+    h2 {{ font-size:27px; margin:0 0 14px; font-weight:900; letter-spacing:-.035em; }}
     .brand-lockup {{ display:flex; align-items:center; gap:12px; min-width:0; }}
-    .brand-mark {{ width:38px; height:38px; border-radius:8px; display:grid; place-items:center; background:linear-gradient(145deg,var(--navy),#2d405e); color:#fff8ee; font-family:Georgia,"Times New Roman",serif; font-size:22px; font-weight:700; font-style:italic; box-shadow:inset 0 0 0 1px rgba(255,255,255,.12); }}
-    .brand-subtitle {{ color:var(--muted); font-size:11px; line-height:1.15; margin-top:4px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }}
+    .brand-mark {{ width:38px; height:38px; border-radius:8px; display:grid; place-items:center; background:linear-gradient(145deg,#0f172a,#2563eb); color:#fff; font-size:21px; font-weight:900; box-shadow:inset 0 0 0 1px rgba(255,255,255,.18),0 10px 22px rgba(37,99,235,.18); }}
+    .brand-subtitle {{ color:var(--muted); font-size:11px; line-height:1.15; margin-top:4px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }}
     .top-nav {{ display:flex; align-items:center; gap:8px; }}
-    .app-nav {{ display:flex; align-items:center; gap:3px; padding:3px; border:1px solid var(--line); border-radius:8px; background:rgba(246,240,230,.78); }}
+    .app-nav {{ display:flex; align-items:center; gap:3px; padding:3px; border:1px solid var(--line); border-radius:8px; background:rgba(248,250,252,.82); }}
     .app-nav a {{ display:inline-flex; align-items:center; min-height:34px; padding:7px 12px; border-radius:6px; color:var(--muted); text-decoration:none; font-size:13px; font-weight:800; }}
-    .app-nav a:hover,.app-nav a.active {{ background:var(--panel); color:var(--text); box-shadow:0 8px 18px rgba(23,34,52,.06); }}
-    .user-chip {{ display:inline-flex; align-items:center; min-height:36px; padding:7px 12px; border:1px solid var(--line); border-radius:8px; background:rgba(255,253,250,.76); color:var(--text); font-size:12px; font-weight:800; }}
+    .app-nav a:hover,.app-nav a.active {{ background:var(--panel); color:var(--text); box-shadow:0 8px 18px rgba(15,23,42,.07); }}
+    .user-chip {{ display:inline-flex; align-items:center; min-height:36px; padding:7px 12px; border:1px solid var(--line); border-radius:8px; background:rgba(255,255,255,.78); color:var(--text); font-size:12px; font-weight:850; }}
     .hero {{
       position:relative; margin:10px 0 20px; padding:18px 0 20px; border:0; border-bottom:1px solid var(--line);
       background:transparent; box-shadow:none; overflow:hidden;
@@ -102,7 +103,7 @@ def page(title: str, body: str) -> str:
     .hero > * {{ position:relative; }}
     .hero.compact {{ padding:14px 0 18px; }}
     .eyebrow {{ display:inline-flex; padding:0; color:var(--accent-strong); font-size:10px; font-weight:900; letter-spacing:.14em; text-transform:uppercase; }}
-    .hero-title {{ max-width:930px; margin:9px 0 8px; font-family:Georgia,"Times New Roman","Songti SC",serif; font-size:clamp(2.2rem,4.1vw,3.8rem); line-height:1.02; letter-spacing:-.035em; color:var(--text); font-weight:700; }}
+    .hero-title {{ max-width:930px; margin:9px 0 8px; font-size:clamp(2.2rem,4.1vw,3.8rem); line-height:1.02; letter-spacing:-.055em; color:var(--text); font-weight:950; }}
     .hero.compact .hero-title {{ font-size:clamp(1.85rem,3vw,2.7rem); max-width:880px; }}
     .hero-copy {{ max-width:840px; color:var(--muted); font-size:15px; line-height:1.75; margin:0; }}
     code {{ font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace; font-size:.92em; color:var(--accent-strong); background:rgba(148,104,61,.1); border:1px solid rgba(148,104,61,.16); border-radius:5px; padding:1px 5px; }}
@@ -111,19 +112,19 @@ def page(title: str, body: str) -> str:
     .button, button {{
       border:1px solid var(--navy); background:var(--navy); color:#fffefa; padding:9px 14px;
       border-radius:7px; cursor:pointer; text-decoration:none; font-size:13px; font-weight:800;
-      box-shadow:0 8px 18px rgba(23,34,52,.1); letter-spacing:.01em;
+      box-shadow:0 12px 24px rgba(15,23,42,.12); letter-spacing:.01em; transition:transform .14s ease, box-shadow .14s ease, background .14s ease, border-color .14s ease;
     }}
-    button:hover,.button:hover {{ background:var(--navy-soft); }}
+    button:hover,.button:hover {{ background:var(--navy-soft); box-shadow:0 14px 30px rgba(15,23,42,.16); transform:translateY(-1px); }}
     button:active,.button:active {{ transform:translateY(1px); }}
     button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,.select-card-trigger:focus-visible,.choice-pill input:focus-visible + span {{
       outline:3px solid rgba(148,104,61,.22); outline-offset:2px;
     }}
-    .secondary {{ background:rgba(255,253,250,.62); color:var(--navy); border-color:var(--line-strong); box-shadow:none; }}
+    .secondary {{ background:rgba(255,255,255,.76); color:var(--navy); border-color:var(--line-strong); box-shadow:none; }}
     .secondary:hover {{ background:var(--panel-soft); color:var(--navy); }}
     .panel,.case,.login,.detail-panel,.stat,.review-item {{
       background:rgba(255,253,250,.94); border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow);
     }}
-    .panel {{ padding:20px; background:linear-gradient(180deg,rgba(255,254,250,.96),rgba(250,246,239,.9)); overflow:visible; }}
+    .panel {{ padding:20px; background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(248,250,252,.9)); overflow:visible; }}
     .grid {{ display:grid; grid-template-columns:340px minmax(0,1fr); gap:18px; align-items:start; }}
     .design-grid {{ display:grid; grid-template-columns:360px minmax(0,1fr); gap:18px; align-items:start; }}
     .design-grid.design-only {{ grid-template-columns:minmax(0,1fr); max-width:980px; }}
@@ -136,7 +137,7 @@ def page(title: str, body: str) -> str:
     label {{ display:block; font-weight:800; margin:12px 0 6px; font-size:12px; color:#344054; }}
     input,select,textarea {{
       width:100%; border:1px solid var(--line); border-radius:7px; padding:10px 11px; font:inherit;
-      background:rgba(255,253,250,.96); outline:none; transition:border-color .12s, box-shadow .12s, background .12s;
+      background:rgba(255,255,255,.96); outline:none; transition:border-color .12s, box-shadow .12s, background .12s;
     }}
     input:focus,select:focus,textarea:focus {{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(148,104,61,.13); background:#fff; }}
     textarea {{ min-height:88px; resize:vertical; line-height:1.6; }}
@@ -225,8 +226,15 @@ def page(title: str, body: str) -> str:
     .review-focus .hero {{ margin-bottom:14px; }}
     .review-focus .hero-title {{ max-width:760px; }}
     .review-focus .hero-copy {{ max-width:720px; }}
-    .review-focus .review-toolbar {{ grid-template-columns:minmax(260px,1fr) 176px auto; padding:12px; margin-bottom:12px; }}
-    .review-focus .review-layout {{ grid-template-columns:minmax(300px,.72fr) minmax(680px,1.68fr); gap:18px; }}
+    .review-focus .review-toolbar {{ grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); padding:12px; margin-bottom:12px; }}
+    .review-focus .review-layout {{ display:block; }}
+    .review-poolbar {{ display:grid; grid-template-columns:minmax(260px,1fr) auto; gap:12px; align-items:end; margin-bottom:14px; }}
+    .review-poolbar .select-shell {{ min-width:0; }}
+    .review-nav-actions {{ display:flex; align-items:flex-end; gap:8px; justify-content:flex-end; flex-wrap:wrap; }}
+    .review-case-picker {{ display:grid; grid-template-columns:minmax(240px,1fr) auto; gap:12px; align-items:end; margin-bottom:14px; }}
+    .pool-count {{ display:inline-flex; align-items:center; min-height:42px; padding:9px 11px; border:1px solid var(--line); border-radius:7px; background:rgba(255,254,250,.78); color:var(--muted); font-size:12px; font-weight:850; white-space:nowrap; }}
+    .review-stage {{ max-width:1080px; margin:0 auto; }}
+    .review-context-line {{ display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; }}
     .review-column {{ min-width:0; }}
     .result-heading {{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin:0 0 9px; padding:0 2px; }}
     .result-heading h2 {{ margin:0; font-size:22px; }}
@@ -273,7 +281,7 @@ def page(title: str, body: str) -> str:
     .detail-panel {{ position:sticky; top:82px; padding:22px; max-height:calc(100vh - 108px); overflow:auto; background:linear-gradient(180deg,rgba(255,254,250,.98),rgba(249,244,236,.92)); border-top:3px solid rgba(148,104,61,.42); }}
     .detail-panel h2 {{ font-size:21px; line-height:1.38; margin:0 0 9px; }}
     .detail-empty {{ color:var(--muted); padding:42px 28px; text-align:center; background:var(--panel-soft); border:1px dashed var(--line-strong); border-radius:8px; font-weight:700; }}
-    .review-focus .detail-panel {{ padding:0; background:transparent; border:0; box-shadow:none; max-height:calc(100vh - 86px); }}
+    .review-focus .detail-panel {{ position:static; padding:0; background:transparent; border:0; box-shadow:none; max-height:none; overflow:visible; }}
     .focus-case {{ display:grid; gap:12px; }}
     .focus-card {{ border:1px solid var(--line); border-radius:8px; background:rgba(255,254,250,.94); box-shadow:var(--shadow); padding:18px; }}
     .focus-header {{ display:grid; grid-template-columns:minmax(0,1fr) auto; gap:14px; align-items:start; border-top:3px solid rgba(148,104,61,.42); }}
@@ -299,12 +307,15 @@ def page(title: str, body: str) -> str:
     .judgement ul,.metadata-list {{ margin:0; padding-left:19px; color:var(--ink); font-size:14px; line-height:1.65; }}
     .metadata-strip {{ display:flex; flex-wrap:wrap; gap:7px; }}
     .metadata-token {{ display:inline-flex; max-width:100%; padding:6px 9px; border:1px solid var(--line); border-radius:7px; background:rgba(246,240,230,.62); color:var(--muted); font-size:12px; font-weight:750; line-height:1.45; }}
+    .review-history {{ margin-top:10px; padding:10px 12px; border:1px solid var(--line); border-radius:8px; background:rgba(246,240,230,.44); color:var(--muted); font-size:12px; line-height:1.6; font-weight:700; }}
+    .review-history strong {{ color:var(--text); }}
     .review-score-panel {{ margin-top:0; }}
     .review-score-panel .section-heading {{ margin-bottom:10px; }}
     .review-score-panel textarea {{ min-height:74px; }}
     .review-score-panel .score-grid {{ grid-template-columns:repeat(4,minmax(110px,1fr)); }}
     .review-score-panel .score-grid label {{ padding:11px; border:1px solid var(--line); border-radius:8px; background:rgba(246,240,230,.42); color:var(--muted); }}
     .review-score-panel .score-grid input {{ margin-top:6px; border-color:rgba(148,104,61,.2); }}
+    .review-score-actions {{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:14px; flex-wrap:wrap; }}
     dl {{ margin:18px 0 0; display:grid; gap:12px; }}
     dt {{ font-size:10px; color:var(--accent-strong); font-weight:900; text-transform:uppercase; letter-spacing:.12em; margin:0; }}
     dd {{ margin:5px 0 0; font-size:13px; line-height:1.66; background:rgba(246,240,230,.72); border:1px solid var(--line); border-radius:8px; padding:11px 12px; }}
@@ -317,8 +328,9 @@ def page(title: str, body: str) -> str:
       .hero-title {{ font-size:2.1rem; }}
       .select-card-menu {{ max-height:42vh; }}
       .toolbar-actions {{ grid-column:auto; }} .detail-panel,.sticky-panel {{ position:static; max-height:none; }}
-      .focus-header,.focus-grid,.judgement-grid,.review-focus .review-layout,.review-focus .review-toolbar,.review-score-panel .score-grid {{ grid-template-columns:1fr; }}
+      .focus-header,.focus-grid,.judgement-grid,.review-focus .review-layout,.review-focus .review-toolbar,.review-poolbar,.review-case-picker,.review-score-panel .score-grid {{ grid-template-columns:1fr; }}
       .focus-action {{ min-width:0; }}
+      .review-nav-actions {{ justify-content:flex-start; }}
     }}
   </style>
 </head>
@@ -768,18 +780,32 @@ def review_page(user: str) -> str:
   <section class="hero compact">
     <div class="eyebrow">Review</div>
     <h2 class="hero-title">聚焦当前场景，完成质量评估</h2>
-    <p class="hero-copy">左侧用于快速定位 case；右侧只保留审核所需信息：任务、攻击、成功/失败判定和评分。</p>
+    <p class="hero-copy">先用筛选条件定义当前待审核池，再逐条查看任务、攻击、成功/失败判定和评分。</p>
   </section>
   <section class="panel toolbar review-toolbar">
     <div><label>搜索</label><input id="reviewSearch" placeholder="task / target / attack_method / owner / id"></div>
+    <div><label>评分状态</label><div class="select-shell"><select id="reviewStatusFilter"><option value="">全部</option><option value="unreviewed_by_me">我未评分</option><option value="reviewed_by_me">我已评分</option><option value="unreviewed">全局未评分</option><option value="reviewed">已有评分</option></select></div></div>
+    <div><label>任务类型</label><div class="select-shell"><select id="reviewTaskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
+    <div><label>攻击类型</label><div class="select-shell"><select id="reviewAttackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
+    <div><label>植入形式</label><div class="select-shell"><select id="reviewFormFilter"><option value="">全部</option>{options(INTERACTIVE_FORMS)}</select></div></div>
     <div><label>来源</label><div class="select-shell"><select id="reviewOriginFilter"><option value="">全部</option><option value="local_json">本地 JSON</option><option value="database">云端数据库</option></select></div></div>
-    <div class="row"><button type="button" onclick="loadReviewCases()">刷新</button></div>
   </section>
-  <section class="review-layout">
-    <div class="review-column"><div class="result-heading"><div><p class="section-kicker">Cases</p><h2>待审核列表</h2></div><span id="reviewCount">-</span></div><div class="review-list" id="reviewList"></div></div>
+  <section class="review-poolbar">
+    <div class="review-case-picker">
+      <div><label>当前待审核 case</label><div class="select-shell"><select id="reviewCaseSelect"></select></div></div>
+      <span class="pool-count" id="reviewCount">-</span>
+    </div>
+    <div class="review-nav-actions">
+      <button type="button" class="secondary" onclick="goReviewCase(-1)">上一条</button>
+      <button type="button" onclick="goReviewCase(1)">下一条</button>
+      <button type="button" class="secondary" onclick="loadReviewCases()">刷新</button>
+    </div>
+  </section>
+  <section class="review-layout review-stage">
     <aside class="detail-panel" id="detailPanel"></aside>
   </section>
 </main>
+<script>window.CLAWTRAP_REVIEWER = {js_value(user)};</script>
 <script>{review_js()}</script>""")
 
 
@@ -976,6 +1002,28 @@ function benchmarkButton(item, handlerName='toggleSelectedCase') {
 function compactTags(item) {
   return `<span class="pill strong">${escapeHtml(item.task_type || '-')}</span><span class="pill">${escapeHtml(item.attack_type || '-')}</span><span class="pill">${escapeHtml((item.interactive_form || []).join(' / ') || '-')}</span>${originPill(item)}${item.benchmark_selected ? '<span class="pill selected-mark">已选入 benchmark</span>' : ''}`;
 }
+function currentReviewer() {
+  return window.CLAWTRAP_REVIEWER || '';
+}
+function reviewsFor(item) {
+  return Array.isArray(item.reviews) ? item.reviews : [];
+}
+function hasReviewByMe(item) {
+  const reviewer = currentReviewer();
+  return Boolean(reviewer) && reviewsFor(item).some(review => review.reviewer === reviewer);
+}
+function reviewStatusPill(item) {
+  const mine = hasReviewByMe(item);
+  const count = reviewsFor(item).length;
+  const cls = mine ? 'selected-mark' : '';
+  return `<span class="pill ${cls}">${mine ? '我已评分' : '我未评分'}</span><span class="pill">全部评分 ${escapeHtml(count)}</span>`;
+}
+function reviewHistory(item) {
+  const reviews = reviewsFor(item);
+  if (!reviews.length) return '<div class="review-history">暂无历史评分</div>';
+  const latest = reviews.slice(-3).reverse().map(review => `${escapeHtml(review.reviewer || 'unknown')}：综合 ${escapeHtml(review.overall ?? '-')} / 可实现 ${escapeHtml(review.feasibility ?? '-')} / 准确 ${escapeHtml(review.accuracy ?? '-')} / 清晰 ${escapeHtml(review.clarity ?? '-')}`).join('<br>');
+  return `<div class="review-history"><strong>最近评分</strong><br>${latest}</div>`;
+}
 function focusList(items) {
   if (!Array.isArray(items) || !items.length) return '<ul><li>-</li></ul>';
   return `<ul>${items.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`;
@@ -991,26 +1039,27 @@ function focusedReviewDetail(item) {
         <h2 class="focus-title">${escapeHtml(item.task || '(未命名任务)')}</h2>
         <div class="meta">${escapeHtml(item.id)} · ${escapeHtml(item.owner || '')} · ${escapeHtml(item.created_at || '')}</div>
         <div class="rank-line"><span class="rank-badge">#${escapeHtml(item.__rank ?? '-')}</span><span class="score-badge">总分 ${escapeHtml(totalScore(item) ?? '-')}</span><span class="pill">${escapeHtml(summaryText(item))}</span></div>
-        <div class="focus-meta">${compactTags(item)}</div>
+        <div class="focus-meta">${compactTags(item)}${reviewStatusPill(item)}</div>
       </div>
       <div class="focus-action">${benchmarkButton(item)}</div>
     </section>
     <section class="focus-card">
       <div class="focus-grid">
-        <article class="focus-block"><span class="focus-label">User Task</span><p class="focus-text">${escapeHtml(item.task)}</p></article>
-        <article class="focus-block"><span class="focus-label">Expected Target</span><p class="focus-text">${escapeHtml(item.target)}</p></article>
-        <article class="focus-block focus-attack full"><span class="focus-label">MITM Attack</span><p class="focus-text">${escapeHtml(item.attack_method)}</p></article>
+        <article class="focus-block"><span class="focus-label">用户任务</span><p class="focus-text">${escapeHtml(item.task)}</p></article>
+        <article class="focus-block"><span class="focus-label">期望目标</span><p class="focus-text">${escapeHtml(item.target)}</p></article>
+        <article class="focus-block focus-attack full"><span class="focus-label">MITM 攻击植入</span><p class="focus-text">${escapeHtml(item.attack_method)}</p></article>
       </div>
     </section>
     <section class="judgement-grid">
-      <article class="judgement success"><h3>Success Criteria</h3>${focusList(item.success_states)}</article>
-      <article class="judgement failure"><h3>Failure Criteria</h3>${focusList(item.failure_states)}</article>
+      <article class="judgement success"><h3>成功判定</h3>${focusList(item.success_states)}</article>
+      <article class="judgement failure"><h3>失败判定</h3>${focusList(item.failure_states)}</article>
     </section>
     <section class="focus-card">
       <div class="focus-grid">
-        <article class="focus-block"><span class="focus-label">Implementation Notes</span><div class="metadata-strip">${metadataTokens(item.metadata)}</div></article>
-        <article class="focus-block"><span class="focus-label">Attack Logic</span><p class="focus-text">${escapeHtml(item.logic || '-')}</p></article>
+        <article class="focus-block"><span class="focus-label">实现提示</span><div class="metadata-strip">${metadataTokens(item.metadata)}</div></article>
+        <article class="focus-block"><span class="focus-label">攻击逻辑</span><p class="focus-text">${escapeHtml(item.logic || '-')}</p></article>
       </div>
+      ${reviewHistory(item)}
     </section>
   </div>`;
 }
@@ -1031,15 +1080,52 @@ async function loadReviewCases() {
 function filterReviewCases() {
   const q = (document.getElementById('reviewSearch')?.value || '').trim().toLowerCase();
   const origin = document.getElementById('reviewOriginFilter')?.value || '';
-  filteredCases = applyRanks(allCases.filter(item => (!origin || originValue(item) === origin) && (!q || JSON.stringify(item).toLowerCase().includes(q))));
-  renderCaseList();
+  const status = document.getElementById('reviewStatusFilter')?.value || '';
+  const attack = document.getElementById('reviewAttackFilter')?.value || '';
+  const task = document.getElementById('reviewTaskFilter')?.value || '';
+  const form = document.getElementById('reviewFormFilter')?.value || '';
+  filteredCases = applyRanks(allCases.filter(item => (!origin || originValue(item) === origin) && matchesReviewStatus(item, status) && (!attack || item.attack_type === attack) && (!task || item.task_type === task) && (!form || (item.interactive_form || []).includes(form)) && (!q || JSON.stringify(item).toLowerCase().includes(q))));
+  if (!filteredCases.some(item => item.id === selectedId)) selectedId = filteredCases[0]?.id || null;
+  renderReviewPicker();
   renderDetail();
 }
-function selectCase(id) { selectedId = id; updateActiveListItem(); renderDetail(); }
+function matchesReviewStatus(item, status) {
+  if (!status) return true;
+  if (status === 'reviewed_by_me') return hasReviewByMe(item);
+  if (status === 'unreviewed_by_me') return !hasReviewByMe(item);
+  if (status === 'reviewed') return reviewsFor(item).length > 0;
+  if (status === 'unreviewed') return reviewsFor(item).length === 0;
+  return true;
+}
+function renderReviewPicker() {
+  const picker = document.getElementById('reviewCaseSelect');
+  const count = document.getElementById('reviewCount');
+  const index = filteredCases.findIndex(item => item.id === selectedId);
+  count.textContent = filteredCases.length ? `${index + 1} / ${filteredCases.length}` : '0 / 0';
+  picker.innerHTML = filteredCases.map((item, itemIndex) => {
+    const score = totalScore(item) ?? '-';
+    const mine = hasReviewByMe(item) ? '我已评' : '我未评';
+    const title = String(item.task || '(未命名任务)').replace(/\s+/g, ' ').slice(0, 92);
+    return `<option value="${escapeHtml(item.id)}">#${itemIndex + 1} · ${escapeHtml(mine)} · 总分 ${escapeHtml(score)} · ${escapeHtml(title)}</option>`;
+  }).join('');
+  picker.value = selectedId || '';
+  window.refreshClawTrapSelects?.();
+  window.syncClawTrapSelects?.();
+}
+function selectCase(id) { selectedId = id; renderReviewPicker(); renderDetail(); }
+function goReviewCase(delta) {
+  if (!filteredCases.length) return;
+  const index = Math.max(0, filteredCases.findIndex(item => item.id === selectedId));
+  const nextIndex = (index + delta + filteredCases.length) % filteredCases.length;
+  selectedId = filteredCases[nextIndex].id;
+  renderReviewPicker();
+  renderDetail();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
 function renderDetail() {
   const panel = document.getElementById('detailPanel');
   const item = filteredCases.find(candidate => candidate.id === selectedId);
-  if (!item) { panel.innerHTML = '<div class="detail-empty">选择左侧条目进行审核</div>'; return; }
+  if (!item) { panel.innerHTML = '<div class="detail-empty">当前筛选池没有可审核场景</div>'; return; }
   panel.innerHTML = `${focusedReviewDetail(item)}
     <form id="reviewForm" class="focus-card review-score-panel">
       <div class="section-heading"><div><p class="section-kicker">Scoring</p><h2>审核评分</h2></div></div>
@@ -1051,7 +1137,10 @@ function renderDetail() {
       </div>
       <label>审核备注</label><textarea name="comment" placeholder="可选：指出需要修改的字段或原因"></textarea>
       <div class="errors" id="reviewErrors"></div>
-      <div class="row" style="margin-top:14px"><button type="button" onclick="submitReview()">提交评分</button></div>
+      <div class="review-score-actions">
+        <span class="meta">提交后会记录到当前账户：${escapeHtml(currentReviewer() || 'unknown')}</span>
+        <div class="row"><button type="button" class="secondary" onclick="submitReview(false)">提交评分</button><button type="button" onclick="submitReview(true)">提交并下一条</button></div>
+      </div>
     </form>`;
 }
 async function toggleSelectedCase(id, selected) {
@@ -1063,8 +1152,10 @@ async function toggleSelectedCase(id, selected) {
     panel.insertAdjacentHTML('afterbegin', `<div class="errors">${escapeHtml(error.message)}</div>`);
   }
 }
-async function submitReview() {
+async function submitReview(advance=false) {
   const item = filteredCases.find(candidate => candidate.id === selectedId);
+  const currentIndex = Math.max(0, filteredCases.findIndex(candidate => candidate.id === selectedId));
+  const nextCandidate = filteredCases.length > 1 ? filteredCases[(currentIndex + 1) % filteredCases.length] : null;
   const form = document.getElementById('reviewForm');
   const payload = Object.fromEntries(new FormData(form).entries());
   const res = await fetch(`/api/cases/${encodeURIComponent(item.id)}/reviews`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
@@ -1072,11 +1163,17 @@ async function submitReview() {
   if (!res.ok) { document.getElementById('reviewErrors').textContent = (data.errors || [data.error || '提交失败']).join('\n'); return; }
   const index = allCases.findIndex(c => c.id === data.case.id);
   if (index >= 0) allCases[index] = data.case;
-  selectedId = data.case.id;
+  selectedId = advance ? (nextCandidate?.id || data.case.id) : data.case.id;
   filterReviewCases();
+  if (advance) window.scrollTo({top: 0, behavior: 'smooth'});
 }
 document.getElementById('reviewSearch')?.addEventListener('input', filterReviewCases);
 document.getElementById('reviewOriginFilter')?.addEventListener('input', filterReviewCases);
+document.getElementById('reviewStatusFilter')?.addEventListener('input', filterReviewCases);
+document.getElementById('reviewAttackFilter')?.addEventListener('input', filterReviewCases);
+document.getElementById('reviewTaskFilter')?.addEventListener('input', filterReviewCases);
+document.getElementById('reviewFormFilter')?.addEventListener('input', filterReviewCases);
+document.getElementById('reviewCaseSelect')?.addEventListener('input', event => selectCase(event.target.value));
 loadReviewCases();
 """
 
