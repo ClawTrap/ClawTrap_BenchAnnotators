@@ -1124,7 +1124,6 @@ function focusedReviewDetail(item) {
           ${editField('task', '用户任务 task', item.task, 'tall')}
           ${editField('target', '期望目标 target', item.target, 'tall')}
           ${editField('attack_method', 'MITM 攻击植入 attack_method', item.attack_method)}
-          ${editField('logic', '攻击逻辑 logic', item.logic)}
           ${editField('success_states', '成功判定 success_states（每行一条）', lineText(item.success_states), 'short')}
           ${editField('failure_states', '失败判定 failure_states（每行一条）', lineText(item.failure_states), 'short')}
           ${editField('metadata', '实现提示 metadata（每行一条）', lineText(item.metadata), 'full compact')}
