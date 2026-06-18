@@ -323,6 +323,7 @@ def page(title: str, body: str) -> str:
     .focus-header .focus-title {{ color:var(--text); }}
     .focus-header .meta {{ color:var(--muted); }}
     .focus-meta {{ display:flex; flex-wrap:wrap; gap:7px; margin-top:9px; }}
+    .focus-header .review-edit-form {{ margin-top:14px; }}
     .focus-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }}
     .focus-block {{ border:1px solid var(--line); border-radius:8px; background:rgba(247,247,242,.74); padding:16px; }}
     .focus-block.full {{ grid-column:1 / -1; }}
@@ -871,16 +872,19 @@ def design_page(user: str) -> str:
 
 
 def review_page(user: str) -> str:
+    readonly = request.args.get("mode") == "view"
+    hero_title = "Benchmark 场景详情" if readonly else "逐条审阅本地场景，决定是否进入 Benchmark"
+    hero_copy = "此页面只用于查看已入选 benchmark 的场景内容，不提供保留、Discard 或 Mark notes 操作。" if readonly else "当前审核只显示未完成处理或存疑的 case。保留进 Benchmark 或 Discard 后会自动进入下一条。"
     return page("ClawTrap 场景审核", f"""
 {app_header(user, "Case review", "review")}
 <main class="admin-main review-focus">
   <section class="hero compact">
     <div class="eyebrow">Review</div>
-    <h2 class="hero-title">逐条审阅本地场景，决定是否进入 Benchmark</h2>
-    <p class="hero-copy">当前审核只显示未完成处理或存疑的 case。保留进 Benchmark 或 Discard 后会自动进入下一条。</p>
+    <h2 class="hero-title">{hero_title}</h2>
+    <p class="hero-copy">{hero_copy}</p>
   </section>
   <section class="panel toolbar review-toolbar">
-    <div><label>搜索</label><input id="reviewSearch" placeholder="task / target / attack_method / id"></div>
+    <div><label>搜索</label><input id="reviewSearch"></div>
     <div><label>裁决状态</label><div class="select-shell"><select id="reviewDecisionFilter"><option value="">全部</option><option value="none">未裁决</option><option value="needs_discussion">存疑 Mark</option></select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="reviewTaskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
     <div><label>攻击类型</label><div class="select-shell"><select id="reviewAttackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
@@ -919,7 +923,7 @@ def scenes_page(user: str) -> str:
     <div><label>裁决状态</label><div class="select-shell"><select id="decisionFilter"><option value="">全部</option><option value="none">未裁决</option><option value="accepted">已保留</option><option value="discarded">Discard</option><option value="needs_discussion">存疑 Mark</option></select></div></div>
     <div><label>攻击类型</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
-    <div><label>搜索</label><input id="search" placeholder="task / id"></div>
+    <div><label>搜索</label><input id="search"></div>
     <div class="row toolbar-actions"><button type="button" onclick="loadCases()">刷新</button></div>
   </section>
   <section class="rank-dashboard">
@@ -945,7 +949,7 @@ def benchmark_page(user: str) -> str:
   <section class="panel toolbar">
     <div><label>攻击类型</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
-    <div><label>搜索</label><input id="search" placeholder="task / id"></div>
+    <div><label>搜索</label><input id="search"></div>
     <div class="row toolbar-actions"><button type="button" onclick="loadCases()">刷新</button></div>
   </section>
   <section class="rank-dashboard">
@@ -979,7 +983,7 @@ def admin_page(admin: str) -> str:
     <div><label>攻击类型</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
     <div><label>植入形式</label><div class="select-shell"><select id="formFilter"><option value="">全部</option>{options(INTERACTIVE_FORMS)}</select></div></div>
-    <div><label>搜索</label><input id="search" placeholder="task / target / attack_method / id"></div>
+    <div><label>搜索</label><input id="search"></div>
     <div class="row toolbar-actions"><button type="button" onclick="loadCases()">刷新</button><button type="button" class="secondary" onclick="downloadFiltered()">导出当前筛选</button></div>
   </section>
   <section class="stats" id="stats"></section>
@@ -1108,7 +1112,8 @@ function escapeTextarea(value) {
   return escapeHtml(value);
 }
 function editField(name, label, value, className='') {
-  return `<div class="review-edit-field ${className}"><label>${escapeHtml(label)}</label><textarea name="${escapeAttr(name)}" required>${escapeTextarea(value || '')}</textarea></div>`;
+  const readonly = typeof readOnlyReview !== 'undefined' && readOnlyReview;
+  return `<div class="review-edit-field ${className}"><label>${escapeHtml(label)}</label><textarea name="${escapeAttr(name)}" required ${readonly ? 'readonly' : ''}>${escapeTextarea(value || '')}</textarea></div>`;
 }
 function focusedReviewDetail(item) {
   return `<div class="focus-case">
@@ -1117,10 +1122,7 @@ function focusedReviewDetail(item) {
         <h2 class="focus-title">${escapeHtml(item.task || '(未命名任务)')}</h2>
         <div class="focus-meta">${compactTags(item)}</div>
       </div>
-    </section>
-    <section class="focus-card">
       <form id="expertEditForm" class="review-edit-form">
-        <div class="section-heading"><div><p class="section-kicker">Case Content</p><h2>场景内容</h2></div><span class="pill">可直接修改</span></div>
         <div class="review-edit-grid">
           ${editField('task', '用户任务 task', item.task, 'tall')}
           ${editField('target', '期望目标 target', item.target, 'tall')}
@@ -1131,7 +1133,7 @@ function focusedReviewDetail(item) {
           ${editField('metadata', '实现提示 metadata（每行一条）', lineText(item.metadata), 'full compact')}
         </div>
         <div class="errors" id="editErrors"></div>
-        <div class="review-edit-actions">
+        <div class="review-edit-actions" ${typeof readOnlyReview !== 'undefined' && readOnlyReview ? 'style="display:none"' : ''}>
           <span class="meta">修改会保存到当前 case；直接执行保留、Discard 或 Mark notes 时也会先自动保存。</span>
           <button type="button" onclick="saveExpertEdit()">保存修改</button>
         </div>
@@ -1160,12 +1162,23 @@ function escapeAttr(value) { return String(value ?? '').replace(/[\'\\]/g, ch =>
 
 def review_js() -> str:
     return shared_case_js() + r"""
+const reviewParams = new URLSearchParams(window.location.search);
+const reviewMode = reviewParams.get('mode') || 'review';
+const requestedCaseId = reviewParams.get('case');
+const readOnlyReview = reviewMode === 'view';
 async function loadReviewCases() {
   const res = await fetch('/api/all-cases');
   const data = await res.json();
   allCases = data.cases || [];
-  const requestedId = new URLSearchParams(window.location.search).get('case');
-  if (requestedId && allCases.some(item => item.id === requestedId)) selectedId = requestedId;
+  if (readOnlyReview) {
+    document.querySelector('.review-toolbar')?.remove();
+    document.querySelector('.review-poolbar')?.remove();
+    filteredCases = requestedCaseId ? allCases.filter(item => item.id === requestedCaseId) : [];
+    selectedId = filteredCases[0]?.id || null;
+    renderDetail();
+    return;
+  }
+  if (requestedCaseId && allCases.some(item => item.id === requestedCaseId)) selectedId = requestedCaseId;
   filterReviewCases();
 }
 function filterReviewCases() {
@@ -1205,9 +1218,9 @@ function goReviewCase(delta) {
 function renderDetail() {
   const panel = document.getElementById('detailPanel');
   const item = filteredCases.find(candidate => candidate.id === selectedId);
-  if (!item) { panel.innerHTML = '<div class="detail-empty">当前筛选池没有可审核场景</div>'; return; }
+  if (!item) { panel.innerHTML = `<div class="detail-empty">${readOnlyReview ? '没有找到对应场景' : '当前筛选池没有可审核场景'}</div>`; return; }
   panel.innerHTML = `${focusedReviewDetail(item)}
-    ${expertDecisionPanel(item)}`;
+    ${readOnlyReview ? '' : expertDecisionPanel(item)}`;
 }
 async function toggleSelectedCase(id, selected) {
   const panel = document.getElementById('detailPanel');
@@ -1405,7 +1418,7 @@ function renderRows() {
     </div>
     <div><span class="pill">${escapeHtml(item.attack_type || '-')}</span></div>
     <div><span class="pill strong">${escapeHtml(item.task_type || '-')}</span></div>
-    <div class="rank-actions"><a class="button secondary" href="/review?case=${encodeURIComponent(item.id)}">查看</a><button type="button" class="danger" onclick="removeFromBenchmark('${escapeAttr(item.id)}')">移除</button></div>
+    <div class="rank-actions"><a class="button secondary" href="/review?mode=view&case=${encodeURIComponent(item.id)}">查看</a><button type="button" class="danger" onclick="removeFromBenchmark('${escapeAttr(item.id)}')">移除</button></div>
   </article>`).join('');
 }
 async function removeFromBenchmark(id) {
