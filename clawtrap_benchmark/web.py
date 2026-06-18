@@ -341,6 +341,19 @@ def page(title: str, body: str) -> str:
     .review-edit-field.compact textarea {{ min-height:54px; }}
     .review-edit-field.tall textarea {{ min-height:98px; }}
     .review-edit-field.short textarea {{ min-height:66px; }}
+    .list-review-field {{ grid-column:1 / -1; display:grid; gap:10px; }}
+    .list-review-field > label {{ margin:0; color:var(--accent-strong); font-size:20px; font-weight:900; letter-spacing:0; line-height:1.18; }}
+    .list-review-items {{ display:grid; gap:8px; }}
+    .list-review-item {{ display:grid; grid-template-columns:1fr auto; align-items:stretch; gap:8px; padding:8px; border:1px solid var(--line); border-radius:8px; background:rgba(255,253,250,.78); transition:border-color .16s ease, background .16s ease, opacity .16s ease; }}
+    .list-review-item textarea {{ min-height:42px; height:100%; border:0; background:transparent; padding:4px 2px; box-shadow:none; resize:vertical; font-size:14px; line-height:1.5; font-weight:520; }}
+    .list-review-item textarea:focus {{ box-shadow:none; background:transparent; }}
+    .list-review-actions {{ display:flex; align-items:flex-start; gap:5px; padding-top:1px; }}
+    .list-review-actions button,.list-add-button {{ width:30px; min-width:30px; height:30px; min-height:30px; padding:0; border-radius:8px; font-size:14px; font-weight:900; line-height:1; }}
+    .list-review-item.approved {{ border-color:rgba(15,118,110,.34); background:rgba(247,255,251,.9); }}
+    .list-review-item.needs-revision {{ border-color:rgba(217,119,6,.34); background:rgba(255,251,235,.9); }}
+    .list-review-item.removed {{ opacity:.48; background:rgba(255,241,242,.78); border-color:rgba(180,35,24,.28); }}
+    .list-review-item.removed textarea {{ text-decoration:line-through; }}
+    .list-add-row {{ display:flex; justify-content:flex-end; }}
     .review-edit-actions {{ display:flex; justify-content:flex-end; align-items:center; gap:12px; padding-top:2px; flex-wrap:wrap; }}
     .review-edit-actions .meta {{ max-width:640px; }}
     .judgement-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }}
@@ -1116,6 +1129,20 @@ function editField(name, label, value, className='') {
   const readonly = typeof readOnlyReview !== 'undefined' && readOnlyReview;
   return `<div class="review-edit-field ${className}"><label>${escapeHtml(label)}</label><textarea name="${escapeAttr(name)}" required ${readonly ? 'readonly' : ''}>${escapeTextarea(value || '')}</textarea></div>`;
 }
+function listReviewField(name, label, items) {
+  const values = Array.isArray(items) ? items : splitLines(items);
+  const controls = typeof readOnlyReview !== 'undefined' && readOnlyReview ? '' : `<div class="list-review-actions">
+    <button type="button" class="secondary" title="Approve" onclick="approveListItem(this)">✓</button>
+    <button type="button" class="danger" title="Remove" onclick="removeListItem(this)">×</button>
+    <button type="button" class="secondary" title="Revise" onclick="reviseListItem(this)">✎</button>
+  </div>`;
+  const rows = (values.length ? values : ['']).map(value => `<div class="list-review-item" data-list-item>
+    <textarea data-list-input ${typeof readOnlyReview !== 'undefined' && readOnlyReview ? 'readonly' : 'readonly'}>${escapeTextarea(value || '')}</textarea>
+    ${controls}
+  </div>`).join('');
+  const addRow = typeof readOnlyReview !== 'undefined' && readOnlyReview ? '' : `<div class="list-add-row"><button type="button" class="secondary list-add-button" title="Add item" onclick="addListItem('${escapeAttr(name)}')">+</button></div>`;
+  return `<div class="list-review-field" data-list-field="${escapeAttr(name)}"><label>${escapeHtml(label)}</label><div class="list-review-items">${rows}</div>${addRow}</div>`;
+}
 function focusedReviewDetail(item, includeDecision=false) {
   return `<div class="focus-case">
     <section class="focus-card focus-header">
@@ -1128,9 +1155,9 @@ function focusedReviewDetail(item, includeDecision=false) {
           ${editField('task', 'Task', item.task, 'tall')}
           ${editField('target', 'Target', item.target, 'tall')}
           ${editField('attack_method', 'Attack Method', item.attack_method)}
-          ${editField('success_states', 'Success States', lineText(item.success_states), 'short')}
-          ${editField('failure_states', 'Failure States', lineText(item.failure_states), 'short')}
-          ${editField('metadata', 'Metadata', lineText(item.metadata), 'full compact')}
+          ${listReviewField('success_states', 'Success States', item.success_states)}
+          ${listReviewField('failure_states', 'Failure States', item.failure_states)}
+          ${listReviewField('metadata', 'Metadata', item.metadata)}
         </div>
         <div class="errors" id="editErrors"></div>
         <div class="review-edit-actions" ${typeof readOnlyReview !== 'undefined' && readOnlyReview ? 'style="display:none"' : ''}>
@@ -1166,6 +1193,59 @@ const reviewParams = new URLSearchParams(window.location.search);
 const reviewMode = reviewParams.get('mode') || 'review';
 const requestedCaseId = reviewParams.get('case');
 const readOnlyReview = reviewMode === 'view';
+function listItemFromButton(button) {
+  return button.closest('[data-list-item]');
+}
+function approveListItem(button) {
+  const item = listItemFromButton(button);
+  if (!item) return;
+  item.classList.remove('needs-revision', 'removed');
+  item.classList.add('approved');
+  const input = item.querySelector('[data-list-input]');
+  if (input) input.setAttribute('readonly', '');
+}
+function removeListItem(button) {
+  const item = listItemFromButton(button);
+  if (!item) return;
+  item.classList.remove('approved', 'needs-revision');
+  item.classList.toggle('removed');
+  const input = item.querySelector('[data-list-input]');
+  if (input) input.setAttribute('readonly', '');
+}
+function reviseListItem(button) {
+  const item = listItemFromButton(button);
+  if (!item) return;
+  item.classList.remove('approved', 'removed');
+  item.classList.add('needs-revision');
+  const input = item.querySelector('[data-list-input]');
+  if (input) {
+    input.removeAttribute('readonly');
+    input.focus();
+    input.setSelectionRange(input.value.length, input.value.length);
+  }
+}
+function addListItem(name) {
+  const field = document.querySelector(`[data-list-field="${CSS.escape(name)}"]`);
+  const list = field?.querySelector('.list-review-items');
+  if (!list) return;
+  const row = document.createElement('div');
+  row.className = 'list-review-item needs-revision';
+  row.setAttribute('data-list-item', '');
+  row.innerHTML = `<textarea data-list-input></textarea><div class="list-review-actions">
+    <button type="button" class="secondary" title="Approve" onclick="approveListItem(this)">✓</button>
+    <button type="button" class="danger" title="Remove" onclick="removeListItem(this)">×</button>
+    <button type="button" class="secondary" title="Revise" onclick="reviseListItem(this)">✎</button>
+  </div>`;
+  list.appendChild(row);
+  const input = row.querySelector('[data-list-input]');
+  if (input) input.focus();
+}
+function collectListValues(name) {
+  return Array.from(document.querySelectorAll(`[data-list-field="${CSS.escape(name)}"] [data-list-item]`))
+    .filter(row => !row.classList.contains('removed'))
+    .map(row => row.querySelector('[data-list-input]')?.value.trim() || '')
+    .filter(Boolean);
+}
 async function loadReviewCases() {
   const res = await fetch('/api/all-cases');
   const data = await res.json();
@@ -1281,9 +1361,9 @@ async function saveCurrentEdit({rerender=true} = {}) {
   if (!item || !form) return false;
   if (errorEl) errorEl.textContent = '';
   const payload = Object.fromEntries(new FormData(form).entries());
-  payload.success_states = splitLines(form.success_states.value);
-  payload.failure_states = splitLines(form.failure_states.value);
-  payload.metadata = splitLines(form.metadata.value);
+  payload.success_states = collectListValues('success_states');
+  payload.failure_states = collectListValues('failure_states');
+  payload.metadata = collectListValues('metadata');
   const res = await fetch(`/api/cases/${encodeURIComponent(item.id)}/expert-edit`, {method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
   const data = await res.json();
   if (!res.ok) {
