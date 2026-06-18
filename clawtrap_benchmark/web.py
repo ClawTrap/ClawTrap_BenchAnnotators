@@ -247,7 +247,7 @@ def page(title: str, body: str) -> str:
     .rank-actions {{ display:flex; justify-content:flex-end; gap:8px; flex-wrap:wrap; }}
     .rank-empty {{ padding:34px 20px; color:var(--muted); text-align:center; font-weight:800; }}
     .bench-toast {{
-      position:fixed; z-index:999; right:22px; top:22px; width:min(330px,calc(100vw - 32px)); overflow:hidden;
+      position:fixed; z-index:999; right:22px; bottom:22px; width:min(330px,calc(100vw - 32px)); overflow:hidden;
       border:1px solid rgba(15,118,110,.24); border-radius:8px; background:rgba(255,253,250,.96); color:var(--text);
       box-shadow:0 18px 44px rgba(20,20,20,.12); animation:benchToastIn .18s ease-out forwards, benchToastOut .2s ease-in 1.9s forwards;
     }}
@@ -256,8 +256,8 @@ def page(title: str, body: str) -> str:
     .bench-toast-title {{ display:block; font-size:13px; font-weight:900; color:var(--text); }}
     .bench-toast-copy {{ display:block; margin-top:2px; color:var(--muted); font-size:12px; font-weight:700; }}
     .bench-toast-bar {{ height:2px; background:var(--green); transform-origin:left; animation:benchToastBar 2s linear forwards; }}
-    @keyframes benchToastIn {{ from {{ opacity:0; transform:translateY(-8px); }} to {{ opacity:1; transform:translateY(0); }} }}
-    @keyframes benchToastOut {{ to {{ opacity:0; transform:translateY(-6px); }} }}
+    @keyframes benchToastIn {{ from {{ opacity:0; transform:translateY(8px); }} to {{ opacity:1; transform:translateY(0); }} }}
+    @keyframes benchToastOut {{ to {{ opacity:0; transform:translateY(6px); }} }}
     @keyframes benchToastBar {{ from {{ transform:scaleX(1); }} to {{ transform:scaleX(0); }} }}
     .review-layout {{ display:grid; grid-template-columns:minmax(390px,.92fr) minmax(560px,1.35fr); gap:15px; align-items:start; }}
     .review-focus {{ max-width:1440px; }}
@@ -266,11 +266,10 @@ def page(title: str, body: str) -> str:
     .review-focus .hero-copy {{ max-width:720px; }}
     .review-focus .review-toolbar {{ grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); padding:12px; margin-bottom:12px; }}
     .review-focus .review-layout {{ display:block; }}
-    .review-poolbar {{ display:grid; grid-template-columns:minmax(260px,1fr) auto; gap:12px; align-items:end; margin-bottom:16px; padding:16px; border:1px solid var(--line); border-radius:8px; background:rgba(255,253,250,.72); box-shadow:none; }}
-    .review-poolbar .select-shell {{ min-width:0; }}
-    .review-poolbar .review-case-picker {{ margin-bottom:0; }}
+    .review-poolbar {{ display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:16px; padding:12px 14px; border:1px solid var(--line); border-radius:8px; background:rgba(255,253,250,.72); box-shadow:none; }}
     .review-nav-actions {{ display:flex; align-items:flex-end; gap:8px; justify-content:flex-end; flex-wrap:wrap; }}
-    .review-case-picker {{ display:grid; grid-template-columns:minmax(240px,1fr) auto; gap:12px; align-items:end; margin-bottom:14px; }}
+    .review-case-picker {{ display:flex; align-items:center; gap:10px; margin-bottom:0; }}
+    .review-pool-label {{ color:var(--muted); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:0; }}
     .pool-count {{ display:inline-flex; align-items:center; min-height:42px; padding:9px 11px; border:1px solid var(--line); border-radius:999px; background:rgba(247,247,242,.74); color:var(--muted); font-size:12px; font-weight:850; white-space:nowrap; }}
     .review-stage {{ max-width:1080px; margin:0 auto; }}
     .review-context-line {{ display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; }}
@@ -318,29 +317,28 @@ def page(title: str, body: str) -> str:
     .review-focus .detail-panel {{ position:static; padding:0; background:transparent; border:0; box-shadow:none; max-height:none; overflow:visible; }}
     .focus-case {{ display:grid; gap:14px; }}
     .focus-card {{ border:1px solid var(--line); border-radius:8px; background:rgba(255,253,250,.86); box-shadow:none; padding:24px; }}
-    .focus-header {{ display:grid; grid-template-columns:minmax(0,1fr) auto; gap:14px; align-items:start; border-top:2px solid rgba(20,116,134,.48); background:rgba(255,253,250,.9); color:var(--text); }}
+    .focus-header {{ border-top:2px solid rgba(20,116,134,.48); background:rgba(255,253,250,.9); color:var(--text); }}
     .focus-title {{ margin:0; color:var(--text); font-size:26px; line-height:1.28; letter-spacing:0; font-weight:900; }}
     .focus-header .focus-title {{ color:var(--text); }}
     .focus-header .meta {{ color:var(--muted); }}
     .focus-meta {{ display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }}
-    .focus-action {{ min-width:190px; }}
-    .focus-action .benchmark-action {{ margin-top:0; }}
-    .focus-action .benchmark-action button {{ min-height:38px; }}
     .focus-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }}
     .focus-block {{ border:1px solid var(--line); border-radius:8px; background:rgba(247,247,242,.74); padding:16px; }}
     .focus-block.full {{ grid-column:1 / -1; }}
     .focus-label {{ display:block; margin-bottom:7px; color:var(--accent-strong); font-size:10px; font-weight:900; letter-spacing:0; text-transform:uppercase; }}
     .focus-text {{ margin:0; color:var(--ink); font-size:15px; line-height:1.72; font-weight:650; }}
-    .audit-row {{ display:grid; grid-template-columns:22px minmax(0,1fr); gap:10px; align-items:start; }}
-    .audit-check {{ width:15px; height:15px; margin:4px 0 0; accent-color:var(--green); cursor:pointer; }}
-    .audit-content {{ min-width:0; border-radius:6px; cursor:pointer; transition:background .12s ease, color .12s ease; }}
-    .audit-content:hover {{ background:rgba(20,116,134,.07); color:var(--text); }}
-    .focus-block .audit-content {{ padding:2px 4px; margin:-2px -4px; }}
-    .audit-list {{ margin:0; padding:0; list-style:none; display:grid; gap:9px; color:var(--ink); font-size:14px; line-height:1.65; }}
-    .audit-token-grid {{ display:grid; gap:8px; }}
-    .audit-token-grid .metadata-token {{ width:fit-content; cursor:pointer; }}
     .focus-attack {{ border-color:rgba(157,37,44,.22); background:rgba(255,248,248,.76); }}
     .focus-attack .focus-label {{ color:var(--accent); }}
+    .review-edit-form {{ display:grid; gap:14px; }}
+    .review-edit-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }}
+    .review-edit-grid .full {{ grid-column:1 / -1; }}
+    .review-edit-field {{ display:grid; gap:7px; }}
+    .review-edit-field label {{ margin:0; color:var(--accent-strong); font-size:10px; font-weight:900; letter-spacing:0; text-transform:uppercase; }}
+    .review-edit-field textarea {{ min-height:104px; background:rgba(255,253,250,.78); }}
+    .review-edit-field.compact textarea {{ min-height:74px; }}
+    .review-edit-field.tall textarea {{ min-height:142px; }}
+    .review-edit-actions {{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding-top:2px; flex-wrap:wrap; }}
+    .review-edit-actions .meta {{ max-width:640px; }}
     .judgement-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }}
     .judgement {{ min-height:150px; border:1px solid var(--line); border-radius:8px; padding:16px 16px 14px; background:rgba(255,253,250,.86); box-shadow:none; }}
     .judgement.success {{ border-color:rgba(15,118,110,.26); background:rgba(247,255,251,.84); }}
@@ -351,8 +349,6 @@ def page(title: str, body: str) -> str:
     .judgement ul,.metadata-list {{ margin:0; padding-left:19px; color:var(--ink); font-size:14px; line-height:1.65; }}
     .metadata-strip {{ display:flex; flex-wrap:wrap; gap:7px; }}
     .metadata-token {{ display:inline-flex; max-width:100%; padding:6px 9px; border:1px solid var(--line); border-radius:999px; background:rgba(255,253,250,.72); color:var(--muted); font-size:12px; font-weight:750; line-height:1.45; }}
-    .review-history {{ margin-top:10px; padding:10px 12px; border:1px solid var(--line); border-radius:8px; background:rgba(247,247,242,.74); color:var(--muted); font-size:12px; line-height:1.6; font-weight:700; }}
-    .review-history strong {{ color:var(--text); }}
     .decision-panel {{ display:grid; gap:12px; }}
     .decision-actions {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:9px; }}
     .decision-actions button {{ min-height:42px; box-shadow:none; }}
@@ -362,13 +358,6 @@ def page(title: str, body: str) -> str:
     .decision-actions .clear {{ background:rgba(255,253,250,.72); color:var(--muted); border-color:var(--line-strong); }}
     .button.danger, button.danger {{ background:rgba(255,253,250,.72); color:var(--danger); border-color:rgba(180,35,24,.34); box-shadow:none; }}
     .button.danger:hover, button.danger:hover {{ border-color:rgba(180,35,24,.52); background:rgba(255,241,242,.9); }}
-    .expert-editor {{ margin:0; }}
-    .expert-editor summary {{ cursor:pointer; list-style:none; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:0; color:var(--text); font-size:18px; font-weight:900; }}
-    .expert-editor summary::-webkit-details-marker {{ display:none; }}
-    .expert-editor summary::after {{ content:'展开'; color:var(--accent-strong); font-size:12px; font-weight:900; }}
-    .expert-editor[open] summary::after {{ content:'收起'; }}
-    .expert-edit-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px; }}
-    .expert-edit-grid .full {{ grid-column:1 / -1; }}
     dl {{ margin:18px 0 0; display:grid; gap:12px; }}
     dt {{ font-size:10px; color:var(--accent-strong); font-weight:900; text-transform:uppercase; letter-spacing:0; margin:0; }}
     dd {{ margin:5px 0 0; font-size:13px; line-height:1.66; background:rgba(247,247,242,.72); border:1px solid var(--line); border-radius:8px; padding:11px 12px; }}
@@ -384,8 +373,7 @@ def page(title: str, body: str) -> str:
       .hero.compact .hero-title {{ font-size:30px; }}
       .select-card-menu {{ max-height:42vh; }}
       .toolbar-actions {{ grid-column:auto; }} .detail-panel,.sticky-panel {{ position:static; max-height:none; }}
-      .focus-header,.focus-grid,.judgement-grid,.review-focus .review-layout,.review-focus .review-toolbar,.review-poolbar,.review-case-picker,.decision-actions,.expert-edit-grid {{ grid-template-columns:1fr; }}
-      .focus-action {{ min-width:0; }}
+      .focus-header,.focus-grid,.judgement-grid,.review-focus .review-layout,.review-focus .review-toolbar,.review-poolbar,.review-case-picker,.decision-actions,.review-edit-grid {{ grid-template-columns:1fr; }}
       .review-nav-actions {{ justify-content:flex-start; }}
       .rank-head {{ display:none; }}
       .rank-actions {{ justify-content:flex-start; }}
@@ -879,18 +867,18 @@ def review_page(user: str) -> str:
   <section class="hero compact">
     <div class="eyebrow">Review</div>
     <h2 class="hero-title">逐条审阅本地场景，决定是否进入 Benchmark</h2>
-    <p class="hero-copy">当前审核只保留裁决流：保留进 benchmark、Discard、Mark notes 或 Skip。评分机制已关闭。</p>
+    <p class="hero-copy">当前审核只显示未完成处理或存疑的 case。保留进 Benchmark 或 Discard 后会自动进入下一条。</p>
   </section>
   <section class="panel toolbar review-toolbar">
     <div><label>搜索</label><input id="reviewSearch" placeholder="task / target / attack_method / owner / id"></div>
-    <div><label>裁决状态</label><div class="select-shell"><select id="reviewDecisionFilter"><option value="">全部</option><option value="none">未裁决</option><option value="accepted">已保留</option><option value="discarded">Discard</option><option value="needs_discussion">存疑 Mark</option></select></div></div>
+    <div><label>裁决状态</label><div class="select-shell"><select id="reviewDecisionFilter"><option value="">全部</option><option value="none">未裁决</option><option value="needs_discussion">存疑 Mark</option></select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="reviewTaskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
     <div><label>攻击类型</label><div class="select-shell"><select id="reviewAttackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>植入形式</label><div class="select-shell"><select id="reviewFormFilter"><option value="">全部</option>{options(INTERACTIVE_FORMS)}</select></div></div>
   </section>
   <section class="review-poolbar">
     <div class="review-case-picker">
-      <div><label>当前待审核 case</label><div class="select-shell"><select id="reviewCaseSelect"></select></div></div>
+      <span class="review-pool-label">当前待审核池</span>
       <span class="pool-count" id="reviewCount">-</span>
     </div>
     <div class="review-nav-actions">
@@ -1095,67 +1083,10 @@ function benchmarkButton(item, handlerName='toggleSelectedCase') {
   return `<div class="benchmark-action"><button type="button" class="${selected ? 'selected' : ''}" onclick="${handlerName}('${escapeAttr(item.id)}', ${selected ? 'false' : 'true'})">${selected ? '取消选中 benchmark' : '选中进入 benchmark'}</button></div>`;
 }
 function compactTags(item) {
-  return `${decisionPill(item)}<span class="pill strong">${escapeHtml(item.task_type || '-')}</span><span class="pill">${escapeHtml(item.attack_type || '-')}</span><span class="pill">${escapeHtml((item.interactive_form || []).join(' / ') || '-')}</span>${item.benchmark_selected ? '<span class="pill selected-mark">已选入 benchmark</span>' : ''}`;
+  return `<span class="pill strong">${escapeHtml(item.task_type || '-')}</span><span class="pill">${escapeHtml(item.attack_type || '-')}</span><span class="pill">${escapeHtml((item.interactive_form || []).join(' / ') || '-')}</span>`;
 }
 function currentReviewer() {
   return window.CLAWTRAP_REVIEWER || '';
-}
-function auditStorageKey(caseId) {
-  return `clawtrap:audit:${currentReviewer() || 'anonymous'}:${caseId}`;
-}
-function auditState(caseId) {
-  try {
-    return JSON.parse(localStorage.getItem(auditStorageKey(caseId)) || '{}') || {};
-  } catch {
-    return {};
-  }
-}
-function auditChecked(caseId, fieldKey) {
-  return auditState(caseId)[fieldKey] ? 'checked' : '';
-}
-function toggleAuditCheck(event, caseId, fieldKey) {
-  event.stopPropagation();
-  const state = auditState(caseId);
-  state[fieldKey] = Boolean(event.target.checked);
-  localStorage.setItem(auditStorageKey(caseId), JSON.stringify(state));
-}
-function openExpertEdit(fieldName) {
-  const details = document.querySelector('.expert-editor');
-  if (details) details.open = true;
-  requestAnimationFrame(() => {
-    const field = document.querySelector(`#expertEditForm [name="${fieldName}"]`);
-    if (!field) return;
-    field.focus({preventScroll: true});
-    field.scrollIntoView({behavior: 'smooth', block: 'center'});
-  });
-}
-function auditCheckbox(caseId, fieldKey) {
-  return `<input class="audit-check" type="checkbox" title="已核对" ${auditChecked(caseId, fieldKey)} onclick="toggleAuditCheck(event, '${escapeAttr(caseId)}', '${escapeAttr(fieldKey)}')">`;
-}
-function auditBlock(item, fieldName, label, content, extraClass='') {
-  return `<article class="focus-block ${extraClass}">
-    <span class="focus-label">${escapeHtml(label)}</span>
-    <div class="audit-row">${auditCheckbox(item.id, fieldName)}<p class="focus-text audit-content" onclick="openExpertEdit('${escapeAttr(fieldName)}')">${escapeHtml(content || '-')}</p></div>
-  </article>`;
-}
-function reviewHistory(item) {
-  const decisions = Array.isArray(item.expert_decisions) ? item.expert_decisions : [];
-  const latestDecisions = decisions.slice(-3).reverse().map(record => `${escapeHtml(record.reviewer || 'unknown')}：${escapeHtml(decisionLabel(record.decision))}${record.comment ? ` · ${escapeHtml(record.comment)}` : ''}`);
-  const parts = [];
-  if (latestDecisions.length) parts.push(`<strong>最近裁决</strong><br>${latestDecisions.join('<br>')}`);
-  return `<div class="review-history">${parts.join('<br><br>') || '暂无历史裁决'}</div>`;
-}
-function focusList(item, fieldName, items) {
-  if (!Array.isArray(items) || !items.length) {
-    return `<ul class="audit-list"><li class="audit-row">${auditCheckbox(item.id, `${fieldName}:0`)}<span class="audit-content" onclick="openExpertEdit('${escapeAttr(fieldName)}')">-</span></li></ul>`;
-  }
-  return `<ul class="audit-list">${items.map((value, index) => `<li class="audit-row">${auditCheckbox(item.id, `${fieldName}:${index}`)}<span class="audit-content" onclick="openExpertEdit('${escapeAttr(fieldName)}')">${escapeHtml(value)}</span></li>`).join('')}</ul>`;
-}
-function metadataTokens(item, items) {
-  if (!Array.isArray(items) || !items.length) {
-    return `<div class="audit-token-grid"><div class="audit-row">${auditCheckbox(item.id, 'metadata:0')}<span class="metadata-token audit-content" onclick="openExpertEdit('metadata')">无补充信息</span></div></div>`;
-  }
-  return `<div class="audit-token-grid">${items.map((value, index) => `<div class="audit-row">${auditCheckbox(item.id, `metadata:${index}`)}<span class="metadata-token audit-content" onclick="openExpertEdit('metadata')">${escapeHtml(value)}</span></div>`).join('')}</div>`;
 }
 function lineText(items) {
   return Array.isArray(items) ? items.join('\n') : String(items || '');
@@ -1166,33 +1097,36 @@ function splitLines(value) {
 function escapeTextarea(value) {
   return escapeHtml(value);
 }
+function editField(name, label, value, className='') {
+  return `<div class="review-edit-field ${className}"><label>${escapeHtml(label)}</label><textarea name="${escapeAttr(name)}" required>${escapeTextarea(value || '')}</textarea></div>`;
+}
 function focusedReviewDetail(item) {
   return `<div class="focus-case">
     <section class="focus-card focus-header">
       <div>
         <h2 class="focus-title">${escapeHtml(item.task || '(未命名任务)')}</h2>
         <div class="meta">${escapeHtml(item.id)} · ${escapeHtml(item.owner || '')} · ${escapeHtml(item.created_at || '')}</div>
-        <div class="focus-meta">${compactTags(item)}<span class="pill">${escapeHtml(summaryText(item))}</span></div>
+        <div class="focus-meta">${compactTags(item)}</div>
       </div>
-      <div class="focus-action"><div class="review-history"><strong>当前裁决</strong><br>${escapeHtml(decisionLabel(item.expert_decision))}${item.expert_decision_by ? ` · ${escapeHtml(item.expert_decision_by)}` : ''}</div></div>
     </section>
     <section class="focus-card">
-      <div class="focus-grid">
-        ${auditBlock(item, 'task', '用户任务', item.task)}
-        ${auditBlock(item, 'target', '期望目标', item.target)}
-        ${auditBlock(item, 'attack_method', 'MITM 攻击植入', item.attack_method, 'focus-attack full')}
-      </div>
-    </section>
-    <section class="judgement-grid">
-      <article class="judgement success"><h3>成功判定</h3>${focusList(item, 'success_states', item.success_states)}</article>
-      <article class="judgement failure"><h3>失败判定</h3>${focusList(item, 'failure_states', item.failure_states)}</article>
-    </section>
-    <section class="focus-card">
-      <div class="focus-grid">
-        <article class="focus-block"><span class="focus-label">实现提示</span><div class="metadata-strip">${metadataTokens(item, item.metadata)}</div></article>
-        ${auditBlock(item, 'logic', '攻击逻辑', item.logic)}
-      </div>
-      ${reviewHistory(item)}
+      <form id="expertEditForm" class="review-edit-form">
+        <div class="section-heading"><div><p class="section-kicker">Case Content</p><h2>场景内容</h2></div><span class="pill">可直接修改</span></div>
+        <div class="review-edit-grid">
+          ${editField('task', '用户任务 task', item.task, 'full tall')}
+          ${editField('target', '期望目标 target', item.target, 'full')}
+          ${editField('attack_method', 'MITM 攻击植入 attack_method', item.attack_method, 'full tall')}
+          ${editField('success_states', '成功判定 success_states（每行一条）', lineText(item.success_states))}
+          ${editField('failure_states', '失败判定 failure_states（每行一条）', lineText(item.failure_states))}
+          ${editField('logic', '攻击逻辑 logic', item.logic, 'full')}
+          ${editField('metadata', '实现提示 metadata（每行一条）', lineText(item.metadata), 'full compact')}
+        </div>
+        <div class="errors" id="editErrors"></div>
+        <div class="review-edit-actions">
+          <span class="meta">修改会保存到当前 case；直接执行保留、Discard 或 Mark notes 时也会先自动保存。</span>
+          <button type="button" onclick="saveExpertEdit()">保存修改</button>
+        </div>
+      </form>
     </section>
   </div>`;
 }
@@ -1208,24 +1142,6 @@ function expertDecisionPanel(item) {
       <button type="button" class="clear" onclick="skipCase()">Skip</button>
     </div>
   </section>`;
-}
-function expertEditPanel(item) {
-  return `<details class="focus-card expert-editor">
-    <summary>专家轻量编辑</summary>
-    <form id="expertEditForm">
-      <div class="expert-edit-grid">
-        <div class="full"><label>用户任务 task</label><textarea name="task" required>${escapeTextarea(item.task || '')}</textarea></div>
-        <div class="full"><label>期望目标 target</label><textarea name="target" required>${escapeTextarea(item.target || '')}</textarea></div>
-        <div class="full"><label>MITM 攻击植入 attack_method</label><textarea name="attack_method" required>${escapeTextarea(item.attack_method || '')}</textarea></div>
-        <div><label>成功判定 success_states（每行一条）</label><textarea name="success_states" required>${escapeTextarea(lineText(item.success_states))}</textarea></div>
-        <div><label>失败判定 failure_states（每行一条）</label><textarea name="failure_states" required>${escapeTextarea(lineText(item.failure_states))}</textarea></div>
-        <div class="full"><label>攻击逻辑 logic</label><textarea name="logic" required>${escapeTextarea(item.logic || '')}</textarea></div>
-        <div class="full"><label>Metadata（每行一条）</label><textarea name="metadata" required>${escapeTextarea(lineText(item.metadata))}</textarea></div>
-      </div>
-      <div class="errors" id="editErrors"></div>
-      <div class="row form-actions"><button type="button" onclick="saveExpertEdit()">保存修改</button></div>
-    </form>
-  </details>`;
 }
 function listText(items) { return Array.isArray(items) ? `<ul>${items.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : escapeHtml(items || ''); }
 function escapeHtml(value) { return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
@@ -1249,10 +1165,14 @@ function filterReviewCases() {
   const attack = document.getElementById('reviewAttackFilter')?.value || '';
   const task = document.getElementById('reviewTaskFilter')?.value || '';
   const form = document.getElementById('reviewFormFilter')?.value || '';
-  filteredCases = allCases.filter(item => matchesDecisionStatus(item, decision) && (!attack || item.attack_type === attack) && (!task || item.task_type === task) && (!form || (item.interactive_form || []).includes(form)) && (!q || JSON.stringify(item).toLowerCase().includes(q)));
+  filteredCases = allCases.filter(item => isReviewCandidate(item) && matchesDecisionStatus(item, decision) && (!attack || item.attack_type === attack) && (!task || item.task_type === task) && (!form || (item.interactive_form || []).includes(form)) && (!q || JSON.stringify(item).toLowerCase().includes(q)));
   if (!filteredCases.some(item => item.id === selectedId)) selectedId = filteredCases[0]?.id || null;
   renderReviewPicker();
   renderDetail();
+}
+function isReviewCandidate(item) {
+  if (item.benchmark_selected) return false;
+  return !['accepted', 'discarded'].includes(item.expert_decision || '');
 }
 function matchesDecisionStatus(item, decision) {
   if (!decision) return true;
@@ -1260,17 +1180,9 @@ function matchesDecisionStatus(item, decision) {
   return item.expert_decision === decision;
 }
 function renderReviewPicker() {
-  const picker = document.getElementById('reviewCaseSelect');
   const count = document.getElementById('reviewCount');
   const index = filteredCases.findIndex(item => item.id === selectedId);
-  count.textContent = filteredCases.length ? `${index + 1} / ${filteredCases.length}` : '0 / 0';
-  picker.innerHTML = filteredCases.map((item, itemIndex) => {
-    const title = String(item.task || '(未命名任务)').replace(/\s+/g, ' ').slice(0, 92);
-    return `<option value="${escapeHtml(item.id)}">#${itemIndex + 1} · ${escapeHtml(decisionLabel(item.expert_decision))} · ${escapeHtml(title)}</option>`;
-  }).join('');
-  picker.value = selectedId || '';
-  window.refreshClawTrapSelects?.();
-  window.syncClawTrapSelects?.();
+  if (count) count.textContent = filteredCases.length ? `${index + 1} / ${filteredCases.length}` : '0 / 0';
 }
 function selectCase(id) { selectedId = id; renderReviewPicker(); renderDetail(); }
 function goReviewCase(delta) {
@@ -1280,15 +1192,13 @@ function goReviewCase(delta) {
   selectedId = filteredCases[nextIndex].id;
   renderReviewPicker();
   renderDetail();
-  window.scrollTo({top: 0, behavior: 'smooth'});
 }
 function renderDetail() {
   const panel = document.getElementById('detailPanel');
   const item = filteredCases.find(candidate => candidate.id === selectedId);
   if (!item) { panel.innerHTML = '<div class="detail-empty">当前筛选池没有可审核场景</div>'; return; }
   panel.innerHTML = `${focusedReviewDetail(item)}
-    ${expertDecisionPanel(item)}
-    ${expertEditPanel(item)}`;
+    ${expertDecisionPanel(item)}`;
 }
 async function toggleSelectedCase(id, selected) {
   const panel = document.getElementById('detailPanel');
@@ -1311,6 +1221,10 @@ async function submitDecision(decision) {
   const errorEl = document.getElementById('decisionErrors');
   if (!item) return;
   if (errorEl) errorEl.textContent = '';
+  const scrollTop = window.scrollY;
+  const scrollLeft = window.scrollX;
+  const editSaved = await saveCurrentEdit({rerender:false});
+  if (!editSaved) return;
   const comment = document.getElementById('decisionComment')?.value || '';
   const res = await fetch(`/api/cases/${encodeURIComponent(item.id)}/expert-decision`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({decision, comment})});
   const data = await res.json();
@@ -1323,7 +1237,7 @@ async function submitDecision(decision) {
   if (index >= 0) allCases[index] = data.case;
   selectedId = nextCandidate?.id || data.case.id;
   filterReviewCases();
-  window.scrollTo({top: 0, behavior: 'smooth'});
+  requestAnimationFrame(() => window.scrollTo({top: scrollTop, left: scrollLeft, behavior: 'auto'}));
 }
 function skipCase() {
   goReviewCase(1);
@@ -1337,10 +1251,13 @@ function showBenchmarkAnimation() {
   window.setTimeout(() => node.remove(), 2300);
 }
 async function saveExpertEdit() {
+  await saveCurrentEdit({rerender:true});
+}
+async function saveCurrentEdit({rerender=true} = {}) {
   const item = filteredCases.find(candidate => candidate.id === selectedId);
   const form = document.getElementById('expertEditForm');
   const errorEl = document.getElementById('editErrors');
-  if (!item || !form) return;
+  if (!item || !form) return false;
   if (errorEl) errorEl.textContent = '';
   const payload = Object.fromEntries(new FormData(form).entries());
   payload.success_states = splitLines(form.success_states.value);
@@ -1350,17 +1267,17 @@ async function saveExpertEdit() {
   const data = await res.json();
   if (!res.ok) {
     if (errorEl) errorEl.textContent = (data.errors || [data.error || '保存修改失败']).join('\n');
-    return;
+    return false;
   }
   mergeUpdatedCase(data.case);
-  filterReviewCases();
+  if (rerender) filterReviewCases();
+  return true;
 }
 document.getElementById('reviewSearch')?.addEventListener('input', filterReviewCases);
 document.getElementById('reviewDecisionFilter')?.addEventListener('input', filterReviewCases);
 document.getElementById('reviewAttackFilter')?.addEventListener('input', filterReviewCases);
 document.getElementById('reviewTaskFilter')?.addEventListener('input', filterReviewCases);
 document.getElementById('reviewFormFilter')?.addEventListener('input', filterReviewCases);
-document.getElementById('reviewCaseSelect')?.addEventListener('input', event => selectCase(event.target.value));
 loadReviewCases();
 """
 
