@@ -10,7 +10,7 @@ from flask import Flask, jsonify, redirect, request, session
 from .auth import authenticate
 from .constants import ATTACK_TYPES, INTERACTIVE_FORMS, TASK_TYPES
 from .schema import normalize_case, validate_case
-from .storage import DEFAULT_DATASET, list_file_datasets, read_local_dataset, set_benchmark_selected, set_expert_decision, update_case_fields, upsert_case
+from .storage import DEFAULT_DATASET, read_local_dataset, set_benchmark_selected, set_expert_decision, update_case_fields, upsert_case
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -41,10 +41,6 @@ def js_value(value: Any) -> str:
 
 def can_access_workspace() -> bool:
     return session.get("role") in ("annotator", "admin")
-
-
-def can_access_admin() -> bool:
-    return session.get("role") == "admin"
 
 
 def page(title: str, body: str) -> str:
@@ -243,7 +239,7 @@ def page(title: str, body: str) -> str:
     .rank-index {{ color:var(--accent-strong); font-size:13px; font-weight:900; }}
     .rank-case-title {{ display:block; color:var(--text); font-size:14px; font-weight:850; line-height:1.52; }}
     .rank-case-meta {{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }}
-    .benchmark-board .rank-head,.benchmark-board .rank-row {{ grid-template-columns:72px minmax(0,1fr) 132px 136px 156px 148px; }}
+    .benchmark-board .rank-head,.benchmark-board .rank-row {{ grid-template-columns:72px minmax(0,1fr) 150px 128px 132px 150px 148px; }}
     .rank-meter {{ height:4px; margin-top:9px; background:rgba(20,20,20,.08); border-radius:999px; overflow:hidden; }}
     .rank-meter span {{ display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--teal)); }}
     .rank-actions {{ display:flex; justify-content:flex-end; gap:8px; flex-wrap:wrap; }}
@@ -574,36 +570,6 @@ def create_app() -> Flask:
         session.clear()
         return redirect("/login")
 
-    @app.get("/admin")
-    def admin():
-        if not can_access_admin():
-            return redirect("/admin/login")
-        return admin_page(session["username"])
-
-    @app.get("/admin/login")
-    def admin_login_page():
-        return render_admin_login()
-
-    @app.post("/admin/login")
-    def admin_login():
-        username = request.form.get("username", "").strip()
-        password = request.form.get("password", "")
-        try:
-            account = authenticate(username, password)
-        except ValueError:
-            return render_admin_login("账户配置错误，请联系管理员"), 500
-        if not account or account.role != "admin":
-            return render_admin_login("管理员账号或密码不正确"), 401
-        session.clear()
-        session["role"] = account.role
-        session["username"] = account.username
-        return redirect("/admin")
-
-    @app.get("/admin/logout")
-    def admin_logout():
-        session.clear()
-        return redirect("/admin/login")
-
     @app.get("/api/cases")
     def api_cases():
         if not can_access_workspace():
@@ -700,18 +666,6 @@ def create_app() -> Flask:
             return jsonify({"error": str(exc)}), 503
         return jsonify({"case": saved})
 
-    @app.get("/api/admin/cases")
-    def api_admin_cases():
-        if not can_access_admin():
-            return jsonify({"error": "admin login required"}), 401
-        datasets = list_file_datasets() or [DEFAULT_DATASET]
-        dataset = request.args.get("dataset") or (DEFAULT_DATASET if DEFAULT_DATASET in datasets else datasets[0])
-        if dataset not in datasets:
-            return jsonify({"error": "unknown dataset"}), 400
-        cases = read_local_dataset(dataset)
-        cases.sort(key=lambda item: item.get("updated_at", ""), reverse=True)
-        return jsonify({"dataset": dataset, "datasets": datasets, "cases": cases})
-
     return app
 
 
@@ -733,28 +687,9 @@ def render_login(error: str = "") -> str:
 </section></main>""")
 
 
-def render_admin_login(error: str = "") -> str:
-    error_html = f'<div class="errors">{error}</div>' if error else ""
-    return page("ClawTrap 管理员登录", f"""
-<main class="login-main"><section class="login">
-  <div class="brand-lockup" style="margin-bottom:18px">
-    <div class="brand-mark">C</div>
-    <div><h1>ClawTrap</h1><div class="brand-subtitle">Administrator review console</div></div>
-  </div>
-  <div class="login-note">管理员入口只接受 role=admin 的账号。管理员账号也可以进入普通标注、审核和总览页面。</div>
-  <form method="post" action="/admin/login">
-    <label>管理员账号</label><input name="username" required autocomplete="username" autofocus>
-    <label>密码</label><input name="password" type="password" required autocomplete="current-password">
-    {error_html}
-    <div class="row form-actions"><button type="submit">进入管理台</button></div>
-  </form>
-</section></main>""")
-
-
 def app_header(user: str, subtitle: str, active: str = "") -> str:
     def active_class(name: str) -> str:
         return "active" if active == name else ""
-    admin_link = '<a href="/admin">管理台</a>' if can_access_admin() else ""
     return f"""
 <header>
   <div class="brand-lockup"><div class="brand-mark">C</div><div><h1>ClawTrap</h1><div class="brand-subtitle">{subtitle}</div></div></div>
@@ -764,7 +699,6 @@ def app_header(user: str, subtitle: str, active: str = "") -> str:
       <a class="{active_class('review')}" href="/review">审核</a>
       <a class="{active_class('scenes')}" href="/scenes">原始库</a>
       <a class="{active_class('benchmark')}" href="/benchmark">Benchmark</a>
-      {admin_link}
     </nav>
     <span class="user-chip">{user}</span>
     <a class="button secondary" href="/logout">退出</a>
@@ -904,6 +838,7 @@ def review_page(user: str) -> str:
   <section class="panel toolbar review-toolbar">
     <div><label>搜索</label><input id="reviewSearch"></div>
     <div><label>裁决状态</label><div class="select-shell"><select id="reviewDecisionFilter"><option value="">全部</option><option value="none">未裁决</option><option value="needs_discussion">存疑 Mark</option></select></div></div>
+    <div><label>数据来源</label><div class="select-shell"><select id="reviewSourceFilter"><option value="">全部</option></select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="reviewTaskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
     <div><label>攻击类型</label><div class="select-shell"><select id="reviewAttackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>植入形式</label><div class="select-shell"><select id="reviewFormFilter"><option value="">全部</option>{options(INTERACTIVE_FORMS)}</select></div></div>
@@ -939,6 +874,7 @@ def scenes_page(user: str) -> str:
   <section class="panel toolbar">
     <div><label>Benchmark</label><div class="select-shell"><select id="selectedFilter"><option value="">全部</option><option value="selected">已选中</option><option value="unselected">未选中</option></select></div></div>
     <div><label>裁决状态</label><div class="select-shell"><select id="decisionFilter"><option value="">全部</option><option value="none">未裁决</option><option value="accepted">已保留</option><option value="discarded">Discard</option><option value="needs_discussion">存疑 Mark</option></select></div></div>
+    <div><label>数据来源</label><div class="select-shell"><select id="sourceFilter"><option value="">全部</option></select></div></div>
     <div><label>攻击类型</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
     <div><label>搜索</label><input id="search"></div>
@@ -967,47 +903,19 @@ def benchmark_page(user: str) -> str:
   <section class="panel toolbar">
     <div><label>攻击类型</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
+    <div><label>数据来源</label><div class="select-shell"><select id="sourceFilter"><option value="">全部</option></select></div></div>
     <div><label>搜索</label><input id="search"></div>
     <div class="row toolbar-actions"><button type="button" onclick="loadCases()">刷新</button></div>
   </section>
   <section class="rank-dashboard">
     <section class="rank-summary" id="stats"></section>
     <section class="rank-board benchmark-board">
-      <div class="rank-head"><span>#</span><span>Benchmark Case</span><span>Reviewer</span><span>Attack</span><span>Task</span><span></span></div>
+      <div class="rank-head"><span>#</span><span>Benchmark Case</span><span>Source</span><span>Reviewer</span><span>Attack</span><span>Task</span><span></span></div>
       <div id="rankRows"></div>
     </section>
   </section>
 </main>
 <script>{benchmark_js()}</script>""")
-
-
-def admin_page(admin: str) -> str:
-    return page("ClawTrap 数据审阅", f"""
-<header>
-  <div class="brand-lockup"><div class="brand-mark">C</div><div><h1>ClawTrap</h1><div class="brand-subtitle">Benchmark data review</div></div></div>
-  <div class="top-nav"><span class="meta">admin: {admin}</span><a class="button secondary" href="/admin/logout">退出</a></div>
-</header>
-<main class="admin-main">
-  <section class="hero compact">
-    <div class="eyebrow">Review Console</div>
-    <h2 class="hero-title">Inspect local MITM benchmark cases.</h2>
-    <p class="hero-copy">管理页保留数据集切换与完整字段查看，但不再显示评分排序或云端/本地来源区分。</p>
-  </section>
-  <section class="panel toolbar">
-    <div><label>数据集</label><div class="select-shell"><select id="dataset"></select></div></div>
-    <div><label>状态</label><div class="select-shell"><select id="statusFilter"><option value="">全部</option><option value="draft">draft</option><option value="submitted">submitted</option></select></div></div>
-    <div><label>Benchmark</label><div class="select-shell"><select id="selectedFilter"><option value="">全部</option><option value="selected">已选中</option><option value="unselected">未选中</option></select></div></div>
-    <div><label>裁决状态</label><div class="select-shell"><select id="decisionFilter"><option value="">全部</option><option value="none">未裁决</option><option value="accepted">已保留</option><option value="discarded">Discard</option><option value="needs_discussion">存疑 Mark</option></select></div></div>
-    <div><label>攻击类型</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
-    <div><label>任务类型</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
-    <div><label>植入形式</label><div class="select-shell"><select id="formFilter"><option value="">全部</option>{options(INTERACTIVE_FORMS)}</select></div></div>
-    <div><label>搜索</label><input id="search"></div>
-    <div class="row toolbar-actions"><button type="button" onclick="loadCases()">刷新</button><button type="button" class="secondary" onclick="downloadFiltered()">导出当前筛选</button></div>
-  </section>
-  <section class="stats" id="stats"></section>
-  <section class="review-layout"><div class="review-column"><div class="result-heading"><div><p class="section-kicker">Cases</p><h2>数据列表</h2></div><span id="resultCount">-</span></div><div class="review-list" id="reviewList"></div></div><aside class="detail-panel" id="detailPanel"></aside></section>
-</main>
-<script>{admin_js()}</script>""")
 
 
 def annotator_js() -> str:
@@ -1068,6 +976,22 @@ function summaryText(item) {
 function applyRanks(items) {
   return [...items];
 }
+function dataSourceLabel(item) {
+  return item.data_source || item.generation_batch || item.dataset || item.batch || item.source || item.owner || 'unknown';
+}
+function dataSourceMatches(item, value) {
+  return !value || dataSourceLabel(item) === value;
+}
+function populateSourceFilter(selectId, cases) {
+  const select = document.getElementById(selectId);
+  if (!select) return;
+  const current = select.value;
+  const sources = [...new Set(cases.map(dataSourceLabel).filter(Boolean))].sort();
+  select.innerHTML = '<option value="">全部</option>' + sources.map(source => `<option value="${escapeHtml(source)}">${escapeHtml(source)}</option>`).join('');
+  select.value = sources.includes(current) ? current : '';
+  window.refreshClawTrapSelects?.();
+  window.syncClawTrapSelects?.();
+}
 function decisionLabel(decision) {
   return ({accepted:'已保留', discarded:'Discard', needs_discussion:'存疑 Mark', clear:'未裁决'})[decision] || '未裁决';
 }
@@ -1115,7 +1039,7 @@ function benchmarkButton(item, handlerName='toggleSelectedCase') {
   return `<div class="benchmark-action"><button type="button" class="${selected ? 'selected' : ''}" onclick="${handlerName}('${escapeAttr(item.id)}', ${selected ? 'false' : 'true'})">${selected ? '取消选中 benchmark' : '选中进入 benchmark'}</button></div>`;
 }
 function compactTags(item) {
-  return `<span class="pill strong">${escapeHtml(item.task_type || '-')}</span><span class="pill">${escapeHtml(item.attack_type || '-')}</span><span class="pill">${escapeHtml((item.interactive_form || []).join(' / ') || '-')}</span>`;
+  return `<span class="pill strong">${escapeHtml(item.task_type || '-')}</span><span class="pill">${escapeHtml(item.attack_type || '-')}</span><span class="pill">${escapeHtml((item.interactive_form || []).join(' / ') || '-')}</span><span class="pill">Source: ${escapeHtml(dataSourceLabel(item))}</span>`;
 }
 function currentReviewer() {
   return window.CLAWTRAP_REVIEWER || '';
@@ -1252,6 +1176,7 @@ async function loadReviewCases() {
   const res = await fetch('/api/all-cases');
   const data = await res.json();
   allCases = data.cases || [];
+  populateSourceFilter('reviewSourceFilter', allCases);
   if (readOnlyReview) {
     document.querySelector('.review-toolbar')?.remove();
     document.querySelector('.review-poolbar')?.remove();
@@ -1266,10 +1191,11 @@ async function loadReviewCases() {
 function filterReviewCases() {
   const q = (document.getElementById('reviewSearch')?.value || '').trim().toLowerCase();
   const decision = document.getElementById('reviewDecisionFilter')?.value || '';
+  const source = document.getElementById('reviewSourceFilter')?.value || '';
   const attack = document.getElementById('reviewAttackFilter')?.value || '';
   const task = document.getElementById('reviewTaskFilter')?.value || '';
   const form = document.getElementById('reviewFormFilter')?.value || '';
-  filteredCases = allCases.filter(item => isReviewCandidate(item) && matchesDecisionStatus(item, decision) && (!attack || item.attack_type === attack) && (!task || item.task_type === task) && (!form || (item.interactive_form || []).includes(form)) && (!q || JSON.stringify(item).toLowerCase().includes(q)));
+  filteredCases = allCases.filter(item => isReviewCandidate(item) && matchesDecisionStatus(item, decision) && dataSourceMatches(item, source) && (!attack || item.attack_type === attack) && (!task || item.task_type === task) && (!form || (item.interactive_form || []).includes(form)) && (!q || JSON.stringify(item).toLowerCase().includes(q)));
   if (!filteredCases.some(item => item.id === selectedId)) selectedId = filteredCases[0]?.id || null;
   renderReviewPicker();
   renderDetail();
@@ -1378,6 +1304,7 @@ async function saveCurrentEdit({rerender=true} = {}) {
 }
 document.getElementById('reviewSearch')?.addEventListener('input', filterReviewCases);
 document.getElementById('reviewDecisionFilter')?.addEventListener('input', filterReviewCases);
+document.getElementById('reviewSourceFilter')?.addEventListener('input', filterReviewCases);
 document.getElementById('reviewAttackFilter')?.addEventListener('input', filterReviewCases);
 document.getElementById('reviewTaskFilter')?.addEventListener('input', filterReviewCases);
 document.getElementById('reviewFormFilter')?.addEventListener('input', filterReviewCases);
@@ -1387,22 +1314,25 @@ loadReviewCases();
 
 def scenes_js() -> str:
     return shared_case_js() + r"""
-const controls = ['selectedFilter','decisionFilter','attackFilter','taskFilter','search'].map(id => document.getElementById(id));
+const controls = ['selectedFilter','decisionFilter','sourceFilter','attackFilter','taskFilter','search'].map(id => document.getElementById(id));
 async function loadCases() {
   const res = await fetch('/api/all-cases');
   const data = await res.json();
   allCases = data.cases || [];
+  populateSourceFilter('sourceFilter', allCases);
   render();
 }
 function render() {
   const selected = document.getElementById('selectedFilter').value;
   const decision = document.getElementById('decisionFilter').value;
+  const source = document.getElementById('sourceFilter').value;
   const attack = document.getElementById('attackFilter').value;
   const task = document.getElementById('taskFilter').value;
   const q = document.getElementById('search').value.trim().toLowerCase();
   filteredCases = allCases.filter(item =>
     (!selected || (selected === 'selected') === Boolean(item.benchmark_selected)) &&
     matchesDecision(item, decision) &&
+    dataSourceMatches(item, source) &&
     (!attack || item.attack_type === attack) &&
     (!task || item.task_type === task) &&
     (!q || [item.id, item.owner, item.task].join(' ').toLowerCase().includes(q))
@@ -1436,7 +1366,7 @@ function renderRankRows() {
 }
 function overviewTags(item) {
   const selected = item.benchmark_selected ? '<span class="pill selected-mark">已选入 benchmark</span>' : '';
-  return `${selected}<span class="pill strong">${escapeHtml(item.task_type || '-')}</span><span class="pill">${escapeHtml(item.attack_type || '-')}</span>`;
+  return `${selected}<span class="pill strong">${escapeHtml(item.task_type || '-')}</span><span class="pill">${escapeHtml(item.attack_type || '-')}</span><span class="pill">Source: ${escapeHtml(dataSourceLabel(item))}</span>`;
 }
 function rankRow(item, index) {
   return `<article class="rank-row">
@@ -1457,21 +1387,24 @@ loadCases();
 
 def benchmark_js() -> str:
     return shared_case_js() + r"""
-const controls = ['attackFilter','taskFilter','search'].map(id => document.getElementById(id));
+const controls = ['attackFilter','taskFilter','sourceFilter','search'].map(id => document.getElementById(id));
 async function loadCases() {
   const res = await fetch('/api/benchmark-cases');
   const data = await res.json();
   allCases = data.cases || [];
+  populateSourceFilter('sourceFilter', allCases);
   render();
 }
 function render() {
   const attack = document.getElementById('attackFilter').value;
   const task = document.getElementById('taskFilter').value;
+  const source = document.getElementById('sourceFilter').value;
   const q = document.getElementById('search').value.trim().toLowerCase();
   filteredCases = allCases.filter(item =>
     (!attack || item.attack_type === attack) &&
     (!task || item.task_type === task) &&
-    (!q || [item.id, item.owner, item.task, benchmarkReviewer(item)].join(' ').toLowerCase().includes(q))
+    dataSourceMatches(item, source) &&
+    (!q || [item.id, item.owner, item.task, benchmarkReviewer(item), dataSourceLabel(item)].join(' ').toLowerCase().includes(q))
   );
   renderStats();
   renderRows();
@@ -1483,6 +1416,7 @@ function renderStats() {
   document.getElementById('stats').innerHTML = [
     stat('当前筛选', filteredCases.length),
     stat('全部入选', allCases.length),
+    stat('数据来源数', new Set(filteredCases.map(dataSourceLabel)).size),
     stat('攻击类型数', new Set(filteredCases.map(c => c.attack_type || '')).size),
     stat('任务类型数', new Set(filteredCases.map(c => c.task_type || '')).size)
   ].join('');
@@ -1499,6 +1433,7 @@ function renderRows() {
     <div>
       <span class="rank-case-title">${escapeHtml(item.task || '(未命名任务)')}</span>
     </div>
+    <div><span class="pill">${escapeHtml(dataSourceLabel(item))}</span></div>
     <div><span class="pill">${escapeHtml(benchmarkReviewer(item) || '-')}</span></div>
     <div><span class="pill">${escapeHtml(item.attack_type || '-')}</span></div>
     <div><span class="pill strong">${escapeHtml(item.task_type || '-')}</span></div>
@@ -1519,103 +1454,6 @@ async function removeFromBenchmark(id) {
 }
 controls.forEach(el => el.addEventListener('input', render));
 loadCases();
-"""
-
-
-def admin_js() -> str:
-    return r"""
-let allCases = []; let filteredCases = []; let selectedId = null;
-const dataset = document.getElementById('dataset');
-const controls = ['statusFilter','selectedFilter','decisionFilter','attackFilter','taskFilter','formFilter','search'].map(id => document.getElementById(id));
-async function init() {
-  const res = await fetch('/api/admin/cases'); const data = await res.json();
-  dataset.innerHTML = data.datasets.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
-  dataset.value = data.dataset; allCases = data.cases || [];
-  window.refreshClawTrapSelects?.();
-  window.syncClawTrapSelects?.();
-  controls.concat(dataset).forEach(el => el.addEventListener('input', () => dataset === el ? loadCases() : render()));
-  render();
-}
-async function loadCases() {
-  const res = await fetch(`/api/admin/cases?dataset=${encodeURIComponent(dataset.value)}`);
-  const data = await res.json(); allCases = data.cases || []; window.syncClawTrapSelects?.(); render();
-}
-function render() {
-  const status = document.getElementById('statusFilter').value, selected = document.getElementById('selectedFilter').value, decision = document.getElementById('decisionFilter').value, attack = document.getElementById('attackFilter').value, task = document.getElementById('taskFilter').value, form = document.getElementById('formFilter').value, q = document.getElementById('search').value.trim().toLowerCase();
-  filteredCases = allCases.filter(item => (!status || item.status === status) && (!selected || (selected === 'selected') === Boolean(item.benchmark_selected)) && matchesDecision(item, decision) && (!attack || item.attack_type === attack) && (!task || item.task_type === task) && (!form || (item.interactive_form || []).includes(form)) && (!q || JSON.stringify(item).toLowerCase().includes(q)));
-  filteredCases.sort((a, b) => String(b.updated_at || '').localeCompare(String(a.updated_at || '')));
-  renderStats(); renderList(); renderDetail();
-}
-function matchesDecision(item, decision) {
-  if (!decision) return true;
-  if (decision === 'none') return !item.expert_decision;
-  return item.expert_decision === decision;
-}
-function renderStats() {
-  document.getElementById('stats').innerHTML = [
-    stat('当前筛选', filteredCases.length), stat('全部数据', allCases.length),
-    stat('已选 benchmark', filteredCases.filter(c => c.benchmark_selected).length),
-    stat('已保留', filteredCases.filter(c => c.expert_decision === 'accepted').length),
-    stat('Discard', filteredCases.filter(c => c.expert_decision === 'discarded').length),
-    stat('存疑', filteredCases.filter(c => c.expert_decision === 'needs_discussion').length),
-    stat('submitted', filteredCases.filter(c => c.status === 'submitted').length),
-    stat('draft', filteredCases.filter(c => c.status === 'draft').length)
-  ].join('');
-}
-function stat(label, value) { return `<article class="stat"><strong>${value}</strong><span>${escapeHtml(label)}</span></article>`; }
-function decisionLabel(decision) {
-  return ({accepted:'已保留', discarded:'Discard', needs_discussion:'存疑 Mark', clear:'未裁决'})[decision] || '未裁决';
-}
-function decisionPill(item) {
-  const decision = item.expert_decision || '';
-  if (!decision) return '<span class="pill">未裁决</span>';
-  return `<span class="pill decision-${escapeHtml(decision)}">${escapeHtml(decisionLabel(decision))}</span>`;
-}
-function adminTags(item) {
-  const selected = item.benchmark_selected ? '<span class="pill selected-mark">已选入 benchmark</span>' : '';
-  return `${selected}${decisionPill(item)}<span class="pill strong">${escapeHtml(item.status || 'draft')}</span><span class="pill">${escapeHtml(item.task_type)}</span><span class="pill">${escapeHtml(item.attack_type)}</span><span class="pill">${escapeHtml((item.interactive_form || []).join('/'))}</span>`;
-}
-function renderList() {
-  if (!filteredCases.some(item => item.id === selectedId)) selectedId = filteredCases[0]?.id || null;
-  const countEl = document.getElementById('resultCount');
-  if (countEl) countEl.textContent = `${filteredCases.length} 条`;
-  const list = document.getElementById('reviewList');
-  list.innerHTML = filteredCases.map((item, index) => `<button class="review-item ${item.id === selectedId ? 'active' : ''}" data-case-id="${escapeHtml(item.id)}" type="button" onclick="selectCase('${escapeAttr(item.id)}')"><span class="review-item-title">${escapeHtml(item.task || '(未命名任务)')}</span><span class="review-item-attack">${escapeHtml(item.attack_method || '')}</span><span class="rank-line"><span class="rank-badge">#${index + 1}</span><span class="pill">${escapeHtml(decisionLabel(item.expert_decision))}</span></span><span class="review-tags">${adminTags(item)}</span></button>`).join('') || '<div class="detail-empty">没有匹配的数据</div>';
-}
-function updateActiveListItem() {
-  document.querySelectorAll('.review-item[data-case-id]').forEach(node => {
-    node.classList.toggle('active', node.dataset.caseId === selectedId);
-  });
-}
-function selectCase(id) { selectedId = id; updateActiveListItem(); renderDetail(); }
-function renderDetail() {
-  const panel = document.getElementById('detailPanel'); const item = filteredCases.find(candidate => candidate.id === selectedId);
-  if (!item) { panel.innerHTML = '<div class="detail-empty">选择左侧条目查看详情</div>'; return; }
-  panel.innerHTML = `<h2>${escapeHtml(item.task || '(未命名任务)')}</h2><div class="review-tags">${adminTags(item)}</div>${benchmarkButton(item)}<dl><dt>Attack Method</dt><dd>${escapeHtml(item.attack_method)}</dd><dt>Success States</dt><dd>${listText(item.success_states)}</dd><dt>Failure States</dt><dd>${listText(item.failure_states)}</dd><dt>Metadata</dt><dd>${listText(item.metadata)}</dd><dt>Target</dt><dd>${escapeHtml(item.target)}</dd><dt>Logic</dt><dd>${escapeHtml(item.logic)}</dd></dl>`;
-}
-async function toggleSelectedCase(id, selected) {
-  const panel = document.getElementById('detailPanel');
-  try {
-    const res = await fetch(`/api/cases/${encodeURIComponent(id)}/benchmark-selection`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({selected})});
-    const data = await res.json();
-    if (!res.ok) throw new Error((data.errors || [data.error || '更新选中状态失败']).join('\n'));
-    const index = allCases.findIndex(item => item.id === data.case.id);
-    if (index >= 0) allCases[index] = data.case;
-    selectedId = data.case.id;
-    render();
-  } catch (error) {
-    panel.insertAdjacentHTML('afterbegin', `<div class="errors">${escapeHtml(error.message)}</div>`);
-  }
-}
-function benchmarkButton(item) {
-  const selected = Boolean(item.benchmark_selected);
-  return `<div class="benchmark-action"><button type="button" class="${selected ? 'selected' : ''}" onclick="toggleSelectedCase('${escapeAttr(item.id)}', ${selected ? 'false' : 'true'})">${selected ? '取消选中 benchmark' : '选中进入 benchmark'}</button></div>`;
-}
-function listText(items) { return Array.isArray(items) ? `<ul>${items.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : escapeHtml(items || ''); }
-function downloadFiltered() { const blob = new Blob([JSON.stringify(filteredCases, null, 2)], {type:'application/json;charset=utf-8'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `clawtrap-filtered-${dataset.value}.json`; a.click(); URL.revokeObjectURL(url); }
-function escapeHtml(value) { return String(value || '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
-function escapeAttr(value) { return String(value || '').replace(/[\'\\]/g, ch => ch === '\\' ? '\\\\' : "\\'"); }
-init();
 """
 
 

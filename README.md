@@ -2,7 +2,7 @@
 
 本项目包含两个部分：
 
-- 标注 Web 页面：登录后查看自己设计过的攻击场景，新增、保存草稿、提交场景。
+- 审核 Web 页面：登录后审阅本地攻击场景，执行保留、Discard、Mark notes，并查看原始库与最终 Benchmark 集合。
 - LLM 批量生成脚本：根据固定 prompt 批量生成 MITM benchmark seed cases，并以 JSON 落盘。
 
 ## 数据格式
@@ -19,6 +19,10 @@
 - `attack_type`
 - `interactive_form`
 - `metadata`
+
+审核页、原始库和 Benchmark 页面会显示并筛选数据来源。来源优先级为：
+
+`data_source` -> `generation_batch` -> `dataset` -> `batch` -> `source` -> `owner`
 
 提交时会校验核心字段非空、枚举值合法、成功/失败状态至少各 2 条。
 
@@ -90,7 +94,7 @@ ADMIN_PASSWORD_2="换成另一个强密码"
 ANNOTATOR_ACCOUNTS="reviewer01:强密码,reviewer02:强密码"
 ```
 
-管理员账号拥有完整权限：可以进入普通工作台，也可以进入 `/admin` 管理台。标注员账号只能进入设计、审核和总览页面。
+所有已配置账号都可以进入当前工作台。工作台入口包括审核、原始库检查和 ClawTrap Bench 检查。
 
 也可以使用一个 JSON 账户表集中管理：
 
@@ -109,25 +113,6 @@ CLAWTRAP_ACCOUNTS_JSON='{
 ```bash
 python -c "from werkzeug.security import generate_password_hash; import getpass; print(generate_password_hash(getpass.getpass('Password: ')))"
 ```
-
-## 管理员审阅页面
-
-管理员页面用于查看和筛选 `data/` 目录下的 JSON 数据集：
-
-```text
-http://127.0.0.1:8000/admin
-```
-
-生产部署前在 `.env` 中设置管理员账号和密码：
-
-```bash
-ADMIN_USERNAME="admin"
-ADMIN_PASSWORD="换成强密码"
-ADMIN_USERNAME_2="admin2"
-ADMIN_PASSWORD_2="换成另一个强密码"
-```
-
-管理员页面支持选择数据集、按状态/攻击类型/任务类型/植入形式筛选、全文搜索、查看详情和导出当前筛选结果。
 
 部署到域名时可通过环境变量调整监听地址：
 
@@ -187,8 +172,6 @@ DATABASE_URL="postgresql://..."
 ```
 
 也可以使用 Vercel Marketplace 里的 Neon/Vercel Postgres。没有 `DATABASE_URL` 时，Vercel 上仍可读取 repo 内的 `data/*.json`，但保存接口会返回明确错误，避免误以为数据已持久保存。
-
-之后 Vercel 管理员页面会从数据库读取这些数据集。
 
 ### 5. 绑定 clawtrap.cn
 
