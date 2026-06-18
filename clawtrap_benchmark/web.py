@@ -333,11 +333,11 @@ def page(title: str, body: str) -> str:
     .focus-attack {{ border-color:rgba(157,37,44,.22); background:rgba(255,248,248,.76); }}
     .focus-attack .focus-label {{ color:var(--accent); }}
     .review-edit-form {{ display:grid; gap:14px; }}
-    .review-edit-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }}
+    .review-edit-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:stretch; }}
     .review-edit-grid .full {{ grid-column:1 / -1; }}
-    .review-edit-field {{ display:grid; gap:8px; }}
+    .review-edit-field {{ display:grid; grid-template-rows:auto 1fr; gap:8px; min-height:0; }}
     .review-edit-field label {{ margin:0; color:var(--accent-strong); font-size:20px; font-weight:900; letter-spacing:0; line-height:1.18; }}
-    .review-edit-field textarea {{ min-height:82px; background:rgba(255,253,250,.78); line-height:1.5; font-size:14px; font-weight:520; }}
+    .review-edit-field textarea {{ min-height:82px; height:100%; background:rgba(255,253,250,.78); line-height:1.5; font-size:14px; font-weight:520; }}
     .review-edit-field.compact textarea {{ min-height:54px; }}
     .review-edit-field.tall textarea {{ min-height:98px; }}
     .review-edit-field.short textarea {{ min-height:66px; }}
@@ -353,7 +353,7 @@ def page(title: str, body: str) -> str:
     .judgement ul,.metadata-list {{ margin:0; padding-left:19px; color:var(--ink); font-size:14px; line-height:1.65; }}
     .metadata-strip {{ display:flex; flex-wrap:wrap; gap:7px; }}
     .metadata-token {{ display:inline-flex; max-width:100%; padding:6px 9px; border:1px solid var(--line); border-radius:999px; background:rgba(255,253,250,.72); color:var(--muted); font-size:12px; font-weight:750; line-height:1.45; }}
-    .decision-panel {{ display:grid; gap:12px; margin-top:20px; padding-top:18px; border-top:1px solid var(--line); }}
+    .decision-panel {{ display:grid; gap:12px; margin-top:20px; padding-top:8px; }}
     .decision-actions {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:9px; }}
     .decision-actions button {{ min-height:42px; }}
     .decision-actions .accept {{ background:var(--green); border-color:var(--green); }}
@@ -1125,12 +1125,12 @@ function focusedReviewDetail(item, includeDecision=false) {
       </div>
       <form id="expertEditForm" class="review-edit-form">
         <div class="review-edit-grid">
-          ${editField('task', '用户任务 task', item.task, 'tall')}
-          ${editField('target', '期望目标 target', item.target, 'tall')}
-          ${editField('attack_method', 'MITM 攻击植入 attack_method', item.attack_method)}
-          ${editField('success_states', '成功判定 success_states（每行一条）', lineText(item.success_states), 'short')}
-          ${editField('failure_states', '失败判定 failure_states（每行一条）', lineText(item.failure_states), 'short')}
-          ${editField('metadata', '实现提示 metadata（每行一条）', lineText(item.metadata), 'full compact')}
+          ${editField('task', 'Task', item.task, 'tall')}
+          ${editField('target', 'Target', item.target, 'tall')}
+          ${editField('attack_method', 'Attack Method', item.attack_method)}
+          ${editField('success_states', 'Success States', lineText(item.success_states), 'short')}
+          ${editField('failure_states', 'Failure States', lineText(item.failure_states), 'short')}
+          ${editField('metadata', 'Metadata', lineText(item.metadata), 'full compact')}
         </div>
         <div class="errors" id="editErrors"></div>
         <div class="review-edit-actions" ${typeof readOnlyReview !== 'undefined' && readOnlyReview ? 'style="display:none"' : ''}>
