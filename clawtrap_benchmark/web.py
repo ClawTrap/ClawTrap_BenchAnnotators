@@ -244,10 +244,21 @@ def page(title: str, body: str) -> str:
     .rank-case-meta {{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }}
     .rank-meter {{ height:4px; margin-top:9px; background:rgba(20,20,20,.08); border-radius:999px; overflow:hidden; }}
     .rank-meter span {{ display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--teal)); }}
-    .rank-actions {{ display:flex; justify-content:flex-end; }}
+    .rank-actions {{ display:flex; justify-content:flex-end; gap:8px; flex-wrap:wrap; }}
     .rank-empty {{ padding:34px 20px; color:var(--muted); text-align:center; font-weight:800; }}
-    .cart-fly {{ position:fixed; z-index:999; left:50%; top:50%; transform:translate(-50%,-50%); pointer-events:none; padding:12px 16px; border:1px solid rgba(15,118,110,.28); border-radius:999px; background:#fff; color:#0f5f59; font-size:13px; font-weight:900; box-shadow:0 18px 42px rgba(20,20,20,.14); animation:cartFly .78s cubic-bezier(.2,.8,.2,1) forwards; }}
-    @keyframes cartFly {{ 0% {{ opacity:0; transform:translate(-50%,-20%) scale(.82); }} 20% {{ opacity:1; }} 100% {{ opacity:0; transform:translate(220px,-220px) scale(.36); }} }}
+    .bench-toast {{
+      position:fixed; z-index:999; right:22px; top:22px; width:min(330px,calc(100vw - 32px)); overflow:hidden;
+      border:1px solid rgba(15,118,110,.24); border-radius:8px; background:rgba(255,253,250,.96); color:var(--text);
+      box-shadow:0 18px 44px rgba(20,20,20,.12); animation:benchToastIn .18s ease-out forwards, benchToastOut .2s ease-in 1.9s forwards;
+    }}
+    .bench-toast-inner {{ display:grid; grid-template-columns:34px minmax(0,1fr); gap:10px; align-items:center; padding:13px 14px 12px; }}
+    .bench-toast-icon {{ width:28px; height:28px; border-radius:999px; display:grid; place-items:center; color:#fff; background:var(--green); font-size:15px; font-weight:900; box-shadow:0 0 0 5px rgba(15,118,110,.1); }}
+    .bench-toast-title {{ display:block; font-size:13px; font-weight:900; color:var(--text); }}
+    .bench-toast-copy {{ display:block; margin-top:2px; color:var(--muted); font-size:12px; font-weight:700; }}
+    .bench-toast-bar {{ height:2px; background:var(--green); transform-origin:left; animation:benchToastBar 2s linear forwards; }}
+    @keyframes benchToastIn {{ from {{ opacity:0; transform:translateY(-8px); }} to {{ opacity:1; transform:translateY(0); }} }}
+    @keyframes benchToastOut {{ to {{ opacity:0; transform:translateY(-6px); }} }}
+    @keyframes benchToastBar {{ from {{ transform:scaleX(1); }} to {{ transform:scaleX(0); }} }}
     .review-layout {{ display:grid; grid-template-columns:minmax(390px,.92fr) minmax(560px,1.35fr); gap:15px; align-items:start; }}
     .review-focus {{ max-width:1440px; }}
     .review-focus .hero {{ margin-bottom:16px; }}
@@ -349,6 +360,8 @@ def page(title: str, body: str) -> str:
     .decision-actions .discard {{ background:rgba(255,253,250,.72); color:var(--danger); border-color:rgba(180,35,24,.40); }}
     .decision-actions .mark {{ background:rgba(255,253,250,.72); color:#9a5b13; border-color:rgba(217,119,6,.44); }}
     .decision-actions .clear {{ background:rgba(255,253,250,.72); color:var(--muted); border-color:var(--line-strong); }}
+    .button.danger, button.danger {{ background:rgba(255,253,250,.72); color:var(--danger); border-color:rgba(180,35,24,.34); box-shadow:none; }}
+    .button.danger:hover, button.danger:hover {{ border-color:rgba(180,35,24,.52); background:rgba(255,241,242,.9); }}
     .expert-editor {{ margin:0; }}
     .expert-editor summary {{ cursor:pointer; list-style:none; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:0; color:var(--text); font-size:18px; font-weight:900; }}
     .expert-editor summary::-webkit-details-marker {{ display:none; }}
@@ -1317,10 +1330,11 @@ function skipCase() {
 }
 function showBenchmarkAnimation() {
   const node = document.createElement('div');
-  node.className = 'cart-fly';
-  node.textContent = '已加入 ClawTrap Bench';
+  document.querySelectorAll('.bench-toast').forEach(item => item.remove());
+  node.className = 'bench-toast';
+  node.innerHTML = `<div class="bench-toast-inner"><span class="bench-toast-icon">✓</span><span><strong class="bench-toast-title">已加入 ClawTrap Bench</strong><span class="bench-toast-copy">正在进入下一条审核</span></span></div><div class="bench-toast-bar"></div>`;
   document.body.appendChild(node);
-  node.addEventListener('animationend', () => node.remove(), {once: true});
+  window.setTimeout(() => node.remove(), 2300);
 }
 async function saveExpertEdit() {
   const item = filteredCases.find(candidate => candidate.id === selectedId);
