@@ -1160,7 +1160,7 @@ function focusedReviewDetail(item, includeDecision=false) {
           ${editField('attack_method', 'Attack Method', item.attack_method, 'full')}
           ${listReviewField('success_states', 'Success States', item.success_states)}
           ${listReviewField('failure_states', 'Failure States', item.failure_states)}
-          ${listReviewField('metadata', 'Metadata', item.metadata, 'full metadata-field')}
+          ${listReviewField('metadata', 'Metadata', item.metadata, 'metadata-field')}
         </div>
         <div class="errors" id="editErrors"></div>
         <div class="review-edit-actions" ${typeof readOnlyReview !== 'undefined' && readOnlyReview ? 'style="display:none"' : ''}>
@@ -1470,10 +1470,13 @@ function render() {
   filteredCases = allCases.filter(item =>
     (!attack || item.attack_type === attack) &&
     (!task || item.task_type === task) &&
-    (!q || [item.id, item.owner, item.task].join(' ').toLowerCase().includes(q))
+    (!q || [item.id, item.owner, item.task, benchmarkReviewer(item)].join(' ').toLowerCase().includes(q))
   );
   renderStats();
   renderRows();
+}
+function benchmarkReviewer(item) {
+  return item.expert_decision_by || item.benchmark_selected_by || '';
 }
 function renderStats() {
   document.getElementById('stats').innerHTML = [
@@ -1494,7 +1497,7 @@ function renderRows() {
     <div class="rank-index">#${index + 1}</div>
     <div>
       <span class="rank-case-title">${escapeHtml(item.task || '(未命名任务)')}</span>
-      <div class="rank-case-meta"><span class="pill selected-mark">已选入 benchmark</span><span class="pill">${escapeHtml(item.id || '')}</span></div>
+      <div class="rank-case-meta"><span class="pill">Reviewer: ${escapeHtml(benchmarkReviewer(item) || '-')}</span></div>
     </div>
     <div><span class="pill">${escapeHtml(item.attack_type || '-')}</span></div>
     <div><span class="pill strong">${escapeHtml(item.task_type || '-')}</span></div>
