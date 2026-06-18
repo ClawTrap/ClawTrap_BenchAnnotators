@@ -1134,7 +1134,6 @@ function focusedReviewDetail(item, includeDecision=false) {
         </div>
         <div class="errors" id="editErrors"></div>
         <div class="review-edit-actions" ${typeof readOnlyReview !== 'undefined' && readOnlyReview ? 'style="display:none"' : ''}>
-          <span class="meta">修改会保存到当前 case；直接执行保留、Discard 或 Mark notes 时也会先自动保存。</span>
           <button type="button" onclick="saveExpertEdit()">保存修改</button>
         </div>
       </form>
