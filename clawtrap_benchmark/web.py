@@ -165,28 +165,28 @@ def page(title: str, body: str) -> str:
     .account-row {{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }}
     .choice-pill {{ position:relative; display:flex; align-items:center; justify-content:center; margin:0; padding:0; cursor:pointer; }}
     .choice-pill input {{ position:absolute; opacity:0; pointer-events:none; }}
-    .choice-pill span {{ width:100%; min-height:42px; display:flex; align-items:center; justify-content:center; padding:8px 10px; border:1px solid rgba(148,104,61,.18); border-radius:7px; background:linear-gradient(180deg,#fffaf1,#f4eadb); color:#695f54; font-size:13px; font-weight:800; transition:background .12s,border-color .12s,color .12s,box-shadow .12s,transform .12s; }}
-    .choice-pill:hover span {{ border-color:rgba(148,104,61,.34); transform:translateY(-1px); }}
-    .choice-pill input:checked + span {{ border-color:rgba(148,104,61,.55); background:linear-gradient(180deg,#f2e5d2,#ead9bf); color:var(--accent-strong); box-shadow:0 0 0 3px rgba(148,104,61,.12); }}
+    .choice-pill span {{ width:100%; min-height:42px; display:flex; align-items:center; justify-content:center; padding:8px 10px; border:1px solid rgba(15,23,42,.1); border-radius:7px; background:linear-gradient(180deg,#fff,#f8fafc); color:#475467; font-size:13px; font-weight:800; transition:background .12s,border-color .12s,color .12s,box-shadow .12s,transform .12s; }}
+    .choice-pill:hover span {{ border-color:rgba(37,99,235,.26); transform:translateY(-1px); }}
+    .choice-pill input:checked + span {{ border-color:rgba(37,99,235,.5); background:linear-gradient(180deg,#eff6ff,#dbeafe); color:var(--accent-strong); box-shadow:0 0 0 3px rgba(37,99,235,.1); }}
     .select-shell {{ position:relative; }}
     .select-shell.open {{ z-index:80; }}
-    .select-shell select {{ appearance:none; padding-right:34px; background:linear-gradient(180deg,#fffaf1,#f4eadb); color:var(--text); font-weight:700; }}
+    .select-shell select {{ appearance:none; padding-right:34px; background:linear-gradient(180deg,#fff,#f8fafc); color:var(--text); font-weight:750; }}
     .select-shell::after {{ content:'⌄'; position:absolute; right:12px; bottom:9px; color:var(--accent-strong); pointer-events:none; font-weight:900; }}
     .select-shell.enhanced::after {{ display:none; }}
     .select-shell.enhanced select {{ position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; overflow:hidden; }}
     .select-card-trigger {{
       width:100%; min-height:42px; display:flex; align-items:center; justify-content:space-between; gap:10px;
       padding:9px 11px; border:1px solid rgba(148,104,61,.18); border-radius:7px;
-      background:linear-gradient(180deg,#fffaf1,#f4eadb); color:var(--text); box-shadow:none;
+      background:linear-gradient(180deg,#fff,#f8fafc); color:var(--text); box-shadow:none;
       font-size:13px; font-weight:800; text-align:left;
     }}
-    .select-card-trigger:hover,.select-shell.open .select-card-trigger {{ background:linear-gradient(180deg,#fffdf8,#f1e4d2); border-color:rgba(148,104,61,.4); color:var(--text); }}
+    .select-card-trigger:hover,.select-shell.open .select-card-trigger {{ background:linear-gradient(180deg,#fff,#eef4ff); border-color:rgba(37,99,235,.34); color:var(--text); }}
     .select-card-trigger::after {{ content:'⌄'; color:var(--accent-strong); font-weight:900; transition:transform .12s; }}
     .select-shell.open .select-card-trigger::after {{ transform:rotate(180deg); }}
     .select-card-menu {{
       position:absolute; left:0; right:0; top:calc(100% + 6px); z-index:30; display:none; gap:5px;
       max-height:min(280px,52vh); overflow:auto; padding:7px; border:1px solid rgba(38,51,70,.16); border-radius:8px;
-      background:linear-gradient(180deg,rgba(255,254,250,.98),rgba(247,240,229,.96)); box-shadow:0 18px 42px rgba(23,34,52,.14);
+      background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(248,250,252,.96)); box-shadow:0 18px 42px rgba(15,23,42,.14);
     }}
     .select-shell.drop-up .select-card-menu {{ top:auto; bottom:calc(100% + 6px); }}
     .select-shell.open .select-card-menu {{ display:grid; }}
@@ -194,18 +194,24 @@ def page(title: str, body: str) -> str:
       width:100%; min-height:36px; padding:8px 10px; border:1px solid transparent; border-radius:7px;
       background:transparent; color:var(--ink); box-shadow:none; text-align:left; font-size:13px; font-weight:750;
     }}
-    .select-card-option:hover {{ background:rgba(148,104,61,.08); border-color:rgba(148,104,61,.16); color:var(--text); }}
-    .select-card-option.active {{ background:var(--accent-soft); border-color:rgba(148,104,61,.34); color:var(--accent-strong); }}
-    .score-grid {{ display:grid; grid-template-columns:repeat(4,minmax(120px,1fr)); gap:10px; }}
-    .score-grid label {{ margin-top:0; }}
-    .score-grid input {{ text-align:center; font-weight:900; font-size:18px; background:linear-gradient(180deg,#fffaf1,#f4eadb); }}
+    .select-card-option:hover {{ background:rgba(37,99,235,.06); border-color:rgba(37,99,235,.14); color:var(--text); }}
+    .select-card-option.active {{ background:var(--accent-soft); border-color:rgba(37,99,235,.32); color:var(--accent-strong); }}
+    .score-grid {{ display:grid; grid-template-columns:repeat(2,minmax(220px,1fr)); gap:12px; }}
+    .score-control {{ margin:0; padding:12px; border:1px solid var(--line); border-radius:8px; background:rgba(248,250,252,.7); }}
+    .score-control legend {{ padding:0 4px; color:var(--text); font-size:12px; font-weight:900; }}
+    .score-scale {{ display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-top:9px; }}
+    .score-option {{ position:relative; margin:0; }}
+    .score-option input {{ position:absolute; opacity:0; pointer-events:none; }}
+    .score-option span {{ min-height:38px; display:grid; place-items:center; border:1px solid var(--line); border-radius:7px; background:#fff; color:var(--muted); font-size:13px; font-weight:900; cursor:pointer; transition:background .12s,border-color .12s,color .12s,box-shadow .12s,transform .12s; }}
+    .score-option:hover span {{ transform:translateY(-1px); border-color:rgba(37,99,235,.28); }}
+    .score-option input:checked + span {{ color:#fff; border-color:var(--accent); background:linear-gradient(145deg,#2563eb,#1d4ed8); box-shadow:0 10px 20px rgba(37,99,235,.2); }}
     .score-summary {{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }}
     .row {{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }}
     .errors {{ color:var(--danger); font-size:13px; white-space:pre-wrap; margin-top:8px; }}
     .status-message {{ color:var(--accent-strong); font-size:13px; white-space:pre-wrap; margin-top:8px; font-weight:700; }}
     .status-message.error {{ color:var(--danger); }}
     .login-main {{ min-height:100vh; display:grid; place-items:center; padding:28px; }}
-    .login {{ width:min(460px,100%); margin:0 auto; padding:30px; background:linear-gradient(135deg,rgba(255,254,250,.97),rgba(246,240,230,.88)); }}
+    .login {{ width:min(460px,100%); margin:0 auto; padding:30px; background:linear-gradient(135deg,rgba(255,255,255,.97),rgba(248,250,252,.9)); }}
     .login h1 {{ margin-bottom:4px; }}
     .login-note {{ margin:18px 0 20px; padding:13px 14px; color:var(--muted); background:rgba(255,254,250,.68); border:1px solid var(--line); border-radius:8px; font-size:13px; line-height:1.65; font-weight:650; }}
     .admin-main {{ max-width:1480px; }}
@@ -218,7 +224,7 @@ def page(title: str, body: str) -> str:
     .review-toolbar {{ grid-template-columns:minmax(260px,1fr) 180px auto; margin-bottom:14px; }}
     .form-actions {{ margin-top:14px; padding-top:14px; border-top:1px solid var(--line); }}
     .stats {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(128px,1fr)); gap:10px; margin:14px 0; }}
-    .stat {{ padding:14px 15px; box-shadow:none; background:rgba(255,254,250,.74); }}
+    .stat {{ padding:14px 15px; box-shadow:none; background:rgba(255,255,255,.82); }}
     .stat strong {{ display:block; font-size:23px; line-height:1; color:var(--text); }}
     .stat span {{ display:block; color:var(--muted); font-size:12px; margin-top:7px; font-weight:700; }}
     .review-layout {{ display:grid; grid-template-columns:minmax(390px,.92fr) minmax(560px,1.35fr); gap:15px; align-items:start; }}
@@ -232,7 +238,7 @@ def page(title: str, body: str) -> str:
     .review-poolbar .select-shell {{ min-width:0; }}
     .review-nav-actions {{ display:flex; align-items:flex-end; gap:8px; justify-content:flex-end; flex-wrap:wrap; }}
     .review-case-picker {{ display:grid; grid-template-columns:minmax(240px,1fr) auto; gap:12px; align-items:end; margin-bottom:14px; }}
-    .pool-count {{ display:inline-flex; align-items:center; min-height:42px; padding:9px 11px; border:1px solid var(--line); border-radius:7px; background:rgba(255,254,250,.78); color:var(--muted); font-size:12px; font-weight:850; white-space:nowrap; }}
+    .pool-count {{ display:inline-flex; align-items:center; min-height:42px; padding:9px 11px; border:1px solid var(--line); border-radius:7px; background:rgba(255,255,255,.82); color:var(--muted); font-size:12px; font-weight:850; white-space:nowrap; }}
     .review-stage {{ max-width:1080px; margin:0 auto; }}
     .review-context-line {{ display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; }}
     .review-column {{ min-width:0; }}
@@ -268,53 +274,51 @@ def page(title: str, body: str) -> str:
     .review-focus .rank-badge {{ min-width:38px; padding:4px 7px; }}
     .review-focus .score-badge {{ padding:4px 7px; }}
     .pill {{ flex:none; border:1px solid var(--line); border-radius:999px; padding:4px 8px; font-size:11px; color:var(--muted); background:var(--panel-soft); font-weight:800; }}
-    .pill.strong {{ color:var(--accent-strong); border-color:rgba(138,98,61,.28); background:var(--accent-soft); }}
-    .pill.origin-local {{ color:var(--accent-strong); border-color:rgba(148,104,61,.32); background:rgba(242,231,215,.78); }}
+    .pill.strong {{ color:var(--accent-strong); border-color:rgba(37,99,235,.28); background:var(--accent-soft); }}
+    .pill.origin-local {{ color:var(--accent-strong); border-color:rgba(37,99,235,.24); background:rgba(239,246,255,.78); }}
     .pill.origin-cloud {{ color:#0f5f59; border-color:rgba(15,118,110,.28); background:rgba(15,118,110,.08); }}
     .pill.selected-mark {{ color:#0f5f59; border-color:rgba(15,118,110,.32); background:rgba(15,118,110,.1); }}
     .rank-line {{ display:flex; align-items:center; gap:8px; margin:9px 0 0; }}
-    .rank-badge {{ min-width:46px; display:inline-flex; align-items:center; justify-content:center; padding:5px 9px; border-radius:7px; background:var(--navy); color:#fffefa; font-size:12px; font-weight:900; }}
-    .score-badge {{ display:inline-flex; align-items:center; justify-content:center; padding:5px 9px; border:1px solid rgba(148,104,61,.24); border-radius:7px; background:var(--accent-soft); color:var(--accent-strong); font-size:12px; font-weight:900; }}
+    .rank-badge {{ min-width:46px; display:inline-flex; align-items:center; justify-content:center; padding:5px 9px; border-radius:7px; background:var(--navy); color:#fff; font-size:12px; font-weight:900; }}
+    .score-badge {{ display:inline-flex; align-items:center; justify-content:center; padding:5px 9px; border:1px solid rgba(37,99,235,.24); border-radius:7px; background:var(--accent-soft); color:var(--accent-strong); font-size:12px; font-weight:900; }}
     .benchmark-action {{ width:100%; margin-top:15px; display:flex; justify-content:center; }}
     .benchmark-action button {{ width:100%; }}
-    .benchmark-action .selected {{ background:rgba(255,253,250,.72); color:#0f5f59; border-color:rgba(15,118,110,.35); box-shadow:none; }}
+    .benchmark-action .selected {{ background:rgba(255,255,255,.72); color:#0f5f59; border-color:rgba(15,118,110,.35); box-shadow:none; }}
     .detail-panel {{ position:sticky; top:82px; padding:22px; max-height:calc(100vh - 108px); overflow:auto; background:linear-gradient(180deg,rgba(255,254,250,.98),rgba(249,244,236,.92)); border-top:3px solid rgba(148,104,61,.42); }}
     .detail-panel h2 {{ font-size:21px; line-height:1.38; margin:0 0 9px; }}
     .detail-empty {{ color:var(--muted); padding:42px 28px; text-align:center; background:var(--panel-soft); border:1px dashed var(--line-strong); border-radius:8px; font-weight:700; }}
     .review-focus .detail-panel {{ position:static; padding:0; background:transparent; border:0; box-shadow:none; max-height:none; overflow:visible; }}
     .focus-case {{ display:grid; gap:12px; }}
-    .focus-card {{ border:1px solid var(--line); border-radius:8px; background:rgba(255,254,250,.94); box-shadow:var(--shadow); padding:18px; }}
-    .focus-header {{ display:grid; grid-template-columns:minmax(0,1fr) auto; gap:14px; align-items:start; border-top:3px solid rgba(148,104,61,.42); }}
-    .focus-title {{ margin:0; color:var(--text); font-family:Georgia,"Times New Roman","Songti SC",serif; font-size:26px; line-height:1.25; letter-spacing:-.02em; }}
+    .focus-card {{ border:1px solid rgba(15,23,42,.09); border-radius:8px; background:rgba(255,255,255,.94); box-shadow:var(--shadow); padding:18px; }}
+    .focus-header {{ display:grid; grid-template-columns:minmax(0,1fr) auto; gap:14px; align-items:start; border-top:3px solid rgba(37,99,235,.55); }}
+    .focus-title {{ margin:0; color:var(--text); font-size:26px; line-height:1.25; letter-spacing:-.035em; font-weight:900; }}
     .focus-meta {{ display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }}
     .focus-action {{ min-width:190px; }}
     .focus-action .benchmark-action {{ margin-top:0; }}
     .focus-action .benchmark-action button {{ min-height:38px; }}
     .focus-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }}
-    .focus-block {{ border:1px solid var(--line); border-radius:8px; background:rgba(246,240,230,.48); padding:14px; }}
+    .focus-block {{ border:1px solid var(--line); border-radius:8px; background:rgba(248,250,252,.78); padding:14px; }}
     .focus-block.full {{ grid-column:1 / -1; }}
     .focus-label {{ display:block; margin-bottom:7px; color:var(--accent-strong); font-size:10px; font-weight:900; letter-spacing:.12em; text-transform:uppercase; }}
     .focus-text {{ margin:0; color:var(--ink); font-size:15px; line-height:1.72; font-weight:650; }}
-    .focus-attack {{ border-color:rgba(180,35,24,.16); background:rgba(180,35,24,.035); }}
+    .focus-attack {{ border-color:rgba(180,35,24,.16); background:linear-gradient(180deg,rgba(255,241,242,.82),rgba(255,255,255,.78)); }}
     .focus-attack .focus-label {{ color:#9b2c22; }}
     .judgement-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }}
-    .judgement {{ min-height:150px; border:1px solid var(--line); border-radius:8px; padding:14px 14px 12px; background:rgba(255,254,250,.78); }}
-    .judgement.success {{ border-color:rgba(15,118,110,.2); background:rgba(15,118,110,.055); }}
-    .judgement.failure {{ border-color:rgba(180,35,24,.18); background:rgba(180,35,24,.045); }}
+    .judgement {{ min-height:150px; border:1px solid var(--line); border-radius:8px; padding:14px 14px 12px; background:rgba(255,255,255,.84); box-shadow:0 8px 18px rgba(15,23,42,.045); }}
+    .judgement.success {{ border-color:rgba(15,118,110,.2); background:linear-gradient(180deg,rgba(240,253,250,.9),rgba(255,255,255,.82)); }}
+    .judgement.failure {{ border-color:rgba(180,35,24,.18); background:linear-gradient(180deg,rgba(255,241,242,.86),rgba(255,255,255,.82)); }}
     .judgement h3 {{ margin:0 0 10px; font-size:13px; letter-spacing:.04em; text-transform:uppercase; }}
     .judgement.success h3 {{ color:#0f5f59; }}
     .judgement.failure h3 {{ color:#9b2c22; }}
     .judgement ul,.metadata-list {{ margin:0; padding-left:19px; color:var(--ink); font-size:14px; line-height:1.65; }}
     .metadata-strip {{ display:flex; flex-wrap:wrap; gap:7px; }}
-    .metadata-token {{ display:inline-flex; max-width:100%; padding:6px 9px; border:1px solid var(--line); border-radius:7px; background:rgba(246,240,230,.62); color:var(--muted); font-size:12px; font-weight:750; line-height:1.45; }}
-    .review-history {{ margin-top:10px; padding:10px 12px; border:1px solid var(--line); border-radius:8px; background:rgba(246,240,230,.44); color:var(--muted); font-size:12px; line-height:1.6; font-weight:700; }}
+    .metadata-token {{ display:inline-flex; max-width:100%; padding:6px 9px; border:1px solid var(--line); border-radius:7px; background:rgba(248,250,252,.82); color:var(--muted); font-size:12px; font-weight:750; line-height:1.45; }}
+    .review-history {{ margin-top:10px; padding:10px 12px; border:1px solid var(--line); border-radius:8px; background:rgba(248,250,252,.72); color:var(--muted); font-size:12px; line-height:1.6; font-weight:700; }}
     .review-history strong {{ color:var(--text); }}
     .review-score-panel {{ margin-top:0; }}
     .review-score-panel .section-heading {{ margin-bottom:10px; }}
     .review-score-panel textarea {{ min-height:74px; }}
-    .review-score-panel .score-grid {{ grid-template-columns:repeat(4,minmax(110px,1fr)); }}
-    .review-score-panel .score-grid label {{ padding:11px; border:1px solid var(--line); border-radius:8px; background:rgba(246,240,230,.42); color:var(--muted); }}
-    .review-score-panel .score-grid input {{ margin-top:6px; border-color:rgba(148,104,61,.2); }}
+    .review-score-panel .score-grid {{ grid-template-columns:repeat(2,minmax(220px,1fr)); }}
     .review-score-actions {{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:14px; flex-wrap:wrap; }}
     dl {{ margin:18px 0 0; display:grid; gap:12px; }}
     dt {{ font-size:10px; color:var(--accent-strong); font-weight:900; text-transform:uppercase; letter-spacing:.12em; margin:0; }}
@@ -1063,6 +1067,10 @@ function focusedReviewDetail(item) {
     </section>
   </div>`;
 }
+function scoreControl(name, label, value=4) {
+  const options = [1, 2, 3, 4, 5].map(score => `<label class="score-option"><input type="radio" name="${escapeAttr(name)}" value="${score}" ${score === value ? 'checked' : ''} required><span>${score}</span></label>`).join('');
+  return `<fieldset class="score-control"><legend>${escapeHtml(label)}</legend><div class="score-scale">${options}</div></fieldset>`;
+}
 function listText(items) { return Array.isArray(items) ? `<ul>${items.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : escapeHtml(items || ''); }
 function escapeHtml(value) { return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
 function escapeAttr(value) { return String(value ?? '').replace(/[\'\\]/g, ch => ch === '\\' ? '\\\\' : "\\'"); }
@@ -1130,10 +1138,10 @@ function renderDetail() {
     <form id="reviewForm" class="focus-card review-score-panel">
       <div class="section-heading"><div><p class="section-kicker">Scoring</p><h2>审核评分</h2></div></div>
       <div class="score-grid">
-        <label>可实现性<input name="feasibility" type="number" min="1" max="5" value="4" required></label>
-        <label>准确性<input name="accuracy" type="number" min="1" max="5" value="4" required></label>
-        <label>描述清晰度<input name="clarity" type="number" min="1" max="5" value="4" required></label>
-        <label>综合评分<input name="overall" type="number" min="1" max="5" value="4" required></label>
+        ${scoreControl('feasibility', '可实现性')}
+        ${scoreControl('accuracy', '准确性')}
+        ${scoreControl('clarity', '描述清晰度')}
+        ${scoreControl('overall', '综合评分')}
       </div>
       <label>审核备注</label><textarea name="comment" placeholder="可选：指出需要修改的字段或原因"></textarea>
       <div class="errors" id="reviewErrors"></div>
