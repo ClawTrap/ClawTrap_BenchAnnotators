@@ -341,7 +341,9 @@ def page(title: str, body: str) -> str:
     .review-edit-field.compact textarea {{ min-height:54px; }}
     .review-edit-field.tall textarea {{ min-height:98px; }}
     .review-edit-field.short textarea {{ min-height:66px; }}
-    .list-review-field {{ grid-column:1 / -1; display:grid; gap:10px; }}
+    .list-review-field {{ display:grid; gap:10px; }}
+    .list-review-field.full {{ grid-column:1 / -1; }}
+    .list-review-field.metadata-field .list-review-items {{ min-height:104px; }}
     .list-review-field > label {{ margin:0; color:var(--accent-strong); font-size:20px; font-weight:900; letter-spacing:0; line-height:1.18; }}
     .list-review-items {{ display:grid; gap:8px; }}
     .list-review-item {{ display:grid; grid-template-columns:1fr auto; align-items:stretch; gap:8px; padding:8px; border:1px solid var(--line); border-radius:8px; background:rgba(255,253,250,.78); transition:border-color .16s ease, background .16s ease, opacity .16s ease; }}
@@ -1129,7 +1131,7 @@ function editField(name, label, value, className='') {
   const readonly = typeof readOnlyReview !== 'undefined' && readOnlyReview;
   return `<div class="review-edit-field ${className}"><label>${escapeHtml(label)}</label><textarea name="${escapeAttr(name)}" required ${readonly ? 'readonly' : ''}>${escapeTextarea(value || '')}</textarea></div>`;
 }
-function listReviewField(name, label, items) {
+function listReviewField(name, label, items, className='') {
   const values = Array.isArray(items) ? items : splitLines(items);
   const controls = typeof readOnlyReview !== 'undefined' && readOnlyReview ? '' : `<div class="list-review-actions">
     <button type="button" class="secondary" title="Approve" onclick="approveListItem(this)">✓</button>
@@ -1141,7 +1143,7 @@ function listReviewField(name, label, items) {
     ${controls}
   </div>`).join('');
   const addRow = typeof readOnlyReview !== 'undefined' && readOnlyReview ? '' : `<div class="list-add-row"><button type="button" class="secondary list-add-button" title="Add item" onclick="addListItem('${escapeAttr(name)}')">+</button></div>`;
-  return `<div class="list-review-field" data-list-field="${escapeAttr(name)}"><label>${escapeHtml(label)}</label><div class="list-review-items">${rows}</div>${addRow}</div>`;
+  return `<div class="list-review-field ${className}" data-list-field="${escapeAttr(name)}"><label>${escapeHtml(label)}</label><div class="list-review-items">${rows}</div>${addRow}</div>`;
 }
 function focusedReviewDetail(item, includeDecision=false) {
   return `<div class="focus-case">
@@ -1157,7 +1159,7 @@ function focusedReviewDetail(item, includeDecision=false) {
           ${editField('attack_method', 'Attack Method', item.attack_method)}
           ${listReviewField('success_states', 'Success States', item.success_states)}
           ${listReviewField('failure_states', 'Failure States', item.failure_states)}
-          ${listReviewField('metadata', 'Metadata', item.metadata)}
+          ${listReviewField('metadata', 'Metadata', item.metadata, 'full metadata-field')}
         </div>
         <div class="errors" id="editErrors"></div>
         <div class="review-edit-actions" ${typeof readOnlyReview !== 'undefined' && readOnlyReview ? 'style="display:none"' : ''}>
