@@ -335,7 +335,7 @@ def page(title: str, body: str) -> str:
     .review-edit-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }}
     .review-edit-grid .full {{ grid-column:1 / -1; }}
     .review-edit-field {{ display:grid; gap:5px; }}
-    .review-edit-field label {{ margin:0; color:var(--accent-strong); font-size:13px; font-weight:900; letter-spacing:0; }}
+    .review-edit-field label {{ margin:0; color:var(--accent-strong); font-size:20px; font-weight:900; letter-spacing:0; line-height:1.18; }}
     .review-edit-field textarea {{ min-height:82px; background:rgba(255,253,250,.78); line-height:1.5; font-size:14px; font-weight:520; }}
     .review-edit-field.compact textarea {{ min-height:54px; }}
     .review-edit-field.tall textarea {{ min-height:98px; }}
