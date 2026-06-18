@@ -264,14 +264,14 @@ def page(title: str, body: str) -> str:
     .review-focus .hero {{ margin-bottom:16px; }}
     .review-focus .hero-title {{ max-width:760px; }}
     .review-focus .hero-copy {{ max-width:720px; }}
-    .review-focus .review-toolbar {{ grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); padding:12px; margin:0 auto 12px; max-width:1180px; width:100%; }}
+    .review-focus .review-toolbar {{ grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); padding:12px; margin-bottom:12px; }}
     .review-focus .review-layout {{ display:block; }}
-    .review-poolbar {{ display:flex; justify-content:space-between; gap:12px; align-items:center; margin:0 auto 16px; max-width:1180px; width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:8px; background:rgba(255,253,250,.72); box-shadow:none; }}
+    .review-poolbar {{ display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:16px; padding:12px 14px; border:1px solid var(--line); border-radius:8px; background:rgba(255,253,250,.72); box-shadow:none; }}
     .review-nav-actions {{ display:flex; align-items:flex-end; gap:8px; justify-content:flex-end; flex-wrap:wrap; }}
     .review-case-picker {{ display:flex; align-items:center; gap:10px; margin-bottom:0; }}
     .review-pool-label {{ color:var(--muted); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:0; }}
     .pool-count {{ display:inline-flex; align-items:center; min-height:42px; padding:9px 11px; border:1px solid var(--line); border-radius:999px; background:rgba(247,247,242,.74); color:var(--muted); font-size:12px; font-weight:850; white-space:nowrap; }}
-    .review-stage {{ max-width:1180px; width:100%; margin:0 auto; }}
+    .review-stage {{ max-width:none; width:100%; margin:0; }}
     .review-context-line {{ display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; }}
     .review-column {{ min-width:0; }}
     .result-heading {{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin:0 0 9px; padding:0 2px; }}
@@ -1068,7 +1068,7 @@ function detailFields(item, includeReviews=true) {
   return `<dl><dt>Attack Method</dt><dd>${escapeHtml(item.attack_method)}</dd><dt>Target</dt><dd>${escapeHtml(item.target)}</dd><dt>Success States</dt><dd>${listText(item.success_states)}</dd><dt>Failure States</dt><dd>${listText(item.failure_states)}</dd><dt>Metadata</dt><dd>${listText(item.metadata)}</dd><dt>Logic</dt><dd>${escapeHtml(item.logic)}</dd></dl>`;
 }
 function baseDetail(item) {
-  return `<h2>${escapeHtml(item.task || '(未命名任务)')}</h2><div class="meta">${escapeHtml(item.id)} · ${escapeHtml(item.created_at || '')}</div><div class="review-tags">${caseTags(item)}<span class="pill">${escapeHtml(summaryText(item))}</span></div>`;
+  return `<h2>${escapeHtml(item.task || '(未命名任务)')}</h2><div class="review-tags">${caseTags(item)}<span class="pill">${escapeHtml(summaryText(item))}</span></div>`;
 }
 async function toggleBenchmarkSelection(id, selected) {
   const res = await fetch(`/api/cases/${encodeURIComponent(id)}/benchmark-selection`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({selected})});
@@ -1106,7 +1106,6 @@ function focusedReviewDetail(item) {
     <section class="focus-card focus-header">
       <div>
         <h2 class="focus-title">${escapeHtml(item.task || '(未命名任务)')}</h2>
-        <div class="meta">${escapeHtml(item.id)} · ${escapeHtml(item.created_at || '')}</div>
         <div class="focus-meta">${compactTags(item)}</div>
       </div>
     </section>
@@ -1486,7 +1485,7 @@ function selectCase(id) { selectedId = id; updateActiveListItem(); renderDetail(
 function renderDetail() {
   const panel = document.getElementById('detailPanel'); const item = filteredCases.find(candidate => candidate.id === selectedId);
   if (!item) { panel.innerHTML = '<div class="detail-empty">选择左侧条目查看详情</div>'; return; }
-  panel.innerHTML = `<h2>${escapeHtml(item.task || '(未命名任务)')}</h2><div class="meta">${escapeHtml(item.id)} · ${escapeHtml(item.created_at || '')}</div><div class="review-tags">${adminTags(item)}</div>${benchmarkButton(item)}<dl><dt>Attack Method</dt><dd>${escapeHtml(item.attack_method)}</dd><dt>Success States</dt><dd>${listText(item.success_states)}</dd><dt>Failure States</dt><dd>${listText(item.failure_states)}</dd><dt>Metadata</dt><dd>${listText(item.metadata)}</dd><dt>Target</dt><dd>${escapeHtml(item.target)}</dd><dt>Logic</dt><dd>${escapeHtml(item.logic)}</dd></dl>`;
+  panel.innerHTML = `<h2>${escapeHtml(item.task || '(未命名任务)')}</h2><div class="review-tags">${adminTags(item)}</div>${benchmarkButton(item)}<dl><dt>Attack Method</dt><dd>${escapeHtml(item.attack_method)}</dd><dt>Success States</dt><dd>${listText(item.success_states)}</dd><dt>Failure States</dt><dd>${listText(item.failure_states)}</dd><dt>Metadata</dt><dd>${listText(item.metadata)}</dd><dt>Target</dt><dd>${escapeHtml(item.target)}</dd><dt>Logic</dt><dd>${escapeHtml(item.logic)}</dd></dl>`;
 }
 async function toggleSelectedCase(id, selected) {
   const panel = document.getElementById('detailPanel');
