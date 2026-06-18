@@ -10,8 +10,7 @@ from flask import Flask, jsonify, redirect, request, session
 from .auth import authenticate
 from .constants import ATTACK_TYPES, INTERACTIVE_FORMS, TASK_TYPES
 from .schema import normalize_case, validate_case
-from .schema import utc_now
-from .storage import DEFAULT_DATASET, add_case_review, list_datasets, read_dataset, set_benchmark_selected, set_expert_decision, update_case_fields, upsert_case
+from .storage import DEFAULT_DATASET, list_file_datasets, read_local_dataset, set_benchmark_selected, set_expert_decision, update_case_fields, upsert_case
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -210,18 +209,6 @@ def page(title: str, body: str) -> str:
     }}
     .select-card-option:hover {{ background:rgba(20,116,134,.07); border-color:rgba(20,116,134,.16); color:var(--text); }}
     .select-card-option.active {{ background:rgba(157,37,44,.1); border-color:rgba(157,37,44,.28); color:var(--accent); }}
-    .score-grid {{ display:grid; grid-template-columns:repeat(2,minmax(220px,1fr)); gap:12px; }}
-    .score-control {{ margin:0; padding:13px; border:1px solid var(--line); border-radius:8px; background:rgba(255,253,250,.78); box-shadow:none; }}
-    .score-control legend {{ padding:0 4px; color:var(--text); font-size:12px; font-weight:900; }}
-    .score-scale {{ display:grid; grid-template-columns:repeat(6,1fr); gap:6px; margin-top:9px; }}
-    .score-option {{ position:relative; margin:0; }}
-    .score-option input {{ position:absolute; opacity:0; pointer-events:none; }}
-    .score-option span {{ min-height:38px; display:grid; place-items:center; border:1px solid var(--line); border-radius:999px; background:#fff; color:var(--muted); font-size:13px; font-weight:900; cursor:pointer; transition:background .12s,border-color .12s,color .12s,transform .12s; }}
-    .score-option:hover span {{ transform:translateY(-1px); border-color:rgba(20,116,134,.42); }}
-    .score-option input:checked + span {{ color:#fff; border-color:var(--accent); background:var(--accent); box-shadow:none; }}
-    .score-option.skip span {{ color:var(--muted); font-size:12px; }}
-    .score-option.skip input:checked + span {{ color:var(--teal); background:var(--teal-soft); border-color:rgba(20,116,134,.32); box-shadow:none; }}
-    .score-summary {{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }}
     .row {{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }}
     .errors {{ color:var(--danger); font-size:13px; white-space:pre-wrap; margin-top:8px; }}
     .status-message {{ color:var(--accent-strong); font-size:13px; white-space:pre-wrap; margin-top:8px; font-weight:700; }}
@@ -255,12 +242,12 @@ def page(title: str, body: str) -> str:
     .rank-index {{ color:var(--accent-strong); font-size:13px; font-weight:900; }}
     .rank-case-title {{ display:block; color:var(--text); font-size:14px; font-weight:850; line-height:1.52; }}
     .rank-case-meta {{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }}
-    .score-stack strong {{ display:block; color:var(--text); font-size:22px; line-height:1; }}
-    .score-stack span {{ display:block; color:var(--muted); font-size:11px; font-weight:800; margin-top:6px; }}
     .rank-meter {{ height:4px; margin-top:9px; background:rgba(20,20,20,.08); border-radius:999px; overflow:hidden; }}
     .rank-meter span {{ display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--teal)); }}
     .rank-actions {{ display:flex; justify-content:flex-end; }}
     .rank-empty {{ padding:34px 20px; color:var(--muted); text-align:center; font-weight:800; }}
+    .cart-fly {{ position:fixed; z-index:999; left:50%; top:50%; transform:translate(-50%,-50%); pointer-events:none; padding:12px 16px; border:1px solid rgba(15,118,110,.28); border-radius:999px; background:#fff; color:#0f5f59; font-size:13px; font-weight:900; box-shadow:0 18px 42px rgba(20,20,20,.14); animation:cartFly .78s cubic-bezier(.2,.8,.2,1) forwards; }}
+    @keyframes cartFly {{ 0% {{ opacity:0; transform:translate(-50%,-20%) scale(.82); }} 20% {{ opacity:1; }} 100% {{ opacity:0; transform:translate(220px,-220px) scale(.36); }} }}
     .review-layout {{ display:grid; grid-template-columns:minmax(390px,.92fr) minmax(560px,1.35fr); gap:15px; align-items:start; }}
     .review-focus {{ max-width:1440px; }}
     .review-focus .hero {{ margin-bottom:16px; }}
@@ -282,8 +269,6 @@ def page(title: str, body: str) -> str:
     .result-heading span {{ color:var(--muted); font-size:12px; font-weight:800; }}
     .review-list {{ max-height:calc(100vh - 120px); overflow:auto; padding:3px; }}
     .review-list {{ display:flex; flex-direction:column; gap:9px; }}
-    .origin-divider {{ display:flex; align-items:center; gap:10px; margin:7px 0 2px; color:var(--muted); font-size:11px; font-weight:900; letter-spacing:0; text-transform:uppercase; }}
-    .origin-divider::after {{ content:''; flex:1; height:1px; background:var(--line); }}
     .review-item {{
       position:relative; width:100%; text-align:left; color:var(--text); padding:15px 15px 15px 18px; cursor:pointer; box-shadow:none; background:rgba(255,253,250,.9);
       transition:border-color .18s ease, background .18s ease, color .18s ease;
@@ -294,10 +279,6 @@ def page(title: str, body: str) -> str:
     .review-item.active .review-item-title {{ color:var(--text); }}
     .review-item.active .review-item-attack,.review-item.active .meta {{ color:#444; }}
     .review-item.active::before {{ top:8px; bottom:8px; background:var(--accent); }}
-    .review-item.origin-database::before {{ background:rgba(15,118,110,.28); }}
-    .review-item.origin-local_json::before {{ background:rgba(5,5,5,.18); }}
-    .review-item.active.origin-database::before {{ background:var(--green); }}
-    .review-item.active.origin-local_json::before {{ background:var(--accent); }}
     .review-item-title {{ display:block; font-size:14px; font-weight:800; line-height:1.52; }}
     .review-item-attack {{
       display:-webkit-box; margin-top:8px; color:var(--muted); font-size:12px; line-height:1.55; font-weight:600;
@@ -309,18 +290,14 @@ def page(title: str, body: str) -> str:
     .review-focus .review-item-attack,.review-focus .review-item .meta,.review-focus .review-item .review-tags {{ display:none; }}
     .review-focus .rank-line {{ margin-top:8px; }}
     .review-focus .rank-badge {{ min-width:38px; padding:4px 7px; }}
-    .review-focus .score-badge {{ padding:4px 7px; }}
     .pill {{ flex:none; border:1px solid var(--line); border-radius:999px; padding:4px 8px; font-size:11px; color:var(--muted); background:rgba(255,253,250,.72); font-weight:800; }}
     .pill.strong {{ color:var(--accent-strong); border-color:rgba(157,37,44,.28); background:var(--accent-soft); }}
-    .pill.origin-local {{ color:var(--teal); border-color:rgba(20,116,134,.24); background:var(--teal-soft); }}
-    .pill.origin-cloud {{ color:#0f5f59; border-color:rgba(15,118,110,.28); background:rgba(15,118,110,.08); }}
     .pill.selected-mark {{ color:#0f5f59; border-color:rgba(15,118,110,.32); background:rgba(15,118,110,.1); }}
     .pill.decision-accepted {{ color:#0f5f59; border-color:rgba(15,118,110,.32); background:rgba(15,118,110,.1); }}
     .pill.decision-discarded {{ color:#9b2c22; border-color:rgba(180,35,24,.24); background:rgba(255,241,242,.9); }}
     .pill.decision-needs_discussion {{ color:#9a5b13; border-color:rgba(217,119,6,.26); background:rgba(255,251,235,.9); }}
     .rank-line {{ display:flex; align-items:center; gap:8px; margin:9px 0 0; }}
     .rank-badge {{ min-width:46px; display:inline-flex; align-items:center; justify-content:center; padding:5px 9px; border-radius:999px; background:var(--navy); color:#fff; font-size:12px; font-weight:900; }}
-    .score-badge {{ display:inline-flex; align-items:center; justify-content:center; padding:5px 9px; border:1px solid rgba(20,116,134,.24); border-radius:999px; background:var(--teal-soft); color:var(--teal); font-size:12px; font-weight:900; }}
     .benchmark-action {{ width:100%; margin-top:15px; display:flex; justify-content:center; }}
     .benchmark-action button {{ width:100%; }}
     .benchmark-action .selected {{ background:rgba(255,255,255,.72); color:#0f5f59; border-color:rgba(15,118,110,.35); box-shadow:none; }}
@@ -343,6 +320,14 @@ def page(title: str, body: str) -> str:
     .focus-block.full {{ grid-column:1 / -1; }}
     .focus-label {{ display:block; margin-bottom:7px; color:var(--accent-strong); font-size:10px; font-weight:900; letter-spacing:0; text-transform:uppercase; }}
     .focus-text {{ margin:0; color:var(--ink); font-size:15px; line-height:1.72; font-weight:650; }}
+    .audit-row {{ display:grid; grid-template-columns:22px minmax(0,1fr); gap:10px; align-items:start; }}
+    .audit-check {{ width:15px; height:15px; margin:4px 0 0; accent-color:var(--green); cursor:pointer; }}
+    .audit-content {{ min-width:0; border-radius:6px; cursor:pointer; transition:background .12s ease, color .12s ease; }}
+    .audit-content:hover {{ background:rgba(20,116,134,.07); color:var(--text); }}
+    .focus-block .audit-content {{ padding:2px 4px; margin:-2px -4px; }}
+    .audit-list {{ margin:0; padding:0; list-style:none; display:grid; gap:9px; color:var(--ink); font-size:14px; line-height:1.65; }}
+    .audit-token-grid {{ display:grid; gap:8px; }}
+    .audit-token-grid .metadata-token {{ width:fit-content; cursor:pointer; }}
     .focus-attack {{ border-color:rgba(157,37,44,.22); background:rgba(255,248,248,.76); }}
     .focus-attack .focus-label {{ color:var(--accent); }}
     .judgement-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }}
@@ -371,17 +356,12 @@ def page(title: str, body: str) -> str:
     .expert-editor[open] summary::after {{ content:'收起'; }}
     .expert-edit-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px; }}
     .expert-edit-grid .full {{ grid-column:1 / -1; }}
-    .review-score-panel {{ margin-top:0; }}
-    .review-score-panel .section-heading {{ margin-bottom:10px; }}
-    .review-score-panel textarea {{ min-height:74px; }}
-    .review-score-panel .score-grid {{ grid-template-columns:repeat(2,minmax(220px,1fr)); }}
-    .review-score-actions {{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:14px; flex-wrap:wrap; }}
     dl {{ margin:18px 0 0; display:grid; gap:12px; }}
     dt {{ font-size:10px; color:var(--accent-strong); font-weight:900; text-transform:uppercase; letter-spacing:0; margin:0; }}
     dd {{ margin:5px 0 0; font-size:13px; line-height:1.66; background:rgba(247,247,242,.72); border:1px solid var(--line); border-radius:8px; padding:11px 12px; }}
     dd ul {{ margin:0; padding-left:18px; }}
     @media (max-width:980px) {{
-      .grid,.design-grid,.design-grid.design-only,.toolbar,.review-layout,.choice-grid,.overview-grid,.overview-stats,.score-grid,.field-grid,.rank-head,.rank-row {{ grid-template-columns:1fr; max-width:none; }}
+      .grid,.design-grid,.design-grid.design-only,.toolbar,.review-layout,.choice-grid,.overview-grid,.overview-stats,.field-grid,.rank-head,.rank-row {{ grid-template-columns:1fr; max-width:none; }}
       header {{ width:100%; padding:10px 14px; align-items:flex-start; border-radius:0; flex-direction:column; }}
       main {{ padding:16px; }}
       .top-nav,.app-nav {{ width:100%; flex-wrap:wrap; }}
@@ -391,7 +371,7 @@ def page(title: str, body: str) -> str:
       .hero.compact .hero-title {{ font-size:30px; }}
       .select-card-menu {{ max-height:42vh; }}
       .toolbar-actions {{ grid-column:auto; }} .detail-panel,.sticky-panel {{ position:static; max-height:none; }}
-      .focus-header,.focus-grid,.judgement-grid,.review-focus .review-layout,.review-focus .review-toolbar,.review-poolbar,.review-case-picker,.review-score-panel .score-grid,.decision-actions,.expert-edit-grid {{ grid-template-columns:1fr; }}
+      .focus-header,.focus-grid,.judgement-grid,.review-focus .review-layout,.review-focus .review-toolbar,.review-poolbar,.review-case-picker,.decision-actions,.expert-edit-grid {{ grid-template-columns:1fr; }}
       .focus-action {{ min-width:0; }}
       .review-nav-actions {{ justify-content:flex-start; }}
       .rank-head {{ display:none; }}
@@ -534,6 +514,12 @@ def create_app() -> Flask:
             return redirect("/login")
         return scenes_page(session["username"])
 
+    @app.get("/benchmark")
+    def benchmark():
+        if not can_access_workspace():
+            return redirect("/login")
+        return benchmark_page(session["username"])
+
     @app.get("/login")
     def login_page():
         return render_login()
@@ -593,7 +579,7 @@ def create_app() -> Flask:
         if not can_access_workspace():
             return jsonify({"error": "not logged in"}), 401
         username = session["username"]
-        cases = [case for case in read_dataset(DEFAULT_DATASET) if case.get("owner") in (username, "llm_seed")]
+        cases = [case for case in read_local_dataset(DEFAULT_DATASET) if case.get("owner") in (username, "llm_seed")]
         cases.sort(key=lambda item: item.get("updated_at", ""), reverse=True)
         return jsonify({"cases": cases})
 
@@ -620,41 +606,21 @@ def create_app() -> Flask:
     def api_all_cases():
         if not can_access_workspace():
             return jsonify({"error": "not logged in"}), 401
-        cases = read_dataset(DEFAULT_DATASET)
+        cases = read_local_dataset(DEFAULT_DATASET)
         cases.sort(key=lambda item: item.get("updated_at", ""), reverse=True)
+        return jsonify({"cases": cases})
+
+    @app.get("/api/benchmark-cases")
+    def api_benchmark_cases():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        cases = [case for case in read_local_dataset(DEFAULT_DATASET) if case.get("benchmark_selected") or case.get("expert_decision") == "accepted"]
+        cases.sort(key=lambda item: item.get("benchmark_selected_at") or item.get("expert_decision_at") or item.get("updated_at", ""), reverse=True)
         return jsonify({"cases": cases})
 
     @app.post("/api/cases/<case_id>/reviews")
     def save_review(case_id: str):
-        if not can_access_workspace():
-            return jsonify({"error": "not logged in"}), 401
-        raw = request.get_json(silent=True) or {}
-        errors = []
-        review: dict[str, Any] = {
-            "reviewer": session["username"],
-            "created_at": utc_now(),
-            "comment": str(raw.get("comment", "")).strip(),
-        }
-        for key in ("feasibility", "accuracy", "clarity", "overall"):
-            if raw.get(key) in (None, ""):
-                continue
-            try:
-                score = int(raw.get(key))
-            except (TypeError, ValueError):
-                errors.append(f"{key} 必须是 1-5 的整数")
-                continue
-            if score < 1 or score > 5:
-                errors.append(f"{key} 必须在 1-5 之间")
-            review[key] = score
-        if errors:
-            return jsonify({"errors": errors}), 400
-        try:
-            saved = add_case_review(case_id, review)
-        except KeyError:
-            return jsonify({"error": "case not found"}), 404
-        except RuntimeError as exc:
-            return jsonify({"error": str(exc)}), 503
-        return jsonify({"case": saved})
+        return jsonify({"error": "score reviews are disabled; use expert decisions instead"}), 410
 
     @app.post("/api/cases/<case_id>/expert-decision")
     def save_expert_decision(case_id: str):
@@ -708,11 +674,11 @@ def create_app() -> Flask:
     def api_admin_cases():
         if not can_access_admin():
             return jsonify({"error": "admin login required"}), 401
-        datasets = list_datasets()
+        datasets = list_file_datasets() or [DEFAULT_DATASET]
         dataset = request.args.get("dataset") or (DEFAULT_DATASET if DEFAULT_DATASET in datasets else datasets[0])
         if dataset not in datasets:
             return jsonify({"error": "unknown dataset"}), 400
-        cases = read_dataset(dataset)
+        cases = read_local_dataset(dataset)
         cases.sort(key=lambda item: item.get("updated_at", ""), reverse=True)
         return jsonify({"dataset": dataset, "datasets": datasets, "cases": cases})
 
@@ -765,9 +731,9 @@ def app_header(user: str, subtitle: str, active: str = "") -> str:
   <div class="top-nav">
     <nav class="app-nav">
       <a class="{active_class('menu')}" href="/">菜单</a>
-      <a class="{active_class('design')}" href="/design">设计</a>
       <a class="{active_class('review')}" href="/review">审核</a>
-      <a class="{active_class('scenes')}" href="/scenes">总览</a>
+      <a class="{active_class('scenes')}" href="/scenes">原始库</a>
+      <a class="{active_class('benchmark')}" href="/benchmark">Benchmark</a>
       {admin_link}
     </nav>
     <span class="user-chip">{user}</span>
@@ -784,30 +750,30 @@ def menu_page(user: str) -> str:
 <section class="hero">
   <div class="eyebrow">Workspace</div>
   <h2 class="hero-title">ClawTrap 场景标注工作台</h2>
-  <p class="hero-copy">当前账户：<strong>{user}</strong>。这里负责 MITM benchmark case 的创建、审核与评分查看。请选择一个入口继续。</p>
+  <p class="hero-copy">当前账户：<strong>{user}</strong>。这里负责从本地 case 池中审阅、筛选并维护 ClawTrap Benchmark。</p>
 </section>
 <section class="overview-grid">
   <article class="overview-card">
     <p class="section-kicker">Account</p>
     <h2>当前标注员</h2>
-    <p>账户名和当前工作空间会显示在每个页面顶部。新建场景、提交评分和后续查询都会关联到当前账户。</p>
+  <p>账户名和当前工作空间会显示在每个页面顶部。审核裁决、Mark notes 和后续查询都会关联到当前账户。</p>
     <div class="account-row"><span class="pill strong">{user}</span><span class="pill">{role}</span><span class="pill">workspace ready</span></div>
   </article>
   <article class="overview-card">
     <p class="section-kicker">Dataset</p>
     <h2>数据概览</h2>
-    <p>进入设计、审核或查看前，可以先确认当前 case 池的大致规模。</p>
+    <p>进入审核或检查页面前，可以先确认当前本地 case 池的大致规模。</p>
     <div class="overview-stats" id="menuStats">
       <div class="mini-stat"><strong>-</strong><span>全部场景</span></div>
-      <div class="mini-stat"><strong>-</strong><span>已有评分</span></div>
+      <div class="mini-stat"><strong>-</strong><span>待审核</span></div>
       <div class="mini-stat"><strong>-</strong><span>已选 benchmark</span></div>
     </div>
   </article>
 </section>
 <section class="choice-grid">
-  <a class="choice-card" href="/design"><div class="choice-number">01</div><strong>设计新场景</strong><span>填写 task、target、攻击方式、判定状态和 metadata，保存为草稿或提交。</span></a>
-  <a class="choice-card" href="/review"><div class="choice-number">02</div><strong>审核与打分</strong><span>聚焦单条 case，完成专家裁决、轻量修改、评分和评论。</span></a>
-  <a class="choice-card" href="/scenes"><div class="choice-number">03</div><strong>评分总览</strong><span>只读查看场景排名、来源分布、裁决状态和 benchmark 入选情况。</span></a>
+  <a class="choice-card" href="/review"><div class="choice-number">01</div><strong>审核</strong><span>逐条查看本地 case，执行保留、Discard、Mark notes 或 Skip。</span></a>
+  <a class="choice-card" href="/scenes"><div class="choice-number">02</div><strong>检查原始数据库</strong><span>只读检查本地 JSON case 池的任务类型、攻击类型和字段完整性。</span></a>
+  <a class="choice-card" href="/benchmark"><div class="choice-number">03</div><strong>检查 ClawTrap Bench</strong><span>查看当前已入选 benchmark 的场景集合、类型分布和详细内容。</span></a>
 </section>
 <script>{menu_js()}</script>
 </main>""")
@@ -821,18 +787,18 @@ async function loadMenuStats() {
     const res = await fetch('/api/all-cases');
     const data = await res.json();
     const cases = data.cases || [];
-    const reviewed = cases.filter(item => item.review_summary?.count).length;
+    const pending = cases.filter(item => !item.expert_decision).length;
     const selected = cases.filter(item => item.benchmark_selected).length;
     el.innerHTML = [
       stat(cases.length, '全部场景'),
-      stat(reviewed, '已有评分'),
+      stat(pending, '待审核'),
       stat(selected, '已选 benchmark')
     ].join('');
   } catch (error) {
     el.innerHTML = [
       stat('-', '全部场景'),
-      stat('-', '已有评分'),
-      stat('-', '标注员数')
+      stat('-', '待审核'),
+      stat('-', '已选 benchmark')
     ].join('');
   }
 }
@@ -895,21 +861,19 @@ def design_page(user: str) -> str:
 
 def review_page(user: str) -> str:
     return page("ClawTrap 场景审核", f"""
-{app_header(user, "Case review and scoring", "review")}
+{app_header(user, "Case review", "review")}
 <main class="admin-main review-focus">
   <section class="hero compact">
     <div class="eyebrow">Review</div>
-    <h2 class="hero-title">聚焦当前场景，完成质量评估</h2>
-    <p class="hero-copy">先用筛选条件定义当前待审核池，再逐条查看任务、攻击、成功/失败判定和评分。</p>
+    <h2 class="hero-title">逐条审阅本地场景，决定是否进入 Benchmark</h2>
+    <p class="hero-copy">当前审核只保留裁决流：保留进 benchmark、Discard、Mark notes 或 Skip。评分机制已关闭。</p>
   </section>
   <section class="panel toolbar review-toolbar">
     <div><label>搜索</label><input id="reviewSearch" placeholder="task / target / attack_method / owner / id"></div>
-    <div><label>评分状态</label><div class="select-shell"><select id="reviewStatusFilter"><option value="">全部</option><option value="unreviewed_by_me">我未评分</option><option value="reviewed_by_me">我已评分</option><option value="unreviewed">全局未评分</option><option value="reviewed">已有评分</option></select></div></div>
     <div><label>裁决状态</label><div class="select-shell"><select id="reviewDecisionFilter"><option value="">全部</option><option value="none">未裁决</option><option value="accepted">已保留</option><option value="discarded">Discard</option><option value="needs_discussion">存疑 Mark</option></select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="reviewTaskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
     <div><label>攻击类型</label><div class="select-shell"><select id="reviewAttackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>植入形式</label><div class="select-shell"><select id="reviewFormFilter"><option value="">全部</option>{options(INTERACTIVE_FORMS)}</select></div></div>
-    <div><label>来源</label><div class="select-shell"><select id="reviewOriginFilter"><option value="">全部</option><option value="local_json">本地 JSON</option><option value="database">云端数据库</option></select></div></div>
   </section>
   <section class="review-poolbar">
     <div class="review-case-picker">
@@ -931,16 +895,15 @@ def review_page(user: str) -> str:
 
 
 def scenes_page(user: str) -> str:
-    return page("ClawTrap 评分总览", f"""
-{app_header(user, "Score overview", "scenes")}
+    return page("ClawTrap 原始数据库", f"""
+{app_header(user, "Raw local database", "scenes")}
 <main class="admin-main">
   <section class="hero compact">
-    <div class="eyebrow">Score Overview</div>
-    <h2 class="hero-title">只读查看场景排名与入选状态</h2>
-    <p class="hero-copy">这里不做审核和编辑，只用于快速掌握 case 池的评分分布、裁决状态、来源划分和 benchmark 候选情况。</p>
+    <div class="eyebrow">Raw Database</div>
+    <h2 class="hero-title">检查本地 JSON 原始 case 池</h2>
+    <p class="hero-copy">这里只读取本地数据文件，不区分云端与本地来源。用于快速检查原始 case 的类型、裁决状态和字段内容。</p>
   </section>
   <section class="panel toolbar">
-    <div><label>来源</label><div class="select-shell"><select id="originFilter"><option value="">全部</option><option value="local_json">本地 JSON</option><option value="database">云端数据库</option></select></div></div>
     <div><label>Benchmark</label><div class="select-shell"><select id="selectedFilter"><option value="">全部</option><option value="selected">已选中</option><option value="unselected">未选中</option></select></div></div>
     <div><label>裁决状态</label><div class="select-shell"><select id="decisionFilter"><option value="">全部</option><option value="none">未裁决</option><option value="accepted">已保留</option><option value="discarded">Discard</option><option value="needs_discussion">存疑 Mark</option></select></div></div>
     <div><label>攻击类型</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
@@ -951,12 +914,38 @@ def scenes_page(user: str) -> str:
   <section class="rank-dashboard">
     <section class="rank-summary" id="stats"></section>
     <section class="rank-board">
-      <div class="rank-head"><span>Rank</span><span>Case</span><span>Score</span><span>Status</span><span></span></div>
+      <div class="rank-head"><span>#</span><span>Case</span><span>Decision</span><span>Status</span><span></span></div>
       <div id="rankRows"></div>
     </section>
   </section>
 </main>
 <script>{scenes_js()}</script>""")
+
+
+def benchmark_page(user: str) -> str:
+    return page("ClawTrap Bench", f"""
+{app_header(user, "ClawTrap Bench", "benchmark")}
+<main class="admin-main">
+  <section class="hero compact">
+    <div class="eyebrow">Benchmark</div>
+    <h2 class="hero-title">当前 ClawTrap Bench 入选集合</h2>
+    <p class="hero-copy">这里专门展示已保留进 benchmark 的 case。审核页做裁决，这里检查最终集合的规模、类型分布和具体内容。</p>
+  </section>
+  <section class="panel toolbar">
+    <div><label>攻击类型</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
+    <div><label>任务类型</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
+    <div><label>搜索</label><input id="search" placeholder="task / id / owner"></div>
+    <div class="row toolbar-actions"><button type="button" onclick="loadCases()">刷新</button></div>
+  </section>
+  <section class="rank-dashboard">
+    <section class="rank-summary" id="stats"></section>
+    <section class="rank-board">
+      <div class="rank-head"><span>#</span><span>Benchmark Case</span><span>Attack</span><span>Task</span><span></span></div>
+      <div id="rankRows"></div>
+    </section>
+  </section>
+</main>
+<script>{benchmark_js()}</script>""")
 
 
 def admin_page(admin: str) -> str:
@@ -968,14 +957,14 @@ def admin_page(admin: str) -> str:
 <main class="admin-main">
   <section class="hero compact">
     <div class="eyebrow">Review Console</div>
-    <h2 class="hero-title">Inspect generated and submitted MITM benchmark cases.</h2>
-    <p class="hero-copy">筛选数据集、攻击类型和任务类型，在左侧快速浏览 case，在右侧查看完整判定逻辑与 metadata。</p>
+    <h2 class="hero-title">Inspect local MITM benchmark cases.</h2>
+    <p class="hero-copy">管理页保留数据集切换与完整字段查看，但不再显示评分排序或云端/本地来源区分。</p>
   </section>
   <section class="panel toolbar">
     <div><label>数据集</label><div class="select-shell"><select id="dataset"></select></div></div>
     <div><label>状态</label><div class="select-shell"><select id="statusFilter"><option value="">全部</option><option value="draft">draft</option><option value="submitted">submitted</option></select></div></div>
-    <div><label>来源</label><div class="select-shell"><select id="originFilter"><option value="">全部</option><option value="local_json">本地 JSON</option><option value="database">云端数据库</option></select></div></div>
     <div><label>Benchmark</label><div class="select-shell"><select id="selectedFilter"><option value="">全部</option><option value="selected">已选中</option><option value="unselected">未选中</option></select></div></div>
+    <div><label>裁决状态</label><div class="select-shell"><select id="decisionFilter"><option value="">全部</option><option value="none">未裁决</option><option value="accepted">已保留</option><option value="discarded">Discard</option><option value="needs_discussion">存疑 Mark</option></select></div></div>
     <div><label>攻击类型</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
     <div><label>植入形式</label><div class="select-shell"><select id="formFilter"><option value="">全部</option>{options(INTERACTIVE_FORMS)}</select></div></div>
@@ -1041,37 +1030,10 @@ def shared_case_js() -> str:
     return r"""
 let allCases = []; let filteredCases = []; let selectedId = null;
 function summaryText(item) {
-  const s = item.review_summary || {};
-  if (!s.count) return '暂无评分';
-  return `总分 ${totalScore(item) ?? '-'} · 综合 ${s.overall ?? '-'} · 可实现 ${s.feasibility ?? '-'} · 准确 ${s.accuracy ?? '-'} · 清晰 ${s.clarity ?? '-'} · ${s.count} 条`;
-}
-function totalScore(item) {
-  const s = item.review_summary || {};
-  if (s.total_score !== undefined && s.total_score !== null) return Number(s.total_score);
-  const values = ['overall','feasibility','accuracy','clarity'].map(key => Number(s[key])).filter(value => Number.isFinite(value));
-  if (!values.length) return null;
-  return Math.round((values.reduce((sum, value) => sum + value, 0) / values.length) * 100) / 100;
-}
-function rankSort(a, b) {
-  const scoreA = totalScore(a), scoreB = totalScore(b);
-  if (scoreA !== null || scoreB !== null) return (scoreB ?? -1) - (scoreA ?? -1);
-  return String(b.updated_at || '').localeCompare(String(a.updated_at || ''));
+  return `${decisionLabel(item.expert_decision)} · ${item.benchmark_selected ? '已入选 benchmark' : '未入选 benchmark'}`;
 }
 function applyRanks(items) {
-  const ranked = [...items].sort(rankSort);
-  ranked.forEach((item, index) => { item.__rank = totalScore(item) === null ? null : index + 1; });
-  return ranked;
-}
-function originValue(item) {
-  return item.storage_origin || 'local_json';
-}
-function originLabel(origin) {
-  return origin === 'database' ? '云端数据库' : '本地 JSON';
-}
-function originPill(item) {
-  const origin = originValue(item);
-  const cls = origin === 'database' ? 'origin-cloud' : 'origin-local';
-  return `<span class="pill ${cls}">${originLabel(origin)}</span>`;
+  return [...items];
 }
 function decisionLabel(decision) {
   return ({accepted:'已保留', discarded:'Discard', needs_discussion:'存疑 Mark', clear:'未裁决'})[decision] || '未裁决';
@@ -1083,21 +1045,10 @@ function decisionPill(item) {
 }
 function caseTags(item) {
   const selected = item.benchmark_selected ? '<span class="pill selected-mark">已选入 benchmark</span>' : '';
-  return `${selected}${decisionPill(item)}${originPill(item)}<span class="pill strong">${escapeHtml(item.status || 'draft')}</span><span class="pill">${escapeHtml(item.task_type)}</span><span class="pill">${escapeHtml(item.attack_type)}</span><span class="pill">${escapeHtml((item.interactive_form || []).join('/'))}</span>`;
+  return `${selected}${decisionPill(item)}<span class="pill strong">${escapeHtml(item.status || 'draft')}</span><span class="pill">${escapeHtml(item.task_type)}</span><span class="pill">${escapeHtml(item.attack_type)}</span><span class="pill">${escapeHtml((item.interactive_form || []).join('/'))}</span>`;
 }
 function groupedCaseList(onClickName='selectCase') {
-  const rankedCases = applyRanks(filteredCases);
-  const groups = [
-    ['database', rankedCases.filter(item => originValue(item) === 'database')],
-    ['local_json', rankedCases.filter(item => originValue(item) !== 'database')],
-  ];
-  return groups.filter(([, items]) => items.length).map(([origin, items]) => {
-    const cards = items.map(item => {
-      const originClass = `origin-${originValue(item)}`;
-      return `<button class="review-item ${originClass} ${item.id === selectedId ? 'active' : ''}" data-case-id="${escapeHtml(item.id)}" type="button" onclick="${onClickName}('${escapeAttr(item.id)}')"><span class="review-item-title">${escapeHtml(item.task || '(未命名任务)')}</span><span class="review-item-attack">${escapeHtml(item.attack_method || '')}</span><span class="rank-line"><span class="rank-badge">#${escapeHtml(item.__rank ?? '-')}</span><span class="score-badge">总分 ${escapeHtml(totalScore(item) ?? '-')}</span></span><span class="meta">${escapeHtml(summaryText(item))}</span><span class="review-tags">${caseTags(item)}</span></button>`;
-    }).join('');
-    return `<div class="origin-divider">${originLabel(origin)} · ${items.length}</div>${cards}`;
-  }).join('');
+  return filteredCases.map((item, index) => `<button class="review-item ${item.id === selectedId ? 'active' : ''}" data-case-id="${escapeHtml(item.id)}" type="button" onclick="${onClickName}('${escapeAttr(item.id)}')"><span class="review-item-title">${escapeHtml(item.task || '(未命名任务)')}</span><span class="review-item-attack">${escapeHtml(item.attack_method || '')}</span><span class="meta">#${index + 1} · ${escapeHtml(summaryText(item))}</span><span class="review-tags">${caseTags(item)}</span></button>`).join('');
 }
 function renderCaseList(onClickName='selectCase') {
   if (!filteredCases.some(item => item.id === selectedId)) selectedId = filteredCases[0]?.id || null;
@@ -1112,12 +1063,10 @@ function updateActiveListItem() {
   });
 }
 function detailFields(item, includeReviews=true) {
-  const reviews = Array.isArray(item.reviews) ? item.reviews : [];
-  const reviewHtml = includeReviews ? `<dt>Reviews</dt><dd>${reviews.length ? `<ul>${reviews.map(r => `<li>${escapeHtml(r.reviewer || 'unknown')}：综合 ${escapeHtml(r.overall)}，可实现 ${escapeHtml(r.feasibility)}，准确 ${escapeHtml(r.accuracy)}，清晰 ${escapeHtml(r.clarity)}${r.comment ? ` · ${escapeHtml(r.comment)}` : ''}</li>`).join('')}</ul>` : '暂无评分'}</dd>` : '';
-  return `<dl><dt>Attack Method</dt><dd>${escapeHtml(item.attack_method)}</dd><dt>Target</dt><dd>${escapeHtml(item.target)}</dd><dt>Success States</dt><dd>${listText(item.success_states)}</dd><dt>Failure States</dt><dd>${listText(item.failure_states)}</dd><dt>Metadata</dt><dd>${listText(item.metadata)}</dd><dt>Logic</dt><dd>${escapeHtml(item.logic)}</dd>${reviewHtml}</dl>`;
+  return `<dl><dt>Attack Method</dt><dd>${escapeHtml(item.attack_method)}</dd><dt>Target</dt><dd>${escapeHtml(item.target)}</dd><dt>Success States</dt><dd>${listText(item.success_states)}</dd><dt>Failure States</dt><dd>${listText(item.failure_states)}</dd><dt>Metadata</dt><dd>${listText(item.metadata)}</dd><dt>Logic</dt><dd>${escapeHtml(item.logic)}</dd></dl>`;
 }
 function baseDetail(item) {
-  return `<h2>${escapeHtml(item.task || '(未命名任务)')}</h2><div class="meta">${escapeHtml(item.id)} · ${escapeHtml(item.owner)} · ${escapeHtml(item.created_at || '')}</div><div class="rank-line"><span class="rank-badge">#${escapeHtml(item.__rank ?? '-')}</span><span class="score-badge">总分 ${escapeHtml(totalScore(item) ?? '-')}</span></div><div class="review-tags">${caseTags(item)}<span class="pill">${escapeHtml(summaryText(item))}</span></div>`;
+  return `<h2>${escapeHtml(item.task || '(未命名任务)')}</h2><div class="meta">${escapeHtml(item.id)} · ${escapeHtml(item.owner)} · ${escapeHtml(item.created_at || '')}</div><div class="review-tags">${caseTags(item)}<span class="pill">${escapeHtml(summaryText(item))}</span></div>`;
 }
 async function toggleBenchmarkSelection(id, selected) {
   const res = await fetch(`/api/cases/${encodeURIComponent(id)}/benchmark-selection`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({selected})});
@@ -1133,41 +1082,67 @@ function benchmarkButton(item, handlerName='toggleSelectedCase') {
   return `<div class="benchmark-action"><button type="button" class="${selected ? 'selected' : ''}" onclick="${handlerName}('${escapeAttr(item.id)}', ${selected ? 'false' : 'true'})">${selected ? '取消选中 benchmark' : '选中进入 benchmark'}</button></div>`;
 }
 function compactTags(item) {
-  return `${decisionPill(item)}<span class="pill strong">${escapeHtml(item.task_type || '-')}</span><span class="pill">${escapeHtml(item.attack_type || '-')}</span><span class="pill">${escapeHtml((item.interactive_form || []).join(' / ') || '-')}</span>${originPill(item)}${item.benchmark_selected ? '<span class="pill selected-mark">已选入 benchmark</span>' : ''}`;
+  return `${decisionPill(item)}<span class="pill strong">${escapeHtml(item.task_type || '-')}</span><span class="pill">${escapeHtml(item.attack_type || '-')}</span><span class="pill">${escapeHtml((item.interactive_form || []).join(' / ') || '-')}</span>${item.benchmark_selected ? '<span class="pill selected-mark">已选入 benchmark</span>' : ''}`;
 }
 function currentReviewer() {
   return window.CLAWTRAP_REVIEWER || '';
 }
-function reviewsFor(item) {
-  return Array.isArray(item.reviews) ? item.reviews : [];
+function auditStorageKey(caseId) {
+  return `clawtrap:audit:${currentReviewer() || 'anonymous'}:${caseId}`;
 }
-function hasReviewByMe(item) {
-  const reviewer = currentReviewer();
-  return Boolean(reviewer) && reviewsFor(item).some(review => review.reviewer === reviewer);
+function auditState(caseId) {
+  try {
+    return JSON.parse(localStorage.getItem(auditStorageKey(caseId)) || '{}') || {};
+  } catch {
+    return {};
+  }
 }
-function reviewStatusPill(item) {
-  const mine = hasReviewByMe(item);
-  const count = reviewsFor(item).length;
-  const cls = mine ? 'selected-mark' : '';
-  return `<span class="pill ${cls}">${mine ? '我已评分' : '我未评分'}</span><span class="pill">全部评分 ${escapeHtml(count)}</span>`;
+function auditChecked(caseId, fieldKey) {
+  return auditState(caseId)[fieldKey] ? 'checked' : '';
+}
+function toggleAuditCheck(event, caseId, fieldKey) {
+  event.stopPropagation();
+  const state = auditState(caseId);
+  state[fieldKey] = Boolean(event.target.checked);
+  localStorage.setItem(auditStorageKey(caseId), JSON.stringify(state));
+}
+function openExpertEdit(fieldName) {
+  const details = document.querySelector('.expert-editor');
+  if (details) details.open = true;
+  requestAnimationFrame(() => {
+    const field = document.querySelector(`#expertEditForm [name="${fieldName}"]`);
+    if (!field) return;
+    field.focus({preventScroll: true});
+    field.scrollIntoView({behavior: 'smooth', block: 'center'});
+  });
+}
+function auditCheckbox(caseId, fieldKey) {
+  return `<input class="audit-check" type="checkbox" title="已核对" ${auditChecked(caseId, fieldKey)} onclick="toggleAuditCheck(event, '${escapeAttr(caseId)}', '${escapeAttr(fieldKey)}')">`;
+}
+function auditBlock(item, fieldName, label, content, extraClass='') {
+  return `<article class="focus-block ${extraClass}">
+    <span class="focus-label">${escapeHtml(label)}</span>
+    <div class="audit-row">${auditCheckbox(item.id, fieldName)}<p class="focus-text audit-content" onclick="openExpertEdit('${escapeAttr(fieldName)}')">${escapeHtml(content || '-')}</p></div>
+  </article>`;
 }
 function reviewHistory(item) {
-  const reviews = reviewsFor(item);
   const decisions = Array.isArray(item.expert_decisions) ? item.expert_decisions : [];
-  const latestReviews = reviews.slice(-3).reverse().map(review => `${escapeHtml(review.reviewer || 'unknown')}：综合 ${escapeHtml(review.overall ?? '-')} / 可实现 ${escapeHtml(review.feasibility ?? '-')} / 准确 ${escapeHtml(review.accuracy ?? '-')} / 清晰 ${escapeHtml(review.clarity ?? '-')}${review.comment ? ` · ${escapeHtml(review.comment)}` : ''}`);
   const latestDecisions = decisions.slice(-3).reverse().map(record => `${escapeHtml(record.reviewer || 'unknown')}：${escapeHtml(decisionLabel(record.decision))}${record.comment ? ` · ${escapeHtml(record.comment)}` : ''}`);
   const parts = [];
   if (latestDecisions.length) parts.push(`<strong>最近裁决</strong><br>${latestDecisions.join('<br>')}`);
-  if (latestReviews.length) parts.push(`<strong>最近评分</strong><br>${latestReviews.join('<br>')}`);
-  return `<div class="review-history">${parts.join('<br><br>') || '暂无历史裁决或评分'}</div>`;
+  return `<div class="review-history">${parts.join('<br><br>') || '暂无历史裁决'}</div>`;
 }
-function focusList(items) {
-  if (!Array.isArray(items) || !items.length) return '<ul><li>-</li></ul>';
-  return `<ul>${items.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`;
+function focusList(item, fieldName, items) {
+  if (!Array.isArray(items) || !items.length) {
+    return `<ul class="audit-list"><li class="audit-row">${auditCheckbox(item.id, `${fieldName}:0`)}<span class="audit-content" onclick="openExpertEdit('${escapeAttr(fieldName)}')">-</span></li></ul>`;
+  }
+  return `<ul class="audit-list">${items.map((value, index) => `<li class="audit-row">${auditCheckbox(item.id, `${fieldName}:${index}`)}<span class="audit-content" onclick="openExpertEdit('${escapeAttr(fieldName)}')">${escapeHtml(value)}</span></li>`).join('')}</ul>`;
 }
-function metadataTokens(items) {
-  if (!Array.isArray(items) || !items.length) return '<span class="metadata-token">无补充信息</span>';
-  return items.map(item => `<span class="metadata-token">${escapeHtml(item)}</span>`).join('');
+function metadataTokens(item, items) {
+  if (!Array.isArray(items) || !items.length) {
+    return `<div class="audit-token-grid"><div class="audit-row">${auditCheckbox(item.id, 'metadata:0')}<span class="metadata-token audit-content" onclick="openExpertEdit('metadata')">无补充信息</span></div></div>`;
+  }
+  return `<div class="audit-token-grid">${items.map((value, index) => `<div class="audit-row">${auditCheckbox(item.id, `metadata:${index}`)}<span class="metadata-token audit-content" onclick="openExpertEdit('metadata')">${escapeHtml(value)}</span></div>`).join('')}</div>`;
 }
 function lineText(items) {
   return Array.isArray(items) ? items.join('\n') : String(items || '');
@@ -1184,26 +1159,25 @@ function focusedReviewDetail(item) {
       <div>
         <h2 class="focus-title">${escapeHtml(item.task || '(未命名任务)')}</h2>
         <div class="meta">${escapeHtml(item.id)} · ${escapeHtml(item.owner || '')} · ${escapeHtml(item.created_at || '')}</div>
-        <div class="rank-line"><span class="rank-badge">#${escapeHtml(item.__rank ?? '-')}</span><span class="score-badge">总分 ${escapeHtml(totalScore(item) ?? '-')}</span><span class="pill">${escapeHtml(summaryText(item))}</span></div>
-        <div class="focus-meta">${compactTags(item)}${reviewStatusPill(item)}</div>
+        <div class="focus-meta">${compactTags(item)}<span class="pill">${escapeHtml(summaryText(item))}</span></div>
       </div>
       <div class="focus-action"><div class="review-history"><strong>当前裁决</strong><br>${escapeHtml(decisionLabel(item.expert_decision))}${item.expert_decision_by ? ` · ${escapeHtml(item.expert_decision_by)}` : ''}</div></div>
     </section>
     <section class="focus-card">
       <div class="focus-grid">
-        <article class="focus-block"><span class="focus-label">用户任务</span><p class="focus-text">${escapeHtml(item.task)}</p></article>
-        <article class="focus-block"><span class="focus-label">期望目标</span><p class="focus-text">${escapeHtml(item.target)}</p></article>
-        <article class="focus-block focus-attack full"><span class="focus-label">MITM 攻击植入</span><p class="focus-text">${escapeHtml(item.attack_method)}</p></article>
+        ${auditBlock(item, 'task', '用户任务', item.task)}
+        ${auditBlock(item, 'target', '期望目标', item.target)}
+        ${auditBlock(item, 'attack_method', 'MITM 攻击植入', item.attack_method, 'focus-attack full')}
       </div>
     </section>
     <section class="judgement-grid">
-      <article class="judgement success"><h3>成功判定</h3>${focusList(item.success_states)}</article>
-      <article class="judgement failure"><h3>失败判定</h3>${focusList(item.failure_states)}</article>
+      <article class="judgement success"><h3>成功判定</h3>${focusList(item, 'success_states', item.success_states)}</article>
+      <article class="judgement failure"><h3>失败判定</h3>${focusList(item, 'failure_states', item.failure_states)}</article>
     </section>
     <section class="focus-card">
       <div class="focus-grid">
-        <article class="focus-block"><span class="focus-label">实现提示</span><div class="metadata-strip">${metadataTokens(item.metadata)}</div></article>
-        <article class="focus-block"><span class="focus-label">攻击逻辑</span><p class="focus-text">${escapeHtml(item.logic || '-')}</p></article>
+        <article class="focus-block"><span class="focus-label">实现提示</span><div class="metadata-strip">${metadataTokens(item, item.metadata)}</div></article>
+        ${auditBlock(item, 'logic', '攻击逻辑', item.logic)}
       </div>
       ${reviewHistory(item)}
     </section>
@@ -1212,13 +1186,13 @@ function focusedReviewDetail(item) {
 function expertDecisionPanel(item) {
   return `<section class="focus-card decision-panel">
     <div class="section-heading"><div><p class="section-kicker">Expert Decision</p><h2>专家裁决</h2></div><span>${decisionPill(item)}</span></div>
-    <textarea id="decisionComment" placeholder="可选：说明保留、丢弃或存疑的理由">${escapeTextarea(item.expert_decision_comment || '')}</textarea>
+    <textarea id="decisionComment" placeholder="Mark notes 或裁决备注。保留和 Discard 可不填；Mark notes 建议写明需要其他人确认的点。">${escapeTextarea(item.expert_decision_comment || '')}</textarea>
     <div class="errors" id="decisionErrors"></div>
     <div class="decision-actions">
-      <button type="button" class="accept" onclick="submitDecision('accepted')">保留进 benchmark</button>
+      <button type="button" class="accept" onclick="submitDecision('accepted')">保留进 Benchmark</button>
       <button type="button" class="discard" onclick="submitDecision('discarded')">Discard</button>
-      <button type="button" class="mark" onclick="submitDecision('needs_discussion')">Mark 存疑</button>
-      <button type="button" class="clear" onclick="submitDecision('clear')">清除裁决</button>
+      <button type="button" class="mark" onclick="submitDecision('needs_discussion')">Mark notes</button>
+      <button type="button" class="clear" onclick="skipCase()">Skip</button>
     </div>
   </section>`;
 }
@@ -1240,11 +1214,6 @@ function expertEditPanel(item) {
     </form>
   </details>`;
 }
-function scoreControl(name, label, value='') {
-  const skip = `<label class="score-option skip"><input type="radio" name="${escapeAttr(name)}" value="" ${value === '' ? 'checked' : ''}><span>跳过</span></label>`;
-  const options = [1, 2, 3, 4, 5].map(score => `<label class="score-option"><input type="radio" name="${escapeAttr(name)}" value="${score}" ${score === value ? 'checked' : ''}><span>${score}</span></label>`).join('');
-  return `<fieldset class="score-control"><legend>${escapeHtml(label)}</legend><div class="score-scale">${skip}${options}</div></fieldset>`;
-}
 function listText(items) { return Array.isArray(items) ? `<ul>${items.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : escapeHtml(items || ''); }
 function escapeHtml(value) { return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
 function escapeAttr(value) { return String(value ?? '').replace(/[\'\\]/g, ch => ch === '\\' ? '\\\\' : "\\'"); }
@@ -1263,24 +1232,14 @@ async function loadReviewCases() {
 }
 function filterReviewCases() {
   const q = (document.getElementById('reviewSearch')?.value || '').trim().toLowerCase();
-  const origin = document.getElementById('reviewOriginFilter')?.value || '';
-  const status = document.getElementById('reviewStatusFilter')?.value || '';
   const decision = document.getElementById('reviewDecisionFilter')?.value || '';
   const attack = document.getElementById('reviewAttackFilter')?.value || '';
   const task = document.getElementById('reviewTaskFilter')?.value || '';
   const form = document.getElementById('reviewFormFilter')?.value || '';
-  filteredCases = applyRanks(allCases.filter(item => (!origin || originValue(item) === origin) && matchesReviewStatus(item, status) && matchesDecisionStatus(item, decision) && (!attack || item.attack_type === attack) && (!task || item.task_type === task) && (!form || (item.interactive_form || []).includes(form)) && (!q || JSON.stringify(item).toLowerCase().includes(q))));
+  filteredCases = allCases.filter(item => matchesDecisionStatus(item, decision) && (!attack || item.attack_type === attack) && (!task || item.task_type === task) && (!form || (item.interactive_form || []).includes(form)) && (!q || JSON.stringify(item).toLowerCase().includes(q)));
   if (!filteredCases.some(item => item.id === selectedId)) selectedId = filteredCases[0]?.id || null;
   renderReviewPicker();
   renderDetail();
-}
-function matchesReviewStatus(item, status) {
-  if (!status) return true;
-  if (status === 'reviewed_by_me') return hasReviewByMe(item);
-  if (status === 'unreviewed_by_me') return !hasReviewByMe(item);
-  if (status === 'reviewed') return reviewsFor(item).length > 0;
-  if (status === 'unreviewed') return reviewsFor(item).length === 0;
-  return true;
 }
 function matchesDecisionStatus(item, decision) {
   if (!decision) return true;
@@ -1293,10 +1252,8 @@ function renderReviewPicker() {
   const index = filteredCases.findIndex(item => item.id === selectedId);
   count.textContent = filteredCases.length ? `${index + 1} / ${filteredCases.length}` : '0 / 0';
   picker.innerHTML = filteredCases.map((item, itemIndex) => {
-    const score = totalScore(item) ?? '-';
-    const mine = hasReviewByMe(item) ? '我已评' : '我未评';
     const title = String(item.task || '(未命名任务)').replace(/\s+/g, ' ').slice(0, 92);
-    return `<option value="${escapeHtml(item.id)}">#${itemIndex + 1} · ${escapeHtml(decisionLabel(item.expert_decision))} · ${escapeHtml(mine)} · 总分 ${escapeHtml(score)} · ${escapeHtml(title)}</option>`;
+    return `<option value="${escapeHtml(item.id)}">#${itemIndex + 1} · ${escapeHtml(decisionLabel(item.expert_decision))} · ${escapeHtml(title)}</option>`;
   }).join('');
   picker.value = selectedId || '';
   window.refreshClawTrapSelects?.();
@@ -1318,22 +1275,7 @@ function renderDetail() {
   if (!item) { panel.innerHTML = '<div class="detail-empty">当前筛选池没有可审核场景</div>'; return; }
   panel.innerHTML = `${focusedReviewDetail(item)}
     ${expertDecisionPanel(item)}
-    ${expertEditPanel(item)}
-    <form id="reviewForm" class="focus-card review-score-panel">
-      <div class="section-heading"><div><p class="section-kicker">Optional Scoring</p><h2>可选评分与评论</h2></div></div>
-      <div class="score-grid">
-        ${scoreControl('feasibility', '可实现性')}
-        ${scoreControl('accuracy', '准确性')}
-        ${scoreControl('clarity', '描述清晰度')}
-        ${scoreControl('overall', '综合评分')}
-      </div>
-      <label>审核备注</label><textarea name="comment" placeholder="可选：指出需要修改的字段或原因"></textarea>
-      <div class="errors" id="reviewErrors"></div>
-      <div class="review-score-actions">
-        <span class="meta">提交后会记录到当前账户：${escapeHtml(currentReviewer() || 'unknown')}</span>
-        <div class="row"><button type="button" class="secondary" onclick="submitReview(false)">提交评分</button><button type="button" onclick="submitReview(true)">提交并下一条</button></div>
-      </div>
-    </form>`;
+    ${expertEditPanel(item)}`;
 }
 async function toggleSelectedCase(id, selected) {
   const panel = document.getElementById('detailPanel');
@@ -1351,6 +1293,8 @@ function mergeUpdatedCase(updated) {
 }
 async function submitDecision(decision) {
   const item = filteredCases.find(candidate => candidate.id === selectedId);
+  const currentIndex = Math.max(0, filteredCases.findIndex(candidate => candidate.id === selectedId));
+  const nextCandidate = filteredCases.length > 1 ? filteredCases[(currentIndex + 1) % filteredCases.length] : null;
   const errorEl = document.getElementById('decisionErrors');
   if (!item) return;
   if (errorEl) errorEl.textContent = '';
@@ -1361,8 +1305,22 @@ async function submitDecision(decision) {
     if (errorEl) errorEl.textContent = (data.errors || [data.error || '裁决失败']).join('\n');
     return;
   }
-  mergeUpdatedCase(data.case);
+  if (decision === 'accepted') showBenchmarkAnimation();
+  const index = allCases.findIndex(candidate => candidate.id === data.case.id);
+  if (index >= 0) allCases[index] = data.case;
+  selectedId = nextCandidate?.id || data.case.id;
   filterReviewCases();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+function skipCase() {
+  goReviewCase(1);
+}
+function showBenchmarkAnimation() {
+  const node = document.createElement('div');
+  node.className = 'cart-fly';
+  node.textContent = '已加入 ClawTrap Bench';
+  document.body.appendChild(node);
+  node.addEventListener('animationend', () => node.remove(), {once: true});
 }
 async function saveExpertEdit() {
   const item = filteredCases.find(candidate => candidate.id === selectedId);
@@ -1383,23 +1341,7 @@ async function saveExpertEdit() {
   mergeUpdatedCase(data.case);
   filterReviewCases();
 }
-async function submitReview(advance=false) {
-  const item = filteredCases.find(candidate => candidate.id === selectedId);
-  const currentIndex = Math.max(0, filteredCases.findIndex(candidate => candidate.id === selectedId));
-  const nextCandidate = filteredCases.length > 1 ? filteredCases[(currentIndex + 1) % filteredCases.length] : null;
-  const form = document.getElementById('reviewForm');
-  const payload = Object.fromEntries(new FormData(form).entries());
-  const res = await fetch(`/api/cases/${encodeURIComponent(item.id)}/reviews`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
-  const data = await res.json();
-  if (!res.ok) { document.getElementById('reviewErrors').textContent = (data.errors || [data.error || '提交失败']).join('\n'); return; }
-  mergeUpdatedCase(data.case);
-  selectedId = advance ? (nextCandidate?.id || data.case.id) : data.case.id;
-  filterReviewCases();
-  if (advance) window.scrollTo({top: 0, behavior: 'smooth'});
-}
 document.getElementById('reviewSearch')?.addEventListener('input', filterReviewCases);
-document.getElementById('reviewOriginFilter')?.addEventListener('input', filterReviewCases);
-document.getElementById('reviewStatusFilter')?.addEventListener('input', filterReviewCases);
 document.getElementById('reviewDecisionFilter')?.addEventListener('input', filterReviewCases);
 document.getElementById('reviewAttackFilter')?.addEventListener('input', filterReviewCases);
 document.getElementById('reviewTaskFilter')?.addEventListener('input', filterReviewCases);
@@ -1411,7 +1353,7 @@ loadReviewCases();
 
 def scenes_js() -> str:
     return shared_case_js() + r"""
-const controls = ['originFilter','selectedFilter','decisionFilter','attackFilter','taskFilter','search'].map(id => document.getElementById(id));
+const controls = ['selectedFilter','decisionFilter','attackFilter','taskFilter','search'].map(id => document.getElementById(id));
 async function loadCases() {
   const res = await fetch('/api/all-cases');
   const data = await res.json();
@@ -1419,20 +1361,18 @@ async function loadCases() {
   render();
 }
 function render() {
-  const origin = document.getElementById('originFilter').value;
   const selected = document.getElementById('selectedFilter').value;
   const decision = document.getElementById('decisionFilter').value;
   const attack = document.getElementById('attackFilter').value;
   const task = document.getElementById('taskFilter').value;
   const q = document.getElementById('search').value.trim().toLowerCase();
-  filteredCases = applyRanks(allCases.filter(item =>
-    (!origin || originValue(item) === origin) &&
+  filteredCases = allCases.filter(item =>
     (!selected || (selected === 'selected') === Boolean(item.benchmark_selected)) &&
     matchesDecision(item, decision) &&
     (!attack || item.attack_type === attack) &&
     (!task || item.task_type === task) &&
     (!q || [item.id, item.owner, item.task].join(' ').toLowerCase().includes(q))
-  ));
+  );
   renderStats();
   renderRankRows();
 }
@@ -1442,14 +1382,11 @@ function matchesDecision(item, decision) {
   return item.expert_decision === decision;
 }
 function renderStats() {
-  const reviewed = filteredCases.filter(c => c.review_summary?.count).length;
-  const scores = filteredCases.map(totalScore).filter(score => score !== null);
-  const avgScore = scores.length ? Math.round((scores.reduce((sum, score) => sum + score, 0) / scores.length) * 100) / 100 : '-';
   document.getElementById('stats').innerHTML = [
     stat('当前筛选', filteredCases.length),
-    stat('平均总分', avgScore),
     stat('已选 benchmark', filteredCases.filter(c => c.benchmark_selected).length),
-    stat('已有评分', reviewed),
+    stat('已保留', filteredCases.filter(c => c.expert_decision === 'accepted').length),
+    stat('Discard', filteredCases.filter(c => c.expert_decision === 'discarded').length),
     stat('存疑', filteredCases.filter(c => c.expert_decision === 'needs_discussion').length),
     stat('未裁决', filteredCases.filter(c => !c.expert_decision).length)
   ].join('');
@@ -1465,22 +1402,71 @@ function renderRankRows() {
 }
 function overviewTags(item) {
   const selected = item.benchmark_selected ? '<span class="pill selected-mark">已选入 benchmark</span>' : '';
-  return `${selected}${originPill(item)}<span class="pill strong">${escapeHtml(item.task_type || '-')}</span><span class="pill">${escapeHtml(item.attack_type || '-')}</span>`;
+  return `${selected}<span class="pill strong">${escapeHtml(item.task_type || '-')}</span><span class="pill">${escapeHtml(item.attack_type || '-')}</span>`;
 }
 function rankRow(item, index) {
-  const score = totalScore(item);
-  const width = score === null ? 0 : Math.max(0, Math.min(100, score * 20));
-  const reviewCount = reviewsFor(item).length;
   return `<article class="rank-row">
-    <div class="rank-index">#${escapeHtml(score === null ? '-' : index + 1)}</div>
+    <div class="rank-index">#${index + 1}</div>
     <div>
       <span class="rank-case-title">${escapeHtml(item.task || '(未命名任务)')}</span>
       <div class="rank-case-meta">${overviewTags(item)}<span class="pill">${escapeHtml(item.owner || 'unknown')}</span></div>
     </div>
-    <div class="score-stack"><strong>${escapeHtml(score ?? '-')}</strong><span>${escapeHtml(reviewCount)} 条评分</span><div class="rank-meter"><span style="width:${width}%"></span></div></div>
-    <div>${decisionPill(item)}<div style="height:6px"></div><span class="pill">${escapeHtml(item.status || 'draft')}</span></div>
+    <div>${decisionPill(item)}</div>
+    <div><span class="pill">${escapeHtml(item.status || 'draft')}</span></div>
     <div class="rank-actions"><a class="button secondary" href="/review?case=${encodeURIComponent(item.id)}">去审核</a></div>
   </article>`;
+}
+controls.forEach(el => el.addEventListener('input', render));
+loadCases();
+"""
+
+
+def benchmark_js() -> str:
+    return shared_case_js() + r"""
+const controls = ['attackFilter','taskFilter','search'].map(id => document.getElementById(id));
+async function loadCases() {
+  const res = await fetch('/api/benchmark-cases');
+  const data = await res.json();
+  allCases = data.cases || [];
+  render();
+}
+function render() {
+  const attack = document.getElementById('attackFilter').value;
+  const task = document.getElementById('taskFilter').value;
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  filteredCases = allCases.filter(item =>
+    (!attack || item.attack_type === attack) &&
+    (!task || item.task_type === task) &&
+    (!q || [item.id, item.owner, item.task].join(' ').toLowerCase().includes(q))
+  );
+  renderStats();
+  renderRows();
+}
+function renderStats() {
+  document.getElementById('stats').innerHTML = [
+    stat('当前筛选', filteredCases.length),
+    stat('全部入选', allCases.length),
+    stat('攻击类型数', new Set(filteredCases.map(c => c.attack_type || '')).size),
+    stat('任务类型数', new Set(filteredCases.map(c => c.task_type || '')).size)
+  ].join('');
+}
+function stat(label, value) { return `<article class="stat"><strong>${value}</strong><span>${escapeHtml(label)}</span></article>`; }
+function renderRows() {
+  const rows = document.getElementById('rankRows');
+  if (!filteredCases.length) {
+    rows.innerHTML = '<div class="rank-empty">当前筛选下没有已入选 benchmark 的 case</div>';
+    return;
+  }
+  rows.innerHTML = filteredCases.map((item, index) => `<article class="rank-row">
+    <div class="rank-index">#${index + 1}</div>
+    <div>
+      <span class="rank-case-title">${escapeHtml(item.task || '(未命名任务)')}</span>
+      <div class="rank-case-meta"><span class="pill selected-mark">已选入 benchmark</span><span class="pill">${escapeHtml(item.owner || 'unknown')}</span><span class="pill">${escapeHtml(item.id || '')}</span></div>
+    </div>
+    <div><span class="pill">${escapeHtml(item.attack_type || '-')}</span></div>
+    <div><span class="pill strong">${escapeHtml(item.task_type || '-')}</span></div>
+    <div class="rank-actions"><a class="button secondary" href="/review?case=${encodeURIComponent(item.id)}">查看</a></div>
+  </article>`).join('');
 }
 controls.forEach(el => el.addEventListener('input', render));
 loadCases();
@@ -1491,7 +1477,7 @@ def admin_js() -> str:
     return r"""
 let allCases = []; let filteredCases = []; let selectedId = null;
 const dataset = document.getElementById('dataset');
-const controls = ['statusFilter','originFilter','selectedFilter','attackFilter','taskFilter','formFilter','search'].map(id => document.getElementById(id));
+const controls = ['statusFilter','selectedFilter','decisionFilter','attackFilter','taskFilter','formFilter','search'].map(id => document.getElementById(id));
 async function init() {
   const res = await fetch('/api/admin/cases'); const data = await res.json();
   dataset.innerHTML = data.datasets.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
@@ -1506,46 +1492,29 @@ async function loadCases() {
   const data = await res.json(); allCases = data.cases || []; window.syncClawTrapSelects?.(); render();
 }
 function render() {
-  const status = document.getElementById('statusFilter').value, origin = document.getElementById('originFilter').value, selected = document.getElementById('selectedFilter').value, attack = document.getElementById('attackFilter').value, task = document.getElementById('taskFilter').value, form = document.getElementById('formFilter').value, q = document.getElementById('search').value.trim().toLowerCase();
-  filteredCases = applyRanks(allCases.filter(item => (!status || item.status === status) && (!origin || originValue(item) === origin) && (!selected || (selected === 'selected') === Boolean(item.benchmark_selected)) && (!attack || item.attack_type === attack) && (!task || item.task_type === task) && (!form || (item.interactive_form || []).includes(form)) && (!q || JSON.stringify(item).toLowerCase().includes(q))));
+  const status = document.getElementById('statusFilter').value, selected = document.getElementById('selectedFilter').value, decision = document.getElementById('decisionFilter').value, attack = document.getElementById('attackFilter').value, task = document.getElementById('taskFilter').value, form = document.getElementById('formFilter').value, q = document.getElementById('search').value.trim().toLowerCase();
+  filteredCases = allCases.filter(item => (!status || item.status === status) && (!selected || (selected === 'selected') === Boolean(item.benchmark_selected)) && matchesDecision(item, decision) && (!attack || item.attack_type === attack) && (!task || item.task_type === task) && (!form || (item.interactive_form || []).includes(form)) && (!q || JSON.stringify(item).toLowerCase().includes(q)));
+  filteredCases.sort((a, b) => String(b.updated_at || '').localeCompare(String(a.updated_at || '')));
   renderStats(); renderList(); renderDetail();
+}
+function matchesDecision(item, decision) {
+  if (!decision) return true;
+  if (decision === 'none') return !item.expert_decision;
+  return item.expert_decision === decision;
 }
 function renderStats() {
   document.getElementById('stats').innerHTML = [
     stat('当前筛选', filteredCases.length), stat('全部数据', allCases.length),
-    stat('云端数据', filteredCases.filter(c => originValue(c) === 'database').length),
-    stat('本地数据', filteredCases.filter(c => originValue(c) !== 'database').length),
     stat('已选 benchmark', filteredCases.filter(c => c.benchmark_selected).length),
+    stat('已保留', filteredCases.filter(c => c.expert_decision === 'accepted').length),
+    stat('Discard', filteredCases.filter(c => c.expert_decision === 'discarded').length),
+    stat('存疑', filteredCases.filter(c => c.expert_decision === 'needs_discussion').length),
     stat('submitted', filteredCases.filter(c => c.status === 'submitted').length),
     stat('draft', filteredCases.filter(c => c.status === 'draft').length),
     stat('标注员数', new Set(filteredCases.map(c => c.owner || '')).size)
   ].join('');
 }
 function stat(label, value) { return `<article class="stat"><strong>${value}</strong><span>${escapeHtml(label)}</span></article>`; }
-function originValue(item) { return item.storage_origin || 'local_json'; }
-function originLabel(origin) { return origin === 'database' ? '云端数据库' : '本地 JSON'; }
-function totalScore(item) {
-  const s = item.review_summary || {};
-  if (s.total_score !== undefined && s.total_score !== null) return Number(s.total_score);
-  const values = ['overall','feasibility','accuracy','clarity'].map(key => Number(s[key])).filter(value => Number.isFinite(value));
-  if (!values.length) return null;
-  return Math.round((values.reduce((sum, value) => sum + value, 0) / values.length) * 100) / 100;
-}
-function rankSort(a, b) {
-  const scoreA = totalScore(a), scoreB = totalScore(b);
-  if (scoreA !== null || scoreB !== null) return (scoreB ?? -1) - (scoreA ?? -1);
-  return String(b.updated_at || '').localeCompare(String(a.updated_at || ''));
-}
-function applyRanks(items) {
-  const ranked = [...items].sort(rankSort);
-  ranked.forEach((item, index) => { item.__rank = totalScore(item) === null ? null : index + 1; });
-  return ranked;
-}
-function originPill(item) {
-  const origin = originValue(item);
-  const cls = origin === 'database' ? 'origin-cloud' : 'origin-local';
-  return `<span class="pill ${cls}">${originLabel(origin)}</span>`;
-}
 function decisionLabel(decision) {
   return ({accepted:'已保留', discarded:'Discard', needs_discussion:'存疑 Mark', clear:'未裁决'})[decision] || '未裁决';
 }
@@ -1556,22 +1525,14 @@ function decisionPill(item) {
 }
 function adminTags(item) {
   const selected = item.benchmark_selected ? '<span class="pill selected-mark">已选入 benchmark</span>' : '';
-  return `${selected}${decisionPill(item)}${originPill(item)}<span class="pill strong">${escapeHtml(item.status || 'draft')}</span><span class="pill">${escapeHtml(item.task_type)}</span><span class="pill">${escapeHtml(item.attack_type)}</span><span class="pill">${escapeHtml((item.interactive_form || []).join('/'))}</span>`;
+  return `${selected}${decisionPill(item)}<span class="pill strong">${escapeHtml(item.status || 'draft')}</span><span class="pill">${escapeHtml(item.task_type)}</span><span class="pill">${escapeHtml(item.attack_type)}</span><span class="pill">${escapeHtml((item.interactive_form || []).join('/'))}</span>`;
 }
 function renderList() {
   if (!filteredCases.some(item => item.id === selectedId)) selectedId = filteredCases[0]?.id || null;
   const countEl = document.getElementById('resultCount');
   if (countEl) countEl.textContent = `${filteredCases.length} 条`;
   const list = document.getElementById('reviewList');
-  const rankedCases = applyRanks(filteredCases);
-  const groups = [
-    ['database', rankedCases.filter(item => originValue(item) === 'database')],
-    ['local_json', rankedCases.filter(item => originValue(item) !== 'database')],
-  ];
-  list.innerHTML = groups.filter(([, items]) => items.length).map(([origin, items]) => {
-    const cards = items.map(item => `<button class="review-item origin-${originValue(item)} ${item.id === selectedId ? 'active' : ''}" data-case-id="${escapeHtml(item.id)}" type="button" onclick="selectCase('${escapeAttr(item.id)}')"><span class="review-item-title">${escapeHtml(item.task || '(未命名任务)')}</span><span class="review-item-attack">${escapeHtml(item.attack_method || '')}</span><span class="rank-line"><span class="rank-badge">#${escapeHtml(item.__rank ?? '-')}</span><span class="score-badge">总分 ${escapeHtml(totalScore(item) ?? '-')}</span></span><span class="review-tags">${adminTags(item)}</span></button>`).join('');
-    return `<div class="origin-divider">${originLabel(origin)} · ${items.length}</div>${cards}`;
-  }).join('') || '<div class="detail-empty">没有匹配的数据</div>';
+  list.innerHTML = filteredCases.map((item, index) => `<button class="review-item ${item.id === selectedId ? 'active' : ''}" data-case-id="${escapeHtml(item.id)}" type="button" onclick="selectCase('${escapeAttr(item.id)}')"><span class="review-item-title">${escapeHtml(item.task || '(未命名任务)')}</span><span class="review-item-attack">${escapeHtml(item.attack_method || '')}</span><span class="rank-line"><span class="rank-badge">#${index + 1}</span><span class="pill">${escapeHtml(decisionLabel(item.expert_decision))}</span></span><span class="review-tags">${adminTags(item)}</span></button>`).join('') || '<div class="detail-empty">没有匹配的数据</div>';
 }
 function updateActiveListItem() {
   document.querySelectorAll('.review-item[data-case-id]').forEach(node => {
@@ -1582,7 +1543,7 @@ function selectCase(id) { selectedId = id; updateActiveListItem(); renderDetail(
 function renderDetail() {
   const panel = document.getElementById('detailPanel'); const item = filteredCases.find(candidate => candidate.id === selectedId);
   if (!item) { panel.innerHTML = '<div class="detail-empty">选择左侧条目查看详情</div>'; return; }
-  panel.innerHTML = `<h2>${escapeHtml(item.task || '(未命名任务)')}</h2><div class="meta">${escapeHtml(item.id)} · ${escapeHtml(item.owner)} · ${escapeHtml(item.created_at || '')}</div><div class="rank-line"><span class="rank-badge">#${escapeHtml(item.__rank ?? '-')}</span><span class="score-badge">总分 ${escapeHtml(totalScore(item) ?? '-')}</span></div><div class="review-tags">${adminTags(item)}</div>${benchmarkButton(item)}<div class="score-summary">${['total_score','overall','feasibility','accuracy','clarity'].map(k => `<span class="pill strong">${k}: ${escapeHtml(k === 'total_score' ? totalScore(item) ?? '-' : item.review_summary?.[k] ?? '-')}</span>`).join('')}</div><dl><dt>Attack Method</dt><dd>${escapeHtml(item.attack_method)}</dd><dt>Success States</dt><dd>${listText(item.success_states)}</dd><dt>Failure States</dt><dd>${listText(item.failure_states)}</dd><dt>Metadata</dt><dd>${listText(item.metadata)}</dd><dt>Target</dt><dd>${escapeHtml(item.target)}</dd><dt>Logic</dt><dd>${escapeHtml(item.logic)}</dd></dl>`;
+  panel.innerHTML = `<h2>${escapeHtml(item.task || '(未命名任务)')}</h2><div class="meta">${escapeHtml(item.id)} · ${escapeHtml(item.owner)} · ${escapeHtml(item.created_at || '')}</div><div class="review-tags">${adminTags(item)}</div>${benchmarkButton(item)}<dl><dt>Attack Method</dt><dd>${escapeHtml(item.attack_method)}</dd><dt>Success States</dt><dd>${listText(item.success_states)}</dd><dt>Failure States</dt><dd>${listText(item.failure_states)}</dd><dt>Metadata</dt><dd>${listText(item.metadata)}</dd><dt>Target</dt><dd>${escapeHtml(item.target)}</dd><dt>Logic</dt><dd>${escapeHtml(item.logic)}</dd></dl>`;
 }
 async function toggleSelectedCase(id, selected) {
   const panel = document.getElementById('detailPanel');

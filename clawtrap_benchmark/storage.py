@@ -32,7 +32,7 @@ def database_url() -> str | None:
 
 
 def use_database() -> bool:
-    return bool(database_url())
+    return os.environ.get("CLAWTRAP_USE_DATABASE") == "1" and bool(database_url())
 
 
 def is_vercel_runtime() -> bool:
@@ -324,6 +324,10 @@ def read_file_dataset(dataset: str) -> list[dict[str, Any]]:
     if not isinstance(data, list):
         raise ValueError(f"{path} must contain a JSON array")
     return [enrich_case(case) for case in data]
+
+
+def read_local_dataset(dataset: str = DEFAULT_DATASET) -> list[dict[str, Any]]:
+    return [enrich_case(case, storage_origin="local_json") for case in read_file_dataset(dataset)]
 
 
 def list_datasets() -> list[str]:
