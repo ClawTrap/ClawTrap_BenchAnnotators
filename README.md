@@ -44,10 +44,12 @@ OPENAI_BASE_URL="..."
 可选：
 
 ```bash
-OPENAI_MODEL="gpt-4.1"
+OPENAI_MODEL="gpt-5-mini"
 ```
 
 ## 批量生成
+
+生成脚本使用 `prompts/case_generation_prompt.md` 作为通用 system prompt；具体 `attack_type`、`task_type`、`interactive_form` 约束由 `scripts/generate_cases.py` 按组合循环注入，避免把全部类别枚举重复塞进每次 LLM 调用。
 
 第一批 300 条，按 5 类攻击类型、10 类任务类型、每组合 6 条生成，并要求每条 case 的 `interactive_form` 只包含 1 个选项：
 
@@ -58,7 +60,19 @@ python scripts/generate_cases.py --limit 300 --per-combo 6 --batch-size 3
 生成 30 条 demo 到单独文件，不追加到主数据：
 
 ```bash
-python scripts/generate_cases.py --model gpt-4.1 --limit 30 --per-combo 1 --batch-size 1 --combo-order task-first --output data/demo_cases_gpt41.json
+python scripts/generate_cases.py --model gpt-5-mini --limit 30 --per-combo 1 --batch-size 1 --combo-order task-first --output data/demo_cases_gpt5_mini.json
+```
+
+生成约 300 条可直接被前端加载的数据文件：
+
+```bash
+python scripts/generate_cases.py --model gpt-5-mini --limit 300 --per-combo 6 --batch-size 3 --workers 8 --combo-order task-first --output data/cases_gpt5_mini_300.json
+```
+
+对已有数据做真实感润色，去掉明显占位符 URL/邮箱，并保留原始 id、任务类型、攻击类型和交互形式：
+
+```bash
+python scripts/refine_cases.py --input data/cases_gpt5_mini_300.json --output data/cases_gpt5_mini_300_refined.json --workers 8
 ```
 
 只验证调用和 parse，不落盘：
@@ -162,7 +176,7 @@ ADMIN_PASSWORD_2="换成另一个强密码"
 ANNOTATOR_ACCOUNTS="reviewer01:强密码,reviewer02:强密码"
 OPENAI_API_KEY="..."
 OPENAI_BASE_URL="..."
-OPENAI_MODEL="gpt-4.1"
+OPENAI_MODEL="gpt-5-mini"
 ```
 
 如果要在线保存审核裁决、字段修改和 Benchmark 入选标记，必须添加 PostgreSQL 连接串。Raw case 池仍然从 repo 内的 `data/*.json` 读取，不需要把原始数据 seed 到数据库：
