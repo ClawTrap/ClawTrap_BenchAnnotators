@@ -15,6 +15,7 @@ DEFAULT_DATASET = "cases"
 EDITABLE_CASE_FIELDS = {
     "task",
     "target",
+    "scenario",
     "task_type",
     "attack_method",
     "success_states",

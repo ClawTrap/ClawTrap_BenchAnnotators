@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from typing import Any
 from uuid import uuid4
 
-from .constants import ATTACK_TYPES, INTERACTIVE_FORMS, REQUIRED_CASE_FIELDS, TASK_TYPES
+from .constants import ATTACK_TYPES, INTERACTIVE_FORMS, REQUIRED_CASE_FIELDS, SCENARIOS, TASK_TYPES
 
 
 def utc_now() -> str:
@@ -41,7 +41,7 @@ def normalize_case(raw: dict[str, Any], *, owner: str | None = None, source: str
 
     for key in ("success_states", "failure_states", "interactive_form", "metadata"):
         case[key] = normalize_list(case.get(key))
-    for key in ("task", "target", "task_type", "attack_method", "logic", "attack_type"):
+    for key in ("task", "target", "scenario", "task_type", "attack_method", "logic", "attack_type"):
         case[key] = str(case.get(key, "")).strip()
 
     if "generation_batch" in raw:
@@ -61,6 +61,8 @@ def validate_case(case: dict[str, Any], *, for_submit: bool = False) -> list[str
 
     if case.get("task_type") and case["task_type"] not in TASK_TYPES:
         errors.append("task_type 必须是文档中的 10 类之一")
+    if case.get("scenario") and case["scenario"] not in SCENARIOS:
+        errors.append("scenario 必须是预设场景池中的 30 类之一")
     if case.get("attack_type") and case["attack_type"] not in ATTACK_TYPES:
         errors.append("attack_type 必须是文档中的 5 类之一")
 

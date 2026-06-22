@@ -8,7 +8,7 @@ from typing import Any
 from flask import Flask, jsonify, redirect, request, session
 
 from .auth import authenticate
-from .constants import ATTACK_TYPES, INTERACTIVE_FORMS, TASK_TYPES
+from .constants import ATTACK_TYPES, INTERACTIVE_FORMS, SCENARIOS, TASK_TYPES
 from .schema import normalize_case, validate_case
 from .storage import DEFAULT_DATASET, list_file_datasets, read_local_dataset, set_benchmark_selected, set_expert_decision, update_case_fields, upsert_case
 
@@ -250,7 +250,7 @@ def page(title: str, body: str) -> str:
     .rank-index {{ color:var(--accent-strong); font-size:13px; font-weight:900; }}
     .rank-case-title {{ display:block; color:var(--text); font-size:14px; font-weight:850; line-height:1.52; }}
     .rank-case-meta {{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }}
-    .benchmark-board .rank-head,.benchmark-board .rank-row {{ grid-template-columns:72px minmax(0,1fr) 150px 128px 132px 150px 148px; }}
+    .benchmark-board .rank-head,.benchmark-board .rank-row {{ grid-template-columns:72px minmax(0,1fr) 150px 128px 150px 132px 150px 148px; }}
     .rank-meter {{ height:4px; margin-top:9px; background:rgba(20,20,20,.08); border-radius:999px; overflow:hidden; }}
     .rank-meter span {{ display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--teal)); }}
     .rank-actions {{ display:flex; justify-content:flex-end; gap:8px; flex-wrap:wrap; }}
@@ -842,6 +842,7 @@ def design_page(user: str) -> str:
         <div class="field-grid">
           <div><label>任务类型</label><div class="select-shell"><select name="task_type" required>{options(TASK_TYPES)}</select></div></div>
           <div><label>攻击类型</label><div class="select-shell"><select name="attack_type" required>{options(ATTACK_TYPES)}</select></div></div>
+          <div class="full"><label>Scenario</label><div class="select-shell"><select name="scenario" required>{options(SCENARIOS)}</select></div></div>
           <div class="full"><label>MITM 植入形式</label><div class="checks">{checkboxes(INTERACTIVE_FORMS)}</div></div>
         </div>
       </section>
@@ -887,6 +888,7 @@ def review_page(user: str) -> str:
     <div><label>搜索</label><input id="reviewSearch"></div>
     <div><label>裁决状态</label><div class="select-shell"><select id="reviewDecisionFilter"><option value="">全部</option><option value="none">未裁决</option><option value="needs_discussion">存疑 Mark</option></select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="reviewTaskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
+    <div><label>场景</label><div class="select-shell"><select id="reviewScenarioFilter"><option value="">全部</option>{options(SCENARIOS)}</select></div></div>
     <div><label>攻击类型</label><div class="select-shell"><select id="reviewAttackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>植入形式</label><div class="select-shell"><select id="reviewFormFilter"><option value="">全部</option>{options(INTERACTIVE_FORMS)}</select></div></div>
   </section>
@@ -905,7 +907,7 @@ def review_page(user: str) -> str:
     <aside class="detail-panel" id="detailPanel"></aside>
   </section>
 </main>
-<script>window.CLAWTRAP_REVIEWER = {js_value(user)};</script>
+<script>window.CLAWTRAP_REVIEWER = {js_value(user)}; window.CLAWTRAP_SCENARIOS = {js_value(SCENARIOS)};</script>
 <script>{review_js()}</script>""")
 
 
@@ -924,6 +926,7 @@ def scenes_page(user: str) -> str:
     <div><label>裁决状态</label><div class="select-shell"><select id="decisionFilter"><option value="">全部</option><option value="none">未裁决</option><option value="accepted">已保留</option><option value="discarded">Discard</option><option value="needs_discussion">存疑 Mark</option></select></div></div>
     <div><label>攻击类型</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
+    <div><label>场景</label><div class="select-shell"><select id="scenarioFilter"><option value="">全部</option>{options(SCENARIOS)}</select></div></div>
     <div><label>搜索</label><input id="search"></div>
     <div class="row toolbar-actions"><button type="button" onclick="loadCases()">刷新</button></div>
   </section>
@@ -950,6 +953,7 @@ def benchmark_page(user: str) -> str:
   <section class="panel toolbar">
     <div><label>攻击类型</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>任务类型</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
+    <div><label>场景</label><div class="select-shell"><select id="scenarioFilter"><option value="">全部</option>{options(SCENARIOS)}</select></div></div>
     <div><label>数据来源</label><div class="select-shell"><select id="sourceFilter"><option value="">全部</option></select></div></div>
     <div><label>搜索</label><input id="search"></div>
     <div class="row toolbar-actions"><button type="button" onclick="loadCases()">刷新</button></div>
@@ -957,7 +961,7 @@ def benchmark_page(user: str) -> str:
   <section class="rank-dashboard">
     <section class="rank-summary" id="stats"></section>
     <section class="rank-board benchmark-board">
-      <div class="rank-head"><span>#</span><span>Benchmark Case</span><span>Source</span><span>Reviewer</span><span>Attack</span><span>Task</span><span></span></div>
+      <div class="rank-head"><span>#</span><span>Benchmark Case</span><span>Source</span><span>Reviewer</span><span>Scenario</span><span>Attack</span><span>Task</span><span></span></div>
       <div id="rankRows"></div>
     </section>
   </section>
@@ -989,7 +993,7 @@ function clearForm() {
 }
 function editCase(item) {
   clearForm();
-  for (const key of ['id','task','target','task_type','attack_method','logic','attack_type']) form[key].value = item[key] || '';
+  for (const key of ['id','task','target','scenario','task_type','attack_method','logic','attack_type']) form[key].value = item[key] || '';
   form.success_states.value = fillLines(item.success_states);
   form.failure_states.value = fillLines(item.failure_states);
   form.metadata.value = fillLines(item.metadata);
@@ -1083,7 +1087,7 @@ function decisionPill(item) {
 }
 function caseTags(item) {
   const selected = item.benchmark_selected ? '<span class="pill selected-mark">已选入 benchmark</span>' : '';
-  return `${selected}${decisionPill(item)}<span class="pill strong">${escapeHtml(item.status || 'draft')}</span><span class="pill">${escapeHtml(item.task_type)}</span><span class="pill">${escapeHtml(item.attack_type)}</span><span class="pill">${escapeHtml((item.interactive_form || []).join('/'))}</span>`;
+  return `${selected}${decisionPill(item)}<span class="pill strong">${escapeHtml(item.status || 'draft')}</span><span class="pill">${escapeHtml(item.scenario || 'Scenario 未标注')}</span><span class="pill">${escapeHtml(item.task_type)}</span><span class="pill">${escapeHtml(item.attack_type)}</span><span class="pill">${escapeHtml((item.interactive_form || []).join('/'))}</span>`;
 }
 function groupedCaseList(onClickName='selectCase') {
   return filteredCases.map((item, index) => `<button class="review-item ${item.id === selectedId ? 'active' : ''}" data-case-id="${escapeHtml(item.id)}" type="button" onclick="${onClickName}('${escapeAttr(item.id)}')"><span class="review-item-title">${escapeHtml(item.task || '(未命名任务)')}</span><span class="review-item-attack">${escapeHtml(item.attack_method || '')}</span><span class="meta">#${index + 1} · ${escapeHtml(summaryText(item))}</span><span class="review-tags">${caseTags(item)}</span></button>`).join('');
@@ -1120,7 +1124,7 @@ function benchmarkButton(item, handlerName='toggleSelectedCase') {
   return `<div class="benchmark-action"><button type="button" class="${selected ? 'selected' : ''}" onclick="${handlerName}('${escapeAttr(item.id)}', ${selected ? 'false' : 'true'})">${selected ? '取消选中 benchmark' : '选中进入 benchmark'}</button></div>`;
 }
 function compactTags(item) {
-  return `<span class="pill strong">${escapeHtml(item.task_type || '-')}</span><span class="pill">${escapeHtml(item.attack_type || '-')}</span><span class="pill">${escapeHtml((item.interactive_form || []).join(' / ') || '-')}</span><span class="pill">Source: ${escapeHtml(dataSourceLabel(item))}</span>`;
+  return `<span class="pill strong">${escapeHtml(item.scenario || 'Scenario 未标注')}</span><span class="pill">${escapeHtml(item.task_type || '-')}</span><span class="pill">${escapeHtml(item.attack_type || '-')}</span><span class="pill">${escapeHtml((item.interactive_form || []).join(' / ') || '-')}</span><span class="pill">Source: ${escapeHtml(dataSourceLabel(item))}</span>`;
 }
 function currentReviewer() {
   return window.CLAWTRAP_REVIEWER || '';
@@ -1137,6 +1141,11 @@ function escapeTextarea(value) {
 function editField(name, label, value, className='') {
   const readonly = typeof readOnlyReview !== 'undefined' && readOnlyReview;
   return `<div class="review-edit-field ${className}"><label>${escapeHtml(label)}</label><textarea name="${escapeAttr(name)}" required ${readonly ? 'readonly' : ''}>${escapeTextarea(value || '')}</textarea></div>`;
+}
+function editSelect(name, label, value, values, className='') {
+  const readonly = typeof readOnlyReview !== 'undefined' && readOnlyReview;
+  const options = (values || []).map(item => `<option value="${escapeHtml(item)}" ${item === value ? 'selected' : ''}>${escapeHtml(item)}</option>`).join('');
+  return `<div class="review-edit-field select-field ${className}"><label>${escapeHtml(label)}</label><div class="select-shell"><select name="${escapeAttr(name)}" required ${readonly ? 'disabled' : ''}>${options}</select></div></div>`;
 }
 function listReviewField(name, label, items, className='') {
   const values = Array.isArray(items) ? items : splitLines(items);
@@ -1161,6 +1170,7 @@ function focusedReviewDetail(item, includeDecision=false) {
       </div>
       <form id="expertEditForm" class="review-edit-form">
         <div class="review-edit-grid">
+          ${editSelect('scenario', 'Scenario', item.scenario || '', window.CLAWTRAP_SCENARIOS || [], 'short')}
           ${editField('task', 'Task', item.task, 'tall')}
           ${editField('target', 'Target', item.target, 'tall')}
           ${editField('attack_method', 'Attack Method', item.attack_method, 'full')}
@@ -1275,8 +1285,9 @@ function filterReviewCases() {
   const decision = document.getElementById('reviewDecisionFilter')?.value || '';
   const attack = document.getElementById('reviewAttackFilter')?.value || '';
   const task = document.getElementById('reviewTaskFilter')?.value || '';
+  const scenario = document.getElementById('reviewScenarioFilter')?.value || '';
   const form = document.getElementById('reviewFormFilter')?.value || '';
-  filteredCases = allCases.filter(item => isReviewCandidate(item) && matchesDecisionStatus(item, decision) && (!attack || item.attack_type === attack) && (!task || item.task_type === task) && (!form || (item.interactive_form || []).includes(form)) && (!q || JSON.stringify(item).toLowerCase().includes(q)));
+  filteredCases = allCases.filter(item => isReviewCandidate(item) && matchesDecisionStatus(item, decision) && (!attack || item.attack_type === attack) && (!task || item.task_type === task) && (!scenario || item.scenario === scenario) && (!form || (item.interactive_form || []).includes(form)) && (!q || JSON.stringify(item).toLowerCase().includes(q)));
   if (!filteredCases.some(item => item.id === selectedId)) selectedId = filteredCases[0]?.id || null;
   renderReviewPicker();
   renderDetail();
@@ -1389,6 +1400,7 @@ document.getElementById('datasetFilter')?.addEventListener('input', loadReviewCa
 document.getElementById('reviewDecisionFilter')?.addEventListener('input', filterReviewCases);
 document.getElementById('reviewAttackFilter')?.addEventListener('input', filterReviewCases);
 document.getElementById('reviewTaskFilter')?.addEventListener('input', filterReviewCases);
+document.getElementById('reviewScenarioFilter')?.addEventListener('input', filterReviewCases);
 document.getElementById('reviewFormFilter')?.addEventListener('input', filterReviewCases);
 loadReviewCases();
 """
@@ -1396,7 +1408,7 @@ loadReviewCases();
 
 def scenes_js() -> str:
     return shared_case_js() + r"""
-const controls = ['datasetFilter','selectedFilter','decisionFilter','attackFilter','taskFilter','search'].map(id => document.getElementById(id));
+const controls = ['datasetFilter','selectedFilter','decisionFilter','attackFilter','taskFilter','scenarioFilter','search'].map(id => document.getElementById(id));
 async function loadCases() {
   await ensureDatasetOptions();
   updateDatasetInUrl();
@@ -1410,12 +1422,14 @@ function render() {
   const decision = document.getElementById('decisionFilter').value;
   const attack = document.getElementById('attackFilter').value;
   const task = document.getElementById('taskFilter').value;
+  const scenario = document.getElementById('scenarioFilter').value;
   const q = document.getElementById('search').value.trim().toLowerCase();
   filteredCases = allCases.filter(item =>
     (!selected || (selected === 'selected') === Boolean(item.benchmark_selected)) &&
     matchesDecision(item, decision) &&
     (!attack || item.attack_type === attack) &&
     (!task || item.task_type === task) &&
+    (!scenario || item.scenario === scenario) &&
     (!q || [item.id, item.owner, item.task].join(' ').toLowerCase().includes(q))
   );
   renderStats();
@@ -1433,7 +1447,8 @@ function renderStats() {
     stat('已保留', filteredCases.filter(c => c.expert_decision === 'accepted').length),
     stat('Discard', filteredCases.filter(c => c.expert_decision === 'discarded').length),
     stat('存疑', filteredCases.filter(c => c.expert_decision === 'needs_discussion').length),
-    stat('未裁决', filteredCases.filter(c => !c.expert_decision).length)
+    stat('未裁决', filteredCases.filter(c => !c.expert_decision).length),
+    stat('场景数', new Set(filteredCases.map(c => c.scenario || '')).size)
   ].join('');
 }
 function stat(label, value) { return `<article class="stat"><strong>${value}</strong><span>${escapeHtml(label)}</span></article>`; }
@@ -1447,7 +1462,7 @@ function renderRankRows() {
 }
 function overviewTags(item) {
   const selected = item.benchmark_selected ? '<span class="pill selected-mark">已选入 benchmark</span>' : '';
-  return `${selected}<span class="pill strong">${escapeHtml(item.task_type || '-')}</span><span class="pill">${escapeHtml(item.attack_type || '-')}</span><span class="pill">Source: ${escapeHtml(dataSourceLabel(item))}</span>`;
+  return `${selected}<span class="pill strong">${escapeHtml(item.scenario || 'Scenario 未标注')}</span><span class="pill">${escapeHtml(item.task_type || '-')}</span><span class="pill">${escapeHtml(item.attack_type || '-')}</span><span class="pill">Source: ${escapeHtml(dataSourceLabel(item))}</span>`;
 }
 function rankRow(item, index) {
   return `<article class="rank-row">
@@ -1468,7 +1483,7 @@ loadCases();
 
 def benchmark_js() -> str:
     return shared_case_js() + r"""
-const controls = ['attackFilter','taskFilter','sourceFilter','search'].map(id => document.getElementById(id));
+const controls = ['attackFilter','taskFilter','scenarioFilter','sourceFilter','search'].map(id => document.getElementById(id));
 async function loadCases() {
   const res = await fetch('/api/benchmark-cases');
   const data = await res.json();
@@ -1479,11 +1494,13 @@ async function loadCases() {
 function render() {
   const attack = document.getElementById('attackFilter').value;
   const task = document.getElementById('taskFilter').value;
+  const scenario = document.getElementById('scenarioFilter').value;
   const source = document.getElementById('sourceFilter').value;
   const q = document.getElementById('search').value.trim().toLowerCase();
   filteredCases = allCases.filter(item =>
     (!attack || item.attack_type === attack) &&
     (!task || item.task_type === task) &&
+    (!scenario || item.scenario === scenario) &&
     dataSourceMatches(item, source) &&
     (!q || [item.id, item.owner, item.task, benchmarkReviewer(item), dataSourceLabel(item)].join(' ').toLowerCase().includes(q))
   );
@@ -1499,7 +1516,8 @@ function renderStats() {
     stat('全部入选', allCases.length),
     stat('数据来源数', new Set(filteredCases.map(dataSourceLabel)).size),
     stat('攻击类型数', new Set(filteredCases.map(c => c.attack_type || '')).size),
-    stat('任务类型数', new Set(filteredCases.map(c => c.task_type || '')).size)
+    stat('任务类型数', new Set(filteredCases.map(c => c.task_type || '')).size),
+    stat('场景数', new Set(filteredCases.map(c => c.scenario || '')).size)
   ].join('');
 }
 function stat(label, value) { return `<article class="stat"><strong>${value}</strong><span>${escapeHtml(label)}</span></article>`; }
@@ -1516,6 +1534,7 @@ function renderRows() {
     </div>
     <div><span class="pill">${escapeHtml(dataSourceLabel(item))}</span></div>
     <div><span class="pill">${escapeHtml(benchmarkReviewer(item) || '-')}</span></div>
+    <div><span class="pill">${escapeHtml(item.scenario || '-')}</span></div>
     <div><span class="pill">${escapeHtml(item.attack_type || '-')}</span></div>
     <div><span class="pill strong">${escapeHtml(item.task_type || '-')}</span></div>
     <div class="rank-actions"><a class="button secondary" href="/review?mode=view&case=${encodeURIComponent(item.id)}&dataset=${encodeURIComponent(datasetName(item))}">查看</a><button type="button" class="danger" onclick="removeFromBenchmark('${escapeAttr(item.id)}')">移除</button></div>
