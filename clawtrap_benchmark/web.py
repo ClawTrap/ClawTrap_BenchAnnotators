@@ -192,7 +192,7 @@ def page(title: str, body: str) -> str:
     .select-shell {{ position:relative; }}
     .select-shell.open {{ z-index:80; }}
     .select-shell select {{ appearance:none; padding-right:34px; background:rgba(255,253,250,.82); color:var(--text); font-weight:750; }}
-    .select-shell::after {{ content:'⌄'; position:absolute; right:12px; bottom:9px; color:var(--accent-strong); pointer-events:none; font-weight:900; }}
+    .select-shell::after {{ content:'⌄'; position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--accent-strong); pointer-events:none; font-weight:900; }}
     .select-shell.enhanced::after {{ display:none; }}
     .select-shell.enhanced select {{ position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; overflow:hidden; }}
     .select-card-trigger {{
@@ -1170,7 +1170,7 @@ function focusedReviewDetail(item, includeDecision=false) {
       </div>
       <form id="expertEditForm" class="review-edit-form">
         <div class="review-edit-grid">
-          ${editSelect('scenario', 'Scenario', item.scenario || '', window.CLAWTRAP_SCENARIOS || [], 'short')}
+          ${editSelect('scenario', 'Scenario', item.scenario || '', window.CLAWTRAP_SCENARIOS || [], 'full scenario-field')}
           ${editField('task', 'Task', item.task, 'tall')}
           ${editField('target', 'Target', item.target, 'tall')}
           ${editField('attack_method', 'Attack Method', item.attack_method, 'full')}
@@ -1320,6 +1320,8 @@ function renderDetail() {
   const item = filteredCases.find(candidate => candidate.id === selectedId);
   if (!item) { panel.innerHTML = `<div class="detail-empty">${readOnlyReview ? '没有找到对应场景' : '当前筛选池没有可审核场景'}</div>`; return; }
   panel.innerHTML = focusedReviewDetail(item, !readOnlyReview);
+  window.refreshClawTrapSelects?.(panel);
+  window.syncClawTrapSelects?.();
 }
 async function toggleSelectedCase(id, selected) {
   const panel = document.getElementById('detailPanel');
