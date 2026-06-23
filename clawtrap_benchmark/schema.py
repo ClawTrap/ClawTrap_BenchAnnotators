@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from typing import Any
 from uuid import uuid4
 
-from .constants import ATTACK_TYPES, INTERACTIVE_FORMS, REQUIRED_CASE_FIELDS, SCENARIOS, TASK_TYPES
+from .constants import ATTACK_TYPES, ATTACK_TYPES_BY_TASK_TYPE, INTERACTIVE_FORMS, REQUIRED_CASE_FIELDS, TASK_TYPES
 
 
 def utc_now() -> str:
@@ -41,8 +41,10 @@ def normalize_case(raw: dict[str, Any], *, owner: str | None = None, source: str
 
     for key in ("success_states", "failure_states", "interactive_form", "metadata"):
         case[key] = normalize_list(case.get(key))
-    for key in ("task", "target", "scenario", "task_type", "attack_method", "logic", "attack_type"):
+    for key in ("task", "target", "task_type", "attack_method", "logic", "attack_type"):
         case[key] = str(case.get(key, "")).strip()
+    if "scenario" in case:
+        case["scenario"] = str(case.get("scenario", "")).strip()
 
     if "generation_batch" in raw:
         case["generation_batch"] = raw["generation_batch"]
@@ -60,11 +62,13 @@ def validate_case(case: dict[str, Any], *, for_submit: bool = False) -> list[str
             errors.append(f"{field} 不能为空")
 
     if case.get("task_type") and case["task_type"] not in TASK_TYPES:
-        errors.append("task_type 必须是文档中的 10 类之一")
-    if case.get("scenario") and case["scenario"] not in SCENARIOS:
-        errors.append("scenario 必须是预设场景池中的 30 类之一")
+        errors.append("task_type 必须是新的 8 个任务大类之一")
     if case.get("attack_type") and case["attack_type"] not in ATTACK_TYPES:
-        errors.append("attack_type 必须是文档中的 5 类之一")
+        errors.append("attack_type 必须是新的 40 个细分攻击场景之一")
+    if case.get("task_type") in ATTACK_TYPES_BY_TASK_TYPE and case.get("attack_type"):
+        valid_attacks = ATTACK_TYPES_BY_TASK_TYPE[case["task_type"]]
+        if case["attack_type"] not in valid_attacks:
+            errors.append("attack_type 必须属于当前 task_type 下的 5 个细分类别之一")
 
     forms = normalize_list(case.get("interactive_form"))
     invalid_forms = [form for form in forms if form not in INTERACTIVE_FORMS]

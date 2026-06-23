@@ -8,7 +8,7 @@ from typing import Any
 from flask import Flask, jsonify, redirect, request, session
 
 from .auth import authenticate
-from .constants import ATTACK_TYPES, INTERACTIVE_FORMS, SCENARIOS, TASK_TYPES
+from .constants import ATTACK_TYPES, ATTACK_TYPES_BY_TASK_TYPE, INTERACTIVE_FORMS, TASK_TYPES
 from .schema import normalize_case, validate_case
 from .storage import DEFAULT_DATASET, list_file_datasets, read_local_dataset, set_benchmark_selected, set_expert_decision, update_case_fields, upsert_case
 
@@ -840,9 +840,8 @@ def design_page(user: str) -> str:
       <section class="form-section">
         <h3 class="form-section-title">场景设定</h3>
         <div class="field-grid">
-          <div><label>任务类型</label><div class="select-shell"><select name="task_type" required>{options(TASK_TYPES)}</select></div></div>
-          <div><label>攻击类型</label><div class="select-shell"><select name="attack_type" required>{options(ATTACK_TYPES)}</select></div></div>
-          <div class="full"><label>Scenario</label><div class="select-shell"><select name="scenario" required>{options(SCENARIOS)}</select></div></div>
+          <div><label>Task Category</label><div class="select-shell"><select name="task_type" required>{options(TASK_TYPES)}</select></div></div>
+          <div><label>Attack Subtype</label><div class="select-shell"><select name="attack_type" required></select></div></div>
           <div class="full"><label>MITM 植入形式</label><div class="checks">{checkboxes(INTERACTIVE_FORMS)}</div></div>
         </div>
       </section>
@@ -868,6 +867,7 @@ def design_page(user: str) -> str:
     </form>
   </section>
 </div></main>
+<script>window.CLAWTRAP_ATTACKS_BY_TASK = {js_value(ATTACK_TYPES_BY_TASK_TYPE)};</script>
 <script>{annotator_js()}</script>""")
 
 
@@ -887,9 +887,8 @@ def review_page(user: str) -> str:
     <div><label>数据文件</label><div class="select-shell"><select id="datasetFilter"></select></div></div>
     <div><label>搜索</label><input id="reviewSearch"></div>
     <div><label>裁决状态</label><div class="select-shell"><select id="reviewDecisionFilter"><option value="">全部</option><option value="none">未裁决</option><option value="needs_discussion">存疑 Mark</option></select></div></div>
-    <div><label>任务类型</label><div class="select-shell"><select id="reviewTaskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
-    <div><label>场景</label><div class="select-shell"><select id="reviewScenarioFilter"><option value="">全部</option>{options(SCENARIOS)}</select></div></div>
-    <div><label>攻击类型</label><div class="select-shell"><select id="reviewAttackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
+    <div><label>Task Category</label><div class="select-shell"><select id="reviewTaskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
+    <div><label>Attack Subtype</label><div class="select-shell"><select id="reviewAttackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>植入形式</label><div class="select-shell"><select id="reviewFormFilter"><option value="">全部</option>{options(INTERACTIVE_FORMS)}</select></div></div>
   </section>
   <section class="review-poolbar">
@@ -907,7 +906,7 @@ def review_page(user: str) -> str:
     <aside class="detail-panel" id="detailPanel"></aside>
   </section>
 </main>
-<script>window.CLAWTRAP_REVIEWER = {js_value(user)}; window.CLAWTRAP_SCENARIOS = {js_value(SCENARIOS)};</script>
+<script>window.CLAWTRAP_REVIEWER = {js_value(user)}; window.CLAWTRAP_ATTACKS_BY_TASK = {js_value(ATTACK_TYPES_BY_TASK_TYPE)};</script>
 <script>{review_js()}</script>""")
 
 
@@ -924,9 +923,8 @@ def scenes_page(user: str) -> str:
     <div><label>数据文件</label><div class="select-shell"><select id="datasetFilter"></select></div></div>
     <div><label>Benchmark</label><div class="select-shell"><select id="selectedFilter"><option value="">全部</option><option value="selected">已选中</option><option value="unselected">未选中</option></select></div></div>
     <div><label>裁决状态</label><div class="select-shell"><select id="decisionFilter"><option value="">全部</option><option value="none">未裁决</option><option value="accepted">已保留</option><option value="discarded">Discard</option><option value="needs_discussion">存疑 Mark</option></select></div></div>
-    <div><label>攻击类型</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
-    <div><label>任务类型</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
-    <div><label>场景</label><div class="select-shell"><select id="scenarioFilter"><option value="">全部</option>{options(SCENARIOS)}</select></div></div>
+    <div><label>Attack Subtype</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
+    <div><label>Task Category</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
     <div><label>搜索</label><input id="search"></div>
     <div class="row toolbar-actions"><button type="button" onclick="loadCases()">刷新</button></div>
   </section>
@@ -938,6 +936,7 @@ def scenes_page(user: str) -> str:
     </section>
   </section>
 </main>
+<script>window.CLAWTRAP_ATTACKS_BY_TASK = {js_value(ATTACK_TYPES_BY_TASK_TYPE)};</script>
 <script>{scenes_js()}</script>""")
 
 
@@ -951,9 +950,8 @@ def benchmark_page(user: str) -> str:
     <p class="hero-copy">这里专门展示已保留进 benchmark 的 case。审核页做裁决，这里检查最终集合的规模、类型分布和具体内容。</p>
   </section>
   <section class="panel toolbar">
-    <div><label>攻击类型</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
-    <div><label>任务类型</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
-    <div><label>场景</label><div class="select-shell"><select id="scenarioFilter"><option value="">全部</option>{options(SCENARIOS)}</select></div></div>
+    <div><label>Attack Subtype</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
+    <div><label>Task Category</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
     <div><label>数据来源</label><div class="select-shell"><select id="sourceFilter"><option value="">全部</option></select></div></div>
     <div><label>搜索</label><input id="search"></div>
     <div class="row toolbar-actions"><button type="button" onclick="loadCases()">刷新</button></div>
@@ -961,11 +959,12 @@ def benchmark_page(user: str) -> str:
   <section class="rank-dashboard">
     <section class="rank-summary" id="stats"></section>
     <section class="rank-board benchmark-board">
-      <div class="rank-head"><span>#</span><span>Benchmark Case</span><span>Source</span><span>Reviewer</span><span>Scenario</span><span>Attack</span><span>Task</span><span></span></div>
+      <div class="rank-head"><span>#</span><span>Benchmark Case</span><span>Source</span><span>Reviewer</span><span>Attack Subtype</span><span>Task Category</span><span></span></div>
       <div id="rankRows"></div>
     </section>
   </section>
 </main>
+<script>window.CLAWTRAP_ATTACKS_BY_TASK = {js_value(ATTACK_TYPES_BY_TASK_TYPE)};</script>
 <script>{benchmark_js()}</script>""")
 
 
@@ -973,6 +972,19 @@ def annotator_js() -> str:
     return r"""
 const form = document.getElementById('caseForm');
 const errors = document.getElementById('errors');
+function attackOptionsForTask(taskType) {
+  const taxonomy = window.CLAWTRAP_ATTACKS_BY_TASK || {};
+  return taxonomy[taskType] || Object.values(taxonomy).flat();
+}
+function syncAttackSubtypeSelect(taskType, selectedValue='', select=form.attack_type) {
+  if (!select) return;
+  const values = attackOptionsForTask(taskType);
+  const nextValue = values.includes(selectedValue) ? selectedValue : (values[0] || '');
+  select.innerHTML = values.map(value => `<option value="${escapeHtml(value)}" ${value === nextValue ? 'selected' : ''}>${escapeHtml(value)}</option>`).join('');
+  select.value = nextValue;
+  window.refreshClawTrapSelects?.();
+  window.syncClawTrapSelects?.();
+}
 function lines(value) { return value.split('\n').map(v => v.trim()).filter(Boolean); }
 function fillLines(items) { return Array.isArray(items) ? items.join('\n') : ''; }
 function formData(status) {
@@ -993,7 +1005,8 @@ function clearForm() {
 }
 function editCase(item) {
   clearForm();
-  for (const key of ['id','task','target','scenario','task_type','attack_method','logic','attack_type']) form[key].value = item[key] || '';
+  for (const key of ['id','task','target','task_type','attack_method','logic','attack_type']) form[key].value = item[key] || '';
+  syncAttackSubtypeSelect(form.task_type.value, form.attack_type.value, form.attack_type);
   form.success_states.value = fillLines(item.success_states);
   form.failure_states.value = fillLines(item.failure_states);
   form.metadata.value = fillLines(item.metadata);
@@ -1015,6 +1028,8 @@ async function saveCase(status) {
   errors.textContent = `已${status === 'submitted' ? '提交' : '保存草稿'}：${data.case.id}`;
 }
 function escapeHtml(value) { return String(value || '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+form.task_type.addEventListener('input', () => syncAttackSubtypeSelect(form.task_type.value, form.attack_type.value, form.attack_type));
+syncAttackSubtypeSelect(form.task_type.value, form.attack_type.value, form.attack_type);
 """
 
 
@@ -1080,6 +1095,33 @@ function updateDatasetInUrl(selectId='datasetFilter') {
 function decisionLabel(decision) {
   return ({accepted:'已保留', discarded:'Discard', needs_discussion:'存疑 Mark', clear:'未裁决'})[decision] || '未裁决';
 }
+function attackOptionsForTask(taskType) {
+  const taxonomy = window.CLAWTRAP_ATTACKS_BY_TASK || {};
+  return taxonomy[taskType] || Object.values(taxonomy).flat();
+}
+function syncTaxonomySelects(root=document) {
+  const taskSelect = root.querySelector?.('select[name="task_type"]');
+  const attackSelect = root.querySelector?.('select[name="attack_type"]');
+  if (!taskSelect || !attackSelect) return;
+  const current = attackSelect.value;
+  const values = attackOptionsForTask(taskSelect.value);
+  const nextValue = values.includes(current) ? current : (values[0] || '');
+  attackSelect.innerHTML = values.map(value => `<option value="${escapeHtml(value)}" ${value === nextValue ? 'selected' : ''}>${escapeHtml(value)}</option>`).join('');
+  attackSelect.value = nextValue;
+  taskSelect.addEventListener('input', () => syncTaxonomySelects(root), {once:true});
+}
+function syncAttackFilterForTask(taskFilterId, attackFilterId) {
+  const taskFilter = document.getElementById(taskFilterId);
+  const attackFilter = document.getElementById(attackFilterId);
+  if (!taskFilter || !attackFilter) return;
+  const current = attackFilter.value;
+  const values = attackOptionsForTask(taskFilter.value);
+  const nextValue = !current || values.includes(current) ? current : '';
+  attackFilter.innerHTML = '<option value="">全部</option>' + values.map(value => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('');
+  attackFilter.value = nextValue;
+  window.refreshClawTrapSelects?.();
+  window.syncClawTrapSelects?.();
+}
 function decisionPill(item) {
   const decision = item.expert_decision || '';
   if (!decision) return '<span class="pill">未裁决</span>';
@@ -1087,7 +1129,7 @@ function decisionPill(item) {
 }
 function caseTags(item) {
   const selected = item.benchmark_selected ? '<span class="pill selected-mark">已选入 benchmark</span>' : '';
-  return `${selected}${decisionPill(item)}<span class="pill strong">${escapeHtml(item.status || 'draft')}</span><span class="pill">${escapeHtml(item.scenario || 'Scenario 未标注')}</span><span class="pill">${escapeHtml(item.task_type)}</span><span class="pill">${escapeHtml(item.attack_type)}</span><span class="pill">${escapeHtml((item.interactive_form || []).join('/'))}</span>`;
+  return `${selected}${decisionPill(item)}<span class="pill strong">${escapeHtml(item.task_type || '-')}</span><span class="pill">${escapeHtml(item.attack_type || '-')}</span><span class="pill">${escapeHtml((item.interactive_form || []).join('/'))}</span>`;
 }
 function groupedCaseList(onClickName='selectCase') {
   return filteredCases.map((item, index) => `<button class="review-item ${item.id === selectedId ? 'active' : ''}" data-case-id="${escapeHtml(item.id)}" type="button" onclick="${onClickName}('${escapeAttr(item.id)}')"><span class="review-item-title">${escapeHtml(item.task || '(未命名任务)')}</span><span class="review-item-attack">${escapeHtml(item.attack_method || '')}</span><span class="meta">#${index + 1} · ${escapeHtml(summaryText(item))}</span><span class="review-tags">${caseTags(item)}</span></button>`).join('');
@@ -1124,7 +1166,7 @@ function benchmarkButton(item, handlerName='toggleSelectedCase') {
   return `<div class="benchmark-action"><button type="button" class="${selected ? 'selected' : ''}" onclick="${handlerName}('${escapeAttr(item.id)}', ${selected ? 'false' : 'true'})">${selected ? '取消选中 benchmark' : '选中进入 benchmark'}</button></div>`;
 }
 function compactTags(item) {
-  return `<span class="pill strong">${escapeHtml(item.scenario || 'Scenario 未标注')}</span><span class="pill">${escapeHtml(item.task_type || '-')}</span><span class="pill">${escapeHtml(item.attack_type || '-')}</span><span class="pill">${escapeHtml((item.interactive_form || []).join(' / ') || '-')}</span><span class="pill">Source: ${escapeHtml(dataSourceLabel(item))}</span>`;
+  return `<span class="pill strong">${escapeHtml(item.task_type || '-')}</span><span class="pill">${escapeHtml(item.attack_type || '-')}</span><span class="pill">${escapeHtml((item.interactive_form || []).join(' / ') || '-')}</span><span class="pill">Source: ${escapeHtml(dataSourceLabel(item))}</span>`;
 }
 function currentReviewer() {
   return window.CLAWTRAP_REVIEWER || '';
@@ -1170,7 +1212,8 @@ function focusedReviewDetail(item, includeDecision=false) {
       </div>
       <form id="expertEditForm" class="review-edit-form">
         <div class="review-edit-grid">
-          ${editSelect('scenario', 'Scenario', item.scenario || '', window.CLAWTRAP_SCENARIOS || [], 'full scenario-field')}
+          ${editSelect('task_type', 'Task Category', item.task_type || '', Object.keys(window.CLAWTRAP_ATTACKS_BY_TASK || {}), 'taxonomy-field')}
+          ${editSelect('attack_type', 'Attack Subtype', item.attack_type || '', attackOptionsForTask(item.task_type), 'taxonomy-field')}
           ${editField('task', 'Task', item.task, 'tall')}
           ${editField('target', 'Target', item.target, 'tall')}
           ${editField('attack_method', 'Attack Method', item.attack_method, 'full')}
@@ -1285,9 +1328,8 @@ function filterReviewCases() {
   const decision = document.getElementById('reviewDecisionFilter')?.value || '';
   const attack = document.getElementById('reviewAttackFilter')?.value || '';
   const task = document.getElementById('reviewTaskFilter')?.value || '';
-  const scenario = document.getElementById('reviewScenarioFilter')?.value || '';
   const form = document.getElementById('reviewFormFilter')?.value || '';
-  filteredCases = allCases.filter(item => isReviewCandidate(item) && matchesDecisionStatus(item, decision) && (!attack || item.attack_type === attack) && (!task || item.task_type === task) && (!scenario || item.scenario === scenario) && (!form || (item.interactive_form || []).includes(form)) && (!q || JSON.stringify(item).toLowerCase().includes(q)));
+  filteredCases = allCases.filter(item => isReviewCandidate(item) && matchesDecisionStatus(item, decision) && (!attack || item.attack_type === attack) && (!task || item.task_type === task) && (!form || (item.interactive_form || []).includes(form)) && (!q || JSON.stringify(item).toLowerCase().includes(q)));
   if (!filteredCases.some(item => item.id === selectedId)) selectedId = filteredCases[0]?.id || null;
   renderReviewPicker();
   renderDetail();
@@ -1320,6 +1362,7 @@ function renderDetail() {
   const item = filteredCases.find(candidate => candidate.id === selectedId);
   if (!item) { panel.innerHTML = `<div class="detail-empty">${readOnlyReview ? '没有找到对应场景' : '当前筛选池没有可审核场景'}</div>`; return; }
   panel.innerHTML = focusedReviewDetail(item, !readOnlyReview);
+  syncTaxonomySelects(panel);
   window.refreshClawTrapSelects?.(panel);
   window.syncClawTrapSelects?.();
 }
@@ -1401,16 +1444,16 @@ document.getElementById('reviewSearch')?.addEventListener('input', filterReviewC
 document.getElementById('datasetFilter')?.addEventListener('input', loadReviewCases);
 document.getElementById('reviewDecisionFilter')?.addEventListener('input', filterReviewCases);
 document.getElementById('reviewAttackFilter')?.addEventListener('input', filterReviewCases);
-document.getElementById('reviewTaskFilter')?.addEventListener('input', filterReviewCases);
-document.getElementById('reviewScenarioFilter')?.addEventListener('input', filterReviewCases);
+document.getElementById('reviewTaskFilter')?.addEventListener('input', () => { syncAttackFilterForTask('reviewTaskFilter', 'reviewAttackFilter'); filterReviewCases(); });
 document.getElementById('reviewFormFilter')?.addEventListener('input', filterReviewCases);
+syncAttackFilterForTask('reviewTaskFilter', 'reviewAttackFilter');
 loadReviewCases();
 """
 
 
 def scenes_js() -> str:
     return shared_case_js() + r"""
-const controls = ['datasetFilter','selectedFilter','decisionFilter','attackFilter','taskFilter','scenarioFilter','search'].map(id => document.getElementById(id));
+const controls = ['datasetFilter','selectedFilter','decisionFilter','attackFilter','taskFilter','search'].map(id => document.getElementById(id));
 async function loadCases() {
   await ensureDatasetOptions();
   updateDatasetInUrl();
@@ -1424,14 +1467,12 @@ function render() {
   const decision = document.getElementById('decisionFilter').value;
   const attack = document.getElementById('attackFilter').value;
   const task = document.getElementById('taskFilter').value;
-  const scenario = document.getElementById('scenarioFilter').value;
   const q = document.getElementById('search').value.trim().toLowerCase();
   filteredCases = allCases.filter(item =>
     (!selected || (selected === 'selected') === Boolean(item.benchmark_selected)) &&
     matchesDecision(item, decision) &&
     (!attack || item.attack_type === attack) &&
     (!task || item.task_type === task) &&
-    (!scenario || item.scenario === scenario) &&
     (!q || [item.id, item.owner, item.task].join(' ').toLowerCase().includes(q))
   );
   renderStats();
@@ -1450,7 +1491,7 @@ function renderStats() {
     stat('Discard', filteredCases.filter(c => c.expert_decision === 'discarded').length),
     stat('存疑', filteredCases.filter(c => c.expert_decision === 'needs_discussion').length),
     stat('未裁决', filteredCases.filter(c => !c.expert_decision).length),
-    stat('场景数', new Set(filteredCases.map(c => c.scenario || '')).size)
+    stat('任务大类数', new Set(filteredCases.map(c => c.task_type || '')).size)
   ].join('');
 }
 function stat(label, value) { return `<article class="stat"><strong>${value}</strong><span>${escapeHtml(label)}</span></article>`; }
@@ -1464,7 +1505,7 @@ function renderRankRows() {
 }
 function overviewTags(item) {
   const selected = item.benchmark_selected ? '<span class="pill selected-mark">已选入 benchmark</span>' : '';
-  return `${selected}<span class="pill strong">${escapeHtml(item.scenario || 'Scenario 未标注')}</span><span class="pill">${escapeHtml(item.task_type || '-')}</span><span class="pill">${escapeHtml(item.attack_type || '-')}</span><span class="pill">Source: ${escapeHtml(dataSourceLabel(item))}</span>`;
+  return `${selected}<span class="pill strong">${escapeHtml(item.task_type || '-')}</span><span class="pill">${escapeHtml(item.attack_type || '-')}</span><span class="pill">Source: ${escapeHtml(dataSourceLabel(item))}</span>`;
 }
 function rankRow(item, index) {
   return `<article class="rank-row">
@@ -1478,14 +1519,15 @@ function rankRow(item, index) {
     <div class="rank-actions"><a class="button secondary" href="/review?case=${encodeURIComponent(item.id)}&dataset=${encodeURIComponent(selectedDataset())}">去审核</a></div>
   </article>`;
 }
-controls.forEach(el => el.addEventListener('input', el?.id === 'datasetFilter' ? loadCases : render));
+controls.forEach(el => el.addEventListener('input', el?.id === 'datasetFilter' ? loadCases : (el?.id === 'taskFilter' ? () => { syncAttackFilterForTask('taskFilter', 'attackFilter'); render(); } : render)));
+syncAttackFilterForTask('taskFilter', 'attackFilter');
 loadCases();
 """
 
 
 def benchmark_js() -> str:
     return shared_case_js() + r"""
-const controls = ['attackFilter','taskFilter','scenarioFilter','sourceFilter','search'].map(id => document.getElementById(id));
+const controls = ['attackFilter','taskFilter','sourceFilter','search'].map(id => document.getElementById(id));
 async function loadCases() {
   const res = await fetch('/api/benchmark-cases');
   const data = await res.json();
@@ -1496,13 +1538,11 @@ async function loadCases() {
 function render() {
   const attack = document.getElementById('attackFilter').value;
   const task = document.getElementById('taskFilter').value;
-  const scenario = document.getElementById('scenarioFilter').value;
   const source = document.getElementById('sourceFilter').value;
   const q = document.getElementById('search').value.trim().toLowerCase();
   filteredCases = allCases.filter(item =>
     (!attack || item.attack_type === attack) &&
     (!task || item.task_type === task) &&
-    (!scenario || item.scenario === scenario) &&
     dataSourceMatches(item, source) &&
     (!q || [item.id, item.owner, item.task, benchmarkReviewer(item), dataSourceLabel(item)].join(' ').toLowerCase().includes(q))
   );
@@ -1517,9 +1557,8 @@ function renderStats() {
     stat('当前筛选', filteredCases.length),
     stat('全部入选', allCases.length),
     stat('数据来源数', new Set(filteredCases.map(dataSourceLabel)).size),
-    stat('攻击类型数', new Set(filteredCases.map(c => c.attack_type || '')).size),
-    stat('任务类型数', new Set(filteredCases.map(c => c.task_type || '')).size),
-    stat('场景数', new Set(filteredCases.map(c => c.scenario || '')).size)
+    stat('任务大类数', new Set(filteredCases.map(c => c.task_type || '')).size),
+    stat('攻击子类数', new Set(filteredCases.map(c => c.attack_type || '')).size)
   ].join('');
 }
 function stat(label, value) { return `<article class="stat"><strong>${value}</strong><span>${escapeHtml(label)}</span></article>`; }
@@ -1536,7 +1575,6 @@ function renderRows() {
     </div>
     <div><span class="pill">${escapeHtml(dataSourceLabel(item))}</span></div>
     <div><span class="pill">${escapeHtml(benchmarkReviewer(item) || '-')}</span></div>
-    <div><span class="pill">${escapeHtml(item.scenario || '-')}</span></div>
     <div><span class="pill">${escapeHtml(item.attack_type || '-')}</span></div>
     <div><span class="pill strong">${escapeHtml(item.task_type || '-')}</span></div>
     <div class="rank-actions"><a class="button secondary" href="/review?mode=view&case=${encodeURIComponent(item.id)}&dataset=${encodeURIComponent(datasetName(item))}">查看</a><button type="button" class="danger" onclick="removeFromBenchmark('${escapeAttr(item.id)}')">移除</button></div>
@@ -1554,7 +1592,8 @@ async function removeFromBenchmark(id) {
     window.alert(error.message || '移除失败');
   }
 }
-controls.forEach(el => el.addEventListener('input', render));
+controls.forEach(el => el.addEventListener('input', el?.id === 'taskFilter' ? () => { syncAttackFilterForTask('taskFilter', 'attackFilter'); render(); } : render));
+syncAttackFilterForTask('taskFilter', 'attackFilter');
 loadCases();
 """
 
