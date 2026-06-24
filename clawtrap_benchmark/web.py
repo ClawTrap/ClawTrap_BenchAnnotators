@@ -348,6 +348,7 @@ def page(title: str, body: str) -> str:
     .review-edit-field {{ display:grid; grid-template-rows:auto 1fr; gap:8px; min-height:0; }}
     .review-edit-field label {{ margin:0; color:var(--accent-strong); font-size:20px; font-weight:900; letter-spacing:0; line-height:1.18; }}
     .review-edit-field textarea {{ min-height:82px; height:100%; background:rgba(255,253,250,.78); line-height:1.5; font-size:14px; font-weight:520; }}
+    .review-edit-field.full textarea {{ min-height:240px; }}
     .review-edit-field.compact textarea {{ min-height:54px; }}
     .review-edit-field.tall textarea {{ min-height:98px; }}
     .review-edit-field.short textarea {{ min-height:66px; }}
@@ -389,7 +390,7 @@ def page(title: str, body: str) -> str:
     .implementation-asset strong {{ display:block; color:var(--text); font-size:13px; line-height:1.42; }}
     .implementation-asset span {{ display:block; margin-top:5px; color:var(--muted); font-size:12px; line-height:1.5; font-weight:650; }}
     .asset-modal {{ position:fixed; inset:0; z-index:1000; display:grid; grid-template-rows:auto 1fr; background:rgba(16,16,16,.72); backdrop-filter:blur(10px); }}
-    .asset-modal-head {{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding:14px 18px; background:rgba(255,253,250,.96); border-bottom:1px solid var(--line); }}
+    .asset-modal-head {{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding:14px 18px; background:rgba(255,253,250,.98); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:2; box-shadow:0 8px 28px rgba(0,0,0,.08); }}
     .asset-modal-title {{ margin:0; color:var(--text); font-size:18px; font-weight:900; }}
     .asset-tabs {{ display:flex; flex-wrap:wrap; gap:8px; }}
     .asset-tabs button {{ background:rgba(255,253,250,.78); color:var(--ink); border-color:var(--line-strong); }}
@@ -400,6 +401,7 @@ def page(title: str, body: str) -> str:
     .asset-info p {{ margin:0 0 12px; color:var(--muted); font-size:13px; line-height:1.65; font-weight:650; }}
     .asset-frame-wrap {{ min-width:0; min-height:0; padding:14px; }}
     .asset-frame {{ width:100%; height:100%; min-height:70vh; border:1px solid var(--line); border-radius:8px; background:#fff; }}
+    .asset-close-primary {{ background:var(--accent-strong); color:#fff; border-color:var(--accent-strong); }}
     .decision-actions {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:9px; }}
     .decision-actions button {{ min-height:42px; }}
     .decision-actions .accept {{ background:var(--green); border-color:var(--green); }}
@@ -1384,13 +1386,14 @@ function showAttackImplementation() {
       <h2 class="asset-modal-title">Attack Implementation</h2>
       <div class="asset-tabs">${assets.map((asset, index) => `<button type="button" class="${index === 0 ? 'active' : ''}" data-asset-index="${index}">${escapeHtml(asset.title || `Asset ${index + 1}`)}</button>`).join('')}</div>
     </div>
-    <button type="button" class="secondary" onclick="closeAttackImplementation()">关闭</button>
+    <button type="button" class="asset-close-primary" onclick="closeAttackImplementation()">返回审核</button>
   </div>
   <div class="asset-modal-body">
     <aside class="asset-info"></aside>
     <div class="asset-frame-wrap"><iframe class="asset-frame" sandbox="allow-same-origin" title="Attack implementation preview"></iframe></div>
   </div>`;
   document.body.appendChild(modal);
+  document.body.style.overflow = 'hidden';
   modal.querySelectorAll('[data-asset-index]').forEach(button => {
     button.addEventListener('click', () => renderAttackAsset(Number(button.dataset.assetIndex || 0)));
   });
@@ -1413,7 +1416,11 @@ function renderAttackAsset(index) {
 }
 function closeAttackImplementation() {
   document.querySelector('.asset-modal')?.remove();
+  document.body.style.overflow = '';
 }
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && document.querySelector('.asset-modal')) closeAttackImplementation();
+});
 async function loadReviewCases() {
   await ensureDatasetOptions();
   updateDatasetInUrl();
