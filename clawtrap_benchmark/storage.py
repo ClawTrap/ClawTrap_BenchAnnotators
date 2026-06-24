@@ -10,8 +10,9 @@ from .schema import validate_case
 
 
 DATA_DIR = Path("data")
+NEW_DATA_DIR = Path("new_data")
 CASES_PATH = DATA_DIR / "cases.json"
-DEFAULT_DATASET = "cases"
+DEFAULT_DATASET = "demo1"
 EDITABLE_CASE_FIELDS = {
     "task",
     "target",
@@ -23,6 +24,10 @@ EDITABLE_CASE_FIELDS = {
     "attack_type",
     "interactive_form",
     "metadata",
+    "protected_assets",
+    "policies",
+    "expected_behavior",
+    "graders",
 }
 EXPERT_DECISIONS = {"accepted", "discarded", "needs_discussion", "clear"}
 
@@ -279,7 +284,7 @@ def summarize_reviews(reviews: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def enrich_case(case: dict[str, Any], *, storage_origin: str | None = None, data_file: str | None = None, dataset: str | None = None) -> dict[str, Any]:
-    enriched = dict(case)
+    enriched = normalize_case(dict(case), owner=case.get("owner") or "llm_seed", source=case.get("source") or "local")
     if storage_origin:
         enriched["storage_origin"] = storage_origin
     if data_file:
@@ -314,24 +319,74 @@ def append_cases(new_cases: list[dict[str, Any]]) -> None:
 
 
 def list_file_datasets() -> list[str]:
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
     names = []
-    for path in sorted(DATA_DIR.glob("*.json")):
+    for path in data_files():
         try:
-            data = json.loads(path.read_text(encoding="utf-8"))
-        except json.JSONDecodeError:
+            read_case_file(path)
+        except (OSError, ValueError, json.JSONDecodeError):
             continue
-        if isinstance(data, list):
-            names.append(path.stem)
+        names.append(path.stem)
     return names
 
 
+def data_files() -> list[Path]:
+    paths: list[Path] = []
+    if NEW_DATA_DIR.exists():
+        paths.extend(sorted(NEW_DATA_DIR.glob("*.jsonl")))
+        paths.extend(sorted(NEW_DATA_DIR.glob("*.json")))
+    if not paths and DATA_DIR.exists():
+        paths.extend(sorted(DATA_DIR.glob("*.json")))
+    seen = set()
+    unique_paths = []
+    for path in paths:
+        key = path.stem
+        if key in seen:
+            continue
+        seen.add(key)
+        unique_paths.append(path)
+    return unique_paths
+
+
+def dataset_path(dataset: str) -> Path:
+    candidates = [
+        NEW_DATA_DIR / f"{dataset}.jsonl",
+        NEW_DATA_DIR / f"{dataset}.json",
+        DATA_DIR / f"{dataset}.json",
+    ]
+    for path in candidates:
+        if path.exists():
+            return path
+    return candidates[0]
+
+
+def read_case_file(path: Path) -> list[dict[str, Any]]:
+    text = path.read_text(encoding="utf-8").strip()
+    if not text:
+        return []
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError:
+        data = []
+        for line_number, line in enumerate(text.splitlines(), start=1):
+            stripped = line.strip()
+            if not stripped:
+                continue
+            try:
+                item = json.loads(stripped)
+            except json.JSONDecodeError as exc:
+                raise ValueError(f"{path}:{line_number} is not valid JSONL") from exc
+            data.append(item)
+    if isinstance(data, dict):
+        data = [data]
+    if not isinstance(data, list) or any(not isinstance(item, dict) for item in data):
+        raise ValueError(f"{path} must contain a JSON object, JSON array, or JSONL objects")
+    return data
+
+
 def read_file_dataset(dataset: str) -> list[dict[str, Any]]:
-    path = DATA_DIR / f"{dataset}.json"
-    data = json.loads(path.read_text(encoding="utf-8"))
-    if not isinstance(data, list):
-        raise ValueError(f"{path} must contain a JSON array")
-    return [enrich_case(case, storage_origin="local_json", data_file=path.name, dataset=dataset) for case in data]
+    path = dataset_path(dataset)
+    data = read_case_file(path)
+    return [enrich_case(case, storage_origin="local_file", data_file=path.name, dataset=dataset) for case in data]
 
 
 def read_persisted_case_map(dataset: str = DEFAULT_DATASET) -> dict[str, dict[str, Any]]:
@@ -360,9 +415,9 @@ def read_local_dataset(dataset: str = DEFAULT_DATASET) -> list[dict[str, Any]]:
             merged = {**case, **persisted[str(case_id)]}
             merged["id"] = case_id
             merged["data_file"] = case.get("data_file") or f"{dataset}.json"
-            merged_cases.append(enrich_case(merged, storage_origin="local_json", data_file=merged["data_file"], dataset=dataset))
+            merged_cases.append(enrich_case(merged, storage_origin="local_file", data_file=merged["data_file"], dataset=dataset))
         else:
-            merged_cases.append(enrich_case(case, storage_origin="local_json", data_file=case.get("data_file") or f"{dataset}.json", dataset=dataset))
+            merged_cases.append(enrich_case(case, storage_origin="local_file", data_file=case.get("data_file") or dataset_path(dataset).name, dataset=dataset))
     return merged_cases
 
 
@@ -379,7 +434,7 @@ def list_datasets() -> list[str]:
 
 def read_dataset(dataset: str) -> list[dict[str, Any]]:
     if use_database():
-        file_cases = read_file_dataset(dataset) if (DATA_DIR / f"{dataset}.json").exists() else []
+        file_cases = read_file_dataset(dataset) if dataset_path(dataset).exists() else []
         ensure_db()
         with connect_db() as conn:
             with conn.cursor() as cur:
@@ -389,13 +444,13 @@ def read_dataset(dataset: str) -> list[dict[str, Any]]:
         for case in file_cases:
             case_id = case.get("id")
             if case_id:
-                merged[case_id] = enrich_case(case, storage_origin="local_json")
+                merged[case_id] = enrich_case(case, storage_origin="local_file")
         for case in db_cases:
             case_id = case.get("id")
             if case_id:
                 merged[case_id] = enrich_case(case, storage_origin="database")
         return sorted(merged.values(), key=lambda item: item.get("updated_at", ""), reverse=True)
-    return [enrich_case(case, storage_origin="local_json") for case in read_file_dataset(dataset)]
+    return [enrich_case(case, storage_origin="local_file") for case in read_file_dataset(dataset)]
 
 
 def replace_dataset(dataset: str, cases: list[dict[str, Any]]) -> None:

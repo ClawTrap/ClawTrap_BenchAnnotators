@@ -887,8 +887,8 @@ def review_page(user: str) -> str:
     <div><label>数据文件</label><div class="select-shell"><select id="datasetFilter"></select></div></div>
     <div><label>搜索</label><input id="reviewSearch"></div>
     <div><label>裁决状态</label><div class="select-shell"><select id="reviewDecisionFilter"><option value="">全部</option><option value="none">未裁决</option><option value="needs_discussion">存疑 Mark</option></select></div></div>
-    <div><label>Task Category</label><div class="select-shell"><select id="reviewTaskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
-    <div><label>Attack Subtype</label><div class="select-shell"><select id="reviewAttackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
+    <div><label>Scenario Domain</label><div class="select-shell"><select id="reviewTaskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
+    <div><label>Scenario Workflow</label><div class="select-shell"><select id="reviewAttackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
     <div><label>植入形式</label><div class="select-shell"><select id="reviewFormFilter"><option value="">全部</option>{options(INTERACTIVE_FORMS)}</select></div></div>
   </section>
   <section class="review-poolbar">
@@ -923,8 +923,8 @@ def scenes_page(user: str) -> str:
     <div><label>数据文件</label><div class="select-shell"><select id="datasetFilter"></select></div></div>
     <div><label>Benchmark</label><div class="select-shell"><select id="selectedFilter"><option value="">全部</option><option value="selected">已选中</option><option value="unselected">未选中</option></select></div></div>
     <div><label>裁决状态</label><div class="select-shell"><select id="decisionFilter"><option value="">全部</option><option value="none">未裁决</option><option value="accepted">已保留</option><option value="discarded">Discard</option><option value="needs_discussion">存疑 Mark</option></select></div></div>
-    <div><label>Attack Subtype</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
-    <div><label>Task Category</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
+    <div><label>Scenario Workflow</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
+    <div><label>Scenario Domain</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
     <div><label>搜索</label><input id="search"></div>
     <div class="row toolbar-actions"><button type="button" onclick="loadCases()">刷新</button></div>
   </section>
@@ -950,8 +950,8 @@ def benchmark_page(user: str) -> str:
     <p class="hero-copy">这里专门展示已保留进 benchmark 的 case。审核页做裁决，这里检查最终集合的规模、类型分布和具体内容。</p>
   </section>
   <section class="panel toolbar">
-    <div><label>Attack Subtype</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
-    <div><label>Task Category</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
+    <div><label>Scenario Workflow</label><div class="select-shell"><select id="attackFilter"><option value="">全部</option>{options(ATTACK_TYPES)}</select></div></div>
+    <div><label>Scenario Domain</label><div class="select-shell"><select id="taskFilter"><option value="">全部</option>{options(TASK_TYPES)}</select></div></div>
     <div><label>数据来源</label><div class="select-shell"><select id="sourceFilter"><option value="">全部</option></select></div></div>
     <div><label>搜索</label><input id="search"></div>
     <div class="row toolbar-actions"><button type="button" onclick="loadCases()">刷新</button></div>
@@ -959,7 +959,7 @@ def benchmark_page(user: str) -> str:
   <section class="rank-dashboard">
     <section class="rank-summary" id="stats"></section>
     <section class="rank-board benchmark-board">
-      <div class="rank-head"><span>#</span><span>Benchmark Case</span><span>Source</span><span>Reviewer</span><span>Attack Subtype</span><span>Task Category</span><span></span></div>
+      <div class="rank-head"><span>#</span><span>Benchmark Case</span><span>Source</span><span>Reviewer</span><span>Workflow</span><span>Domain</span><span></span></div>
       <div id="rankRows"></div>
     </section>
   </section>
@@ -1061,7 +1061,7 @@ function populateSourceFilter(selectId, cases) {
 function datasetName(item) {
   if (item.dataset) return item.dataset;
   const file = item.data_file || '';
-  return file.endsWith('.json') ? file.slice(0, -5) : (file || 'cases');
+  return file.replace(/\.(jsonl|json)$/i, '') || 'demo1';
 }
 function requestedDatasetFromUrl() {
   return new URLSearchParams(window.location.search).get('dataset') || '';
@@ -1081,7 +1081,7 @@ async function ensureDatasetOptions(selectId='datasetFilter') {
   const datasets = data.datasets || [];
   const requested = requestedDatasetFromUrl();
   const value = datasets.includes(requested) ? requested : (data.default || datasets[0] || 'cases');
-  select.innerHTML = datasets.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}.json</option>`).join('');
+  select.innerHTML = datasets.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
   select.value = value;
   window.refreshClawTrapSelects?.();
   window.syncClawTrapSelects?.();
@@ -1099,12 +1099,25 @@ function attackOptionsForTask(taskType) {
   const taxonomy = window.CLAWTRAP_ATTACKS_BY_TASK || {};
   return taxonomy[taskType] || Object.values(taxonomy).flat();
 }
+function uniqueValues(cases, key) {
+  return [...new Set(cases.map(item => item?.[key]).filter(Boolean))].sort();
+}
+function populateCaseValueFilter(selectId, cases, key, fallback=[]) {
+  const select = document.getElementById(selectId);
+  if (!select) return;
+  const current = select.value;
+  const values = [...new Set([...fallback, ...uniqueValues(cases, key)])].filter(Boolean);
+  select.innerHTML = '<option value="">全部</option>' + values.map(value => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('');
+  select.value = values.includes(current) ? current : '';
+  window.refreshClawTrapSelects?.();
+  window.syncClawTrapSelects?.();
+}
 function syncTaxonomySelects(root=document) {
   const taskSelect = root.querySelector?.('select[name="task_type"]');
   const attackSelect = root.querySelector?.('select[name="attack_type"]');
   if (!taskSelect || !attackSelect) return;
   const current = attackSelect.value;
-  const values = attackOptionsForTask(taskSelect.value);
+  const values = [...new Set([...attackOptionsForTask(taskSelect.value), ...uniqueValues(allCases || [], 'attack_type'), current])].filter(Boolean);
   const nextValue = values.includes(current) ? current : (values[0] || '');
   attackSelect.innerHTML = values.map(value => `<option value="${escapeHtml(value)}" ${value === nextValue ? 'selected' : ''}>${escapeHtml(value)}</option>`).join('');
   attackSelect.value = nextValue;
@@ -1115,7 +1128,7 @@ function syncAttackFilterForTask(taskFilterId, attackFilterId) {
   const attackFilter = document.getElementById(attackFilterId);
   if (!taskFilter || !attackFilter) return;
   const current = attackFilter.value;
-  const values = attackOptionsForTask(taskFilter.value);
+  const values = [...new Set([...attackOptionsForTask(taskFilter.value), ...uniqueValues(allCases || [], 'attack_type')])].filter(Boolean);
   const nextValue = !current || values.includes(current) ? current : '';
   attackFilter.innerHTML = '<option value="">全部</option>' + values.map(value => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('');
   attackFilter.value = nextValue;
@@ -1212,14 +1225,17 @@ function focusedReviewDetail(item, includeDecision=false) {
       </div>
       <form id="expertEditForm" class="review-edit-form">
         <div class="review-edit-grid">
-          ${editSelect('task_type', 'Task Category', item.task_type || '', Object.keys(window.CLAWTRAP_ATTACKS_BY_TASK || {}), 'taxonomy-field')}
-          ${editSelect('attack_type', 'Attack Subtype', item.attack_type || '', attackOptionsForTask(item.task_type), 'taxonomy-field')}
-          ${editField('task', 'Task', item.task, 'tall')}
+          ${editSelect('task_type', 'Scenario Domain', item.task_type || '', [...new Set([...Object.keys(window.CLAWTRAP_ATTACKS_BY_TASK || {}), ...uniqueValues(allCases || [], 'task_type'), item.task_type].filter(Boolean))], 'taxonomy-field')}
+          ${editSelect('attack_type', 'Scenario Workflow', item.attack_type || '', [...new Set([...attackOptionsForTask(item.task_type), ...uniqueValues(allCases || [], 'attack_type'), item.attack_type].filter(Boolean))], 'taxonomy-field')}
+          ${editField('task', 'Benign Objective', item.task, 'tall')}
           ${editField('target', 'Target', item.target, 'tall')}
-          ${editField('attack_method', 'Attack Method', item.attack_method, 'full')}
-          ${listReviewField('success_states', 'Success States', item.success_states)}
+          ${editField('attack_method', 'Attack Description', item.attack_method, 'full')}
+          ${listReviewField('protected_assets', 'Protected Assets', item.protected_assets)}
+          ${listReviewField('policies', 'Policies', item.policies)}
+          ${listReviewField('success_states', 'Expected Behavior', item.success_states)}
           ${listReviewField('failure_states', 'Failure States', item.failure_states)}
           ${listReviewField('metadata', 'Metadata', item.metadata, 'metadata-field')}
+          ${listReviewField('graders', 'Graders', item.graders, 'metadata-field')}
         </div>
         <div class="errors" id="editErrors"></div>
         <div class="review-edit-actions" ${typeof readOnlyReview !== 'undefined' && readOnlyReview ? 'style="display:none"' : ''}>
@@ -1312,6 +1328,8 @@ async function loadReviewCases() {
   const res = await fetch(`/api/all-cases?${datasetQuery()}`);
   const data = await res.json();
   allCases = data.cases || [];
+  populateCaseValueFilter('reviewTaskFilter', allCases, 'task_type', Object.keys(window.CLAWTRAP_ATTACKS_BY_TASK || {}));
+  populateCaseValueFilter('reviewAttackFilter', allCases, 'attack_type', Object.values(window.CLAWTRAP_ATTACKS_BY_TASK || {}).flat());
   if (readOnlyReview) {
     document.querySelector('.review-toolbar')?.remove();
     document.querySelector('.review-poolbar')?.remove();
@@ -1426,9 +1444,12 @@ async function saveCurrentEdit({rerender=true} = {}) {
   if (!item || !form) return false;
   if (errorEl) errorEl.textContent = '';
   const payload = Object.fromEntries(new FormData(form).entries());
+  payload.protected_assets = collectListValues('protected_assets');
+  payload.policies = collectListValues('policies');
   payload.success_states = collectListValues('success_states');
   payload.failure_states = collectListValues('failure_states');
   payload.metadata = collectListValues('metadata');
+  payload.graders = collectListValues('graders');
   payload.dataset = selectedDataset();
   const res = await fetch(`/api/cases/${encodeURIComponent(item.id)}/expert-edit`, {method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
   const data = await res.json();
@@ -1460,6 +1481,8 @@ async function loadCases() {
   const res = await fetch(`/api/all-cases?${datasetQuery()}`);
   const data = await res.json();
   allCases = data.cases || [];
+  populateCaseValueFilter('taskFilter', allCases, 'task_type', Object.keys(window.CLAWTRAP_ATTACKS_BY_TASK || {}));
+  populateCaseValueFilter('attackFilter', allCases, 'attack_type', Object.values(window.CLAWTRAP_ATTACKS_BY_TASK || {}).flat());
   render();
 }
 function render() {
@@ -1533,6 +1556,8 @@ async function loadCases() {
   const data = await res.json();
   allCases = data.cases || [];
   populateSourceFilter('sourceFilter', allCases);
+  populateCaseValueFilter('taskFilter', allCases, 'task_type', Object.keys(window.CLAWTRAP_ATTACKS_BY_TASK || {}));
+  populateCaseValueFilter('attackFilter', allCases, 'attack_type', Object.values(window.CLAWTRAP_ATTACKS_BY_TASK || {}).flat());
   render();
 }
 function render() {
