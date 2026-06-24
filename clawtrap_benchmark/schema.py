@@ -29,6 +29,26 @@ def normalize_list(value: Any) -> list[str]:
     return []
 
 
+def normalize_asset_list(value: Any) -> list[dict[str, Any]]:
+    if not isinstance(value, list):
+        return []
+    assets = []
+    for item in value:
+        if not isinstance(item, dict):
+            continue
+        normalized = {
+            "title": str(item.get("title") or "").strip(),
+            "type": str(item.get("type") or "").strip(),
+            "url": str(item.get("url") or "").strip(),
+            "description": str(item.get("description") or "").strip(),
+        }
+        if item.get("notes"):
+            normalized["notes"] = str(item.get("notes") or "").strip()
+        if normalized["title"] or normalized["url"]:
+            assets.append(normalized)
+    return assets
+
+
 def nested_text(value: Any, *keys: str) -> str:
     current = value
     for key in keys:
@@ -93,6 +113,8 @@ def normalize_case(raw: dict[str, Any], *, owner: str | None = None, source: str
 
     for key in ("success_states", "failure_states", "interactive_form", "metadata", "protected_assets", "policies", "expected_behavior", "graders"):
         case[key] = normalize_list(case.get(key))
+    if "attack_implementation" in case:
+        case["attack_implementation"] = normalize_asset_list(case.get("attack_implementation"))
     for key in ("task", "target", "task_type", "attack_method", "logic", "attack_type"):
         case[key] = str(case.get(key, "")).strip()
     if "scenario" in case and not isinstance(case.get("scenario"), dict):

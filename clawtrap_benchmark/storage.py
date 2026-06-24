@@ -28,6 +28,7 @@ EDITABLE_CASE_FIELDS = {
     "policies",
     "expected_behavior",
     "graders",
+    "attack_implementation",
 }
 EXPERT_DECISIONS = {"accepted", "discarded", "needs_discussion", "clear"}
 

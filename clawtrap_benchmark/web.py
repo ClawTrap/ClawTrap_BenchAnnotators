@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 from typing import Any
 
-from flask import Flask, jsonify, redirect, request, session
+from flask import Flask, jsonify, redirect, request, send_from_directory, session
 
 from .auth import authenticate
 from .constants import ATTACK_TYPES, ATTACK_TYPES_BY_TASK_TYPE, INTERACTIVE_FORMS, TASK_TYPES
@@ -380,6 +380,26 @@ def page(title: str, body: str) -> str:
     .metadata-strip {{ display:flex; flex-wrap:wrap; gap:7px; }}
     .metadata-token {{ display:inline-flex; max-width:100%; padding:6px 9px; border:1px solid var(--line); border-radius:999px; background:rgba(255,253,250,.72); color:var(--muted); font-size:12px; font-weight:750; line-height:1.45; }}
     .decision-panel {{ display:grid; gap:12px; margin-top:20px; padding-top:8px; }}
+    .implementation-panel {{ grid-column:1 / -1; display:grid; gap:12px; padding:16px; border:1px solid rgba(20,116,134,.18); border-radius:8px; background:rgba(247,252,253,.72); }}
+    .implementation-head {{ display:flex; justify-content:space-between; align-items:center; gap:12px; }}
+    .implementation-title {{ margin:0; color:var(--accent-strong); font-size:20px; font-weight:900; line-height:1.18; }}
+    .implementation-copy {{ margin:0; color:var(--muted); font-size:13px; line-height:1.58; font-weight:650; }}
+    .implementation-assets {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:9px; }}
+    .implementation-asset {{ padding:12px; border:1px solid var(--line); border-radius:8px; background:rgba(255,253,250,.86); }}
+    .implementation-asset strong {{ display:block; color:var(--text); font-size:13px; line-height:1.42; }}
+    .implementation-asset span {{ display:block; margin-top:5px; color:var(--muted); font-size:12px; line-height:1.5; font-weight:650; }}
+    .asset-modal {{ position:fixed; inset:0; z-index:1000; display:grid; grid-template-rows:auto 1fr; background:rgba(16,16,16,.72); backdrop-filter:blur(10px); }}
+    .asset-modal-head {{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding:14px 18px; background:rgba(255,253,250,.96); border-bottom:1px solid var(--line); }}
+    .asset-modal-title {{ margin:0; color:var(--text); font-size:18px; font-weight:900; }}
+    .asset-tabs {{ display:flex; flex-wrap:wrap; gap:8px; }}
+    .asset-tabs button {{ background:rgba(255,253,250,.78); color:var(--ink); border-color:var(--line-strong); }}
+    .asset-tabs button.active {{ background:var(--accent-strong); color:#fff; border-color:var(--accent-strong); }}
+    .asset-modal-body {{ display:grid; grid-template-columns:300px minmax(0,1fr); gap:0; min-height:0; background:var(--paper); }}
+    .asset-info {{ padding:18px; border-right:1px solid var(--line); overflow:auto; background:rgba(255,253,250,.9); }}
+    .asset-info h3 {{ margin:0 0 8px; font-size:18px; }}
+    .asset-info p {{ margin:0 0 12px; color:var(--muted); font-size:13px; line-height:1.65; font-weight:650; }}
+    .asset-frame-wrap {{ min-width:0; min-height:0; padding:14px; }}
+    .asset-frame {{ width:100%; height:100%; min-height:70vh; border:1px solid var(--line); border-radius:8px; background:#fff; }}
     .decision-actions {{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:9px; }}
     .decision-actions button {{ min-height:42px; }}
     .decision-actions .accept {{ background:var(--green); border-color:var(--green); }}
@@ -411,7 +431,8 @@ def page(title: str, body: str) -> str:
       .hero.compact .hero-title {{ font-size:30px; }}
       .select-card-menu {{ max-height:42vh; }}
       .toolbar-actions {{ grid-column:auto; }} .detail-panel,.sticky-panel {{ position:static; max-height:none; }}
-      .focus-header,.focus-grid,.judgement-grid,.review-focus .review-layout,.review-focus .review-toolbar,.review-poolbar,.review-case-picker,.decision-actions,.review-edit-grid {{ grid-template-columns:1fr; }}
+      .focus-header,.focus-grid,.judgement-grid,.review-focus .review-layout,.review-focus .review-toolbar,.review-poolbar,.review-case-picker,.decision-actions,.review-edit-grid,.asset-modal-body {{ grid-template-columns:1fr; }}
+      .asset-info {{ border-right:0; border-bottom:1px solid var(--line); }}
       .review-nav-actions {{ justify-content:flex-start; }}
       .rank-head {{ display:none; }}
       .rank-actions {{ justify-content:flex-start; }}
@@ -558,6 +579,12 @@ def create_app() -> Flask:
         if not can_access_workspace():
             return redirect("/login")
         return benchmark_page(session["username"])
+
+    @app.get("/attack-assets/<path:asset_path>")
+    def attack_asset(asset_path: str):
+        if not can_access_workspace():
+            return redirect("/login")
+        return send_from_directory(ROOT / "new_data" / "attack_assets", asset_path)
 
     @app.get("/login")
     def login_page():
@@ -1216,6 +1243,26 @@ function listReviewField(name, label, items, className='') {
   const addRow = typeof readOnlyReview !== 'undefined' && readOnlyReview ? '' : `<div class="list-add-row"><button type="button" class="secondary list-add-button" title="Add item" onclick="addListItem('${escapeAttr(name)}')">+</button></div>`;
   return `<div class="list-review-field ${className}" data-list-field="${escapeAttr(name)}"><label>${escapeHtml(label)}</label><div class="list-review-items">${rows}</div>${addRow}</div>`;
 }
+function attackImplementationPanel(item) {
+  const assets = Array.isArray(item.attack_implementation) ? item.attack_implementation : [];
+  if (!assets.length) {
+    return `<div class="implementation-panel">
+      <div class="implementation-head"><div><h3 class="implementation-title">Attack Implementation</h3><p class="implementation-copy">暂无可预览攻击实现资产。可以在 case 中加入 attack_implementation 列表。</p></div></div>
+    </div>`;
+  }
+  const cards = assets.map((asset, index) => `<article class="implementation-asset">
+    <strong>${escapeHtml(asset.title || `Asset ${index + 1}`)}</strong>
+    <span>${escapeHtml(asset.type || 'attack asset')}</span>
+    <span>${escapeHtml(asset.description || '')}</span>
+  </article>`).join('');
+  return `<div class="implementation-panel">
+    <div class="implementation-head">
+      <div><h3 class="implementation-title">Attack Implementation</h3><p class="implementation-copy">检查攻击页面、弹窗、文件或注入片段是否逼真，以及是否和攻击描述一致。</p></div>
+      <button type="button" class="secondary" onclick="showAttackImplementation()">Show attack metadata</button>
+    </div>
+    <div class="implementation-assets">${cards}</div>
+  </div>`;
+}
 function focusedReviewDetail(item, includeDecision=false) {
   return `<div class="focus-case">
     <section class="focus-card focus-header">
@@ -1236,6 +1283,7 @@ function focusedReviewDetail(item, includeDecision=false) {
           ${listReviewField('failure_states', 'Failure States', item.failure_states)}
           ${listReviewField('metadata', 'Metadata', item.metadata, 'metadata-field')}
           ${listReviewField('graders', 'Graders', item.graders, 'metadata-field')}
+          ${attackImplementationPanel(item)}
         </div>
         <div class="errors" id="editErrors"></div>
         <div class="review-edit-actions" ${typeof readOnlyReview !== 'undefined' && readOnlyReview ? 'style="display:none"' : ''}>
@@ -1321,6 +1369,50 @@ function collectListValues(name) {
     .filter(row => !row.classList.contains('removed'))
     .map(row => row.querySelector('[data-list-input]')?.value.trim() || '')
     .filter(Boolean);
+}
+function currentCase() {
+  return filteredCases.find(candidate => candidate.id === selectedId);
+}
+function showAttackImplementation() {
+  const item = currentCase();
+  const assets = Array.isArray(item?.attack_implementation) ? item.attack_implementation : [];
+  if (!assets.length) return;
+  const modal = document.createElement('div');
+  modal.className = 'asset-modal';
+  modal.innerHTML = `<div class="asset-modal-head">
+    <div>
+      <h2 class="asset-modal-title">Attack Implementation</h2>
+      <div class="asset-tabs">${assets.map((asset, index) => `<button type="button" class="${index === 0 ? 'active' : ''}" data-asset-index="${index}">${escapeHtml(asset.title || `Asset ${index + 1}`)}</button>`).join('')}</div>
+    </div>
+    <button type="button" class="secondary" onclick="closeAttackImplementation()">关闭</button>
+  </div>
+  <div class="asset-modal-body">
+    <aside class="asset-info"></aside>
+    <div class="asset-frame-wrap"><iframe class="asset-frame" sandbox="allow-same-origin" title="Attack implementation preview"></iframe></div>
+  </div>`;
+  document.body.appendChild(modal);
+  modal.querySelectorAll('[data-asset-index]').forEach(button => {
+    button.addEventListener('click', () => renderAttackAsset(Number(button.dataset.assetIndex || 0)));
+  });
+  renderAttackAsset(0);
+}
+function renderAttackAsset(index) {
+  const item = currentCase();
+  const assets = Array.isArray(item?.attack_implementation) ? item.attack_implementation : [];
+  const asset = assets[index];
+  const modal = document.querySelector('.asset-modal');
+  if (!asset || !modal) return;
+  modal.querySelectorAll('[data-asset-index]').forEach(button => button.classList.toggle('active', Number(button.dataset.assetIndex || 0) === index));
+  modal.querySelector('.asset-info').innerHTML = `<h3>${escapeHtml(asset.title || `Asset ${index + 1}`)}</h3>
+    <p><strong>Type:</strong> ${escapeHtml(asset.type || '-')}</p>
+    <p>${escapeHtml(asset.description || '')}</p>
+    ${asset.notes ? `<p><strong>Review focus:</strong> ${escapeHtml(asset.notes)}</p>` : ''}
+    ${asset.url ? `<p><a class="button secondary" target="_blank" rel="noopener" href="${escapeHtml(asset.url)}">打开新窗口</a></p>` : ''}`;
+  const frame = modal.querySelector('.asset-frame');
+  if (frame) frame.src = asset.url || 'about:blank';
+}
+function closeAttackImplementation() {
+  document.querySelector('.asset-modal')?.remove();
 }
 async function loadReviewCases() {
   await ensureDatasetOptions();
