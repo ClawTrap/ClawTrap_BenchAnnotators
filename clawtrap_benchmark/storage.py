@@ -367,21 +367,33 @@ def read_case_file(path: Path) -> list[dict[str, Any]]:
     try:
         data = json.loads(text)
     except json.JSONDecodeError:
-        data = []
-        for line_number, line in enumerate(text.splitlines(), start=1):
-            stripped = line.strip()
-            if not stripped:
-                continue
-            try:
-                item = json.loads(stripped)
-            except json.JSONDecodeError as exc:
-                raise ValueError(f"{path}:{line_number} is not valid JSONL") from exc
-            data.append(item)
+        data = read_json_objects(text, path)
     if isinstance(data, dict):
         data = [data]
     if not isinstance(data, list) or any(not isinstance(item, dict) for item in data):
         raise ValueError(f"{path} must contain a JSON object, JSON array, or JSONL objects")
     return data
+
+
+def read_json_objects(text: str, path: Path) -> list[dict[str, Any]]:
+    decoder = json.JSONDecoder()
+    index = 0
+    items: list[dict[str, Any]] = []
+    while index < len(text):
+        while index < len(text) and text[index].isspace():
+            index += 1
+        if index >= len(text):
+            break
+        try:
+            item, end = decoder.raw_decode(text, index)
+        except json.JSONDecodeError as exc:
+            line_number = text.count("\n", 0, index) + 1
+            raise ValueError(f"{path}:{line_number} is not valid JSON/JSONL") from exc
+        if not isinstance(item, dict):
+            raise ValueError(f"{path} must contain JSON objects")
+        items.append(item)
+        index = end
+    return items
 
 
 def read_file_dataset(dataset: str) -> list[dict[str, Any]]:
