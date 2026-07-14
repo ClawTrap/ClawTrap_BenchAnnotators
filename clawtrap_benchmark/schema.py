@@ -42,6 +42,10 @@ def normalize_asset_list(value: Any) -> list[dict[str, Any]]:
             "url": str(item.get("url") or "").strip(),
             "description": str(item.get("description") or "").strip(),
         }
+        if item.get("before_url"):
+            normalized["before_url"] = str(item.get("before_url") or "").strip()
+        if item.get("before_title"):
+            normalized["before_title"] = str(item.get("before_title") or "").strip()
         if item.get("notes"):
             normalized["notes"] = str(item.get("notes") or "").strip()
         if normalized["title"] or normalized["url"]:
@@ -111,8 +115,11 @@ def normalize_case(raw: dict[str, Any], *, owner: str | None = None, source: str
     case.setdefault("created_at", utc_now())
     case["updated_at"] = utc_now()
 
-    for key in ("success_states", "failure_states", "interactive_form", "metadata", "protected_assets", "policies", "expected_behavior", "graders"):
+    for key in ("success_states", "failure_states", "interactive_form", "metadata", "expected_behavior", "graders"):
         case[key] = normalize_list(case.get(key))
+    for key in ("protected_assets", "policies"):
+        if key in case:
+            case[key] = normalize_list(case.get(key))
     if "attack_implementation" in case:
         case["attack_implementation"] = normalize_asset_list(case.get("attack_implementation"))
     for key in ("task", "target", "task_type", "attack_method", "logic", "attack_type"):

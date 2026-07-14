@@ -389,6 +389,21 @@ def page(title: str, body: str) -> str:
     .implementation-asset {{ padding:12px; border:1px solid var(--line); border-radius:8px; background:rgba(255,253,250,.86); }}
     .implementation-asset strong {{ display:block; color:var(--text); font-size:13px; line-height:1.42; }}
     .implementation-asset span {{ display:block; margin-top:5px; color:var(--muted); font-size:12px; line-height:1.5; font-weight:650; }}
+    .implementation-preview-list {{ display:grid; gap:18px; }}
+    .implementation-preview-group {{ display:grid; gap:11px; padding-top:16px; border-top:1px solid var(--line); }}
+    .implementation-preview-group:first-child {{ padding-top:0; border-top:0; }}
+    .implementation-preview-summary {{ display:flex; justify-content:space-between; align-items:flex-start; gap:14px; }}
+    .implementation-preview-summary h4 {{ margin:0; color:var(--text); font-size:15px; line-height:1.4; }}
+    .implementation-preview-summary p {{ margin:4px 0 0; color:var(--muted); font-size:12px; line-height:1.55; font-weight:650; }}
+    .implementation-preview-grid {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr)); gap:14px; }}
+    .implementation-browser {{ min-width:0; overflow:hidden; border:1px solid var(--line-strong); border-radius:10px; background:#fff; box-shadow:0 10px 30px rgba(20,20,20,.07); }}
+    .implementation-browser[hidden] {{ display:none; }}
+    .implementation-browser-head {{ min-height:48px; display:flex; justify-content:space-between; align-items:center; gap:12px; padding:9px 12px; border-bottom:1px solid var(--line); background:rgba(247,247,242,.92); }}
+    .implementation-browser-label {{ display:grid; gap:2px; color:var(--text); font-size:13px; font-weight:900; }}
+    .implementation-browser-label small {{ color:var(--muted); font-size:10px; font-weight:800; text-transform:uppercase; }}
+    .implementation-browser-open {{ flex:none; color:var(--accent-strong); font-size:12px; font-weight:850; text-decoration:none; }}
+    .implementation-browser-open:hover {{ text-decoration:underline; }}
+    .implementation-inline-frame {{ display:block; width:100%; height:clamp(580px,68vh,860px); border:0; background:#fff; }}
     .asset-modal {{ position:fixed; inset:0; z-index:1000; display:grid; grid-template-rows:auto 1fr; background:rgba(16,16,16,.72); backdrop-filter:blur(10px); }}
     .asset-modal-head {{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding:14px 18px; background:rgba(255,253,250,.98); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:2; box-shadow:0 8px 28px rgba(0,0,0,.08); }}
     .asset-modal-title {{ margin:0; color:var(--text); font-size:18px; font-weight:900; }}
@@ -587,6 +602,12 @@ def create_app() -> Flask:
         if not can_access_workspace():
             return redirect("/login")
         return send_from_directory(ROOT / "new_data" / "attack_assets", asset_path)
+
+    @app.get("/clean-assets/<path:asset_path>")
+    def clean_asset(asset_path: str):
+        if not can_access_workspace():
+            return redirect("/login")
+        return send_from_directory(ROOT / "new_data" / "clean_assets", asset_path)
 
     @app.get("/login")
     def login_page():
@@ -1252,18 +1273,55 @@ function attackImplementationPanel(item) {
       <div class="implementation-head"><div><h3 class="implementation-title">Attack Implementation</h3><p class="implementation-copy">暂无可预览攻击实现资产。可以在 case 中加入 attack_implementation 列表。</p></div></div>
     </div>`;
   }
-  const cards = assets.map((asset, index) => `<article class="implementation-asset">
-    <strong>${escapeHtml(asset.title || `Asset ${index + 1}`)}</strong>
-    <span>${escapeHtml(asset.type || 'attack asset')}</span>
-    <span>${escapeHtml(asset.description || '')}</span>
-  </article>`).join('');
+  const previews = assets.map((asset, index) => {
+    const changedUrl = asset.url || '';
+    const explicitBeforeUrl = asset.before_url || asset.original_url || asset.reference_url || '';
+    const inferredBeforeUrl = !explicitBeforeUrl && changedUrl.startsWith('/attack-assets/') ? changedUrl.replace('/attack-assets/', '/clean-assets/') : '';
+    const beforeUrl = explicitBeforeUrl || inferredBeforeUrl;
+    const beforeTitle = asset.before_title || '改动前';
+    return `<article class="implementation-preview-group">
+      <div class="implementation-preview-summary">
+        <div><h4>${escapeHtml(asset.title || `Asset ${index + 1}`)}</h4><p>${escapeHtml(asset.type || 'attack asset')} · ${escapeHtml(asset.description || '')}</p></div>
+      </div>
+      <div class="implementation-preview-grid">
+        ${beforeUrl ? `<section class="implementation-browser" data-before-preview data-before-url="${escapeHtml(beforeUrl)}" data-before-explicit="${explicitBeforeUrl ? 'true' : 'false'}" hidden>
+          <div class="implementation-browser-head"><span class="implementation-browser-label"><small>Before</small>${escapeHtml(beforeTitle)}</span><a class="implementation-browser-open" target="_blank" rel="noopener" href="${escapeHtml(beforeUrl)}">独立打开 ↗</a></div>
+          <iframe class="implementation-inline-frame" data-before-frame sandbox="allow-same-origin allow-scripts allow-forms" loading="lazy" title="${escapeHtml(beforeTitle)}"></iframe>
+        </section>` : ''}
+        <section class="implementation-browser">
+          <div class="implementation-browser-head"><span class="implementation-browser-label"><small>After</small>实现后页面</span>${changedUrl ? `<a class="implementation-browser-open" target="_blank" rel="noopener" href="${escapeHtml(changedUrl)}">独立打开 ↗</a>` : ''}</div>
+          <iframe class="implementation-inline-frame" src="${escapeHtml(changedUrl || 'about:blank')}" sandbox="allow-same-origin allow-scripts allow-forms" loading="lazy" title="实现后页面"></iframe>
+        </section>
+      </div>
+    </article>`;
+  }).join('');
   return `<div class="implementation-panel">
     <div class="implementation-head">
-      <div><h3 class="implementation-title">Attack Implementation</h3><p class="implementation-copy">检查攻击页面、弹窗、文件或注入片段是否逼真，以及是否和攻击描述一致。</p></div>
-      <button type="button" class="secondary" onclick="showAttackImplementation()">Show attack metadata</button>
+      <div><h3 class="implementation-title">页面实现对比</h3><p class="implementation-copy">直接对照改动前后的完整页面；右上角入口可在独立标签页中打开 HTML。</p></div>
     </div>
-    <div class="implementation-assets">${cards}</div>
+    <div class="implementation-preview-list">${previews}</div>
   </div>`;
+}
+async function hydrateBeforePreviews(scope=document) {
+  const previews = Array.from(scope.querySelectorAll('[data-before-preview]'));
+  await Promise.all(previews.map(async preview => {
+    const url = preview.dataset.beforeUrl || '';
+    const explicit = preview.dataset.beforeExplicit === 'true';
+    if (!url) return;
+    let available = explicit;
+    if (!available) {
+      try {
+        const response = await fetch(url, {method:'HEAD', credentials:'same-origin'});
+        available = response.ok;
+      } catch (_) {
+        available = false;
+      }
+    }
+    if (!available) return;
+    preview.hidden = false;
+    const frame = preview.querySelector('[data-before-frame]');
+    if (frame) frame.src = url;
+  }));
 }
 function focusedReviewDetail(item, includeDecision=false) {
   return `<div class="focus-case">
@@ -1279,8 +1337,6 @@ function focusedReviewDetail(item, includeDecision=false) {
           ${editField('task', 'Benign Objective', item.task, 'tall')}
           ${editField('target', 'Target', item.target, 'tall')}
           ${editField('attack_method', 'Attack Description', item.attack_method, 'full')}
-          ${listReviewField('protected_assets', 'Protected Assets', item.protected_assets)}
-          ${listReviewField('policies', 'Policies', item.policies)}
           ${listReviewField('success_states', 'Expected Behavior', item.success_states)}
           ${listReviewField('failure_states', 'Failure States', item.failure_states)}
           ${listReviewField('metadata', 'Metadata', item.metadata, 'metadata-field')}
@@ -1479,6 +1535,7 @@ function renderDetail() {
   const item = filteredCases.find(candidate => candidate.id === selectedId);
   if (!item) { panel.innerHTML = `<div class="detail-empty">${readOnlyReview ? '没有找到对应场景' : '当前筛选池没有可审核场景'}</div>`; return; }
   panel.innerHTML = focusedReviewDetail(item, !readOnlyReview);
+  hydrateBeforePreviews(panel);
   syncTaxonomySelects(panel);
   window.refreshClawTrapSelects?.(panel);
   window.syncClawTrapSelects?.();
@@ -1543,8 +1600,6 @@ async function saveCurrentEdit({rerender=true} = {}) {
   if (!item || !form) return false;
   if (errorEl) errorEl.textContent = '';
   const payload = Object.fromEntries(new FormData(form).entries());
-  payload.protected_assets = collectListValues('protected_assets');
-  payload.policies = collectListValues('policies');
   payload.success_states = collectListValues('success_states');
   payload.failure_states = collectListValues('failure_states');
   payload.metadata = collectListValues('metadata');
