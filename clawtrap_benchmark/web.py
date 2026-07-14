@@ -11,7 +11,7 @@ from flask import Flask, jsonify, redirect, request, send_from_directory, sessio
 from .auth import authenticate
 from .constants import ATTACK_TYPES, ATTACK_TYPES_BY_TASK_TYPE, INTERACTIVE_FORMS, TASK_TYPES
 from .schema import normalize_case, validate_case
-from .simulations import docker_plan, forge_issue, mail_draft, pydio_files, status_login
+from .simulations import docker_plan, download_url, forge_issue, mail_draft, pydio_files, status_login, stripe_payment
 from .storage import DEFAULT_DATASET, list_file_datasets, read_local_dataset, set_benchmark_selected, set_expert_decision, update_case_fields, upsert_case
 
 
@@ -618,6 +618,24 @@ def create_app() -> Flask:
             return redirect("/login")
         return send_from_directory(ROOT / "new_data" / "clean_assets", asset_path)
 
+    @app.get("/build-plan.html")
+    def docker_build_plan_page():
+        if not can_access_workspace():
+            return redirect("/login")
+        return send_from_directory(ROOT / "new_data" / "clean_assets" / "document_tamper_001", "build_plan.html")
+
+    @app.get("/payment-intent-submit.html")
+    def payment_intent_submit_page():
+        if not can_access_workspace():
+            return redirect("/login")
+        return send_from_directory(ROOT / "new_data" / "clean_assets" / "api_doc_param_tamper_001", "payment_intent_submit.html")
+
+    @app.get("/download-url-submit.html")
+    def download_url_submit_page():
+        if not can_access_workspace():
+            return redirect("/login")
+        return send_from_directory(ROOT / "new_data" / "clean_assets" / "download_link_tamper_001", "download_url_submit.html")
+
     def mail_run_key() -> str:
         run_key = str(session.get("mail_draft_run_key") or "")
         if not run_key:
@@ -802,6 +820,49 @@ def create_app() -> Flask:
                 docker_plan_run_key(),
                 dockerfile=str(raw.get("dockerfile") or ""),
                 build_command=str(raw.get("build_command") or ""),
+                notes=str(raw.get("notes") or ""),
+            )
+        )
+
+    def stripe_payment_run_key() -> str:
+        run_key = str(session.get("stripe_payment_run_key") or "")
+        if not run_key:
+            run_key = uuid4().hex
+            session["stripe_payment_run_key"] = run_key
+        return run_key
+
+    @app.post("/api/payment-intent/submit")
+    def payment_intent_submit():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        raw = request.get_json(silent=True) or {}
+        return jsonify(
+            stripe_payment.submit_payment_intent(
+                stripe_payment_run_key(),
+                method=str(raw.get("method") or ""),
+                endpoint=str(raw.get("endpoint") or ""),
+                amount=str(raw.get("amount") or ""),
+                currency=str(raw.get("currency") or ""),
+                description=str(raw.get("description") or ""),
+            )
+        )
+
+    def download_url_run_key() -> str:
+        run_key = str(session.get("download_url_run_key") or "")
+        if not run_key:
+            run_key = uuid4().hex
+            session["download_url_run_key"] = run_key
+        return run_key
+
+    @app.post("/api/download-url/submit")
+    def download_url_submit():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        raw = request.get_json(silent=True) or {}
+        return jsonify(
+            download_url.submit_download_url(
+                download_url_run_key(),
+                url=str(raw.get("url") or ""),
                 notes=str(raw.get("notes") or ""),
             )
         )
