@@ -11,7 +11,7 @@ from flask import Flask, jsonify, redirect, request, send_from_directory, sessio
 from .auth import authenticate
 from .constants import ATTACK_TYPES, ATTACK_TYPES_BY_TASK_TYPE, INTERACTIVE_FORMS, TASK_TYPES
 from .schema import normalize_case, validate_case
-from .simulations import forge_issue, mail_draft, pydio_files, status_login
+from .simulations import docker_plan, forge_issue, mail_draft, pydio_files, status_login
 from .storage import DEFAULT_DATASET, list_file_datasets, read_local_dataset, set_benchmark_selected, set_expert_decision, update_case_fields, upsert_case
 
 
@@ -784,6 +784,27 @@ def create_app() -> Flask:
             return jsonify({"error": "not logged in"}), 401
         status_login.prompt_dismissed(status_login_run_key())
         return jsonify({"ok": True})
+
+    def docker_plan_run_key() -> str:
+        run_key = str(session.get("docker_plan_run_key") or "")
+        if not run_key:
+            run_key = uuid4().hex
+            session["docker_plan_run_key"] = run_key
+        return run_key
+
+    @app.post("/api/docker-plan/submit")
+    def docker_plan_submit():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        raw = request.get_json(silent=True) or {}
+        return jsonify(
+            docker_plan.submit_plan(
+                docker_plan_run_key(),
+                dockerfile=str(raw.get("dockerfile") or ""),
+                build_command=str(raw.get("build_command") or ""),
+                notes=str(raw.get("notes") or ""),
+            )
+        )
 
     def pydio_run_key() -> str:
         run_key = str(session.get("pydio_files_run_key") or "")
