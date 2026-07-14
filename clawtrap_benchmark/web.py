@@ -404,6 +404,13 @@ def page(title: str, body: str) -> str:
     .implementation-browser-open {{ flex:none; color:var(--accent-strong); font-size:12px; font-weight:850; text-decoration:none; }}
     .implementation-browser-open:hover {{ text-decoration:underline; }}
     .implementation-inline-frame {{ display:block; width:100%; height:clamp(580px,68vh,860px); border:0; background:#fff; }}
+    .task-files-panel {{ grid-column:1 / -1; padding:14px; border:1px solid var(--line); border-radius:8px; background:rgba(247,247,242,.68); }}
+    .task-files-panel > label {{ margin:0 0 9px; }}
+    .task-files-grid {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:9px; }}
+    .task-file-card {{ min-width:0; padding:11px 12px; border:1px solid var(--line); border-radius:8px; background:rgba(255,253,250,.9); }}
+    .task-file-card strong {{ display:block; color:var(--accent-strong); font:800 12px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace; }}
+    .task-file-card code {{ display:block; margin-top:6px; overflow-wrap:anywhere; white-space:normal; }}
+    .task-file-card span {{ display:block; margin-top:7px; color:var(--muted); font-size:12px; line-height:1.5; font-weight:650; }}
     .asset-modal {{ position:fixed; inset:0; z-index:1000; display:grid; grid-template-rows:auto 1fr; background:rgba(16,16,16,.72); backdrop-filter:blur(10px); }}
     .asset-modal-head {{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding:14px 18px; background:rgba(255,253,250,.98); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:2; box-shadow:0 8px 28px rgba(0,0,0,.08); }}
     .asset-modal-title {{ margin:0; color:var(--text); font-size:18px; font-weight:900; }}
@@ -1266,6 +1273,16 @@ function listReviewField(name, label, items, className='') {
   const addRow = typeof readOnlyReview !== 'undefined' && readOnlyReview ? '' : `<div class="list-add-row"><button type="button" class="secondary list-add-button" title="Add item" onclick="addListItem('${escapeAttr(name)}')">+</button></div>`;
   return `<div class="list-review-field ${className}" data-list-field="${escapeAttr(name)}"><label>${escapeHtml(label)}</label><div class="list-review-items">${rows}</div>${addRow}</div>`;
 }
+function taskFilesPanel(item) {
+  const files = Array.isArray(item.task_files) ? item.task_files : [];
+  if (!files.length) return '';
+  const cards = files.map(file => `<article class="task-file-card">
+    <strong>${escapeHtml(file.key || '-')}</strong>
+    <code>${escapeHtml(file.path || '-')}</code>
+    ${file.description ? `<span>${escapeHtml(file.description)}</span>` : ''}
+  </article>`).join('');
+  return `<div class="task-files-panel"><label>Task Files（题面引用 key，平台按路径挂载）</label><div class="task-files-grid">${cards}</div></div>`;
+}
 function attackImplementationPanel(item) {
   const assets = Array.isArray(item.attack_implementation) ? item.attack_implementation : [];
   if (!assets.length) {
@@ -1336,6 +1353,7 @@ function focusedReviewDetail(item, includeDecision=false) {
           ${editSelect('attack_type', 'Scenario Workflow', item.attack_type || '', [...new Set([...attackOptionsForTask(item.task_type), ...uniqueValues(allCases || [], 'attack_type'), item.attack_type].filter(Boolean))], 'taxonomy-field')}
           ${editField('task', 'Benign Objective', item.task, 'tall')}
           ${editField('target', 'Target', item.target, 'tall')}
+          ${taskFilesPanel(item)}
           ${editField('attack_method', 'Attack Description', item.attack_method, 'full')}
           ${listReviewField('success_states', 'Expected Behavior', item.success_states)}
           ${listReviewField('failure_states', 'Failure States', item.failure_states)}

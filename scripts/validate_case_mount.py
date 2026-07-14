@@ -58,16 +58,34 @@ def validate_manifest(manifest_path: Path) -> dict[str, Any]:
     checks.extend(["dataset:discoverable", "case:schema-valid"])
 
     mounts: set[str] = set()
+    task_text = str(cases[0].get("task") or "")
+    if re.search(r"(?:^|\s)(?:new_data/|/workspace/|/Users/|[A-Za-z]:\\)", task_text):
+        raise AssertionError("task contains a local path instead of a task_files key")
+    declared_task_files = {
+        str(item.get("key") or ""): str(item.get("path") or "")
+        for item in cases[0].get("task_files", [])
+        if isinstance(item, dict)
+    }
+    referenced_task_keys = set(re.findall(r"\[([a-z][a-z0-9_]*)\]", task_text))
+    if set(declared_task_files) != referenced_task_keys:
+        raise AssertionError("task [key] references and task_files declarations differ")
+    manifest_task_keys: set[str] = set()
     for asset in manifest.get("task_assets", []):
         task_asset_path = require_file(str(asset["source"]), checks)
+        key = str(asset.get("key") or "")
+        if not key or key in manifest_task_keys:
+            raise AssertionError(f"missing or duplicate task asset key: {key}")
+        manifest_task_keys.add(key)
         target = str(asset["mount_target"])
         if target in mounts:
             raise AssertionError(f"duplicate mount target: {target}")
         mounts.add(target)
         if not asset.get("agent_visible") or not asset.get("read_only"):
             raise AssertionError("task assets must be agent-visible and read-only")
-        if target not in str(cases[0].get("task", "")):
-            raise AssertionError(f"task does not reference mounted asset: {target}")
+        if declared_task_files.get(key) != str(asset["source"]):
+            raise AssertionError(f"case task_files path and manifest source differ for key: {key}")
+    if manifest_task_keys != set(declared_task_files):
+        raise AssertionError("manifest task asset keys and case task_files keys differ")
     checks.append("task-assets:mountable")
 
     modes = manifest.get("modes", {})
@@ -164,8 +182,14 @@ def validate_manifest(manifest_path: Path) -> dict[str, Any]:
         raise AssertionError("could not authenticate local review client")
     if client.get(manifest["review"]["dataset_query"]).status_code != 200:
         raise AssertionError("review dataset route is not loadable")
+    clean_review_route = str(modes["clean"].get("review_route") or "")
+    if not clean_review_route or client.get(clean_review_route).status_code != 200:
+        raise AssertionError("clean preview route is not loadable")
     if client.get(review_route).status_code != 200:
         raise AssertionError("attack preview route is not loadable")
+    for static in modes["clean"].get("static_mounts", []):
+        if client.get(static["route"]).status_code != 200:
+            raise AssertionError(f"clean static route is not loadable: {static['route']}")
     for static in modes["attack"].get("static_mounts", []):
         if client.get(static["route"]).status_code != 200:
             raise AssertionError(f"attack static route is not loadable: {static['route']}")
@@ -175,6 +199,8 @@ def validate_manifest(manifest_path: Path) -> dict[str, Any]:
         "/evaluator-assets/store_checkout_001/grader_spec.json",
         "/attack-assets/../evaluator_assets/store_checkout_001/grader_spec.json",
         "/attack-assets/../source_archives/store_checkout_001/checkout_overview_original.png",
+        "/clean-assets/../evaluator_assets/store_checkout_001/grader_spec.json",
+        "/clean-assets/../source_archives/store_checkout_001/checkout_overview_original.png",
     ]
     leaked = [probe for probe in private_probes if client.get(probe).status_code != 404]
     if leaked:

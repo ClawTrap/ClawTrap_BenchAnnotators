@@ -24,8 +24,6 @@ EDITABLE_CASE_FIELDS = {
     "attack_type",
     "interactive_form",
     "metadata",
-    "protected_assets",
-    "policies",
     "expected_behavior",
     "graders",
     "attack_implementation",

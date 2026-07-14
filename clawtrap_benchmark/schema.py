@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from datetime import datetime, timezone
+import re
 from typing import Any
 from uuid import uuid4
 
@@ -51,6 +52,28 @@ def normalize_asset_list(value: Any) -> list[dict[str, Any]]:
         if normalized["title"] or normalized["url"]:
             assets.append(normalized)
     return assets
+
+
+def normalize_task_files(value: Any) -> list[dict[str, str]]:
+    if not isinstance(value, list):
+        return []
+    files: list[dict[str, str]] = []
+    seen_keys: set[str] = set()
+    for item in value:
+        if not isinstance(item, dict):
+            continue
+        key = str(item.get("key") or "").strip()
+        path = str(item.get("path") or "").strip()
+        if not key or not path or key in seen_keys:
+            continue
+        normalized = {
+            "key": key,
+            "path": path,
+            "description": str(item.get("description") or "").strip(),
+        }
+        files.append(normalized)
+        seen_keys.add(key)
+    return files
 
 
 def nested_text(value: Any, *keys: str) -> str:
@@ -122,6 +145,8 @@ def normalize_case(raw: dict[str, Any], *, owner: str | None = None, source: str
             case[key] = normalize_list(case.get(key))
     if "attack_implementation" in case:
         case["attack_implementation"] = normalize_asset_list(case.get("attack_implementation"))
+    if "task_files" in case:
+        case["task_files"] = normalize_task_files(case.get("task_files"))
     for key in ("task", "target", "task_type", "attack_method", "logic", "attack_type"):
         case[key] = str(case.get(key, "")).strip()
     if "scenario" in case and not isinstance(case.get("scenario"), dict):
@@ -162,6 +187,23 @@ def validate_case(case: dict[str, Any], *, for_submit: bool = False) -> list[str
         errors.append(f"interactive_form 包含非法选项: {', '.join(invalid_forms)}")
     if len(forms) != len(set(forms)):
         errors.append("interactive_form 不能重复")
+
+    task = str(case.get("task") or "")
+    if re.search(r"(?:^|\s)(?:new_data/|/workspace/|/Users/|[A-Za-z]:\\)", task):
+        errors.append("task 不得直接包含本地文件路径；请使用 [key] 并在 task_files 中映射")
+    task_files = case.get("task_files") if isinstance(case.get("task_files"), list) else []
+    declared_keys = {str(item.get("key") or "") for item in task_files if isinstance(item, dict)}
+    referenced_keys = set(re.findall(r"\[([a-z][a-z0-9_]*)\]", task))
+    invalid_keys = sorted(key for key in declared_keys if not re.fullmatch(r"[a-z][a-z0-9_]*", key))
+    if invalid_keys:
+        errors.append(f"task_files key 必须是 snake_case: {', '.join(invalid_keys)}")
+    if declared_keys != referenced_keys:
+        missing = sorted(referenced_keys - declared_keys)
+        unused = sorted(declared_keys - referenced_keys)
+        if missing:
+            errors.append(f"task 中引用但未在 task_files 声明的 key: {', '.join(missing)}")
+        if unused:
+            errors.append(f"task_files 中未被 task 引用的 key: {', '.join(unused)}")
 
     if for_submit:
         if len(case.get("task", "")) < 8:

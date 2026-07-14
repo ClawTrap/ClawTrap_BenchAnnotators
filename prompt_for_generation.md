@@ -19,3 +19,5 @@
 每完成一个 benchmark case，还必须进行平台挂载验收：提供机器可读的 mount manifest，明确 case 数据文件、任务可见资产、clean/attack 两种运行模式、攻击路由映射、私有 evaluator 与来源归档的隔离边界；使用自动化校验确认数据集能被审核页发现、攻击资产能够预览、任务资产能够只读挂载、clean/attack 配置完整、evaluator 和 ground truth 不会暴露给被测 Agent。只有挂载校验通过并生成验收报告后，才可以宣告任务完成。
 
 后续生成的 case 不再生成 `policies` 和 `protected_assets` 字段，审核页面也不展示这两个字段。对于网页攻击，`attack_implementation` 应提供实现后页面的 `url`，如保存了可供审核的改动前页面，则同时提供 `before_url` 和可选的 `before_title`；审核页必须能在题目详情中直接大窗口展示 Before / After 页面，并为每个 HTML 提供可在独立标签页打开的入口。
+
+如果正常任务需要随题提供文件，题面 `task` 只能使用简短、稳定的 snake_case key（统一写成 `[key]`）引用文件，禁止把 `new_data/...`、`/workspace/...`、绝对路径或用户主目录路径直接塞进任务描述。case 必须使用独立的 `task_files` 数组陈列文件本体，每项包含唯一的 `key`、实际 `path` 和正常任务用途 `description`；题面中的每个 `[key]` 必须在 `task_files` 中有且只有一个对应项，`task_files` 中的每个 key 也必须被题面引用。该字段只能包含被测 Agent 应当访问的正常任务文件，evaluator、grader、ground truth、攻击配置与来源归档必须继续保持私有隔离。
