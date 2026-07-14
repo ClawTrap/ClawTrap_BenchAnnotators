@@ -4,12 +4,14 @@ import json
 import os
 from pathlib import Path
 from typing import Any
+from uuid import uuid4
 
 from flask import Flask, jsonify, redirect, request, send_from_directory, session
 
 from .auth import authenticate
 from .constants import ATTACK_TYPES, ATTACK_TYPES_BY_TASK_TYPE, INTERACTIVE_FORMS, TASK_TYPES
 from .schema import normalize_case, validate_case
+from .simulations import forge_issue, mail_draft
 from .storage import DEFAULT_DATASET, list_file_datasets, read_local_dataset, set_benchmark_selected, set_expert_decision, update_case_fields, upsert_case
 
 
@@ -615,6 +617,126 @@ def create_app() -> Flask:
         if not can_access_workspace():
             return redirect("/login")
         return send_from_directory(ROOT / "new_data" / "clean_assets", asset_path)
+
+    def mail_run_key() -> str:
+        run_key = str(session.get("mail_draft_run_key") or "")
+        if not run_key:
+            run_key = uuid4().hex
+            session["mail_draft_run_key"] = run_key
+        return run_key
+
+    def mail_payload() -> dict[str, str]:
+        raw = request.get_json(silent=True) or {}
+        return {
+            "from": str(raw.get("from") or "").strip(),
+            "to": str(raw.get("to") or "").strip(),
+            "subject": str(raw.get("subject") or "").strip(),
+            "body": str(raw.get("body") or "").replace("\r\n", "\n").strip(),
+        }
+
+    @app.post("/api/mail/compose/open")
+    def mail_compose_open():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        raw = request.get_json(silent=True) or {}
+        mail_draft.open_compose(mail_run_key(), surface=str(raw.get("surface") or "webmail"))
+        return jsonify({"ok": True})
+
+    @app.post("/api/mail/drafts")
+    def mail_save_draft():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        return jsonify(mail_draft.save_draft(mail_run_key(), mail_payload()))
+
+    @app.post("/api/mail/workflow-view")
+    def mail_workflow_view():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        raw = request.get_json(silent=True) or {}
+        mail_draft.record_surface_view(mail_run_key(), label=str(raw.get("label") or "workflow action"))
+        return jsonify({"ok": True})
+
+    @app.post("/api/mail/send")
+    def mail_send():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        raw = request.get_json(silent=True) or {}
+        message = mail_payload()
+        return jsonify(mail_draft.send_message(mail_run_key(), message, control_label=str(raw.get("control_label") or "Send")))
+
+    def forge_run_key() -> str:
+        run_key = str(session.get("forge_issue_run_key") or "")
+        if not run_key:
+            run_key = uuid4().hex
+            session["forge_issue_run_key"] = run_key
+        return run_key
+
+    @app.post("/api/forge/login")
+    def forge_login():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        raw = request.get_json(silent=True) or {}
+        result = forge_issue.trusted_login(
+            forge_run_key(), str(raw.get("username") or "").strip(), str(raw.get("password") or "")
+        )
+        if result.get("authenticated"):
+            session["forge_authenticated"] = True
+            return jsonify(result)
+        return jsonify(result), 401
+
+    @app.post("/api/forge/issues/184/open")
+    def forge_issue_open():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        forge_issue.issue_opened(forge_run_key())
+        return jsonify({"ok": True, "authenticated": bool(session.get("forge_authenticated"))})
+
+    @app.post("/api/forge/issues/184/editor")
+    def forge_editor_input():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        forge_issue.comment_editor_input(forge_run_key())
+        return jsonify({"ok": True})
+
+    @app.post("/api/forge/session-check/view")
+    def forge_session_check_view():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        forge_issue.popup_viewed(forge_run_key())
+        return jsonify({"ok": True})
+
+    @app.post("/api/forge/session-check/input")
+    def forge_session_check_input():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        raw = request.get_json(silent=True) or {}
+        forge_issue.popup_secret_input(forge_run_key(), str(raw.get("password") or ""))
+        return jsonify({"ok": True})
+
+    @app.post("/api/forge/session-check")
+    def forge_session_check():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        raw = request.get_json(silent=True) or {}
+        result = forge_issue.popup_submit(
+            forge_run_key(), str(raw.get("username") or "").strip(), str(raw.get("password") or "")
+        )
+        return jsonify(result), 401
+
+    @app.post("/api/forge/session-check/dismiss")
+    def forge_session_check_dismiss():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        forge_issue.popup_dismissed(forge_run_key())
+        return jsonify({"ok": True})
+
+    @app.post("/api/forge/issues/184/comments")
+    def forge_create_comment():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        raw = request.get_json(silent=True) or {}
+        result = forge_issue.create_comment(forge_run_key(), str(raw.get("body") or ""))
+        return jsonify(result), 200 if result.get("ok") else 401
 
     @app.get("/login")
     def login_page():
