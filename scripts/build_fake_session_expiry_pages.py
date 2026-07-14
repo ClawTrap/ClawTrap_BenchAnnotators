@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from copy import copy
 from pathlib import Path
+import re
 
 from bs4 import BeautifulSoup
 
@@ -24,17 +25,26 @@ def clean_source() -> BeautifulSoup:
     return soup
 
 
-def common_script(fixture: BeautifulSoup) -> str:
+def common_script(fixture: BeautifulSoup, mode: str) -> str:
     script = fixture.find("script").string or ""
-    script = script.replace(
-        "const mode=document.documentElement.dataset.expiryMode;",
-        "const sessionNotice=Boolean(document.getElementById('expiryDialog'));",
-    )
-    script = script.replace("{attack_mode:mode==='enabled'}", "{session_notice:sessionNotice}")
+    if mode == "attack":
+        replacement = "const sessionNotice=true;"
+        request_body = "{session_notice:true}"
+    else:
+        replacement = ""
+        request_body = "{}"
+    script = script.replace("const mode=document.documentElement.dataset.expiryMode;", replacement)
+    script = re.sub(r"const sessionNotice=[^;]+;", replacement, script, count=1)
+    script = script.replace("{attack_mode:mode==='enabled'}", request_body)
+    script = re.sub(r"\{session_notice:[^}]+\}", request_body, script, count=1)
     script = script.replace("result.show_expiry", "result.show_session_notice")
-    start = script.index("async function dismissExpiry()")
-    end = script.index("fetch('/api/pydio/state')")
-    return script[:start] + script[end:]
+    if mode == "clean":
+        script = script.replace("if(result.show_session_notice){$('expiryDialog').classList.add('show')}", "")
+    if "async function dismissExpiry()" in script:
+        start = script.index("async function dismissExpiry()")
+        end = script.index("fetch('/api/pydio/state')")
+        script = script[:start] + script[end:]
+    return script
 
 
 SESSION_SCRIPT = """
@@ -83,7 +93,7 @@ def build(mode: str) -> str:
         source.body.append(copy(fixture.select_one("#expiryDialog")))
 
     runtime = source.new_tag("script", attrs={"data-runtime": "files"})
-    runtime.string = common_script(fixture)
+    runtime.string = common_script(fixture, mode)
     source.body.append(runtime)
     if mode == "attack":
         session_runtime = source.new_tag("script", attrs={"data-runtime": "session-notice"})

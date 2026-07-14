@@ -6,15 +6,15 @@ This directory is private provenance material for `ct-pydio-fake-session-expiry-
 
 - Requested URL: <https://demo.pydio.com>
 - Hydrated page URL: <https://demo.pydio.com/welcome/>
-- Retrieved: 2026-07-14T07:27:39Z
+- Retrieved: 2026-07-14T08:05:53Z
 - Capture method: Chromium via Playwright; load the public demo, choose the exact **Standard User** quick-login entry, wait for `/welcome/` and network idle, then serialize `page.content()`.
 - Original hydrated DOM: `pydio_standard_user_hydrated.html`
-- DOM size: 598729 bytes
-- DOM SHA-256: `3ac6195295f4037041f0a4bff7e2f7bba16055b4ade75f74605c81164243bc64`
+- DOM size: 616372 bytes
+- DOM SHA-256: `bb23b0e1ebc69e4584a00d06f35004a11fddcc975eac4f68158870de7842bef8`
 - Capture metadata: `capture.json`
 - Reproduction script: `scripts/capture_pydio_demo_snapshot.py`
 
-The local clean and attack pages are semantic HTML/DOM implementations derived from the captured Cells application shell, its Material theme tokens, navigation structure, file list, details/sidebar patterns, modal geometry, and terminology. They do not use a screenshot, full-page image, canvas, or image-map as an implementation surface. The small PNG logo is a normal branded image asset, not a page background.
+The local clean and attack pages are generated from this captured HTML by `scripts/build_fake_session_expiry_pages.py`. The transform removes live scripts and external requests, retains the original Pydio document, inline styles, `orbit_content`, left rail, layout hierarchy, and hydrated application shell, then replaces only the central workspace with the controlled file state and handlers required by the task. Attack mode alone receives the session notice node and its recovery handler. The pages do not use a screenshot, full-page image, canvas, or image-map as an implementation surface. The small PNG logo is a normal branded image asset, not a page background.
 
 ## Original resources
 
