@@ -32,6 +32,26 @@ def require_file(relative: str, checks: list[str]) -> Path:
     return path
 
 
+def require_path(relative: str, checks: list[str]) -> Path:
+    path = ROOT / relative
+    if not path.exists():
+        raise AssertionError(f"missing path: {relative}")
+    checks.append(f"path:{relative}")
+    return path
+
+
+def static_probe_route(static: dict[str, Any]) -> str:
+    route = str(static["route"])
+    source = ROOT / str(static["source"])
+    if source.is_dir():
+        first_file = next((path for path in sorted(source.rglob("*")) if path.is_file()), None)
+        if first_file is None:
+            raise AssertionError(f"empty static directory: {static['source']}")
+        suffix = first_file.relative_to(source).as_posix()
+        return f"{route.rstrip('/')}/{suffix}"
+    return route
+
+
 def hidden_form_values(path: Path) -> dict[str, int | str]:
     text = path.read_text(encoding="utf-8")
     fields: dict[str, int | str] = {}
@@ -119,13 +139,13 @@ def validate_mail_draft_profile(
     if normalized_clean != normalized_attack:
         raise AssertionError("mail clean/attack pages contain differences beyond the declared workflow mode and asset namespace")
     lowered = (clean_text + attack_text).lower()
-    if "<canvas" in lowered or "class=\"snapshot\"" in lowered or re.search(r"background(?:-image)?\s*:[^;]*url\([^)]*\.(?:png|jpe?g)", lowered):
+    if "<canvas" in lowered or "<map " in lowered or "class=\"snapshot\"" in lowered or "/snapshots/" in lowered:
         raise AssertionError("mail implementation must use captured HTML/DOM, not a screenshot or canvas page base")
     source_dom = ROOT / "new_data/source_archives/mail_draft_001/roundcubeplus_compose_hydrated.html"
     source_text = source_dom.read_text(encoding="utf-8")
     if source_dom.stat().st_size < 50_000 or "Roundcube Webmail :: Compose" not in source_text or "rcmbtn111" not in source_text:
         raise AssertionError("source archive lacks a substantial captured Roundcube compose HTML snapshot")
-    for required in ("Save draft", "Submit for approval", "POST", "/api/mail/drafts", "/api/mail/send"):
+    for required in ("Save", "Save as draft", "Submit for approval", "POST", "/api/mail/drafts", "/api/mail/send"):
         if required not in attack_text:
             raise AssertionError(f"mail page is missing required interaction: {required}")
 
@@ -757,7 +777,7 @@ def validate_manifest(manifest_path: Path) -> dict[str, Any]:
         if not str(mode.get("route") or "").startswith("/"):
             raise AssertionError(f"target route must be absolute for {mode_name}")
         for static in mode.get("static_mounts", []):
-            require_file(str(static["source"]), checks)
+            require_path(str(static["source"]), checks)
             route = str(static["route"])
             if not route.startswith("/"):
                 raise AssertionError(f"static route must be absolute: {route}")
@@ -817,10 +837,10 @@ def validate_manifest(manifest_path: Path) -> dict[str, Any]:
     if client.get(review_route).status_code != 200:
         raise AssertionError("attack preview route is not loadable")
     for static in modes["clean"].get("static_mounts", []):
-        if client.get(static["route"]).status_code != 200:
+        if client.get(static_probe_route(static)).status_code != 200:
             raise AssertionError(f"clean static route is not loadable: {static['route']}")
     for static in modes["attack"].get("static_mounts", []):
-        if client.get(static["route"]).status_code != 200:
+        if client.get(static_probe_route(static)).status_code != 200:
             raise AssertionError(f"attack static route is not loadable: {static['route']}")
     checks.append("review-platform:loadable")
 

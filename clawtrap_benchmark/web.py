@@ -413,6 +413,16 @@ def page(title: str, body: str) -> str:
     .task-file-card strong {{ display:block; color:var(--accent-strong); font:800 12px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace; }}
     .task-file-card code {{ display:block; margin-top:6px; overflow-wrap:anywhere; white-space:normal; }}
     .task-file-card span {{ display:block; margin-top:7px; color:var(--muted); font-size:12px; line-height:1.5; font-weight:650; }}
+    .task-file-head {{ display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }}
+    .task-file-meta {{ margin-top:6px; color:var(--muted); font-size:11px; line-height:1.45; overflow-wrap:anywhere; }}
+    .task-file-description {{ margin-top:8px; color:var(--muted); font-size:12px; line-height:1.5; font-weight:650; }}
+    .task-file-content {{ margin-top:10px; padding:10px; border:1px solid rgba(20,20,20,.1); border-radius:7px; background:#fff; max-height:360px; overflow:auto; }}
+    .task-kv {{ width:100%; border-collapse:collapse; table-layout:fixed; }}
+    .task-kv th,.task-kv td {{ padding:6px 7px; border-top:1px solid rgba(20,20,20,.08); vertical-align:top; text-align:left; font-size:12px; line-height:1.45; }}
+    .task-kv tr:first-child th,.task-kv tr:first-child td {{ border-top:0; }}
+    .task-kv th {{ width:34%; color:var(--accent-strong); font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-weight:850; overflow-wrap:anywhere; }}
+    .task-kv td {{ color:var(--ink); white-space:pre-wrap; overflow-wrap:anywhere; }}
+    .task-file-pre {{ margin:0; white-space:pre-wrap; overflow-wrap:anywhere; font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace; color:#27343b; }}
     .asset-modal {{ position:fixed; inset:0; z-index:1000; display:grid; grid-template-rows:auto 1fr; background:rgba(16,16,16,.72); backdrop-filter:blur(10px); }}
     .asset-modal-head {{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding:14px 18px; background:rgba(255,253,250,.98); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:2; box-shadow:0 8px 28px rgba(0,0,0,.08); }}
     .asset-modal-title {{ margin:0; color:var(--text); font-size:18px; font-weight:900; }}
@@ -1599,12 +1609,50 @@ function listReviewField(name, label, items, className='') {
 function taskFilesPanel(item) {
   const files = Array.isArray(item.task_files) ? item.task_files : [];
   if (!files.length) return '';
-  const cards = files.map(file => `<article class="task-file-card">
-    <strong>${escapeHtml(file.key || '-')}</strong>
-    <code>${escapeHtml(file.path || '-')}</code>
-    ${file.description ? `<span>${escapeHtml(file.description)}</span>` : ''}
-  </article>`).join('');
+  const previews = Array.isArray(item.task_file_previews) ? item.task_file_previews : [];
+  const byKey = new Map(previews.map(preview => [preview.key, preview]));
+  const cards = files.map(file => {
+    const preview = byKey.get(file.key) || {};
+    const description = preview.description || file.description || '';
+    const meta = [
+      preview.format ? `format: ${preview.format}` : '',
+      Number.isFinite(preview.bytes) ? `${preview.bytes} bytes` : '',
+      preview.truncated ? 'truncated preview' : '',
+      file.path ? `path: ${file.path}` : '',
+    ].filter(Boolean).join(' · ');
+    const content = preview.error
+      ? `<pre class="task-file-pre">Preview unavailable: ${escapeHtml(preview.error)}</pre>`
+      : taskFileContent(preview);
+    return `<article class="task-file-card">
+      <div class="task-file-head"><strong>[${escapeHtml(file.key || '-')}]</strong></div>
+      ${meta ? `<div class="task-file-meta">${escapeHtml(meta)}</div>` : ''}
+      ${description ? `<div class="task-file-description">${escapeHtml(description)}</div>` : ''}
+      <div class="task-file-content">${content}</div>
+    </article>`;
+  }).join('');
   return `<div class="task-files-panel"><label>Task Files（题面引用 key，平台按路径挂载）</label><div class="task-files-grid">${cards}</div></div>`;
+}
+function taskFileContent(preview) {
+  if (preview && preview.value && typeof preview.value === 'object' && !Array.isArray(preview.value)) {
+    return jsonValueTable(preview.value);
+  }
+  return `<pre class="task-file-pre">${escapeHtml(preview?.text || '')}</pre>`;
+}
+function jsonValueTable(value) {
+  const rows = Object.entries(value || {}).map(([key, raw]) => `<tr><th>${escapeHtml(key)}</th><td>${formatJsonPreviewValue(raw)}</td></tr>`).join('');
+  return `<table class="task-kv"><tbody>${rows}</tbody></table>`;
+}
+function formatJsonPreviewValue(value) {
+  if (Array.isArray(value)) {
+    if (!value.length) return '<span class="muted">[]</span>';
+    if (value.every(item => typeof item !== 'object' || item === null)) return escapeHtml(value.join('\\n'));
+    return `<pre class="task-file-pre">${escapeHtml(JSON.stringify(value, null, 2))}</pre>`;
+  }
+  if (value && typeof value === 'object') {
+    return `<pre class="task-file-pre">${escapeHtml(JSON.stringify(value, null, 2))}</pre>`;
+  }
+  if (value === null || value === undefined || value === '') return '<span class="muted">-</span>';
+  return escapeHtml(String(value));
 }
 function attackImplementationPanel(item) {
   const assets = Array.isArray(item.attack_implementation) ? item.attack_implementation : [];

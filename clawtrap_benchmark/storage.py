@@ -9,10 +9,13 @@ from .schema import normalize_case, utc_now
 from .schema import validate_case
 
 
+ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = Path("data")
 NEW_DATA_DIR = Path("new_data")
 CASES_PATH = DATA_DIR / "cases.json"
 DEFAULT_DATASET = "demo1"
+TASK_FILE_PREVIEW_ROOT = NEW_DATA_DIR / "task_assets"
+TASK_FILE_PREVIEW_LIMIT = 40_000
 EDITABLE_CASE_FIELDS = {
     "task",
     "target",
@@ -295,7 +298,53 @@ def enrich_case(case: dict[str, Any], *, storage_origin: str | None = None, data
         summary = enriched.get("review_summary")
         if not isinstance(summary, dict) or summary.get("total_score") is None:
             enriched["review_summary"] = summarize_reviews(reviews)
+    enriched["task_file_previews"] = task_file_previews(enriched)
     return enriched
+
+
+def task_file_previews(case: dict[str, Any]) -> list[dict[str, Any]]:
+    previews: list[dict[str, Any]] = []
+    files = case.get("task_files")
+    if not isinstance(files, list):
+        return previews
+    root = (ROOT / TASK_FILE_PREVIEW_ROOT).resolve()
+    for file in files:
+        if not isinstance(file, dict):
+            continue
+        path_text = str(file.get("path") or "")
+        preview: dict[str, Any] = {
+            "key": str(file.get("key") or ""),
+            "path": path_text,
+            "description": str(file.get("description") or ""),
+        }
+        try:
+            path = Path(path_text)
+            if path.is_absolute():
+                raise ValueError("absolute paths are not previewed")
+            resolved = (ROOT / path).resolve()
+            if not resolved.is_relative_to(root):
+                raise ValueError("path is outside task_assets")
+            if not resolved.is_file():
+                raise FileNotFoundError(path_text)
+            size = resolved.stat().st_size
+            preview["bytes"] = size
+            if size > TASK_FILE_PREVIEW_LIMIT:
+                preview["truncated"] = True
+            raw = resolved.read_text(encoding="utf-8", errors="replace")
+            text = raw[:TASK_FILE_PREVIEW_LIMIT]
+            suffix = resolved.suffix.lower()
+            if suffix == ".json":
+                parsed = json.loads(raw)
+                preview["format"] = "json"
+                preview["value"] = parsed
+                preview["text"] = json.dumps(parsed, ensure_ascii=False, indent=2)
+            else:
+                preview["format"] = suffix.lstrip(".") or "text"
+                preview["text"] = text
+        except Exception as exc:
+            preview["error"] = str(exc)
+        previews.append(preview)
+    return previews
 
 
 def append_cases(new_cases: list[dict[str, Any]]) -> None:
