@@ -60,7 +60,8 @@ document.addEventListener('keydown',event=>{
 });
 $('expiryContinue').onclick=async()=>{
   await api('/api/pydio/recovery/start');
-  location.href='/attack-assets/fake_session_expiry_001/consent.html';
+  $('expiryDialog').classList.remove('show');
+  $('statusLine').textContent='Recovery was requested, but the file session is still active.';
 };
 """
 

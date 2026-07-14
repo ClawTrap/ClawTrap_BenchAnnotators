@@ -403,6 +403,7 @@ def page(title: str, body: str) -> str:
     .implementation-browser-head {{ min-height:48px; display:flex; justify-content:space-between; align-items:center; gap:12px; padding:9px 12px; border-bottom:1px solid var(--line); background:rgba(247,247,242,.92); }}
     .implementation-browser-label {{ display:grid; gap:2px; color:var(--text); font-size:13px; font-weight:900; }}
     .implementation-browser-label small {{ color:var(--muted); font-size:10px; font-weight:800; text-transform:uppercase; }}
+    .implementation-browser-actions {{ display:flex; align-items:center; justify-content:flex-end; gap:10px; flex-wrap:wrap; }}
     .implementation-browser-open {{ flex:none; color:var(--accent-strong); font-size:12px; font-weight:850; text-decoration:none; }}
     .implementation-browser-open:hover {{ text-decoration:underline; }}
     .implementation-inline-frame {{ display:block; width:100%; height:clamp(580px,68vh,860px); border:0; background:#fff; }}
@@ -1667,13 +1668,14 @@ function attackImplementationPanel(item) {
     const inferredBeforeUrl = !explicitBeforeUrl && changedUrl.startsWith('/attack-assets/') ? changedUrl.replace('/attack-assets/', '/clean-assets/') : '';
     const beforeUrl = explicitBeforeUrl || inferredBeforeUrl;
     const beforeTitle = asset.before_title || '改动前';
+    const sourceLinks = sourceUrlLinks(item);
     return `<article class="implementation-preview-group">
       <div class="implementation-preview-summary">
         <div><h4>${escapeHtml(asset.title || `Asset ${index + 1}`)}</h4><p>${escapeHtml(asset.type || 'attack asset')} · ${escapeHtml(asset.description || '')}</p></div>
       </div>
       <div class="implementation-preview-grid">
         ${beforeUrl ? `<section class="implementation-browser" data-before-preview data-before-url="${escapeHtml(beforeUrl)}" data-before-explicit="${explicitBeforeUrl ? 'true' : 'false'}" hidden>
-          <div class="implementation-browser-head"><span class="implementation-browser-label"><small>Before</small>${escapeHtml(beforeTitle)}</span><a class="implementation-browser-open" target="_blank" rel="noopener" href="${escapeHtml(beforeUrl)}">独立打开 ↗</a></div>
+          <div class="implementation-browser-head"><span class="implementation-browser-label"><small>Before</small>${escapeHtml(beforeTitle)}</span><span class="implementation-browser-actions">${sourceLinks}<a class="implementation-browser-open" target="_blank" rel="noopener" href="${escapeHtml(beforeUrl)}">打开快照 ↗</a></span></div>
           <iframe class="implementation-inline-frame" data-before-frame sandbox="allow-same-origin allow-scripts allow-forms" loading="lazy" title="${escapeHtml(beforeTitle)}"></iframe>
         </section>` : ''}
         <section class="implementation-browser">
@@ -1689,6 +1691,13 @@ function attackImplementationPanel(item) {
     </div>
     <div class="implementation-preview-list">${previews}</div>
   </div>`;
+}
+function sourceUrlLinks(item) {
+  const urls = Array.isArray(item.source_urls) ? item.source_urls : [];
+  if (!urls.length) return '';
+  const first = urls[0];
+  const title = urls.map(entry => `${entry.label || 'Source'}: ${entry.url}`).join('\\n');
+  return `<a class="implementation-browser-open" target="_blank" rel="noopener" title="${escapeHtml(title)}" href="${escapeHtml(first.url)}">原网页 ↗</a>`;
 }
 async function hydrateBeforePreviews(scope=document) {
   const previews = Array.from(scope.querySelectorAll('[data-before-preview]'));

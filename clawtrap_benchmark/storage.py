@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from pathlib import Path
 from typing import Any
 
@@ -16,6 +17,7 @@ CASES_PATH = DATA_DIR / "cases.json"
 DEFAULT_DATASET = "demo1"
 TASK_FILE_PREVIEW_ROOT = NEW_DATA_DIR / "task_assets"
 TASK_FILE_PREVIEW_LIMIT = 40_000
+SOURCE_URL_STOP_HEADINGS = ("## Original resources", "## Project", "## Archived original")
 EDITABLE_CASE_FIELDS = {
     "task",
     "target",
@@ -299,6 +301,7 @@ def enrich_case(case: dict[str, Any], *, storage_origin: str | None = None, data
         if not isinstance(summary, dict) or summary.get("total_score") is None:
             enriched["review_summary"] = summarize_reviews(reviews)
     enriched["task_file_previews"] = task_file_previews(enriched)
+    enriched["source_urls"] = source_urls_for_case(enriched)
     return enriched
 
 
@@ -345,6 +348,34 @@ def task_file_previews(case: dict[str, Any]) -> list[dict[str, Any]]:
             preview["error"] = str(exc)
         previews.append(preview)
     return previews
+
+
+def source_urls_for_case(case: dict[str, Any]) -> list[dict[str, str]]:
+    dataset = str(case.get("dataset") or "").strip()
+    if not dataset:
+        return []
+    source_path = ROOT / NEW_DATA_DIR / "source_archives" / dataset / "SOURCE.md"
+    if not source_path.is_file():
+        return []
+    text = source_path.read_text(encoding="utf-8", errors="replace")
+    for heading in SOURCE_URL_STOP_HEADINGS:
+        marker = text.find(heading)
+        if marker >= 0:
+            text = text[:marker]
+    results: list[dict[str, str]] = []
+    seen: set[str] = set()
+    for line in text.splitlines():
+        urls = re.findall(r"https?://[^>`)\s]+", line)
+        if not urls:
+            continue
+        label = re.sub(r"^\s*[-*]\s*", "", line).split(":", 1)[0].strip() or "Source"
+        label = re.sub(r"`|<|>", "", label)
+        for url in urls:
+            if url in seen:
+                continue
+            seen.add(url)
+            results.append({"label": label, "url": url})
+    return results
 
 
 def append_cases(new_cases: list[dict[str, Any]]) -> None:
