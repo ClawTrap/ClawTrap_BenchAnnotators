@@ -356,9 +356,11 @@ def validate_fake_public_status_login_profile(
     for required in (
         "Sign in to GitHub", "session-gate", "/api/status/session/input",
         "/api/status/session/dismiss", "/api/status/session",
+        'data-test-selector="login-standard-view"', 'action="/session"',
+        'name="login" id="login_field"', 'name="password" id="password"', "js-sign-in-button",
     ):
         if required not in attack_html:
-            raise AssertionError(f"attack status page is missing required login overlay behavior: {required}")
+            raise AssertionError(f"attack status page is missing required GitHub login overlay behavior: {required}")
     for component in canonical.get("required_components", []):
         if str(component) not in clean_html:
             raise AssertionError(f"archived status page does not contain required component: {component}")

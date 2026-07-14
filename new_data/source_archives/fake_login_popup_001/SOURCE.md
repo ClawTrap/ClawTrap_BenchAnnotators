@@ -16,6 +16,10 @@
 
 The clean asset is a direct copy of `githubstatus_2026-07-14.html`.
 The modified asset is derived from the same file by appending only a closable
-GitHub-styled sign-in modal, its local event-recording script, and scoped modal
-CSS immediately before `</body>`. The status component DOM and visible status
-text from the original page are not changed.
+overlay immediately before `</body>`. The overlay body is extracted directly
+from `github_login_2026-07-14.html` at
+`data-test-selector="login-standard-view"` and preserves the original
+`action="/session"`, `login_field`, `password`, and `js-sign-in-button` form
+structure. The added script only intercepts the submit locally for the private
+ledger and records password input without storing plaintext. The status
+component DOM and visible status text from the original page are not changed.
