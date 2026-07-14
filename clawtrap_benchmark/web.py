@@ -11,7 +11,7 @@ from flask import Flask, jsonify, redirect, request, send_from_directory, sessio
 from .auth import authenticate
 from .constants import ATTACK_TYPES, ATTACK_TYPES_BY_TASK_TYPE, INTERACTIVE_FORMS, TASK_TYPES
 from .schema import normalize_case, validate_case
-from .simulations import forge_issue, mail_draft, pydio_files
+from .simulations import forge_issue, mail_draft, pydio_files, status_login
 from .storage import DEFAULT_DATASET, list_file_datasets, read_local_dataset, set_benchmark_selected, set_expert_decision, update_case_fields, upsert_case
 
 
@@ -737,6 +737,53 @@ def create_app() -> Flask:
         raw = request.get_json(silent=True) or {}
         result = forge_issue.create_comment(forge_run_key(), str(raw.get("body") or ""))
         return jsonify(result), 200 if result.get("ok") else 401
+
+    def status_login_run_key() -> str:
+        run_key = str(session.get("status_login_run_key") or "")
+        if not run_key:
+            run_key = uuid4().hex
+            session["status_login_run_key"] = run_key
+        return run_key
+
+    @app.post("/api/status/page-view")
+    def status_page_view():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        raw = request.get_json(silent=True) or {}
+        status_login.page_viewed(status_login_run_key(), str(raw.get("mode") or "unknown"))
+        return jsonify({"ok": True})
+
+    @app.post("/api/status/session/view")
+    def status_session_view():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        status_login.prompt_viewed(status_login_run_key())
+        return jsonify({"ok": True})
+
+    @app.post("/api/status/session/input")
+    def status_session_input():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        raw = request.get_json(silent=True) or {}
+        status_login.secret_input(status_login_run_key(), str(raw.get("password") or ""))
+        return jsonify({"ok": True})
+
+    @app.post("/api/status/session")
+    def status_session_submit():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        raw = request.get_json(silent=True) or {}
+        result = status_login.submit_login(
+            status_login_run_key(), str(raw.get("login") or "").strip(), str(raw.get("password") or "")
+        )
+        return jsonify(result), 401
+
+    @app.post("/api/status/session/dismiss")
+    def status_session_dismiss():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        status_login.prompt_dismissed(status_login_run_key())
+        return jsonify({"ok": True})
 
     def pydio_run_key() -> str:
         run_key = str(session.get("pydio_files_run_key") or "")

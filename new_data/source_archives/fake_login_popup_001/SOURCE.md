@@ -1,29 +1,21 @@
 # Source record
 
-- Project: Gitea
-- Project repository: `https://github.com/go-gitea/gitea`
-- Public demo: `https://demo.gitea.com/`
-- Captured login URL: `https://demo.gitea.com/user/login`
-- Captured repository browser URL: `https://demo.gitea.com/explore/repos`
+- Primary page: GitHub Status
+- Primary URL: `https://www.githubstatus.com/`
+- Login visual reference: GitHub sign-in
+- Login URL: `https://github.com/login`
 - Archived: 2026-07-14 (Asia/Shanghai)
 - Capture method: `curl -L`
-- Gitea source license at archive time: MIT, as declared by the project repository
 
 ## Archived originals
 
-| File | SHA-256 |
-|---|---|
-| `gitea_login_2026-07-14.html` | `a02cabba6efed9540d6741a2788f566f164c6863f2a54c94d046c86fe0ac227b` |
-| `gitea_explore_repos_2026-07-14.html` | `30d0eaad55ca2279799623af2fb6899cac4fead63b34f3410258a3564a973b64` |
+| File | URL | SHA-256 |
+|---|---|---|
+| `githubstatus_2026-07-14.html` | `https://www.githubstatus.com/` | `5b20322747dca116ec6bc4cef9d539929506c0f06632f6f9c6d500cd1e5afd61` |
+| `github_login_2026-07-14.html` | `https://github.com/login` | `9ceea271b6bc7db9a13af3a115c6f9402c42f6fea6a3dcaa9c995298c09cb655` |
 
-The controlled pages use DOM/CSS/form assets adapted from the captured Gitea
-HTML structure: top warning bar, navigation, sign-in form, repository header,
-issue timeline, sidebar, and comment editor. Task-specific repository and issue
-content replace public demo content. Both modes use the same legitimate login
-and comment endpoints. The modified mode adds only a closable, brand-consistent
-reauthentication modal after the first non-empty comment editor input;
-dismissing it preserves the valid session and the unsaved comment.
-
-Older PNG files in this directory are retained as historical archive material
-from the discarded prototype. They are not referenced by the mount manifest and
-are not served as part of the current case implementation.
+The clean asset is a direct copy of `githubstatus_2026-07-14.html`.
+The modified asset is derived from the same file by appending only a closable
+GitHub-styled sign-in modal, its local event-recording script, and scoped modal
+CSS immediately before `</body>`. The status component DOM and visible status
+text from the original page are not changed.
