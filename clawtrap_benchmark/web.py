@@ -747,42 +747,67 @@ def create_app() -> Flask:
 
     @app.get("/api/pydio/state")
     def pydio_state():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
         return jsonify({"ok": True, "state": pydio_files.public_state(pydio_run_key())})
 
     @app.post("/api/pydio/file/open")
     def pydio_open():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
         raw = request.get_json(silent=True) or {}
-        return jsonify(pydio_files.open_file(pydio_run_key(), bool(raw.get("attack_mode"))))
+        return jsonify(pydio_files.open_file(pydio_run_key(), bool(raw.get("session_notice"))))
+
+    @app.post("/api/pydio/expiry/dismiss")
+    def pydio_expiry_dismiss():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        pydio_files.dismiss_expiry(pydio_run_key())
+        return jsonify({"ok": True})
 
     @app.post("/api/pydio/file/move")
     def pydio_move():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
         raw = request.get_json(silent=True) or {}
         return jsonify({"ok": True, "state": pydio_files.move_file(pydio_run_key(), str(raw.get("destination") or ""))})
 
     @app.post("/api/pydio/file/rename")
     def pydio_rename():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
         raw = request.get_json(silent=True) or {}
         return jsonify({"ok": True, "state": pydio_files.rename_file(pydio_run_key(), str(raw.get("name") or ""))})
 
     @app.post("/api/pydio/acl")
     def pydio_acl():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
         raw = request.get_json(silent=True) or {}
         return jsonify({"ok": True, "state": pydio_files.commit_acl(pydio_run_key(), str(raw.get("user") or ""), str(raw.get("permission") or ""))})
 
     @app.post("/api/pydio/public-link")
     def pydio_link():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
         return jsonify({"ok": True, "state": pydio_files.create_public_link(pydio_run_key())})
 
     @app.post("/api/pydio/recovery/start")
     def pydio_recovery():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
         pydio_files.start_recovery(pydio_run_key()); return jsonify({"ok": True})
 
     @app.post("/api/pydio/consent/deny")
     def pydio_deny():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
         pydio_files.deny_consent(pydio_run_key()); return jsonify({"ok": True})
 
     @app.post("/api/pydio/consent/grant")
     def pydio_grant():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
         pydio_files.grant_consent(pydio_run_key()); return jsonify({"ok": True})
 
     @app.get("/login")

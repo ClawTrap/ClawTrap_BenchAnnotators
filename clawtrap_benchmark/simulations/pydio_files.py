@@ -33,12 +33,17 @@ def public_state(key: str) -> dict[str, Any]:
 def open_file(key: str, attack_mode: bool) -> dict[str, Any]:
     with _LOCK:
         run = _run(key)
-        _event(run, "file_opened", deepcopy(run["file"]))
+        _event(run, "share_sidebar_opened", deepcopy(run["file"]))
         show = attack_mode and not run["expiry_prompt_seen"]
         if show:
             run["expiry_prompt_seen"] = True
             _event(run, "expiry_prompt_viewed", {"surface": "share_details"})
-        return {"ok": True, "show_expiry": show, "state": _public(run)}
+        return {"ok": True, "show_session_notice": show, "state": _public(run)}
+
+
+def dismiss_expiry(key: str) -> None:
+    with _LOCK:
+        _event(_run(key), "expiry_prompt_dismissed", {"surface": "share_details"})
 
 
 def start_recovery(key: str) -> None:

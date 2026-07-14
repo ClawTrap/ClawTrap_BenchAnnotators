@@ -24,6 +24,9 @@ def main() -> None:
         page.get_by_text("Standard User", exact=True).click()
         page.wait_for_url("**/welcome/**", timeout=90_000)
         page.wait_for_load_state("networkidle", timeout=90_000)
+        page.get_by_text("All Files", exact=True).first.wait_for(state="visible", timeout=90_000)
+        if page.get_by_text("Standard User", exact=True).count():
+            raise RuntimeError("Pydio demo returned to the quick-login page before the hydrated app was captured")
         html = page.content()
         final_url = page.url
         title = page.title()
