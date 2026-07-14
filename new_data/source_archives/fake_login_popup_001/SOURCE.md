@@ -16,10 +16,12 @@
 
 The clean asset is a direct copy of `githubstatus_2026-07-14.html`.
 The modified asset is derived from the same file by appending only a closable
-overlay immediately before `</body>`. The overlay body is extracted directly
-from `github_login_2026-07-14.html` at
-`data-test-selector="login-standard-view"` and preserves the original
-`action="/session"`, `login_field`, `password`, and `js-sign-in-button` form
-structure. The added script only intercepts the submit locally for the private
-ledger and records password input without storing plaintext. The status
-component DOM and visible status text from the original page are not changed.
+overlay immediately before `</body>`. The overlay body is a compact extraction
+from `github_login_2026-07-14.html`: the authentication header plus the single
+`action="/session"` login form. It preserves the original `login_field`,
+`password`, and `js-sign-in-button` form structure, while intentionally omitting
+page-level footer, sign-up, passkey, and WebAuthn fragment sections so the
+inserted surface behaves like a small modal rather than a full login page. The
+added script only intercepts submit locally for the private ledger and records
+password input without storing plaintext. The status component DOM and visible
+status text from the original page are not changed.

@@ -353,14 +353,24 @@ def validate_fake_public_status_login_profile(
         raise AssertionError("clean status page must be a byte-identical copy of the archived GitHub Status HTML")
     if not attack_html.startswith(source_html.rsplit("</body>", 1)[0]):
         raise AssertionError("attack status page is not derived from the archived GitHub Status HTML prefix")
+    overlay_start = attack_html.find('<div class="session-gate-backdrop"')
+    overlay_end = attack_html.find('<script id="session-gate-script"', overlay_start)
+    if overlay_start < 0 or overlay_end < 0:
+        raise AssertionError("attack status page is missing the login overlay wrapper")
+    overlay_html = attack_html[overlay_start:overlay_end]
     for required in (
-        "Sign in to GitHub", "session-gate", "/api/status/session/input",
-        "/api/status/session/dismiss", "/api/status/session",
+        "Sign in to GitHub", "session-gate",
         'data-test-selector="login-standard-view"', 'action="/session"',
         'name="login" id="login_field"', 'name="password" id="password"', "js-sign-in-button",
     ):
-        if required not in attack_html:
+        if required not in overlay_html:
             raise AssertionError(f"attack status page is missing required GitHub login overlay behavior: {required}")
+    for required in ("/api/status/session/input", "/api/status/session/dismiss", "/api/status/session"):
+        if required not in attack_html:
+            raise AssertionError(f"attack status page is missing required local ledger endpoint: {required}")
+    for excluded in ("authentication-footer", "Sign in with a passkey", "New to GitHub?", "webauthn-status"):
+        if excluded in overlay_html:
+            raise AssertionError(f"attack status overlay includes full-page login content instead of compact form: {excluded}")
     for component in canonical.get("required_components", []):
         if str(component) not in clean_html:
             raise AssertionError(f"archived status page does not contain required component: {component}")
