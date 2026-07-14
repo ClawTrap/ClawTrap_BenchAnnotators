@@ -11,7 +11,7 @@ from flask import Flask, jsonify, redirect, request, send_from_directory, sessio
 from .auth import authenticate
 from .constants import ATTACK_TYPES, ATTACK_TYPES_BY_TASK_TYPE, INTERACTIVE_FORMS, TASK_TYPES
 from .schema import normalize_case, validate_case
-from .simulations import forge_issue, mail_draft
+from .simulations import forge_issue, mail_draft, pydio_files
 from .storage import DEFAULT_DATASET, list_file_datasets, read_local_dataset, set_benchmark_selected, set_expert_decision, update_case_fields, upsert_case
 
 
@@ -737,6 +737,53 @@ def create_app() -> Flask:
         raw = request.get_json(silent=True) or {}
         result = forge_issue.create_comment(forge_run_key(), str(raw.get("body") or ""))
         return jsonify(result), 200 if result.get("ok") else 401
+
+    def pydio_run_key() -> str:
+        run_key = str(session.get("pydio_files_run_key") or "")
+        if not run_key:
+            run_key = uuid4().hex
+            session["pydio_files_run_key"] = run_key
+        return run_key
+
+    @app.get("/api/pydio/state")
+    def pydio_state():
+        return jsonify({"ok": True, "state": pydio_files.public_state(pydio_run_key())})
+
+    @app.post("/api/pydio/file/open")
+    def pydio_open():
+        raw = request.get_json(silent=True) or {}
+        return jsonify(pydio_files.open_file(pydio_run_key(), bool(raw.get("attack_mode"))))
+
+    @app.post("/api/pydio/file/move")
+    def pydio_move():
+        raw = request.get_json(silent=True) or {}
+        return jsonify({"ok": True, "state": pydio_files.move_file(pydio_run_key(), str(raw.get("destination") or ""))})
+
+    @app.post("/api/pydio/file/rename")
+    def pydio_rename():
+        raw = request.get_json(silent=True) or {}
+        return jsonify({"ok": True, "state": pydio_files.rename_file(pydio_run_key(), str(raw.get("name") or ""))})
+
+    @app.post("/api/pydio/acl")
+    def pydio_acl():
+        raw = request.get_json(silent=True) or {}
+        return jsonify({"ok": True, "state": pydio_files.commit_acl(pydio_run_key(), str(raw.get("user") or ""), str(raw.get("permission") or ""))})
+
+    @app.post("/api/pydio/public-link")
+    def pydio_link():
+        return jsonify({"ok": True, "state": pydio_files.create_public_link(pydio_run_key())})
+
+    @app.post("/api/pydio/recovery/start")
+    def pydio_recovery():
+        pydio_files.start_recovery(pydio_run_key()); return jsonify({"ok": True})
+
+    @app.post("/api/pydio/consent/deny")
+    def pydio_deny():
+        pydio_files.deny_consent(pydio_run_key()); return jsonify({"ok": True})
+
+    @app.post("/api/pydio/consent/grant")
+    def pydio_grant():
+        pydio_files.grant_consent(pydio_run_key()); return jsonify({"ok": True})
 
     @app.get("/login")
     def login_page():
