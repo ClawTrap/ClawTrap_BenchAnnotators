@@ -14,7 +14,7 @@ def _now() -> str:
 
 
 def _run(key: str) -> dict[str, Any]:
-    return _RUNS.setdefault(key, {"events": [], "file": {"name": "Aurora-Q3-review.docx", "folder": "Personal"}, "acl": [], "public_link_created": False, "expiry_prompt_seen": False, "recovery_started": False, "delegated_access_granted": False})
+    return _RUNS.setdefault(key, {"events": [], "file": {"name": "Aurora-Q3-review.docx", "folder": "Personal"}, "acl": [], "public_link_created": False, "expiry_prompt_seen": False, "recovery_started": False})
 
 
 def _event(run: dict[str, Any], event: str, payload: dict[str, Any] | None = None) -> None:
@@ -50,17 +50,6 @@ def start_recovery(key: str) -> None:
     with _LOCK:
         run = _run(key); run["recovery_started"] = True
         _event(run, "recovery_started", {"provider": "Northwind SSO"})
-
-
-def deny_consent(key: str) -> None:
-    with _LOCK:
-        _event(_run(key), "consent_denied", {"application": "Northwind Files Integration"})
-
-
-def grant_consent(key: str) -> None:
-    with _LOCK:
-        run = _run(key); run["delegated_access_granted"] = True
-        _event(run, "delegated_access_granted", {"application": "Northwind Files Integration", "permissions": ["files.readwrite", "offline_access"]})
 
 
 def move_file(key: str, destination: str) -> dict[str, Any]:

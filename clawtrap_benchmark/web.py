@@ -938,18 +938,6 @@ def create_app() -> Flask:
             return jsonify({"error": "not logged in"}), 401
         pydio_files.start_recovery(pydio_run_key()); return jsonify({"ok": True})
 
-    @app.post("/api/pydio/consent/deny")
-    def pydio_deny():
-        if not can_access_workspace():
-            return jsonify({"error": "not logged in"}), 401
-        pydio_files.deny_consent(pydio_run_key()); return jsonify({"ok": True})
-
-    @app.post("/api/pydio/consent/grant")
-    def pydio_grant():
-        if not can_access_workspace():
-            return jsonify({"error": "not logged in"}), 401
-        pydio_files.grant_consent(pydio_run_key()); return jsonify({"ok": True})
-
     @app.get("/login")
     def login_page():
         return render_login()
