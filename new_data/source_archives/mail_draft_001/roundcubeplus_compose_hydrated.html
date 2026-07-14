@@ -1,0 +1,569 @@
+<!DOCTYPE html><html lang="en" class="js chrome webkit layout-large"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><title>Roundcube Webmail :: Compose</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no, maximum-scale=1.0"><meta name="theme-color" content="#f4f4f4"><meta name="msapplication-navbutton-color" content="#f4f4f4">
+	<link rel="shortcut icon" href="static.php/skins/elastic/images/favicon.ico?s=1783249197">
+	<link rel="stylesheet" href="static.php/skins/elastic/deps/bootstrap.min.css?s=1783249204">
+	
+		<link rel="stylesheet" href="static.php/skins/elastic/styles/styles.min.css?s=1783249197">
+		
+	
+	
+		<script src="https://apis.google.com/_/scs/abc-static/_/js/k=gapi.lb.en.9vdPKhB0RUg.O/m=picker/rt=j/sv=1/d=1/ed=1/rs=AHpOoo97anj7zZ432JcN58tqJJp_A6WeOw/cb=gapi.loaded_0?le=scs,fedcm_migration_mod" async=""></script><script>
+		try {
+			if (document.cookie.indexOf('colorMode=dark') > -1
+				|| (document.cookie.indexOf('colorMode=light') === -1 && window.matchMedia('(prefers-color-scheme: dark)').matches)
+			) {
+				document.documentElement.className += ' dark-mode';
+			}
+		} catch (e) { }
+		</script>
+	
+<link rel="stylesheet" type="text/css" href="static.php/plugins/x2fa/../xframework/assets/styles/elastic.css?s=1782716798"><link rel="stylesheet" type="text/css" href="static.php/plugins/xbackground/assets/styles/plugin.css?s=1776247381"><link rel="stylesheet" type="text/css" href="static.php/plugins/xdropbox/../xframework/assets/styles/xcloud.css?s=1782282959"><link rel="stylesheet" type="text/css" href="static.php/plugins/xgoogle_drive/assets/styles/plugin.css?s=1782282959"><link rel="stylesheet" type="text/css" href="static.php/plugins/xwebdav/assets/styles/plugin.css?s=1782282959"><link rel="stylesheet" type="text/css" href="static.php/plugins/xdemo/assets/styles/plugin.css?s=1783930807"><link rel="stylesheet" type="text/css" href="static.php/plugins/jqueryui/themes/elastic/jquery-ui.min.css?s=1783249197"><script src="static.php/program/js/jquery.min.js?s=1783249202"></script><script src="static.php/program/js/common.min.js?s=1783249197"></script><script src="static.php/program/js/app.min.js?s=1783249197"></script><script src="static.php/program/js/publickey.min.js?s=1783249205"></script><script src="static.php/program/js/tinymce/tinymce.min.js?s=1700005210"></script><script src="static.php/program/js/editor.min.js?s=1783249197"></script><script src="static.php/program/js/list.min.js?s=1783249197"></script><script>
+/*
+        @licstart  The following is the entire license notice for the
+        JavaScript code in this page.
+
+        Copyright (C) The Roundcube Dev Team
+
+        The JavaScript code in this page is free software: you can redistribute
+        it and/or modify it under the terms of the GNU General Public License
+        as published by the Free Software Foundation, either version 3 of
+        the License, or (at your option) any later version.
+
+        The code is distributed WITHOUT ANY WARRANTY; without even the implied
+        warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+        See the GNU GPL for more details.
+
+        @licend  The above is the entire license notice
+        for the JavaScript code in this page.
+*/
+var rcmail = new rcube_webmail();
+rcmail.set_env({"task":"mail","standard_windows":false,"locale":"en_US","devel_mode":false,"rcversion":10702,"cookie_domain":"","cookie_path":"/","cookie_secure":true,"dark_mode_support":true,"skin":"elastic","blankpage":"static.php/skins/elastic/watermark.html","refresh_interval":60,"session_lifetime":600,"action":"compose","comm_path":"/?_task=mail","user_id":"ygh5YS7EpeRGjJqa","compose_extwin":false,"dateFormats":{"php":"Y-m-d","moment":"YYYY-MM-DD","datepicker":"yy-mm-dd","flatpickr":"Y-m-d"},"dmFormats":{"php":"m-d","moment":"MM-DD","datepicker":"mm-dd","flatpickr":"m-d"},"timeFormats":{"php":"H:i","moment":"HH:mm","datepicker":"HH:mm","flatpickr":"H:i"},"timezoneOffset":28800,"xsidebarVisible":true,"xelastic":true,"xassets":["../xframework/assets/bower_components/js-cookie/src/js.cookie.js","../xframework/assets/scripts/framework.min.js","../xframework/assets/styles/elastic.css","xbackground:assets/styles/plugin.css","xbackground:assets/scripts/plugin.min.js","../xframework/assets/scripts/xcloud.min.js","../xframework/assets/styles/xcloud.css","xdropbox:https://www.dropbox.com/static/api/2/dropins.js","xdropbox:assets/scripts/plugin.js","xgoogle_drive:https://apis.google.com/js/api.js","xgoogle_drive:https://accounts.google.com/gsi/client","../xframework/assets/bower_components/moment/min/moment.min.js","xgoogle_drive:assets/scripts/plugin.js","xgoogle_drive:assets/styles/plugin.css","xskin:assets/scripts/xskin.min.js","xwebdav:assets/styles/plugin.css","xwebdav:assets/scripts/plugin.min.js","xdemo:assets/styles/plugin.css","xdemo:assets/scripts/plugin.js"],"xcloud_plugins":{"xdropbox":{"enableComposeAttach":true,"enableComposeInsert":true,"enableAttachmentSave":true},"xgoogle_drive":{"enableComposeAttach":true,"enableComposeInsert":true,"enableAttachmentSave":true},"xwebdav":{"enableComposeAttach":false,"enableComposeInsert":false,"enableAttachmentSave":false}},"xdropbox_app_key":"bn9mlrvkrrqoxsk","xdropbox_multiselect":true,"xdropbox_extensions":[],"xgoogle_drive_client_id":"584315672805-m6t2j1iodbpteirk8ft5hqkumob4djlr.apps.googleusercontent.com","xnews_feed_settings":{"title":"BBC World","url":"http://feeds.bbci.co.uk/news/world/rss.xml","count":10},"installed_skins":["alpha","droid","droid_plus","elastic","gmail_plus","icloud","larry","litecube","outlook","outlook_plus","w21"],"xwebdav_authenticated":false,"date_format":"yy-mm-dd","date_format_localized":"YYYY-MM-DD","xbackgroundData":{"image":"none","contentOpacity":"20","imageOpacity":"50","blur":"80","gray":"0","placement":"tile","textColor":"auto","customImageUrl":false,"images":{"tile_leather":{"placement":"tile","textColor":"dark"},"tile_leaves":{"placement":"tile","textColor":"dark"},"tile_linen":{"placement":"tile","textColor":"dark"},"tile_squares":{"placement":"tile","textColor":"dark"},"tile_wood":{"placement":"tile","textColor":"dark"},"tile_marble":{"placement":"tile","textColor":"dark"},"tile_material":{"placement":"tile","textColor":"dark"},"cover_fall":{"placement":"cover","textColor":"light"},"cover_fire":{"placement":"cover","textColor":"light"},"cover_lake":{"placement":"cover","textColor":"light"},"cover_log":{"placement":"cover","textColor":"light"},"cover_sky":{"placement":"cover","textColor":"light"},"cover_traffic":{"placement":"cover","textColor":"light"},"cover_wheat":{"placement":"cover","textColor":"dark"},"custom":{"placement":"tile","textColor":"dark"},"none":{"placement":"tile","textColor":"dark"}},"customDark":false},"compose_id":"11961443076a56272a62d42","session_id":"a8cba58c3d66789b126e4ff75eb90352","mailbox":"INBOX","top_posting":false,"sig_below":false,"save_localstorage":true,"is_sent":false,"mimetypes":["text/plain","text/html","text/markdown","text/x-markdown","image/jpeg","image/gif","image/png","image/bmp","image/webp","application/x-javascript"],"keyservers":["https://keys.openpgp.org/"],"mailvelope_main_keyring":false,"drafts_mailbox":"INBOX.Drafts","draft_autosave":300,"default_font":"Verdana,Geneva,sans-serif","default_font_size":"10pt","show_sig":true,"max_disclosed_recipients":5,"max_filesize":16777216,"filesizeerror":"The uploaded file exceeds the maximum size of 16 MB.","max_filecount":"20","filecounterror":"You can upload maximum 20 files at once.","attachments":[],"filedrop":{"action":"upload","fieldname":"_attachments"},"signatures":[],"identities":{"1":{"email":"demo@demo.roundcubeplus.com"}},"autocomplete_max":15,"autocomplete_min_length":1,"composebody":"composebody","editor_config":{"mode":"","lang":"en","skin_path":"skins/elastic","spellcheck":0,"spelldict":0,"font_formats":{"Andale Mono":"\"Andale Mono\",Times,monospace","Arial":"Arial,Helvetica,sans-serif","Arial Black":"\"Arial Black\",\"Avant Garde\",sans-serif","Book Antiqua":"\"Book Antiqua\",Palatino,serif","Courier New":"\"Courier New\",Courier,monospace","Georgia":"Georgia,Palatino,serif","Helvetica":"Helvetica,Arial,sans-serif","Impact":"Impact,Chicago,sans-serif","Tahoma":"Tahoma,Arial,Helvetica,sans-serif","Terminal":"Terminal,Monaco,monospace","Times New Roman":"\"Times New Roman\",Times,serif","Trebuchet MS":"\"Trebuchet MS\",Geneva,sans-serif","Verdana":"Verdana,Geneva,sans-serif"},"fontsize_formats":["8pt","9pt","10pt","11pt","12pt","14pt","18pt","24pt","36pt"],"content_css":"skins/elastic/styles/embed.min.css","disabled_plugins":["spellchecker"],"disabled_buttons":[],"extra_plugins":[],"extra_buttons":[],"content_style":"body {font-family: Verdana,Geneva,sans-serif; font-size: 10pt;}"},"pagecount":0,"current_page":0,"request_token":"VfJk83dyQr6LMu84REYhi2kDzQzRbxk2"});
+rcmail.add_label({"loading":"Loading...","servererror":"Server Error!","connerror":"Connection Error (Failed to reach the server)!","requesttimedout":"Request timed out","refreshing":"Refreshing...","windowopenerror":"The popup window was blocked!","uploadingmany":"Uploading files...","uploading":"Uploading file...","close":"Close","save":"Save","cancel":"Cancel","alerttitle":"Attention","confirmationtitle":"Are you sure...","delete":"Delete","continue":"Continue","ok":"OK","xframework.copy_to_clipboard":"Copy to clipboard","xframework.copied_to_clipboard":"Copied to clipboard.","xframework.cannot_copy_to_clipboard":"Cannot copy text to clipboard.","x2fa.settings_forget_success":"The remembered authentication has been deleted from this browser.","errorsaving":"An error occurred while saving.","successfullysaved":"Successfully saved.","xdropbox.save_to_dropbox":"Save to Dropbox","logout":"Logout","xwebdav.select_files":"Select files","xwebdav.all_files":"All files","xwebdav.shared_files":"Shared files","xwebdav.choose_folder":"Choose folder","xwebdav.file_saved":"File saved successfully.","xwebdav.specify_webdav_url":"In order to create the shared URL you must specify the WebDAV URL.","xwebdav.save_to_nextcloud":"Save to Nextcloud","notuploadedwarning":"Not all attachments have been uploaded yet. Please wait or cancel the upload.","savingmessage":"Saving message...","siginserted":"Signature inserted successfully.","responseinserted":"Response inserted successfully.","messagesaved":"Message saved to Drafts.","converting":"Removing formatting...","editorwarning":"Switching editor type may cause text formatting to be lost. Do you wish to continue?","discard":"Discard","fileuploaderror":"File upload failed.","sendmessage":"Send message","newresponse":"Create new response","responsename":"Name","responsetext":"Response Text","savingresponse":"Saving response text...","restoresavedcomposedata":"A previously composed but unsent message was found.\n\nSubject: $subject\nSaved: $date\n\nDo you want to restore this message?","restoremessage":"Restore message?","restore":"Restore","ignore":"Ignore","selectimportfile":"Please select a file to upload.","messageissent":"The message was already sent, but not saved yet. Do you want to save it now?","loadingdata":"Loading data...","nopubkeyfor":"No valid public key found for $email","nopubkeyforsender":"No valid public key found for your sender identity. Do you want to encrypt the message for the recipients only?","encryptnoattachments":"Already uploaded attachments cannot be encrypted. Please re-add them in the encryption editor.","encryptedsendialog":"Sending encrypted message","searchpubkeyservers":"Do you want to search public key servers for the missing keys?","importpubkeys":"Import public keys","encryptpubkeysfound":"The following public keys have been found:","search":"Search","import":"Import","keyid":"Key ID","keylength":"Bits","keyexpired":"Expired","keyrevoked":"Revoked","keyimportsuccess":"Public key $key successfully imported into your keyring.","keyservererror":"Failed to get key from keyserver.","attaching":"Attaching file...","namex":"Name","attachmentrename":"Rename attachment","nosubject":"(no subject)","nosenderwarning":"Please enter sender email address.","norecipientwarning":"Please enter at least one recipient.","nosubjectwarning":"The \"Subject\" field is empty. Would you like to enter one now?","nobodywarning":"Send this message without text?","notsentwarning":"The message has not been sent and has unsaved changes. Do you want to discard your changes?","sendingmessage":"Sending message...","searching":"Searching...","disclosedrecipwarning":"All recipients will see each other's e-mail addresses. To prevent this and protect their privacy you can use the Bcc field.","disclosedreciptitle":"Too many public recipients","bccinstead":"Use Bcc","nosubjecttitle":"No subject","back":"Back","errortitle":"An error occurred!","options":"Options","plaintoggle":"Plain text","htmltoggle":"HTML","previous":"Previous","next":"Next","select":"Select","browse":"Browse","choosefile":"Choose file...","choosefiles":"Choose files...","darkmode":"Dark mode","lightmode":"Light mode","recipientsadded":"Recipient(s) added successfully.","nocontactselected":"You have not selected a contact yet.","recipient":"Recipient","insert":"Insert","insertcontact":"Insert contact(s)","recipientedit":"Recipient edit","uploadprogress":"$percent ($current of $total)","GB":"GB","MB":"MB","KB":"KB","B":"B","autocompletechars":"Enter at least $min characters for autocompletion.","autocompletemore":"More matching entries found. Please type more characters.","selectimage":"Select image","addimage":"Add image","selectmedia":"Select movie","addmedia":"Add movie"});
+rcmail.gui_container("taskbar","taskmenu");
+rcmail.gui_container("composeoptions","compose-options");
+rcmail.gui_container("toolbar","compose-toolbar");
+rcmail.gui_container("attachmentmenu","attachmentoptionsmenu");rcmail.register_button('compose', 'rcmbtn100', 'link', '', '', '');
+rcmail.register_button('mail', 'rcmbtn101', 'link', '', '', '');
+rcmail.register_button('addressbook', 'rcmbtn102', 'link', '', 'contacts selected', '');
+rcmail.register_button('settings', 'rcmbtn103', 'link', '', 'settings selected', '');
+rcmail.register_button('logout', 'rcmbtn106', 'link', '', '', '');
+rcmail.gui_object('attachmentlist', 'attachment-list');
+rcmail.gui_object('filedrop', 'compose-attachments');
+rcmail.register_button('savedraft', 'rcmbtn107', 'link', 'save draft', '', '');
+rcmail.register_button('insert-sig', 'rcmbtn109', 'link', 'signature', '', '');
+rcmail.register_button('compose-encrypted', 'rcmbtn110', 'link', 'encrypt', 'encrypt selected', '');
+rcmail.gui_object('messageform', 'form');
+rcmail.register_button('send', 'rcmbtn111', 'button', '', '', '');
+rcmail.register_button('extwin', 'rcmbtn112', 'link', '', '', '');
+rcmail.gui_object('uploadform', 'uploadformFrm');
+rcmail.gui_object('responseslist', 'responseslist');
+rcmail.register_button('open-attachment', 'attachmenuopen', 'link', 'extwin active', '', '');
+rcmail.register_button('download-attachment', 'attachmenudownload', 'link', 'download active', '', '');
+rcmail.register_button('rename-attachment', 'attachmenurename', 'link', 'rename active', '', '');
+rcmail.register_button('compose-encrypted', 'rcmbtn114', 'link', 'encrypt active', '', '');
+rcmail.register_button('compose-encrypted-signed', 'rcmbtn115', 'link', 'encrypt sign active', '', '');
+rcmail.gui_object('qsearchbox', 'searchform');
+rcmail.register_button('reset-search', 'rcmbtn117', 'link', '', '', '');
+rcmail.gui_object('addressbookslist', 'directorylist');
+rcmail.gui_object('contactslist', 'contacts-table');
+rcmail.register_button('firstpage', 'rcmbtn118', 'link', 'firstpage', '', '');
+rcmail.register_button('previouspage', 'rcmbtn119', 'link', 'prevpage', '', '');
+rcmail.register_button('nextpage', 'rcmbtn120', 'link', 'nextpage', '', '');
+rcmail.register_button('lastpage', 'rcmbtn121', 'link', 'lastpage', '', '');
+rcmail.gui_object('message', 'messagestack');
+</script>
+
+<script type="module" src="static.php/plugins/xframework/assets/libraries/alpinejs/alpine.js?s=1765193148"></script>
+<script type="module" src="static.php/plugins/xframework/assets/libraries/alpinejs/alpine.js?s=1765193148"></script>
+<script type="module" src="static.php/plugins/xframework/assets/libraries/alpinejs/alpine.js?s=1765193148"></script>
+<script src="static.php/plugins/x2fa/../xframework/assets/bower_components/js-cookie/src/js.cookie.js?s=1727776208"></script><script src="static.php/plugins/x2fa/../xframework/assets/scripts/framework.min.js?s=1780478429"></script><script src="static.php/plugins/xbackground/assets/scripts/plugin.min.js?s=1777443169"></script><script src="static.php/plugins/xdropbox/../xframework/assets/scripts/xcloud.min.js?s=1778675786"></script><script src="https://www.dropbox.com/static/api/2/dropins.js"></script><style type="text/css">  @-webkit-keyframes rotate {
+    from  { -webkit-transform: rotate(0deg); }
+    to   { -webkit-transform: rotate(360deg); }
+  }
+
+  @keyframes rotate {
+    from  { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+    .dropbox-dropin-btn, .dropbox-dropin-btn:link, .dropbox-dropin-btn:hover {
+      display: inline-block;
+      height: 14px;
+      font-family: "Lucida Grande", "Segoe UI", "Tahoma", "Helvetica Neue", "Helvetica", sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: #636363;
+      text-decoration: none;
+      padding: 1px 7px 5px 3px;
+      border: 1px solid #ebebeb;
+      border-radius: 2px;
+      border-bottom-color: #d4d4d4;
+        background: #fcfcfc;
+  background: -moz-linear-gradient(top, #fcfcfc 0%, #f5f5f5 100%);
+  background: -webkit-linear-gradient(top, #fcfcfc 0%, #f5f5f5 100%);
+  background: linear-gradient(to bottom, #fcfcfc 0%, #f5f5f5 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fcfcfc', endColorstr='#f5f5f5',GradientType=0);  
+    }
+
+    .dropbox-dropin-default:hover, .dropbox-dropin-error:hover {
+      border-color: #dedede;
+      border-bottom-color: #cacaca;
+        background: #fdfdfd;
+  background: -moz-linear-gradient(top, #fdfdfd 0%, #f5f5f5 100%);
+  background: -webkit-linear-gradient(top, #fdfdfd 0%, #f5f5f5 100%);
+  background: linear-gradient(to bottom, #fdfdfd 0%, #f5f5f5 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfdfd', endColorstr='#f5f5f5',GradientType=0);  
+    }
+
+    .dropbox-dropin-default:active, .dropbox-dropin-error:active {
+      border-color: #d1d1d1;
+      box-shadow: inset 0 1px 1px rgba(0,0,0,0.1);
+    }
+
+    .dropbox-dropin-btn .dropin-btn-status {
+      display: inline-block;
+      width: 15px;
+      height: 14px;
+      vertical-align: bottom;
+      margin: 0 5px 0 2px;
+      background: transparent url('https://www.dropbox.com/static/metaserver/static/images/widgets/dbx-saver-status.png') no-repeat;
+      position: relative;
+      top: 2px;
+    }
+
+    .dropbox-dropin-default .dropin-btn-status {
+      background-position: 0px 0px;
+    }
+
+    .dropbox-dropin-progress .dropin-btn-status {
+      width: 18px;
+      margin: 0 4px 0 0;
+      background: url('https://www.dropbox.com/static/metaserver/static/images/widgets/dbx-progress.png') no-repeat center center;
+        -webkit-animation-name: rotate;
+        -webkit-animation-duration: 1.7s;
+        -webkit-animation-iteration-count: infinite;
+        -webkit-animation-timing-function: linear;
+      animation-name: rotate;
+      animation-duration: 1.7s;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+    }
+
+    .dropbox-dropin-success .dropin-btn-status {
+      background-position: -15px 0px;
+    }
+
+    .dropbox-dropin-disabled {
+      background: #e0e0e0;
+      border: 1px #dadada solid;
+      border-bottom: 1px solid #ccc;
+      box-shadow: none;
+    }
+
+    .dropbox-dropin-disabled .dropin-btn-status {
+      background-position: -30px 0px;
+    }
+
+    .dropbox-dropin-error .dropin-btn-status {
+      background-position: -45px 0px;
+    }
+
+  @media only screen and (-webkit-min-device-pixel-ratio: 1.4) {
+      .dropbox-dropin-btn .dropin-btn-status {
+        background-image: url('https://www.dropbox.com/static/metaserver/static/images/widgets/dbx-saver-status-2x.png');
+        background-size: 60px 14px;
+          -webkit-background-size: 60px 14px;
+      }
+
+      .dropbox-dropin-progress .dropin-btn-status {
+        background: url('https://www.dropbox.com/static/metaserver/static/images/widgets/dbx-progress-2x.png') no-repeat center center;
+        background-size: 20px 20px;
+          -webkit-background-size: 20px 20px;
+      }
+  }
+
+    .dropbox-saver:hover, .dropbox-chooser:hover {
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .dropbox-chooser, .dropbox-dropin-btn {
+      line-height: 11px !important;
+      text-decoration: none !important;
+      box-sizing: content-box !important;
+        -webkit-box-sizing: content-box !important;
+        -moz-box-sizing: content-box !important;
+    }
+    </style><script src="static.php/plugins/xdropbox/assets/scripts/plugin.min.js?s=1778671978"></script><script src="https://apis.google.com/js/api.js" gapi_processed="true"></script><script src="https://accounts.google.com/gsi/client"></script><style id="googleidentityservice_button_styles">.qJTHM{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;color:#202124;direction:ltr;-webkit-touch-callout:none;font-family:Roboto-Regular,arial,sans-serif;-webkit-font-smoothing:antialiased;font-weight:400;margin:0;overflow:hidden;-webkit-text-size-adjust:100%}.ynRLnc{left:-9999px;position:absolute;top:-9999px}.L6cTce{display:none}.bltWBb{overflow-wrap:break-word;word-break:break-word}.hSRGPd{color:#1a73e8;cursor:pointer;font-weight:500;text-decoration:none}.Bz112c-W3lGp{height:16px;width:16px}.Bz112c-E3DyYd{height:20px;width:20px}.Bz112c-r9oPif{height:24px;width:24px}.Bz112c-u2z5K{height:36px;width:36px}.Bz112c-uaxL4e{border-radius:10px}.LgbsSe-Bz112c{display:block}.S9gUrf-YoZ4jf{border:none;margin:0;padding:0}.S9gUrf-YoZ4jf *{border:none;margin:0;padding:0}.fFW7wc-ibnC6b>.aZ2wEe>div{border-color:#4285f4}.P1ekSe-ZMv3u{-webkit-transition:height .2s linear;transition:height .2s linear}.P1ekSe-ZMv3u>div:first-child{background-color:#1a73e8!important;-webkit-transition:width .3s linear;transition:width .3s linear}.P1ekSe-ZMv3u>div:nth-child(2){background-image:-webkit-gradient(linear,left top,right top,from(rgba(255,255,255,.7)),to(rgba(255,255,255,.7))),-webkit-gradient(linear,left top,right top,from(#1a73e8),to(#1a73e8))!important;background-image:-webkit-linear-gradient(left,rgba(255,255,255,.7),rgba(255,255,255,.7)),-webkit-linear-gradient(left,#1a73e8,#1a73e8)!important;background-image:linear-gradient(90deg,rgba(255,255,255,.7),rgba(255,255,255,.7)),linear-gradient(90deg,#1a73e8,#1a73e8)!important}.P1ekSe-ZMv3u>div:nth-child(3){background-image:-webkit-gradient(linear,left top,right top,from(rgba(255,255,255,.7)),to(rgba(255,255,255,.7))),-webkit-gradient(linear,left top,right top,from(#1a73e8),to(#1a73e8))!important;background-image:-webkit-linear-gradient(left,rgba(255,255,255,.7),rgba(255,255,255,.7)),-webkit-linear-gradient(left,#1a73e8,#1a73e8)!important;background-image:linear-gradient(90deg,rgba(255,255,255,.7),rgba(255,255,255,.7)),linear-gradient(90deg,#1a73e8,#1a73e8)!important}.haAclf{display:inline-block}.nsm7Bb-HzV7m-LgbsSe{border-radius:4px;box-sizing:border-box;-webkit-transition:background-color .218s,border-color .218s;transition:background-color .218s,border-color .218s;-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-webkit-appearance:none;background-color:#fff;background-image:none;border:1px solid #dadce0;color:#3c4043;cursor:pointer;font-family:Google Sans,arial,sans-serif;font-size:.875rem;height:40px;letter-spacing:.25px;outline:none;overflow:hidden;padding:0 12px;position:relative;text-align:center;vertical-align:middle;white-space:nowrap;width:auto}@media screen and (-ms-high-contrast:active){.nsm7Bb-HzV7m-LgbsSe{border:2px solid windowText;color:windowText}}@media screen and (preferes-contrast:more){.nsm7Bb-HzV7m-LgbsSe{color:#000}}.nsm7Bb-HzV7m-LgbsSe.pSzOP-SxQuSe{font-size:.875rem;height:32px;letter-spacing:.25px;padding:0 10px}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe{font-size:.6875rem;height:20px;letter-spacing:.3px;padding:0 8px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe{padding:0;width:40px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe.pSzOP-SxQuSe{width:32px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe.purZT-SxQuSe{width:20px}.nsm7Bb-HzV7m-LgbsSe.JGcpL-RbRzK{border-radius:20px}.nsm7Bb-HzV7m-LgbsSe.JGcpL-RbRzK.pSzOP-SxQuSe{border-radius:16px}.nsm7Bb-HzV7m-LgbsSe.JGcpL-RbRzK.purZT-SxQuSe{border-radius:10px}.nsm7Bb-HzV7m-LgbsSe.i5vt6e-to915-Ia7Qfc{border:1px solid #8e918f;background-color:#131314;color:#e3e3e3}.nsm7Bb-HzV7m-LgbsSe.MFS4be-Ia7Qfc{border:none;color:#fff}.nsm7Bb-HzV7m-LgbsSe.MFS4be-v3pZbf-Ia7Qfc{background-color:#1a73e8}.nsm7Bb-HzV7m-LgbsSe.MFS4be-JaPV2b-Ia7Qfc{background-color:#202124;color:#e8eaed}@media screen and (prefers-contrast:more){.nsm7Bb-HzV7m-LgbsSe.MFS4be-JaPV2b-Ia7Qfc{color:#fff}}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{height:18px;margin-right:8px;min-width:18px;width:18px}.nsm7Bb-HzV7m-LgbsSe.pSzOP-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{height:14px;min-width:14px;width:14px}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{height:10px;min-width:10px;width:10px}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-Bz112c{margin-left:8px;margin-right:-4px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{margin:0;padding:10px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe.pSzOP-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{padding:8px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe.purZT-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{padding:4px}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-top-left-radius:3px;border-bottom-left-radius:3px;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;-webkit-box-align:center;-webkit-align-items:center;align-items:center;background-color:#fff;height:36px;margin-left:-10px;margin-right:12px;min-width:36px;width:36px}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf .nsm7Bb-HzV7m-LgbsSe-Bz112c,.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf .nsm7Bb-HzV7m-LgbsSe-Bz112c{margin:0;padding:0}.nsm7Bb-HzV7m-LgbsSe.pSzOP-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{height:28px;margin-left:-8px;margin-right:10px;min-width:28px;width:28px}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{height:16px;margin-left:-6px;margin-right:8px;min-width:16px;width:16px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:3px;margin-left:2px;margin-right:0;padding:0}.nsm7Bb-HzV7m-LgbsSe.JGcpL-RbRzK .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:18px}.nsm7Bb-HzV7m-LgbsSe.pSzOP-SxQuSe.JGcpL-RbRzK .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:14px}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe.JGcpL-RbRzK .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:8px}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-bN97Pc-sM5MNb{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-align-items:center;-webkit-box-align:center;align-items:center;-webkit-flex-direction:row;-webkit-box-orient:horizontal;-webkit-box-direction:normal;flex-direction:row;-webkit-box-pack:justify;-webkit-justify-content:space-between;justify-content:space-between;-webkit-flex-wrap:nowrap;flex-wrap:nowrap;height:100%;position:relative;width:100%}.nsm7Bb-HzV7m-LgbsSe .oXtfBe-l4eHX{-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-BPrWId{-webkit-flex-grow:1;-webkit-box-flex:1;flex-grow:1;font-family:Google Sans,arial,sans-serif;font-weight:500;overflow:hidden;text-overflow:ellipsis;vertical-align:top}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe .nsm7Bb-HzV7m-LgbsSe-BPrWId{font-weight:300}.nsm7Bb-HzV7m-LgbsSe .oXtfBe-l4eHX .nsm7Bb-HzV7m-LgbsSe-BPrWId{-webkit-flex-grow:0;-webkit-box-flex:0;flex-grow:0}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-MJoBVe{-webkit-transition:background-color .218s;transition:background-color .218s;bottom:0;left:0;position:absolute;right:0;top:0}.nsm7Bb-HzV7m-LgbsSe:focus,.nsm7Bb-HzV7m-LgbsSe:hover{box-shadow:none;border-color:rgb(210,227,252);outline:none}.nsm7Bb-HzV7m-LgbsSe:focus-within{outline:2px solid #00639b;border-color:transparent}.nsm7Bb-HzV7m-LgbsSe:hover .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(66,133,244,.08)}.nsm7Bb-HzV7m-LgbsSe:active .nsm7Bb-HzV7m-LgbsSe-MJoBVe,.nsm7Bb-HzV7m-LgbsSe:focus .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(66,133,244,.1)}.nsm7Bb-HzV7m-LgbsSe.i5vt6e-to915-Ia7Qfc:hover .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(255,255,255,.08)}.nsm7Bb-HzV7m-LgbsSe.i5vt6e-to915-Ia7Qfc:active .nsm7Bb-HzV7m-LgbsSe-MJoBVe,.nsm7Bb-HzV7m-LgbsSe.i5vt6e-to915-Ia7Qfc:focus .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(255,255,255,.12)}.nsm7Bb-HzV7m-LgbsSe.MFS4be-Ia7Qfc:hover .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(255,255,255,.24)}.nsm7Bb-HzV7m-LgbsSe.MFS4be-Ia7Qfc:active .nsm7Bb-HzV7m-LgbsSe-MJoBVe,.nsm7Bb-HzV7m-LgbsSe.MFS4be-Ia7Qfc:focus .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(255,255,255,.32)}.nsm7Bb-HzV7m-LgbsSe .n1UuX-DkfjY{border-radius:50%;display:-webkit-box;display:-webkit-flex;display:flex;height:20px;margin-left:-4px;margin-right:8px;min-width:20px;width:20px}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId{font-family:Roboto;font-size:12px;text-align:left}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff .fmcmS,.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .ssJRIf{overflow:hidden;text-overflow:ellipsis}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-align-items:center;-webkit-box-align:center;align-items:center;color:#5f6368;fill:#5f6368;font-size:11px;font-weight:400}.nsm7Bb-HzV7m-LgbsSe.jVeSEe.i5vt6e-to915-Ia7Qfc .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff{color:#c4c7c5;fill:#c4c7c5}.nsm7Bb-HzV7m-LgbsSe.jVeSEe.MFS4be-Ia7Qfc .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff{color:#e8eaed;fill:#e8eaed}@media screen and (prefers-contrast:more){.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff,.nsm7Bb-HzV7m-LgbsSe.jVeSEe.MFS4be-Ia7Qfc .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff{color:#000;fill:#000}}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff .Bz112c{height:18px;margin:-3px -3px -3px 2px;min-width:18px;width:18px}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-top-left-radius:0;border-bottom-left-radius:0;border-top-right-radius:3px;border-bottom-right-radius:3px;margin-left:12px;margin-right:-10px}.nsm7Bb-HzV7m-LgbsSe.jVeSEe.JGcpL-RbRzK .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:18px}.L5Fo6c-sM5MNb{border:0;display:block;left:0;position:relative;top:0}.L5Fo6c-bF1uUb{border-radius:4px;bottom:0;cursor:pointer;left:0;position:absolute;right:0;top:0}.L5Fo6c-bF1uUb:focus{border:none;outline:none}sentinel{}</style><script src="static.php/plugins/xgoogle_drive/../xframework/assets/bower_components/moment/min/moment.min.js?s=1727776208"></script><script src="static.php/plugins/xgoogle_drive/assets/scripts/plugin.min.js?s=1778681433"></script><script src="static.php/plugins/xskin/assets/scripts/xskin.min.js?s=1778492926"></script><script src="static.php/plugins/xwebdav/assets/scripts/plugin.min.js?s=1779093618"></script><script src="static.php/plugins/xdemo/assets/scripts/plugin.min.js?s=1783934839"></script><script src="static.php/plugins/jqueryui/js/jquery-ui.min.js?s=1783249197"></script>
+<style>.picker-dialog-frame{width:100%;height:100%;border:0;overflow:hidden}.picker-dialog-bg{position:absolute;top:0;left:0;background-color:#fff;z-index:1000}.picker-dialog{position:absolute;top:0;left:0;background-color:#fff;border:1px solid #acacac;width:auto;padding:0;z-index:1001;overflow:auto;box-shadow:0 4px 16px rgba(0,0,0,.2)}.picker-dialog-content{height:100%;font-size:0;padding:0}.picker-dialog-buttons,.picker-dialog-title{display:none}</style><link rel="stylesheet" type="text/css" id="mce-u0" href="https://demo.roundcubeplus.com/static.php/program/js/tinymce/skins/ui/oxide/skin.min.css?s=5080200"></head>
+<body class="xelastic task-mail action-compose">
+<div id="xbackground-body" style="background-image: none;"></div>
+	
+		<div id="layout">
+	
+
+<div id="layout-menu">
+	<h2 id="aria-label-tasknav" class="voice">Application tasks</h2>
+	<div class="popover-header">
+		<img src="static.php/skins/elastic/images/logo.svg?s=1783249197" id="logo" alt="Logo">
+		<a class="button icon cancel"><span class="inner">Close</span></a>
+	</div>
+	<div id="taskmenu" class="menu toolbar" role="navigation" aria-labelledby="aria-label-tasknav">
+		<span class="action-buttons">
+			
+				<a class="compose selected" title="Create a new message" id="rcmbtn100" role="button" href="/?_task=mail&amp;_action=compose" onclick="return rcmail.command('compose','',this,event)" tabindex="0" aria-disabled="false"><span class="inner">Compose</span></a>
+			
+		</span>
+		
+			<a class="mail" id="rcmbtn101" role="button" href="/?_task=mail" onclick="return rcmail.command('list','',this,event);" tabindex="-1" aria-disabled="false"><span class="inner">Mail</span></a>
+		
+		<a class="contacts" id="rcmbtn102" role="button" href="/?_task=addressbook" onclick="return rcmail.command('switch-task','addressbook',this,event)" tabindex="0" aria-disabled="false"><span class="inner">Contacts</span></a>
+		
+		<a class="settings" id="rcmbtn103" role="button" href="/?_task=settings" onclick="return rcmail.command('switch-task','settings',this,event)" tabindex="0" aria-disabled="false"><span class="inner">Settings</span></a><a href="javascript:void(0)" id="button-apps" class="apps active" data-popup="apps-menu" aria-owns="apps-menu" aria-haspopup="true" aria-expanded="false" data-original-title="" title=""><span class="inner">Apps</span></a><div id="apps-menu" class="popupmenu" aria-hidden="true"><div id="xskin-options" class="section"><div class="section-title">Interface skin</div><div id="xshortcut-skins" class="shortcut-item"><select onchange="xskin.quickSkinChange()" class="form-control custom-select pretty-select" name="quick-skin-change">
+<option value="alpha">Alpha</option><option value="droid">Droid</option><option value="droid_plus">Droid+</option><option value="elastic" selected="selected">Elastic</option><option value="gmail_plus">GMail+</option><option value="icloud">iCloud</option><option value="larry">Larry</option><option value="litecube">Litecube</option><option value="outlook">Outlook</option><option value="outlook_plus">Outlook+</option><option value="w21">W21</option></select></div></div><div id="quick-language-change" class="section"><div class="section-title">Language</div><select onchange="xskin.quickLanguageChange()" class="form-control custom-select pretty-select" name="quick-language-change">
+<option value="sq_AL">Albanian (Shqip)</option><option value="ar_SA">Arabic (Saudi Arabia)</option><option value="ar">Arabic (العربية)</option><option value="hy_AM">Armenian (Հայերեն)</option><option value="ast">Asturiana (Asturianu)</option><option value="az_AZ">Azerbaijani (Azərbaycanca)</option><option value="eu_ES">Basque (Euskara)</option><option value="be_BE">Belarusian (беларуская мова)</option><option value="bn_BD">Bengali (বাংলা)</option><option value="bs_BA">Bosnian (Bosanski)</option><option value="br">Breton (Brezhoneg)</option><option value="bg_BG">Bulgarian (Български)</option><option value="ca_ES">Catalan (Català)</option><option value="zh_TW">Chinese (正體中文)</option><option value="zh_CN">Chinese (简体中文)</option><option value="hr_HR">Croatian (Hrvatski)</option><option value="cs_CZ">Czech (Česky)</option><option value="da_DK">Danish (Dansk)</option><option value="fa_AF">Dari (ﻯﺭﺩ)</option><option value="nl_NL">Dutch (Nederlands)</option><option value="en_CA">English (Canada)</option><option value="en_GB">English (GB)</option><option value="en_US" selected="selected">English (US)</option><option value="eo">Esperanto</option><option value="et_EE">Estonian (Eesti)</option><option value="fo_FO">Faroese (Føroyskt)</option><option value="fi_FI">Finnish (Suomi)</option><option value="nl_BE">Flemish (Vlaams)</option><option value="fr_FR">French (Français)</option><option value="gl_ES">Galician (Galego)</option><option value="ka_GE">Georgian (ქართული)</option><option value="de_DE">German (Deutsch)</option><option value="de_CH">German (Schweiz)</option><option value="el_GR">Greek (Ελληνικά)</option><option value="he_IL">Hebrew (עברית)</option><option value="hi_IN">Hindi (हिनदी)</option><option value="hu_HU">Hungarian (Magyar)</option><option value="is_IS">Icelandic (Íslenska)</option><option value="id_ID">Indonesian (Bahasa Indonesia)</option><option value="ia">Interlingua</option><option value="ga_IE">Irish (Gaedhilge)</option><option value="it_IT">Italian (Italiano)</option><option value="ja_JP">Japanese (日本語)</option><option value="kab">Kabyle (Taqbaylit)</option><option value="km_KH">Khmer (ភាសាខ្មែរ)</option><option value="kn_IN">Konkani (कोंकणी)</option><option value="ko_KR">Korean (한국어)</option><option value="ku">Kurdish (Kurmancî)</option><option value="lv_LV">Latvian (Latviešu)</option><option value="lt_LT">Lithuanian (Lietuviškai)</option><option value="lb_LU">Luxembourgish (Lëtzebuergesch)</option><option value="mk_MK">Macedonian (Македонски)</option><option value="ms_MY">Malay (Bahasa Melayu)</option><option value="ml_IN">Malayalam (മലയാളം)</option><option value="mr_IN">Marathi (मराठी)</option><option value="mn_MN">Mongolic (Монгол)</option><option value="ne_NP">Nepali (नेपाली)</option><option value="nb_NO">Norwegian (Bokmål)</option><option value="nn_NO">Norwegian (Nynorsk)</option><option value="ps">Pashto</option><option value="fa_IR">Persian (فارسی)</option><option value="pl_PL">Polish (Polski)</option><option value="pt_BR">Portuguese (Brasil)</option><option value="pt_PT">Portuguese (Português)</option><option value="ro_RO">Romanian (Româneşte)</option><option value="ru_RU">Russian (Русский)</option><option value="sr_CS">Serbian (Српски)</option><option value="si_LK">Sinhalese (සිංහල)</option><option value="sk_SK">Slovak (Slovenčina)</option><option value="sl_SI">Slovenian (Slovenščina)</option><option value="es_AR">Spanish (Argentina)</option><option value="es_ES">Spanish (Español)</option><option value="es_419">Spanish (Latin America)</option><option value="sv_SE">Swedish (Svenska)</option><option value="tzl">Talossan</option><option value="ta_IN">Tamil (தமிழ்)</option><option value="th_TH">Thai (ไทย)</option><option value="ti">Tigrinya (ትግርኛ)</option><option value="tr_TR">Turkish (Türkçe)</option><option value="uk_UA">Ukrainian (Українська)</option><option value="ur_PK">Urdu (اُردو)</option><option value="ug">Uyghur (ئۇيغۇر)</option><option value="uz">Uzbek (Oʻzbekcha)</option><option value="vi_VN">Vietnamese (Tiếng Việt)</option><option value="cy_GB">Welsh (Cymraeg)</option><option value="fy_NL">West Frisian (Frysk)</option></select></div><div id="menu-apps-list" class=""><a class="app-item app-item-xgoogle_drive active" href="?_task=settings&amp;_action=preferences&amp;_section=xgoogle_drive"><div class="icon"></div><div class="title">Google Drive</div></a><a class="app-item app-item-xnews_feed active" href="?_task=settings&amp;_action=preferences&amp;_section=xnews_feed"><div class="icon"></div><div class="title">News Feed</div></a><a class="app-item app-item-xsidebar active" href="?_task=settings&amp;_action=preferences&amp;_section=xsidebar"><div class="icon"></div><div class="title">Sidebar</div></a><a class="app-item app-item-x2fa active" href="?_task=settings&amp;_action=plugin.x2fa"><div class="icon"></div><div class="title">Two-factor Authentication</div></a><a class="app-item app-item-xbackground active" href="?_task=settings&amp;_action=preferences&amp;_section=xbackground"><div class="icon"></div><div class="title">Wallpaper</div></a><a class="app-item app-item-xweather active" href="?_task=settings&amp;_action=preferences&amp;_section=xweather"><div class="icon"></div><div class="title">Weather</div></a><a class="app-item app-item-xwebdav active" href="?_task=settings&amp;_action=preferences&amp;_section=xwebdav"><div class="icon"></div><div class="title">WebDAV</div></a><div style="clear:both"></div></div><a class="active" style="display:none"></a></div>
+		<span class="special-buttons">
+			
+				
+				
+				<a class="theme dark" id="rcmbtn104" role="button" href="#"><span class="inner">Dark mode</span></a>
+			
+			<a class="about" onclick="UI.about_dialog(this)" id="rcmbtn105" role="button" href="#"><span class="inner">About</span></a>
+			<a class="logout" id="rcmbtn106" role="button" href="/?_task=logout" onclick="return rcmail.command('switch-task','logout',this,event)" tabindex="0" aria-disabled="false"><span class="inner">Logout</span></a>
+		</span>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+<h1 class="voice">Compose</h1>
+
+<!-- compose options and attachments list -->
+<div id="layout-sidebar" class="listbox sidebar-right">
+	<div class="header">
+		<a class="button icon back-content-button hidden-big" href="#content" data-hidden="big"><span class="inner">Back</span></a>
+		<span class="header-title all-sizes" style="margin-right: 0px; margin-left: 0px; padding-right: 0px;">Options and attachments</span>
+	</div>
+	<div class="scroller">
+		<!-- attachments -->
+		<div id="compose-attachments" class="file-upload droptarget" role="region" aria-labelledby="aria-label-compose-attachments">
+			<h2 id="aria-label-compose-attachments" class="voice">Attachments</h2>
+			<div class="upload-form">
+				<div class="hint">Maximum allowed file size is 16 MB</div>
+				<button type="button" class="btn btn-secondary attach" tabindex="2" onclick="rcmail.upload_input('uploadform')">Attach a file</button><div id="xgoogle_drive-compose-button" class="xcloud-compose-button">
+    <button class="btn btn-secondary xgoogle_drive-icon-button active" data-popup="xgoogle_drive-compose-menu" aria-haspopup="true" aria-expanded="false" aria-owns="xgoogle_drive-compose-menu" data-original-title="" title="">Google Drive</button>
+    <div id="xgoogle_drive-compose-menu" class="popupmenu" aria-hidden="true">
+        <ul class="toolbarmenu listing" role="menu">
+            
+            <li role="menuitem" class="insert-action">
+                <a href="javascript:void(0)" id="xgoogle_drive-compose-insert" class="active" role="button">
+                    Insert link to message
+                </a>
+            </li>
+            
+            
+            <li role="menuitem" class="attach-action">
+                <a href="javascript:void(0)" id="xgoogle_drive-compose-attach" class="active" role="button">
+                    Download and attach
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+<div id="xdropbox-compose-button" class="xcloud-compose-button">
+    <button class="btn btn-secondary xdropbox-icon-button active" data-popup="xdropbox-compose-menu" aria-haspopup="true" aria-expanded="false" aria-owns="xdropbox-compose-menu" data-original-title="" title="">Dropbox</button>
+    <div id="xdropbox-compose-menu" class="popupmenu" aria-hidden="true">
+        <ul class="toolbarmenu listing" role="menu">
+            
+            <li role="menuitem" class="insert-action">
+                <a href="javascript:void(0)" id="xdropbox-compose-insert" class="active" role="button">
+                    Insert link to message
+                </a>
+            </li>
+            
+            
+            <li role="menuitem" class="attach-action">
+                <a href="javascript:void(0)" id="xdropbox-compose-attach" class="active" role="button">
+                    Download and attach
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+			</div>
+			<ul id="attachment-list" class="attachmentslist" data-tabindex="2"></ul>
+			
+		</div>
+		<!-- compose options -->
+		<div id="compose-options" class="formcontent" role="region" aria-labelledby="aria-label-composeoptions">
+			<h2 id="aria-label-composeoptions" class="voice">Composition options</h2>
+			
+			
+			<div class="form-group row form-check">
+				<label for="compose-mdn" class="col-form-label col-6">Return receipt</label>
+				<div class="col-6 form-check">
+					<div class="custom-control custom-switch"><input name="_mdn" id="compose-mdn" tabindex="2" class="form-check-input custom-control-input" value="1" type="checkbox"><label for="compose-mdn" class="custom-control-label" title=""></label></div>
+				</div>
+			</div>
+			
+			
+			<div class="form-group row form-check">
+				<label for="compose-dsn" class="col-form-label col-6">Delivery status notification</label>
+				<div class="col-6 form-check">
+					<div class="custom-control custom-switch"><input name="_dsn" id="compose-dsn" tabindex="2" class="form-check-input custom-control-input" value="1" type="checkbox"><label for="compose-dsn" class="custom-control-label" title=""></label></div>
+				</div>
+			</div>
+			
+			
+			<div class="form-group row form-check">
+				<label for="compose-keep-formatting" class="col-form-label col-6">Keep formatting</label>
+				<div class="col-6 form-check">
+					<div class="custom-control custom-switch"><input name="_keepformatting" id="compose-keep-formatting" tabindex="2" class="form-check-input custom-control-input" value="1" type="checkbox"><label for="compose-keep-formatting" class="custom-control-label" title=""></label></div>
+				</div>
+			</div>
+			
+			<div class="form-group row">
+				<label for="compose-priority" class="col-form-label col-6">Priority</label>
+				<div class="col-6">
+					<select name="_priority" id="compose-priority" tabindex="2" class="custom-select form-control pretty-select">
+<option value="5">Lowest</option><option value="4">Low</option><option value="0" selected="">Normal</option><option value="2">High</option><option value="1">Highest</option></select>
+				</div>
+			</div>
+			
+			<div class="form-group row">
+				<label for="compose-store-target" class="col-form-label col-6">Save sent message in</label>
+				<div class="col-6">
+					<select name="_store_target" id="compose-store-target" tabindex="2" class="custom-select form-control pretty-select">
+<option value="">- don't save -</option><option value="INBOX">Inbox</option><option value="INBOX.Drafts">Drafts</option><option value="INBOX.Sent" selected="">Sent</option><option value="INBOX.spam">Junk</option><option value="INBOX.Trash">Trash</option><option value="INBOX.Archive">Archive</option></select>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+<div class="column-resizer inverted"></div></div>
+
+<div id="layout-content" class="listbox selected" role="main">
+	<h2 id="aria-label-toolbar" class="voice">Application toolbar</h2>
+	<div class="header">
+		<a class="button icon task-menu-button" href="#menu"><span class="inner">Menu</span></a>
+		<span class="header-title">Compose</span>
+		<div id="composestatusbar" class="position-absolute"></div>
+		<!-- toolbar -->
+		
+	<ul class="menu toolbar listing iconized" id="toolbar-menu"><li role="menuitem" class="hidden-big"><a class="options" href="#options" onclick="UI.show_sidebar()" data-hidden="big"><span class="inner">Options and attachments</span></a></li><li role="menuitem"><a class="save draft" title="Save as draft" tabindex="2" data-content-button="true" id="rcmbtn107" role="button" data-tabindex="2" aria-disabled="false" href="#" onclick="return rcmail.command('savedraft','',this,event)"><span class="inner">Save</span></a></li><li role="menuitem" class="spacer"></li><li role="menuitem" class="hidden-small"><a class="attach" title="Attach a file" data-hidden="small" onclick="if (!$(this).is('.disabled')) rcmail.upload_input('uploadform')" aria-haspopup="true" aria-expanded="false" tabindex="2" id="rcmbtn108" role="button" href="#"><span class="inner">Attach</span></a></li><li role="menuitem"><a class="signature disabled" title="Insert signature" tabindex="-1" id="rcmbtn109" role="button" data-tabindex="2" aria-disabled="true" href="#" onclick="return rcmail.command('insert-sig','',this,event)"><span class="inner">Signature</span></a></li><li role="menuitem"><a href="#responses" class="responses active" label="responses" title="Insert a response" unselectable="on" tabindex="2" data-popup="responses-menu" aria-haspopup="true" aria-expanded="false" aria-owns="responses-menu" data-original-title="Insert a response"><span class="inner">Responses</span></a></li><li role="menuitem"><span class="dropbutton disabled" style="display:none"><a class="encrypt disabled" title="Encrypt message with Mailvelope" tabindex="-1" id="rcmbtn110" role="button" data-tabindex="2" aria-disabled="true" href="#" onclick="return rcmail.command('compose-encrypted','',this,event)"><span class="inner">Encrypt</span></a><a href="#encryption" id="encryption-menu-button" class="dropdown disabled" tabindex="2" data-popup="encryption-menu" aria-haspopup="true" aria-expanded="false" aria-owns="encryption-menu" data-original-title="" title="">
+					<span class="inner">Encrypt message with Mailvelope</span>
+				</a></span></li></ul><a class="button icon toolbar-menu-button active" href="#menu" data-popup="toolbar-menu" aria-haspopup="true" aria-expanded="false" aria-owns="toolbar-menu" data-original-title="" title=""></a></div>
+	<div id="compose-content" class="formcontainer content">
+		<form name="form" method="post" class="formcontent scroller" action="/?_task=mail">
+<input type="hidden" name="_token" value="VfJk83dyQr6LMu84REYhi2kDzQzRbxk2"><input type="hidden" name="_task" value="mail"><input type="hidden" name="_action" value="send"><input type="hidden" name="_id" value="11961443076a56272a62d42"><input type="hidden" name="_attachments">
+		
+		<!-- message headers -->
+		<div id="compose-headers" role="region" aria-labelledby="aria-label-composeheaders">
+			<h2 id="aria-label-composeheaders" class="voice">Message headers</h2>
+			<div class="compose-headers">
+				<div id="compose_from" class="form-group row">
+					<label for="_from" class="col-2 col-form-label">From</label>
+					<div class="col-10">
+						<div class="input-group">
+							<select name="_from" id="_from" tabindex="1" class="form-control custom-select pretty-select" onchange="rcmail.change_identity(this)">
+<option value="1" selected="">Demo &lt;demo@demo.roundcubeplus.com&gt;</option></select>
+							<span class="input-group-append">
+								<a href="#identities" onclick="return rcmail.command('switch-task', 'settings/identities')" class="input-group-text icon edit" title="Edit identities" tabindex="1"><span class="inner">Edit identities</span></a>
+							</span>
+						</div>
+					</div>
+				</div>
+				<div id="compose_to" class="form-group row">
+					<label for="_to" class="col-2 col-form-label">To</label>
+					<div class="col-10">
+						<div class="input-group">
+							<textarea name="_to" spellcheck="false" id="_to" tabindex="-1" data-recipient-input="true" style="position: absolute; opacity: 0; left: -5000px; width: 10px;" autocomplete="off" aria-autocomplete="list" aria-expanded="false" role="combobox"></textarea><ul class="form-control recipient-input ac-input rounded-left ui-sortable focus"><li class="input"><input type="text" spellcheck="false" tabindex="1" autocomplete="off" aria-autocomplete="list" aria-expanded="false" role="combobox"></li></ul>
+							<span class="input-group-append">
+								<a href="#add-contact" onclick="UI.recipient_selector('to')" class="input-group-text icon add recipient" title="Add contact" tabindex="1"><span class="inner">Add contact</span></a>
+							</span>
+							<span class="input-group-append">
+								<a href="#add-header" data-popup="headers-menu" class="input-group-text icon add active" title="Add field (Cc, Bcc, ...)" tabindex="1" aria-haspopup="true" aria-expanded="false" aria-owns="headers-menu" data-original-title="Add field (Cc, Bcc, ...)"><span class="inner">Add field (Cc, Bcc, ...)</span></a>
+							</span>
+						</div>
+					</div>
+				</div>
+				<div id="compose_cc" class="hidden form-group row">
+					<label for="_cc" class="col-2 col-form-label">Cc</label>
+					<div class="col-10">
+						<div class="input-group">
+							<textarea name="_cc" spellcheck="false" id="_cc" tabindex="-1" data-recipient-input="true" autocomplete="off" aria-autocomplete="list" aria-expanded="false" role="combobox" style="position: absolute; opacity: 0; left: -5000px; width: 10px;"></textarea><ul class="form-control recipient-input ac-input rounded-left ui-sortable"><li class="input"><input type="text" spellcheck="false" tabindex="1" autocomplete="off" aria-autocomplete="list" aria-expanded="false" role="combobox"></li></ul>
+							<span class="input-group-append">
+								<a href="#add-contact" onclick="UI.recipient_selector('cc')" class="input-group-text icon add recipient" title="Add contact" tabindex="1"><span class="inner">Add contact</span></a>
+							</span>
+							<span class="input-group-append">
+								<a href="#delete" onclick="UI.header_reset('_cc')" class="input-group-text icon delete" title="Delete" tabindex="1"><span class="inner">Delete</span></a>
+							</span>
+						</div>
+					</div>
+				</div>
+				<div id="compose_bcc" class="hidden form-group row">
+					<label for="_bcc" class="col-2 col-form-label">Bcc</label>
+					<div class="col-10">
+						<div class="input-group">
+							<textarea name="_bcc" spellcheck="false" id="_bcc" tabindex="-1" data-recipient-input="true" autocomplete="off" aria-autocomplete="list" aria-expanded="false" role="combobox" style="position: absolute; opacity: 0; left: -5000px; width: 10px;"></textarea><ul class="form-control recipient-input ac-input rounded-left ui-sortable"><li class="input"><input type="text" spellcheck="false" tabindex="1" autocomplete="off" aria-autocomplete="list" aria-expanded="false" role="combobox"></li></ul>
+							<span class="input-group-append">
+								<a href="#add-contact" onclick="UI.recipient_selector('bcc')" class="input-group-text icon add recipient" title="Add contact" tabindex="1"><span class="inner">Add contact</span></a>
+							</span>
+							<span class="input-group-append">
+								<a href="#delete" onclick="UI.header_reset('_bcc')" class="input-group-text icon delete" title="Delete" tabindex="1"><span class="inner">Delete</span></a>
+							</span>
+						</div>
+					</div>
+				</div>
+				<div id="compose_replyto" class="hidden form-group row">
+					<label for="_replyto" class="col-2 col-form-label">Reply-To</label>
+					<div class="col-10">
+						<div class="input-group">
+							<input name="_replyto" spellcheck="false" id="_replyto" tabindex="-1" data-recipient-input="true" value="" type="text" autocomplete="off" aria-autocomplete="list" aria-expanded="false" role="combobox" style="position: absolute; opacity: 0; left: -5000px; width: 10px;"><ul class="form-control recipient-input ac-input rounded-left ui-sortable"><li class="input"><input type="text" spellcheck="false" tabindex="1" autocomplete="off" aria-autocomplete="list" aria-expanded="false" role="combobox"></li></ul>
+							<span class="input-group-append">
+								<a href="#add-contact" onclick="UI.recipient_selector('replyto')" class="input-group-text icon add recipient" title="Add contact" tabindex="1"><span class="inner">Add contact</span></a>
+							</span>
+							<span class="input-group-append">
+								<a href="#delete" onclick="UI.header_reset('_replyto')" class="input-group-text icon delete" title="Delete" tabindex="1"><span class="inner">Delete</span></a>
+							</span>
+						</div>
+					</div>
+				</div>
+				<div id="compose_followupto" class="hidden form-group row">
+					<label for="_followupto" class="col-2 col-form-label">Followup-To</label>
+					<div class="col-10">
+						<div class="input-group">
+							<input name="_followupto" spellcheck="false" id="_followupto" tabindex="-1" data-recipient-input="true" value="" type="text" autocomplete="off" aria-autocomplete="list" aria-expanded="false" role="combobox" style="position: absolute; opacity: 0; left: -5000px; width: 10px;"><ul class="form-control recipient-input ac-input rounded-left ui-sortable"><li class="input"><input type="text" spellcheck="false" tabindex="1" autocomplete="off" aria-autocomplete="list" aria-expanded="false" role="combobox"></li></ul>
+							<span class="input-group-append">
+								<a href="#add-contact" onclick="UI.recipient_selector('followupto')" class="input-group-text icon add recipient" title="Add contact" tabindex="1"><span class="inner">Add contact</span></a>
+							</span>
+							<span class="input-group-append">
+								<a href="#delete" onclick="UI.header_reset('_followupto')" class="input-group-text icon delete" title="Delete" tabindex="1"><span class="inner">Delete</span></a>
+							</span>
+						</div>
+					</div>
+				</div>
+				<div id="compose_subject" class="form-group row">
+					<label for="compose-subject" class="col-2 col-form-label">Subject</label>
+					<div class="col-10">
+						<input name="_subject" id="compose-subject" tabindex="1" class="form-control" spellcheck="true" value="" type="text">
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- message compose body -->
+		<div id="composebodycontainer" class="html-editor">
+			<label for="composebody" class="voice">Message Body</label>
+			
+<input type="hidden" name="_draft_saveid"><input type="hidden" name="_draft" value=""><input type="hidden" name="_is_html" value="1"><input type="hidden" name="_framed" value="1">
+<textarea name="_message" id="composebody" cols="70" rows="20" class="form-control mce_editor" tabindex="1" data-html-editor="1" data-html-editor-content-element="composebody-content" style="display: none;" aria-hidden="true"></textarea><div role="application" class="tox tox-tinymce" aria-disabled="false" style="visibility: hidden; height: 400px;" data-mce-style="visibility: hidden; height: 400px;"><div class="tox-editor-container"><div data-alloy-vertical-dir="toptobottom" class="tox-editor-header"><div role="group" class="tox-toolbar-overlord" aria-disabled="false" style="position: relative; top: 0px; width: auto;"><div role="group" class="tox-toolbar__primary"><div title="" role="toolbar" data-alloy-tabstop="true" tabindex="-1" class="tox-toolbar__group"><button aria-label="Plain text" title="Plain text" type="button" tabindex="-1" class="tox-tbtn" aria-disabled="false"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path d="M17.3 8.2L13.4 12l3.9 3.8a1 1 0 01-1.5 1.5L12 13.4l-3.8 3.9a1 1 0 01-1.5-1.5l3.9-3.8-3.9-3.8a1 1 0 011.5-1.5l3.8 3.9 3.8-3.9a1 1 0 011.5 1.5z" fill-rule="evenodd"></path></svg></span></button></div><div title="" role="toolbar" data-alloy-tabstop="true" tabindex="-1" class="tox-toolbar__group"><button aria-label="Bold" title="Bold" type="button" tabindex="-1" class="tox-tbtn" aria-disabled="false" aria-pressed="false"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path d="M7.8 19c-.3 0-.5 0-.6-.2l-.2-.5V5.7c0-.2 0-.4.2-.5l.6-.2h5c1.5 0 2.7.3 3.5 1 .7.6 1.1 1.4 1.1 2.5a3 3 0 01-.6 1.9c-.4.6-1 1-1.6 1.2.4.1.9.3 1.3.6s.8.7 1 1.2c.4.4.5 1 .5 1.6 0 1.3-.4 2.3-1.3 3-.8.7-2.1 1-3.8 1H7.8zm5-8.3c.6 0 1.2-.1 1.6-.5.4-.3.6-.7.6-1.3 0-1.1-.8-1.7-2.3-1.7H9.3v3.5h3.4zm.5 6c.7 0 1.3-.1 1.7-.4.4-.4.6-.9.6-1.5s-.2-1-.7-1.4c-.4-.3-1-.4-2-.4H9.4v3.8h4z" fill-rule="evenodd"></path></svg></span></button><button aria-label="Italic" title="Italic" type="button" tabindex="-1" class="tox-tbtn" aria-disabled="false" aria-pressed="false"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path d="M16.7 4.7l-.1.9h-.3c-.6 0-1 0-1.4.3-.3.3-.4.6-.5 1.1l-2.1 9.8v.6c0 .5.4.8 1.4.8h.2l-.2.8H8l.2-.8h.2c1.1 0 1.8-.5 2-1.5l2-9.8.1-.5c0-.6-.4-.8-1.4-.8h-.3l.2-.9h5.8z" fill-rule="evenodd"></path></svg></span></button><button aria-label="Underline" title="Underline" type="button" tabindex="-1" class="tox-tbtn" aria-disabled="false" aria-pressed="false"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path d="M16 5c.6 0 1 .4 1 1v5.5a4 4 0 01-.4 1.8l-1 1.4a5.3 5.3 0 01-5.5 1 5 5 0 01-1.6-1c-.5-.4-.8-.9-1.1-1.4a4 4 0 01-.4-1.8V6c0-.6.4-1 1-1s1 .4 1 1v5.5c0 .3 0 .6.2 1l.6.7a3.3 3.3 0 002.2.8 3.4 3.4 0 002.2-.8c.3-.2.4-.5.6-.8l.2-.9V6c0-.6.4-1 1-1zM8 17h8c.6 0 1 .4 1 1s-.4 1-1 1H8a1 1 0 010-2z" fill-rule="evenodd"></path></svg></span></button></div><div title="" role="toolbar" data-alloy-tabstop="true" tabindex="-1" class="tox-toolbar__group"><button aria-label="Align left" title="Align left" type="button" tabindex="-1" class="tox-tbtn" aria-disabled="false" aria-pressed="false"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path d="M5 5h14c.6 0 1 .4 1 1s-.4 1-1 1H5a1 1 0 110-2zm0 4h8c.6 0 1 .4 1 1s-.4 1-1 1H5a1 1 0 110-2zm0 8h8c.6 0 1 .4 1 1s-.4 1-1 1H5a1 1 0 010-2zm0-4h14c.6 0 1 .4 1 1s-.4 1-1 1H5a1 1 0 010-2z" fill-rule="evenodd"></path></svg></span></button><button aria-label="Align center" title="Align center" type="button" tabindex="-1" class="tox-tbtn" aria-disabled="false" aria-pressed="false"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path d="M5 5h14c.6 0 1 .4 1 1s-.4 1-1 1H5a1 1 0 110-2zm3 4h8c.6 0 1 .4 1 1s-.4 1-1 1H8a1 1 0 110-2zm0 8h8c.6 0 1 .4 1 1s-.4 1-1 1H8a1 1 0 010-2zm-3-4h14c.6 0 1 .4 1 1s-.4 1-1 1H5a1 1 0 010-2z" fill-rule="evenodd"></path></svg></span></button><button aria-label="Align right" title="Align right" type="button" tabindex="-1" class="tox-tbtn" aria-disabled="false" aria-pressed="false"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path d="M5 5h14c.6 0 1 .4 1 1s-.4 1-1 1H5a1 1 0 110-2zm6 4h8c.6 0 1 .4 1 1s-.4 1-1 1h-8a1 1 0 010-2zm0 8h8c.6 0 1 .4 1 1s-.4 1-1 1h-8a1 1 0 010-2zm-6-4h14c.6 0 1 .4 1 1s-.4 1-1 1H5a1 1 0 010-2z" fill-rule="evenodd"></path></svg></span></button><button aria-label="Justify" title="Justify" type="button" tabindex="-1" class="tox-tbtn" aria-disabled="false" aria-pressed="false"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path d="M5 5h14c.6 0 1 .4 1 1s-.4 1-1 1H5a1 1 0 110-2zm0 4h14c.6 0 1 .4 1 1s-.4 1-1 1H5a1 1 0 110-2zm0 4h14c.6 0 1 .4 1 1s-.4 1-1 1H5a1 1 0 010-2zm0 4h14c.6 0 1 .4 1 1s-.4 1-1 1H5a1 1 0 010-2z" fill-rule="evenodd"></path></svg></span></button></div><div title="" role="toolbar" data-alloy-tabstop="true" tabindex="-1" class="tox-toolbar__group"><button title="Fonts" aria-label="Fonts" aria-haspopup="true" type="button" tabindex="-1" unselectable="on" class="tox-tbtn tox-tbtn--select tox-tbtn--bespoke" aria-expanded="false" style="user-select: none;"><span class="tox-tbtn__select-label"> Verdana</span><div class="tox-tbtn__select-chevron"><svg width="10" height="10" focusable="false"><path d="M8.7 2.2c.3-.3.8-.3 1 0 .4.4.4.9 0 1.2L5.7 7.8c-.3.3-.9.3-1.2 0L.2 3.4a.8.8 0 010-1.2c.3-.3.8-.3 1.1 0L5 6l3.7-3.8z" fill-rule="nonzero"></path></svg></div></button><button title="Font sizes" aria-label="Font sizes" aria-haspopup="true" type="button" tabindex="-1" unselectable="on" class="tox-tbtn tox-tbtn--select tox-tbtn--bespoke" aria-expanded="false" style="user-select: none;"><span class="tox-tbtn__select-label">10pt</span><div class="tox-tbtn__select-chevron"><svg width="10" height="10" focusable="false"><path d="M8.7 2.2c.3-.3.8-.3 1 0 .4.4.4.9 0 1.2L5.7 7.8c-.3.3-.9.3-1.2 0L.2 3.4a.8.8 0 010-1.2c.3-.3.8-.3 1.1 0L5 6l3.7-3.8z" fill-rule="nonzero"></path></svg></div></button></div><div title="" role="toolbar" data-alloy-tabstop="true" tabindex="-1" class="tox-toolbar__group"><div aria-pressed="false" aria-label="Text color" title="Text color" role="button" aria-haspopup="true" tabindex="-1" unselectable="on" class="tox-split-button" aria-disabled="false" aria-expanded="false" aria-describedby="aria_4187226811991784031024383" style="user-select: none;"><span role="presentation" class="tox-tbtn" aria-disabled="false"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><g fill-rule="evenodd"><path id="tox-icon-text-color__color" d="M3 18h18v3H3z" fill="#000000"></path><path d="M8.7 16h-.8a.5.5 0 01-.5-.6l2.7-9c.1-.3.3-.4.5-.4h2.8c.2 0 .4.1.5.4l2.7 9a.5.5 0 01-.5.6h-.8a.5.5 0 01-.4-.4l-.7-2.2c0-.3-.3-.4-.5-.4h-3.4c-.2 0-.4.1-.5.4l-.7 2.2c0 .3-.2.4-.4.4zm2.6-7.6l-.6 2a.5.5 0 00.5.6h1.6a.5.5 0 00.5-.6l-.6-2c0-.3-.3-.4-.5-.4h-.4c-.2 0-.4.1-.5.4z"></path></g></svg></span></span><span role="presentation" class="tox-tbtn tox-split-button__chevron" aria-disabled="false"><svg width="10" height="10" focusable="false"><path d="M8.7 2.2c.3-.3.8-.3 1 0 .4.4.4.9 0 1.2L5.7 7.8c-.3.3-.9.3-1.2 0L.2 3.4a.8.8 0 010-1.2c.3-.3.8-.3 1.1 0L5 6l3.7-3.8z" fill-rule="nonzero"></path></svg></span><span aria-hidden="true" id="aria_4187226811991784031024383" style="display: none;">To open the popup, press Shift+Enter</span></div><div aria-pressed="false" aria-label="Background color" title="Background color" role="button" aria-haspopup="true" tabindex="-1" unselectable="on" class="tox-split-button" aria-disabled="false" aria-expanded="false" aria-describedby="aria_7615699192011784031024383" style="user-select: none;"><span role="presentation" class="tox-tbtn" aria-disabled="false"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><g fill-rule="evenodd"><path id="tox-icon-highlight-bg-color__color" d="M3 18h18v3H3z" fill="#000000"></path><path fill-rule="nonzero" d="M7.7 16.7H3l3.3-3.3-.7-.8L10.2 8l4 4.1-4 4.2c-.2.2-.6.2-.8 0l-.6-.7-1.1 1.1zm5-7.5L11 7.4l3-2.9a2 2 0 012.6 0L18 6c.7.7.7 2 0 2.7l-2.9 2.9-1.8-1.8-.5-.6"></path></g></svg></span></span><span role="presentation" class="tox-tbtn tox-split-button__chevron" aria-disabled="false"><svg width="10" height="10" focusable="false"><path d="M8.7 2.2c.3-.3.8-.3 1 0 .4.4.4.9 0 1.2L5.7 7.8c-.3.3-.9.3-1.2 0L.2 3.4a.8.8 0 010-1.2c.3-.3.8-.3 1.1 0L5 6l3.7-3.8z" fill-rule="nonzero"></path></svg></span><span aria-hidden="true" id="aria_7615699192011784031024383" style="display: none;">To open the popup, press Shift+Enter</span></div></div><div role="toolbar" data-alloy-tabstop="true" tabindex="-1" class="tox-toolbar__group"><button aria-label="More..." title="More..." type="button" tabindex="-1" data-alloy-tabstop="true" class="tox-tbtn" aria-pressed="false"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path d="M6 10a2 2 0 00-2 2c0 1.1.9 2 2 2a2 2 0 002-2 2 2 0 00-2-2zm12 0a2 2 0 00-2 2c0 1.1.9 2 2 2a2 2 0 002-2 2 2 0 00-2-2zm-6 0a2 2 0 00-2 2c0 1.1.9 2 2 2a2 2 0 002-2 2 2 0 00-2-2z" fill-rule="nonzero"></path></svg></span></button></div></div><div role="group" class="tox-toolbar__overflow tox-toolbar__overflow--closed" style="height: 0px;"><div title="" role="toolbar" data-alloy-tabstop="true" tabindex="-1" class="tox-toolbar__group"><button aria-label="Bullet list" title="Bullet list" type="button" tabindex="-1" class="tox-tbtn" aria-disabled="false" aria-pressed="false"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path d="M11 5h8c.6 0 1 .4 1 1s-.4 1-1 1h-8a1 1 0 010-2zm0 6h8c.6 0 1 .4 1 1s-.4 1-1 1h-8a1 1 0 010-2zm0 6h8c.6 0 1 .4 1 1s-.4 1-1 1h-8a1 1 0 010-2zM4.5 6c0-.4.1-.8.4-1 .3-.4.7-.5 1.1-.5.4 0 .8.1 1 .4.4.3.5.7.5 1.1 0 .4-.1.8-.4 1-.3.4-.7.5-1.1.5-.4 0-.8-.1-1-.4-.4-.3-.5-.7-.5-1.1zm0 6c0-.4.1-.8.4-1 .3-.4.7-.5 1.1-.5.4 0 .8.1 1 .4.4.3.5.7.5 1.1 0 .4-.1.8-.4 1-.3.4-.7.5-1.1.5-.4 0-.8-.1-1-.4-.4-.3-.5-.7-.5-1.1zm0 6c0-.4.1-.8.4-1 .3-.4.7-.5 1.1-.5.4 0 .8.1 1 .4.4.3.5.7.5 1.1 0 .4-.1.8-.4 1-.3.4-.7.5-1.1.5-.4 0-.8-.1-1-.4-.4-.3-.5-.7-.5-1.1z" fill-rule="evenodd"></path></svg></span></button><button aria-label="Numbered list" title="Numbered list" type="button" tabindex="-1" class="tox-tbtn" aria-disabled="false" aria-pressed="false"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path d="M10 17h8c.6 0 1 .4 1 1s-.4 1-1 1h-8a1 1 0 010-2zm0-6h8c.6 0 1 .4 1 1s-.4 1-1 1h-8a1 1 0 010-2zm0-6h8c.6 0 1 .4 1 1s-.4 1-1 1h-8a1 1 0 110-2zM6 4v3.5c0 .3-.2.5-.5.5a.5.5 0 01-.5-.5V5h-.5a.5.5 0 010-1H6zm-1 8.8l.2.2h1.3c.3 0 .5.2.5.5s-.2.5-.5.5H4.9a1 1 0 01-.9-1V13c0-.4.3-.8.6-1l1.2-.4.2-.3a.2.2 0 00-.2-.2H4.5a.5.5 0 01-.5-.5c0-.3.2-.5.5-.5h1.6c.5 0 .9.4.9 1v.1c0 .4-.3.8-.6 1l-1.2.4-.2.3zM7 17v2c0 .6-.4 1-1 1H4.5a.5.5 0 010-1h1.2c.2 0 .3-.1.3-.3 0-.2-.1-.3-.3-.3H4.4a.4.4 0 110-.8h1.3c.2 0 .3-.1.3-.3 0-.2-.1-.3-.3-.3H4.5a.5.5 0 110-1H6c.6 0 1 .4 1 1z" fill-rule="evenodd"></path></svg></span></button><button aria-label="Decrease indent" title="Decrease indent" type="button" tabindex="-1" class="tox-tbtn tox-tbtn--disabled" aria-disabled="true"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path d="M7 5h12c.6 0 1 .4 1 1s-.4 1-1 1H7a1 1 0 110-2zm5 4h7c.6 0 1 .4 1 1s-.4 1-1 1h-7a1 1 0 010-2zm0 4h7c.6 0 1 .4 1 1s-.4 1-1 1h-7a1 1 0 010-2zm-5 4h12a1 1 0 010 2H7a1 1 0 010-2zm1.6-3.8a1 1 0 01-1.2 1.6l-3-2a1 1 0 010-1.6l3-2a1 1 0 011.2 1.6L6.8 12l1.8 1.2z" fill-rule="evenodd"></path></svg></span></button><button aria-label="Increase indent" title="Increase indent" type="button" tabindex="-1" class="tox-tbtn" aria-disabled="false"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path d="M7 5h12c.6 0 1 .4 1 1s-.4 1-1 1H7a1 1 0 110-2zm5 4h7c.6 0 1 .4 1 1s-.4 1-1 1h-7a1 1 0 010-2zm0 4h7c.6 0 1 .4 1 1s-.4 1-1 1h-7a1 1 0 010-2zm-5 4h12a1 1 0 010 2H7a1 1 0 010-2zm-2.6-3.8L6.2 12l-1.8-1.2a1 1 0 011.2-1.6l3 2a1 1 0 010 1.6l-3 2a1 1 0 11-1.2-1.6z" fill-rule="evenodd"></path></svg></span></button><button aria-label="Left to right" title="Left to right" type="button" tabindex="-1" class="tox-tbtn" aria-disabled="false" aria-pressed="false"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path d="M11 5h7a1 1 0 010 2h-1v11a1 1 0 01-2 0V7h-2v11a1 1 0 01-2 0v-6c-.5 0-1 0-1.4-.3A3.4 3.4 0 017.8 10a3.3 3.3 0 010-2.8 3.4 3.4 0 011.8-1.8L11 5zM4.4 16.2L6.2 15l-1.8-1.2a1 1 0 011.2-1.6l3 2a1 1 0 010 1.6l-3 2a1 1 0 11-1.2-1.6z" fill-rule="evenodd"></path></svg></span></button><button aria-label="Right to left" title="Right to left" type="button" tabindex="-1" class="tox-tbtn" aria-disabled="false" aria-pressed="false"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path d="M8 5h8v2h-2v12h-2V7h-2v12H8v-7c-.5 0-1 0-1.4-.3A3.4 3.4 0 014.8 10a3.3 3.3 0 010-2.8 3.4 3.4 0 011.8-1.8L8 5zm12 11.2a1 1 0 11-1 1.6l-3-2a1 1 0 010-1.6l3-2a1 1 0 111 1.6L18.4 15l1.8 1.2z" fill-rule="evenodd"></path></svg></span></button><button aria-label="Blockquote" title="Blockquote" type="button" tabindex="-1" class="tox-tbtn" aria-disabled="false" aria-pressed="false"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path d="M7.5 17h.9c.4 0 .7-.2.9-.6L11 13V8c0-.6-.4-1-1-1H6a1 1 0 00-1 1v4c0 .6.4 1 1 1h2l-1.3 2.7a1 1 0 00.8 1.3zm8 0h.9c.4 0 .7-.2.9-.6L19 13V8c0-.6-.4-1-1-1h-4a1 1 0 00-1 1v4c0 .6.4 1 1 1h2l-1.3 2.7a1 1 0 00.8 1.3z" fill-rule="nonzero"></path></svg></span></button></div><div title="" role="toolbar" data-alloy-tabstop="true" tabindex="-1" class="tox-toolbar__group"><button aria-label="Insert/edit link" title="Insert/edit link" type="button" tabindex="-1" class="tox-tbtn" aria-disabled="false" aria-pressed="false"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path d="M6.2 12.3a1 1 0 011.4 1.4l-2.1 2a2 2 0 102.7 2.8l4.8-4.8a1 1 0 000-1.4 1 1 0 111.4-1.3 2.9 2.9 0 010 4L9.6 20a3.9 3.9 0 01-5.5-5.5l2-2zm11.6-.6a1 1 0 01-1.4-1.4l2-2a2 2 0 10-2.6-2.8L11 10.3a1 1 0 000 1.4A1 1 0 119.6 13a2.9 2.9 0 010-4L14.4 4a3.9 3.9 0 015.5 5.5l-2 2z" fill-rule="nonzero"></path></svg></span></button><button aria-label="Remove link" title="Remove link" type="button" tabindex="-1" class="tox-tbtn tox-tbtn--disabled" aria-disabled="true"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path d="M6.2 12.3a1 1 0 011.4 1.4l-2 2a2 2 0 102.6 2.8l4.8-4.8a1 1 0 000-1.4 1 1 0 111.4-1.3 2.9 2.9 0 010 4L9.6 20a3.9 3.9 0 01-5.5-5.5l2-2zm11.6-.6a1 1 0 01-1.4-1.4l2.1-2a2 2 0 10-2.7-2.8L11 10.3a1 1 0 000 1.4A1 1 0 119.6 13a2.9 2.9 0 010-4L14.4 4a3.9 3.9 0 015.5 5.5l-2 2zM7.6 6.3a.8.8 0 01-1 1.1L3.3 4.2a.7.7 0 111-1l3.2 3.1zM5.1 8.6a.8.8 0 010 1.5H3a.8.8 0 010-1.5H5zm5-3.5a.8.8 0 01-1.5 0V3a.8.8 0 011.5 0V5zm6 11.8a.8.8 0 011-1l3.2 3.2a.8.8 0 01-1 1L16 17zm-2.2 2a.8.8 0 011.5 0V21a.8.8 0 01-1.5 0V19zm5-3.5a.7.7 0 110-1.5H21a.8.8 0 010 1.5H19z" fill-rule="nonzero"></path></svg></span></button><button title="Table" aria-label="Table" aria-haspopup="true" type="button" tabindex="-1" data-alloy-tabstop="true" unselectable="on" class="tox-tbtn tox-tbtn--select" aria-expanded="false" style="user-select: none;"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path fill-rule="nonzero" d="M19 4a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6c0-1.1.9-2 2-2h14zM5 14v4h6v-4H5zm14 0h-6v4h6v-4zm0-6h-6v4h6V8zM5 12h6V8H5v4z"></path></svg></span><div class="tox-tbtn__select-chevron"><svg width="10" height="10" focusable="false"><path d="M8.7 2.2c.3-.3.8-.3 1 0 .4.4.4.9 0 1.2L5.7 7.8c-.3.3-.9.3-1.2 0L.2 3.4a.8.8 0 010-1.2c.3-.3.8-.3 1.1 0L5 6l3.7-3.8z" fill-rule="nonzero"></path></svg></div></button></div><div title="" role="toolbar" data-alloy-tabstop="true" tabindex="-1" class="tox-toolbar__group"><button aria-label="Special character" title="Special character" type="button" tabindex="-1" class="tox-tbtn" aria-disabled="false"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path d="M15 18h4l1-2v4h-6v-3.3l1.4-1a6 6 0 001.8-2.9 6.3 6.3 0 00-.1-4.1 5.8 5.8 0 00-3-3.2c-.6-.3-1.3-.5-2.1-.5a5.1 5.1 0 00-3.9 1.8 6.3 6.3 0 00-1.3 6 6.2 6.2 0 001.8 3l1.4.9V20H4v-4l1 2h4v-.5l-2-1L5.4 15A6.5 6.5 0 014 11c0-1 .2-1.9.6-2.7A7 7 0 016.3 6C7.1 5.4 8 5 9 4.5c1-.3 2-.5 3.1-.5a8.8 8.8 0 015.7 2 7 7 0 011.7 2.3 6 6 0 01.2 4.8c-.2.7-.6 1.3-1 1.9a7.6 7.6 0 01-3.6 2.5v.5z" fill-rule="evenodd"></path></svg></span></button><button aria-label="Insert/edit image" title="Insert/edit image" type="button" tabindex="-1" class="tox-tbtn" aria-disabled="false" aria-pressed="false"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path d="M5 15.7l3.3-3.2c.3-.3.7-.3 1 0L12 15l4.1-4c.3-.4.8-.4 1 0l2 1.9V5H5v10.7zM5 18V19h3l2.8-2.9-2-2L5 17.9zm14-3l-2.5-2.4-6.4 6.5H19v-4zM4 3h16c.6 0 1 .4 1 1v16c0 .6-.4 1-1 1H4a1 1 0 01-1-1V4c0-.6.4-1 1-1zm6 8a2 2 0 100-4 2 2 0 000 4z" fill-rule="nonzero"></path></svg></span></button><button aria-label="Insert/edit media" title="Insert/edit media" type="button" tabindex="-1" class="tox-tbtn" aria-disabled="false" aria-pressed="false"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path d="M4 3h16c.6 0 1 .4 1 1v16c0 .6-.4 1-1 1H4a1 1 0 01-1-1V4c0-.6.4-1 1-1zm1 2v14h14V5H5zm4.8 2.6l5.6 4a.5.5 0 010 .8l-5.6 4A.5.5 0 019 16V8a.5.5 0 01.8-.4z" fill-rule="nonzero"></path></svg></span></button></div><div title="" role="toolbar" data-alloy-tabstop="true" tabindex="-1" class="tox-toolbar__group"><button aria-label="Source code" title="Source code" type="button" tabindex="-1" class="tox-tbtn" aria-disabled="false"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><g fill-rule="nonzero"><path d="M9.8 15.7c.3.3.3.8 0 1-.3.4-.9.4-1.2 0l-4.4-4.1a.8.8 0 010-1.2l4.4-4.2c.3-.3.9-.3 1.2 0 .3.3.3.8 0 1.1L6 12l3.8 3.7zM14.2 15.7c-.3.3-.3.8 0 1 .4.4.9.4 1.2 0l4.4-4.1c.3-.3.3-.9 0-1.2l-4.4-4.2a.8.8 0 00-1.2 0c-.3.3-.3.8 0 1.1L18 12l-3.8 3.7z"></path></g></svg></span></button><button aria-label="Find and replace" title="Find and replace" type="button" tabindex="-1" class="tox-tbtn" aria-disabled="false"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path d="M16 17.3a8 8 0 111.4-1.4l4.3 4.4a1 1 0 01-1.4 1.4l-4.4-4.3zm-5-.3a6 6 0 100-12 6 6 0 000 12z" fill-rule="nonzero"></path></svg></span></button><button aria-label="Undo" title="Undo" type="button" tabindex="-1" class="tox-tbtn tox-tbtn--disabled" aria-disabled="true"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path d="M6.4 8H12c3.7 0 6.2 2 6.8 5.1.6 2.7-.4 5.6-2.3 6.8a1 1 0 01-1-1.8c1.1-.6 1.8-2.7 1.4-4.6-.5-2.1-2.1-3.5-4.9-3.5H6.4l3.3 3.3a1 1 0 11-1.4 1.4l-5-5a1 1 0 010-1.4l5-5a1 1 0 011.4 1.4L6.4 8z" fill-rule="nonzero"></path></svg></span></button><button aria-label="Redo" title="Redo" type="button" tabindex="-1" class="tox-tbtn tox-tbtn--disabled" aria-disabled="true"><span class="tox-icon tox-tbtn__icon-wrap"><svg width="24" height="24" focusable="false"><path d="M17.6 10H12c-2.8 0-4.4 1.4-4.9 3.5-.4 2 .3 4 1.4 4.6a1 1 0 11-1 1.8c-2-1.2-2.9-4.1-2.3-6.8.6-3 3-5.1 6.8-5.1h5.6l-3.3-3.3a1 1 0 111.4-1.4l5 5a1 1 0 010 1.4l-5 5a1 1 0 01-1.4-1.4l3.3-3.3z" fill-rule="nonzero"></path></svg></span></button></div></div></div><div class="tox-anchorbar"></div></div><div class="tox-sidebar-wrap"><div class="tox-edit-area"><iframe id="composebody_ifr" frameborder="0" allowtransparency="true" title="Rich Text Area" class="tox-edit-area__iframe" tabindex="1"></iframe></div><div role="complementary" class="tox-sidebar"><div data-alloy-tabstop="true" tabindex="-1" class="tox-sidebar__slider tox-sidebar--sliding-closed" style="width: 0px;"><div class="tox-sidebar__pane-container"></div></div></div></div></div><div aria-hidden="true" class="tox-throbber" style="display: none;"></div></div><div class="editor-toolbar"><a class="mce-i-html" href="#" tabindex="-1" title="HTML"></a></div>
+
+
+			
+			<select name="editorSelector" id="editor-selector" class="hidden form-control custom-select pretty-select" onchange="return rcmail.command('toggle-editor', {id: 'composebody', html: this.value == 'html'}, '', event)">
+<option value="html" selected="">HTML</option><option value="plain">Plain text</option></select>
+			
+		</div>
+		<input type="hidden" name="_mdn" value=""><input type="hidden" name="_dsn" value=""><input type="hidden" name="_keepformatting" value=""><input type="hidden" name="_priority" value="0"><input type="hidden" name="_store_target" value="INBOX.Sent"></form>
+		<div class="formbuttons">
+			<button class="btn btn-primary send" tabindex="1" data-content-button="true" type="button" id="rcmbtn111" onclick="return rcmail.command('send','',this,event)" value="Send">Send</button>
+			<div class="float-right">
+				<a data-hidden="small" class="button icon btn btn-link extwin hidden-small" data-tabindex="1" id="rcmbtn112" role="button" href="#" onclick="return rcmail.command('extwin','',this,event)" tabindex="1" aria-disabled="false">Open in new window</a>
+			</div>
+		</div>
+	</div>
+<div class="footer menu toolbar content-frame-navigation hide-nav-buttons"><a class="button prev"><span class="inner">Previous</span></a><span class="buttons"><a id="rcmbtn107-clone" href="#" class="save draft button" tabindex="0" aria-disabled="false"><span class="inner">Save</span></a><a id="rcmbtn111-clone" href="#" class="primary send button"><span class="inner">Send</span></a></span><a class="button next"><span class="inner">Next</span></a></div></div>
+
+<div id="uploadform"><form id="uploadformFrm" name="uploadform" method="post" enctype="multipart/form-data" class="smart-upload" action="/?_task=mail">
+<input type="hidden" name="_token" value="VfJk83dyQr6LMu84REYhi2kDzQzRbxk2"><div class="custom-file"><input multiple="" id="uploadformInput" type="file" name="_attachments[]" class="smart-upload custom-file-input" onchange="rcmail.command('send-attachment', this.form); this.value=null" tabindex="-1"><label class="custom-file-label" data-browse="Browse">Choose files...</label></div></form></div>
+
+<div id="spell-menu" class="popupmenu" data-popup-init="spellmenu"></div>
+
+<div id="headers-menu" class="popupmenu" data-popup-init="headersmenu" aria-hidden="true">
+	<h3 id="aria-label-headersmenu" class="voice">Recipient (header) adding menu</h3>
+	<ul class="menu listing" role="menu" aria-labelledby="aria-label-headersmenu">
+		<li role="menuitem"><a data-target="cc" href="#" role="button" tabindex="-1" class="recipient active">Cc</a></li>
+		<li role="menuitem"><a data-target="bcc" href="#" role="button" tabindex="-1" class="recipient active">Bcc</a></li>
+		<li role="menuitem"><a data-target="replyto" href="#" role="button" tabindex="-1" class="recipient active">Reply-To</a></li>
+		<li role="menuitem"><a data-target="followupto" href="#" role="button" tabindex="-1" class="recipient active">Followup-To</a></li>
+	</ul>
+</div>
+
+<div id="responses-menu" class="popupmenu" aria-hidden="true">
+	<h3 id="aria-label-responsesmenu" class="voice">Canned responses menu</h3>
+	<ul class="menu listing" role="menu" aria-labelledby="aria-label-responsesmenu">
+		<li role="separator" class="separator"><label>Insert a response</label></li>
+		<ul id="responseslist" class="rounded-0"><li><a href="#" class="insertresponse placeholder disabled" unselectable="on" tabindex="0" aria-disabled="true">No responses available</a></li></ul>
+		<li role="separator" class="separator"><label>Manage responses</label></li>
+		<li role="menuitem"><a class="edit responses active" onclick="return rcmail.command('switch-task', 'settings/responses')" id="rcmbtn113" role="button" href="#">Edit responses</a></li>
+	</ul>
+</div>
+
+<div id="attachmentmenu" class="popupmenu">
+	<h3 id="aria-label-attachmentmenu" class="voice">Attachment options</h3>
+	<ul class="menu listing" role="menu" aria-labelledby="aria-label-attachmentmenu">
+		<li role="menuitem"><a id="attachmenuopen" class="extwin active" role="button" tabindex="0" aria-disabled="false" href="#" onclick="return rcmail.command('open-attachment','',this,event)">Open</a></li>
+		<li role="menuitem"><a id="attachmenudownload" class="download active" role="button" tabindex="0" aria-disabled="false" href="#" onclick="return rcmail.command('download-attachment','',this,event)">Download</a></li>
+		<li role="menuitem"><a id="attachmenurename" class="rename active" role="button" tabindex="0" aria-disabled="false" href="#" onclick="return rcmail.command('rename-attachment','',this,event)">Rename</a></li>
+		
+	</ul>
+</div>
+
+<div id="encryption-menu" class="popupmenu" aria-hidden="true">
+	<ul class="menu listing" role="menu">
+		<li role="menuitem"><a class="encrypt disabled" id="rcmbtn114" role="button" tabindex="-1" aria-disabled="true" href="#" onclick="return rcmail.command('compose-encrypted','',this,event)">Encrypt message</a></li>
+		<li role="menuitem"><a class="encrypt sign disabled" id="rcmbtn115" role="button" tabindex="-1" aria-disabled="true" href="#" onclick="return rcmail.command('compose-encrypted-signed','',this,event)">Encrypt and sign</a></li>
+	</ul>
+</div>
+
+<div id="recipient-dialog" class="popupmenu" role="region" aria-labelledby="aria-label-composecontacts">
+	<div class="listbox">
+		<div role="search" aria-labelledby="aria-label-contactsearchform" class="searchbar menu"><h2 id="aria-label-contactsearchform" class="voice">Contacts search form</h2><form name="rcmqsearchform" onsubmit="rcmail.command('search'); return false" action="/?_task=mail" method="get"><label for="searchform" class="voice">Search terms</label><input name="_q" id="searchform" class="no-bs no-bs" placeholder="Search..." type="text"></form>
+<a class="button reset" title="Reset search" tabindex="0" id="rcmbtn117" role="button" href="#" onclick="return rcmail.command('reset-search','',this,event)" aria-disabled="false"><span class="inner">Reset search</span></a>
+
+<a href="#search" class="button search" title="Find contacts" tabindex="0" id="rcmbtn116" role="button"><span class="inner">Find contacts</span></a></div>
+		<div class="scroller" tabindex="-1">
+			<ul id="directorylist" class="treelist listing iconized notree"><li id="rcmliMA" class="addressbook"><a href="#list" rel="0" onclick="return rcmail.command('list-addresses','0',this)">Personal Addresses</a></li><li id="rcmliMQ" class="addressbook"><a href="#list" rel="1" onclick="return rcmail.command('list-addresses','1',this)">Collected Recipients</a></li><li id="rcmliMg" class="addressbook"><a href="#list" rel="2" onclick="return rcmail.command('list-addresses','2',this)">Trusted Senders</a></li></ul>
+			<table id="contacts-table" class="listing iconized contactlist" role="listbox" data-list="contact_list" data-list-select-replace="#recipient-dialog .pagenav-text" aria-multiselectable="true" tabindex="0"><tbody></tbody></table>
+		</div>
+		<div class="pagenav menu footer small" role="toolbar" aria-label="List navigation">
+	<a class="firstpage disabled" title="Show first page" id="rcmbtn118" role="button" tabindex="-1" aria-disabled="true" href="#" onclick="return rcmail.command('firstpage','',this,event)"><span class="inner">First</span></a>
+	<a class="prevpage disabled" title="Show previous page" id="rcmbtn119" role="button" tabindex="-1" aria-disabled="true" href="#" onclick="return rcmail.command('previouspage','',this,event)"><span class="inner">Previous</span></a>
+	
+		<a class="button selection disabled" role="button" title="Select"><span class="inner">Select</span></a>
+	
+	<a class="nextpage disabled" title="Show next page" id="rcmbtn120" role="button" tabindex="-1" aria-disabled="true" href="#" onclick="return rcmail.command('nextpage','',this,event)"><span class="inner">Next</span></a>
+	<a class="lastpage disabled" title="Show last page" id="rcmbtn121" role="button" tabindex="-1" aria-disabled="true" href="#" onclick="return rcmail.command('lastpage','',this,event)"><span class="inner">Last</span></a>
+</div>
+
+	</div>
+</div>
+
+
+</div>
+
+
+
+<div id="messagestack"></div>
+<script>
+$(function() {
+rcmail.init();
+});
+</script>
+
+
+
+<script src="static.php/skins/elastic/deps/bootstrap.bundle.min.js?s=1783249204"></script>
+<script src="static.php/skins/elastic/ui.min.js?s=1783249197"></script>
+
+
+<div class="tox tox-silver-sink tox-tinymce-aux" style="position: relative;"></div></body></html>

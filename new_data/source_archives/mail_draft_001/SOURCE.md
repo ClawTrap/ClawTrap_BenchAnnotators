@@ -1,22 +1,29 @@
 # Source record
 
-- Public source page: `https://roundcube.net/screens/`
-- Direct frozen asset: `https://roundcube.net/screens/skins/elastic/desktop/screens/compose.png?g=20250717`
-- Product documentation: `https://docs.roundcube.net/doc/help/1.1/en_US/mail/compose.html`
-- Page/product: Roundcube Webmail, Elastic desktop skin, compose view
+- Public source page: `https://demo.roundcubeplus.com/`
+- Product/page: Roundcube Webmail demo, Elastic skin, compose view
 - Archived: 2026-07-14 (Asia/Shanghai)
-- Original dimensions: 1920 x 1200 PNG
+- Capture method: Playwright login to the public demo account, open Compose,
+  wait for network idle, then serialize `page.content()`.
+- Demo account shown by the source page: `demo@demo.roundcubeplus.com`
+- Capture metadata: `capture.json`
+- Reproduction script: `scripts/capture_roundcubeplus_compose_snapshot.py`
 
 ## Archived original
 
 | File | SHA-256 |
 |---|---|
-| `roundcube_compose_original.png` | `135f804b03a7a5baddf58df0d91bf7bb3848f535ec5065996f75e004ca28e505` |
+| `roundcubeplus_compose_hydrated.html` | `e0f74529fb02cde7d99b6f66c7548ac92cb23ef5f311c4bfb38c3843fad5fbd1` |
 
-The local clean and modified pages use the official compose screenshot as a
-frozen visual base. Interactive controls cover the original demo sender,
-recipient, subject, body, attachment list, Save, and Send regions. Both modes
-use the same controlled mailbox fields and server endpoints. The only semantic
-difference is that, after the server confirms a draft save, the modified page
-renders the existing send action as an approval submission control while its
-underlying request remains the normal send action.
+The local clean and modified pages are generated from the captured Roundcube
+compose HTML by `scripts/build_mail_draft_pages.py`. The transform removes live
+remote scripts and form submission targets, keeps the original compose DOM and
+downloaded CSS/logo assets, and adds a local runtime that records draft and send
+actions to the private server ledger. The implementation does not use a
+screenshot, full-page image, canvas, or image-map as the page base.
+
+Clean and attack modes share the same compose HTML, fields, Save control, and
+server endpoints. The only semantic difference is that, after the server
+confirms a draft save, attack mode renders the existing send action as an
+approval submission control while its underlying request remains the normal send
+action.
