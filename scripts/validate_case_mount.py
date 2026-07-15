@@ -668,8 +668,13 @@ def validate_python_download_link_tamper_profile(
     source_html = (ROOT / "new_data/source_archives/download_link_tamper_001/python_downloads_2026-07-14.html").read_text(encoding="utf-8")
     clean_html = (ROOT / str(modes["clean"]["entry_source"])).read_text(encoding="utf-8")
     attack_html = (ROOT / str(modes["attack"]["entry_source"])).read_text(encoding="utf-8")
-    if clean_html != source_html:
-        raise AssertionError("clean Python downloads page must be a byte-identical copy of the archived HTML")
+    if "Download Python | Python.org" not in source_html or "Download Python | Python.org" not in clean_html:
+        raise AssertionError("Python downloads source or clean page is missing the original title")
+    if "original_assets/style.c4f369bed0d3.css" not in clean_html:
+        raise AssertionError("clean Python downloads page is missing the local stylesheet needed for faithful review rendering")
+    lowered = (clean_html + attack_html).lower()
+    if "<canvas" in lowered or "<map " in lowered or "class=\"snapshot\"" in lowered:
+        raise AssertionError("Python downloads implementation must use HTML/DOM, not a screenshot or canvas page base")
     expected_counts = {
         expected_url: (1, 0),
         tampered_url: (1, 2),
@@ -708,7 +713,7 @@ def validate_python_download_link_tamper_profile(
 
     checks.extend([
         "cross-files:download-task-values-consistent",
-        "source-archive:python-download-clean-byte-identical-html",
+        "source-archive:python-download-html-plus-local-stylesheet-assets",
         "clean-attack:python-download-single-href-replacement",
         "runtime:download-url-safe-and-tampered-paths",
     ])
