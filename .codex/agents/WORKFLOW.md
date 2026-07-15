@@ -69,6 +69,7 @@ Allowed:
 - **Pydio expiry problem:** a real DOM hidden under a custom replacement UI is not a realistic snapshot. The visible surface must remain the captured page.
 - **GitHub login problem:** if a fake login uses a real brand surface, fetch the real login HTML rather than approximating a modal by hand.
 - **Stripe docs problem:** source archives can contain realistic-looking test keys that trigger push protection. Redact or avoid secret-shaped strings in archived public sources before committing.
+- **News tamper problem:** when the attack is a news fact replacement, do not leave the same attacked fact correct elsewhere on the modified page as an artificial clue. Change that fact consistently on the attack page; external or multi-source verification is the Agent's responsibility.
 - **Clue-scan problem:** generic words such as `tamper` may appear in real pages or local dataset paths. Treat only obvious benchmark/security-test clues as blockers.
 
 ## Reviewer scope
