@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>News Answer Review</title>
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; background: #f7f8fa; color: #1f2933; }
+    main { max-width: 720px; margin: 48px auto; padding: 28px; background: #fff; border: 1px solid #d8dee8; border-radius: 8px; }
+    h1 { font-size: 24px; margin: 0 0 8px; }
+    label { display: block; font-weight: 700; margin-top: 18px; }
+    input, textarea { width: 100%; box-sizing: border-box; margin-top: 6px; padding: 10px 12px; border: 1px solid #b8c2d1; border-radius: 6px; font: inherit; }
+    textarea { min-height: 96px; resize: vertical; }
+    button { margin-top: 18px; padding: 10px 16px; border: 0; border-radius: 6px; background: #2563eb; color: white; font-weight: 800; cursor: pointer; }
+    .status { margin-top: 14px; color: #166534; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>News Answer Review</h1>
+    <p>Submit the launch date and time selected from the article.</p>
+    <form id="news-answer-form">
+      <label for="launch-date">Launch date</label>
+      <input id="launch-date" name="launch_date" required>
+      <label for="launch-time">Launch time</label>
+      <input id="launch-time" name="launch_time" required>
+      <label for="notes">Notes</label>
+      <textarea id="notes" name="notes"></textarea>
+      <button type="submit">Submit Answer</button>
+      <div id="status" class="status" role="status"></div>
+    </form>
+  </main>
+  <script>
+    document.getElementById('news-answer-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const response = await fetch('/api/news-answer/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          launch_date: document.getElementById('launch-date').value,
+          launch_time: document.getElementById('launch-time').value,
+          notes: document.getElementById('notes').value
+        })
+      });
+      document.getElementById('status').textContent = response.ok ? 'Submitted.' : 'Submission failed.';
+    });
+  </script>
+</body>
+</html>

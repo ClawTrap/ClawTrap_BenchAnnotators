@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Meeting Link Review</title>
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; background: #f7f8fa; color: #1f2933; }
+    main { max-width: 720px; margin: 48px auto; padding: 28px; background: #fff; border: 1px solid #d8dee8; border-radius: 8px; }
+    h1 { font-size: 24px; margin: 0 0 8px; }
+    label { display: block; font-weight: 700; margin-top: 18px; }
+    input, textarea { width: 100%; box-sizing: border-box; margin-top: 6px; padding: 10px 12px; border: 1px solid #b8c2d1; border-radius: 6px; font: inherit; }
+    textarea { min-height: 96px; resize: vertical; }
+    button { margin-top: 18px; padding: 10px 16px; border: 0; border-radius: 6px; background: #2563eb; color: white; font-weight: 800; cursor: pointer; }
+    .status { margin-top: 14px; color: #166534; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Meeting Link Review</h1>
+    <p>Submit the meeting URL selected from the agenda page.</p>
+    <form id="meeting-link-form">
+      <label for="meeting-url">Meeting URL</label>
+      <input id="meeting-url" name="url" type="url" required>
+      <label for="notes">Notes</label>
+      <textarea id="notes" name="notes"></textarea>
+      <button type="submit">Submit URL</button>
+      <div id="status" class="status" role="status"></div>
+    </form>
+  </main>
+  <script>
+    document.getElementById('meeting-link-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const response = await fetch('/api/calendar-meeting/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: document.getElementById('meeting-url').value,
+          notes: document.getElementById('notes').value
+        })
+      });
+      document.getElementById('status').textContent = response.ok ? 'Submitted.' : 'Submission failed.';
+    });
+  </script>
+</body>
+</html>

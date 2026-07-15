@@ -11,7 +11,7 @@ from flask import Flask, jsonify, redirect, request, send_from_directory, sessio
 from .auth import authenticate
 from .constants import ATTACK_TYPES, ATTACK_TYPES_BY_TASK_TYPE, INTERACTIVE_FORMS, TASK_TYPES
 from .schema import normalize_case, validate_case
-from .simulations import docker_plan, download_url, forge_issue, mail_draft, pydio_files, status_login, stripe_payment
+from .simulations import calendar_meeting, docker_plan, download_url, forge_issue, mail_draft, news_report, pydio_files, status_login, stripe_payment, vendor_payment
 from .storage import DEFAULT_DATASET, list_file_datasets, read_local_dataset, set_benchmark_selected, set_expert_decision, update_case_fields, upsert_case
 
 
@@ -647,6 +647,24 @@ def create_app() -> Flask:
             return redirect("/login")
         return send_from_directory(ROOT / "new_data" / "clean_assets" / "download_link_tamper_001", "download_url_submit.html")
 
+    @app.get("/meeting-link-submit.html")
+    def meeting_link_submit_page():
+        if not can_access_workspace():
+            return redirect("/login")
+        return send_from_directory(ROOT / "new_data" / "clean_assets" / "calendar_meeting_link_tamper_001", "meeting_link_submit.html")
+
+    @app.get("/news-answer-submit.html")
+    def news_answer_submit_page():
+        if not can_access_workspace():
+            return redirect("/login")
+        return send_from_directory(ROOT / "new_data" / "clean_assets" / "news_content_tamper_001", "news_answer_submit.html")
+
+    @app.get("/vendor-payment-submit.html")
+    def vendor_payment_submit_page():
+        if not can_access_workspace():
+            return redirect("/login")
+        return send_from_directory(ROOT / "new_data" / "clean_assets" / "vendor_bank_change_001", "vendor_payment_submit.html")
+
     def mail_run_key() -> str:
         run_key = str(session.get("mail_draft_run_key") or "")
         if not run_key:
@@ -874,6 +892,73 @@ def create_app() -> Flask:
             download_url.submit_download_url(
                 download_url_run_key(),
                 url=str(raw.get("url") or ""),
+                notes=str(raw.get("notes") or ""),
+            )
+        )
+
+    def calendar_meeting_run_key() -> str:
+        run_key = str(session.get("calendar_meeting_run_key") or "")
+        if not run_key:
+            run_key = uuid4().hex
+            session["calendar_meeting_run_key"] = run_key
+        return run_key
+
+    @app.post("/api/calendar-meeting/submit")
+    def calendar_meeting_submit():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        raw = request.get_json(silent=True) or {}
+        return jsonify(
+            calendar_meeting.submit_meeting_link(
+                calendar_meeting_run_key(),
+                url=str(raw.get("url") or ""),
+                notes=str(raw.get("notes") or ""),
+            )
+        )
+
+    def news_report_run_key() -> str:
+        run_key = str(session.get("news_report_run_key") or "")
+        if not run_key:
+            run_key = uuid4().hex
+            session["news_report_run_key"] = run_key
+        return run_key
+
+    @app.post("/api/news-answer/submit")
+    def news_answer_submit():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        raw = request.get_json(silent=True) or {}
+        return jsonify(
+            news_report.submit_news_answer(
+                news_report_run_key(),
+                launch_date=str(raw.get("launch_date") or ""),
+                launch_time=str(raw.get("launch_time") or ""),
+                notes=str(raw.get("notes") or ""),
+            )
+        )
+
+    def vendor_payment_run_key() -> str:
+        run_key = str(session.get("vendor_payment_run_key") or "")
+        if not run_key:
+            run_key = uuid4().hex
+            session["vendor_payment_run_key"] = run_key
+        return run_key
+
+    @app.post("/api/vendor-payment/submit")
+    def vendor_payment_submit():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        raw = request.get_json(silent=True) or {}
+        return jsonify(
+            vendor_payment.submit_payment_instruction(
+                vendor_payment_run_key(),
+                payee=str(raw.get("payee") or ""),
+                amount=str(raw.get("amount") or ""),
+                payment_reference=str(raw.get("payment_reference") or ""),
+                sort_code=str(raw.get("sort_code") or ""),
+                account_number=str(raw.get("account_number") or ""),
+                iban=str(raw.get("iban") or ""),
+                bic=str(raw.get("bic") or ""),
                 notes=str(raw.get("notes") or ""),
             )
         )

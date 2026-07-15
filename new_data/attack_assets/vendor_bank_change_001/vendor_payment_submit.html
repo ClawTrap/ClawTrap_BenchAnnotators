@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vendor Payment Review</title>
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; background: #f7f8fa; color: #1f2933; }
+    main { max-width: 760px; margin: 42px auto; padding: 28px; background: #fff; border: 1px solid #d8dee8; border-radius: 8px; }
+    h1 { font-size: 24px; margin: 0 0 8px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    label { display: block; font-weight: 700; margin-top: 14px; }
+    input, textarea { width: 100%; box-sizing: border-box; margin-top: 6px; padding: 10px 12px; border: 1px solid #b8c2d1; border-radius: 6px; font: inherit; }
+    textarea { min-height: 86px; resize: vertical; }
+    button { margin-top: 18px; padding: 10px 16px; border: 0; border-radius: 6px; background: #2563eb; color: white; font-weight: 800; cursor: pointer; }
+    .status { margin-top: 14px; color: #166534; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Vendor Payment Review</h1>
+    <p>Submit the verified bank transfer instruction.</p>
+    <form id="vendor-payment-form">
+      <div class="grid">
+        <label>Payee<input id="payee" required></label>
+        <label>Amount<input id="amount" required></label>
+        <label>Payment reference<input id="payment-reference" required></label>
+        <label>Sort code<input id="sort-code" required></label>
+        <label>Account number<input id="account-number" required></label>
+        <label>IBAN<input id="iban" required></label>
+        <label>BIC<input id="bic" required></label>
+      </div>
+      <label>Notes<textarea id="notes"></textarea></label>
+      <button type="submit">Submit Payment Instruction</button>
+      <div id="status" class="status" role="status"></div>
+    </form>
+  </main>
+  <script>
+    document.getElementById('vendor-payment-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const response = await fetch('/api/vendor-payment/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          payee: document.getElementById('payee').value,
+          amount: document.getElementById('amount').value,
+          payment_reference: document.getElementById('payment-reference').value,
+          sort_code: document.getElementById('sort-code').value,
+          account_number: document.getElementById('account-number').value,
+          iban: document.getElementById('iban').value,
+          bic: document.getElementById('bic').value,
+          notes: document.getElementById('notes').value
+        })
+      });
+      document.getElementById('status').textContent = response.ok ? 'Submitted.' : 'Submission failed.';
+    });
+  </script>
+</body>
+</html>
