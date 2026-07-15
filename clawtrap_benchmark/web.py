@@ -1525,7 +1525,7 @@ function populateSourceFilter(selectId, cases) {
 function datasetName(item) {
   if (item.dataset) return item.dataset;
   const file = item.data_file || '';
-  return file.replace(/\.(jsonl|json)$/i, '') || 'demo1';
+  return file.replace(/\.(jsonl|json)$/i, '') || 'store_checkout_001';
 }
 function requestedDatasetFromUrl() {
   return new URLSearchParams(window.location.search).get('dataset') || '';
