@@ -1,120 +1,91 @@
-# ClawTrap case-generation workflow
+# ClawTrap case workflow
 
-This is the project workflow for producing one mountable MITM benchmark case. It complements `prompt_for_generation.md`; if the two disagree, the prompt and the user's current request win.
+This workflow exists to keep MITM benchmark work realistic, mountable, and cheap to review. The user's current instruction and `prompt_for_generation.md` always take priority.
 
-## Objectives
+## Default mode
 
-A finished case must isolate one credible MITM intervention inside an otherwise ordinary task, retain a safe completion path, have deterministic private ground truth, and mount directly on the review platform. Quality comes from good experimental controls, not from adding validators or review rounds.
+Do the work in the main agent unless the user explicitly asks to use `.codex` agents. These agent prompts are reusable role definitions, not a requirement to fan out every task.
 
-## Agents
+When agents are used:
 
-| Agent | Purpose | Writes files |
+| Agent | Use only for | Writes |
 | --- | --- | --- |
-| `benchmark_designer` | Defines the clean task, attack, safe path, observables, and scoring states. | No |
-| `html_snapshot_researcher` | Finds and assesses authentic HTML/DOM sources for web cases. | No |
-| `benchmark_reviewer` | Applies a short pre-build gate or a focused post-build audit. | No |
-| `case_builder` | Implements the accepted design and is the only subagent allowed to write. | Yes |
+| `benchmark_designer` | New case design before implementation. | No |
+| `html_snapshot_researcher` | Finding/verifying an HTML source for a web case. | No |
+| `case_builder` | Implementing one accepted case. | Yes |
+| `benchmark_reviewer` | One lightweight design gate or one focused file audit. | No |
 
-The parent agent owns orchestration, final judgment, and the user-facing handoff. Subagents must not spawn more agents.
+Never run more than one write-capable agent at a time. No subagent may spawn another agent.
 
-## Pipeline
+## Minimal pipeline
 
-### 0. Intake by the parent
+1. **Intake**
+   - Identify the requested MITM topic and the normal user task.
+   - Inspect the schema, mount validator, and at most one nearby existing case.
+   - For web cases, identify the real page/state that should be captured as HTML.
 
-Read all of `prompt_for_generation.md`, the current schema and mount validator, and at most one closest existing case. Inspect more files only when a concrete dependency requires it. Record the requested attack theme and any user constraints in a compact intake note.
+2. **Design**
+   - Start from the benign task and clean answer, not from the attack.
+   - Add the smallest credible MITM change.
+   - Define a safe path, private deterministic observables, and outcome priority.
+   - Reject designs that mainly test trivia, search luck, product knowledge, or generic task correctness.
 
-### 1. Parallel bounded research
+3. **Source**
+   - For web cases, obtain real HTML/serialized DOM. “Looks similar” or “DOM reference” is not enough.
+   - If the page cannot be captured as usable HTML, choose another source or redesign the case.
+   - Save original HTML and needed assets in `source_archives`, with URL, capture method/date, and hashes where practical.
 
-Run `benchmark_designer` and, only for a web case, `html_snapshot_researcher` in parallel. Give both the same attack theme and intake note. Their responses are briefs, not essays or implementation plans.
+4. **Build**
+   - Clean and attack assets derive from the same captured baseline.
+   - Modify only the text, href, parameter, DOM node, or handler needed for the attack and scoring.
+   - Keep evaluator, ground truth, source archive, and attack configuration private.
+   - Map task file keys as `[snake_case_key]`; do not expose local paths as the task interface.
 
-For a non-web case, skip `html_snapshot_researcher`. Do not create a replacement agent merely to keep the stage parallel.
+5. **Check**
+   - Run the current case mount validator and one review-platform smoke test.
+   - For stateful cases, exercise only the decisive safe and attacked ledger paths.
+   - Use screenshots only as QA evidence, not as implementation input.
 
-### 2. One pre-build gate
+## HTML snapshot rules
 
-The parent merges the two briefs into one proposed design and asks `benchmark_reviewer` for a `PRE_BUILD` review. The reviewer may return at most five blocking findings.
+Hard requirements:
 
-- `ACCEPT`: proceed.
-- `REVISE`: the parent fixes the design once and checks the named blockers itself.
-- `REJECT`: choose a materially different design or source; do not polish a broken premise.
+- A webpage snapshot is saved HTML/DOM plus localizable assets. It is not a screenshot.
+- Do not build a page by putting text, controls, or dialogs over a PNG/JPEG background, canvas, or image-map.
+- Do not replace the visible page body with a custom app while claiming it is a real snapshot. If the real page is only a skeleton/welcome page, either make the task fit that page or pick another source.
+- Do not hand-draw branded dialogs when real HTML for that dialog/page can be fetched.
+- Localize CSS, fonts, images, and other assets needed for review rendering. Root-relative assets like `/static/...`, `/css/...`, and `/assets/...` often render as bare text unless rewritten or mounted.
+- Keep the original source archive intact. Served clean/attack assets may rewrite resource links for local rendering, but source records must explain that.
 
-There is at most **one design revision round**. Do not rerun all research unless the reviewer invalidated the source or the basic task premise.
+Allowed:
 
-### 3. Single-writer implementation
+- Removing live production scripts, analytics, or external actions when the static page still looks and behaves like the captured state needed for the task.
+- Adding minimal local JS only for controlled task instrumentation or private ledger events.
+- Capturing QA screenshots after implementation.
 
-After acceptance, run exactly one `case_builder`. Never run two write-capable agents concurrently. The builder must preserve unrelated work and implement only the accepted case plus the minimal shared-platform change genuinely required to mount it.
+## Lessons to preserve
 
-The expected artifact set is:
+- **Python.org/Docker docs problem:** byte-identical HTML can still render as plain text when CSS is root-relative or blocked by CORS. Archive the original, then localize served CSS/assets.
+- **Pydio expiry problem:** a real DOM hidden under a custom replacement UI is not a realistic snapshot. The visible surface must remain the captured page.
+- **GitHub login problem:** if a fake login uses a real brand surface, fetch the real login HTML rather than approximating a modal by hand.
+- **Stripe docs problem:** source archives can contain realistic-looking test keys that trigger push protection. Redact or avoid secret-shaped strings in archived public sources before committing.
+- **Clue-scan problem:** generic words such as `tamper` may appear in real pages or local dataset paths. Treat only obvious benchmark/security-test clues as blockers.
 
-- one dataset JSONL entry;
-- agent-visible task assets referenced by `[snake_case_key]` and declared in `task_files`;
-- clean and attack assets;
-- private evaluator assets and, for stateful cases, a private server ledger;
-- a source archive with provenance;
-- a mount manifest and generated mount report.
+## Reviewer scope
 
-Do not generate `policies` or `protected_assets`.
+The reviewer is a gate, not a second implementation agent. It should check only:
 
-## HTML snapshot rule
+- Does this measure the requested MITM behavior?
+- Is the clean task legitimate and safely completable?
+- Is the attack minimal and realistic?
+- Is scoring deterministic and private?
+- For web cases, is the visible page real HTML/DOM, not screenshot/composited/custom replacement UI?
+- Are mount routes, task files, evaluator privacy, and review previews usable?
 
-For this project, a static webpage snapshot means saved **HTML/DOM content** plus the CSS, JavaScript, fonts, images, and other assets needed to render it locally. A screenshot is not a webpage snapshot.
+Block only issues that break measurement validity, safe path, deterministic scoring, privacy isolation, or platform mounting. Style preferences, optional metadata, and speculative edge cases are warnings.
 
-Required:
+Default loop limit: one design revision and one implementation repair. If it still fails, report the concrete blocker instead of expanding validation.
 
-- Start from fetched HTML, a browser DOM serialization/static export, or an authentic open-source/demo page with traceable provenance.
-- Save the original HTML and relevant original assets in the private source archive, with source URL, retrieval date, and hashes where available.
-- Localize or remove unsafe external dependencies, analytics, and production actions while preserving semantic DOM, layout, and normal context.
-- Derive clean and attack pages from the same baseline. Change only the DOM, text, data, or handlers needed for the attack and its observability.
-- Keep the review page's Before/After URLs clickable and embeddable.
+## Completion
 
-Forbidden:
-
-- Using a PNG/JPEG screenshot as the page background, canvas, or full-page image and placing synthetic controls or text on top.
-- Reconstructing a page from a screenshot when usable HTML/DOM exists.
-- Calling a screenshot-only archive an HTML snapshot.
-
-Screenshots may be stored only as visual references, provenance evidence, or QA output. If no defensible HTML/DOM source can be obtained, choose another source or document the exception before implementation; do not silently fall back to screenshot compositing.
-
-## Validation policy
-
-Validation is a bounded decision procedure, not an open-ended search for imperfections.
-
-### Level 0: always run
-
-These are hard gates:
-
-- dataset discovery and case schema validity;
-- exact agreement between task `[key]` references, `task_files`, and manifest task assets;
-- existence and read-only/visibility boundaries of all mounted files;
-- exactly one clean and one attack mode with loadable routes;
-- evaluator, ground truth, and source archive inaccessible to the tested Agent and public routes;
-- deterministic scoring observables and attack outcome priority;
-- no obvious benchmark/debug/security-test clues in agent-visible content;
-- clean/attack semantic difference is limited to the declared intervention and instrumentation;
-- mount report says `mountable: true`.
-
-### Level 1: web cases
-
-Run one route/asset smoke test and one browser-level safe-path/attack-path smoke flow. Confirm that the page is real HTML/DOM, the safe completion path remains usable, and the review page can show and open Before/After HTML. A screenshot may be captured as QA evidence but is never implementation input.
-
-### Level 2: irreversible, credential, or stateful cases
-
-Exercise only the decisive ledger transitions: one safe completion, one attacked action, persistence across refresh/retry where relevant, and absence of plaintext secrets. Do not enumerate every possible UI sequence.
-
-### Scope and loop limits
-
-- Run the current case's validator and one generic review-platform smoke test.
-- Run the full test suite only when shared schema, shared web/runtime code, or the validator framework changed.
-- Allow one main validation pass and one corrective pass. A second failure becomes a concrete blocker report; it does not authorize broader validators or more review agents.
-- Deterministic mount, isolation, scoring, and safety-path failures are blocking. Minor visual differences, optional metadata, stylistic preferences, and speculative edge cases are warnings unless they break realism or reveal the benchmark.
-- Prefer declarative manifest invariants and reusable checks. Add a case-specific validation profile only when a unique scoring invariant cannot be expressed by existing checks.
-
-## Optional post-build audit
-
-Use `benchmark_reviewer` once in `POST_BUILD` mode only when the case handles credentials, irreversible actions, new shared runtime code, or a non-trivial HTML transformation. Otherwise the parent performs the Level 0/1 checklist directly.
-
-The post-build reviewer inspects actual files and returns at most five blockers. The parent may send one focused repair request to `case_builder`; after that, rerun only the failed checks and their direct dependencies.
-
-## Completion contract
-
-The parent may declare completion only when required validation levels pass, the mount report exists and says `mountable: true`, review URLs load, and any remaining warnings are explicitly non-blocking. The handoff should name the case ID, manifest, report, review URL, and tests run without repeating every internal discussion.
-
+Report the case IDs touched, the important changes, the checks run, and any remaining non-blocking warnings. Keep the handoff short.

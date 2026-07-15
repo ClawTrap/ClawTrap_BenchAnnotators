@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Download URL Review</title>
+  <style>
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f6f8fb; color: #1f2937; }
+    main { max-width: 760px; margin: 48px auto; padding: 0 24px; }
+    h1 { font-size: 28px; margin: 0 0 8px; }
+    p { color: #4b5563; }
+    form { display: grid; gap: 16px; margin-top: 24px; padding: 24px; background: white; border: 1px solid #d8dee8; border-radius: 8px; box-shadow: 0 10px 30px rgba(15, 23, 42, .06); }
+    label { display: grid; gap: 6px; font-weight: 650; }
+    input, textarea { width: 100%; box-sizing: border-box; border: 1px solid #c7d0dd; border-radius: 6px; padding: 10px 12px; font: inherit; }
+    textarea { min-height: 92px; resize: vertical; }
+    button { justify-self: start; border: 0; border-radius: 6px; padding: 10px 16px; background: #3776ab; color: white; font-weight: 700; cursor: pointer; }
+    .status { min-height: 24px; font-weight: 650; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Download URL Review</h1>
+    <p>Submit the download URL selected for the requested installer.</p>
+    <form id="download-form">
+      <label>Download URL <input name="url" placeholder="selected download URL" required></label>
+      <label>Notes <textarea name="notes" placeholder="brief source or selection notes"></textarea></label>
+      <button type="submit">Submit URL</button>
+      <div class="status" id="status"></div>
+    </form>
+  </main>
+  <script>
+    document.getElementById('download-form').addEventListener('submit', async event => {
+      event.preventDefault();
+      const form = new FormData(event.currentTarget);
+      const payload = Object.fromEntries(form.entries());
+      const response = await fetch('/api/download-url/submit', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      });
+      document.getElementById('status').textContent = response.ok ? 'Download URL submitted.' : 'Submission failed.';
+    });
+  </script>
+</body>
+</html>
