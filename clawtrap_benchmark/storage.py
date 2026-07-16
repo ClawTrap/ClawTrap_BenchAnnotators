@@ -408,6 +408,25 @@ def list_file_datasets() -> list[str]:
     return names
 
 
+NUMBERED_DATASET_RE = re.compile(r"^(?P<group>.+)_\d{3}$")
+
+
+def dataset_group_name(dataset: str) -> str:
+    match = NUMBERED_DATASET_RE.match(dataset)
+    return match.group("group") if match else dataset
+
+
+def list_file_dataset_groups() -> list[str]:
+    return sorted({dataset_group_name(name) for name in list_file_datasets()})
+
+
+def dataset_member_names(dataset: str) -> list[str]:
+    names = list_file_datasets()
+    if dataset in names:
+        return [dataset]
+    return sorted(name for name in names if dataset_group_name(name) == dataset)
+
+
 def data_files() -> list[Path]:
     paths: list[Path] = []
     if NEW_DATA_DIR.exists():
@@ -496,7 +515,7 @@ def read_persisted_case_map(dataset: str = DEFAULT_DATASET) -> dict[str, dict[st
     return persisted
 
 
-def read_local_dataset(dataset: str = DEFAULT_DATASET) -> list[dict[str, Any]]:
+def read_single_local_dataset(dataset: str = DEFAULT_DATASET) -> list[dict[str, Any]]:
     local_cases = read_file_dataset(dataset)
     persisted = read_persisted_case_map(dataset)
     merged_cases = []
@@ -510,6 +529,16 @@ def read_local_dataset(dataset: str = DEFAULT_DATASET) -> list[dict[str, Any]]:
         else:
             merged_cases.append(enrich_case(case, storage_origin="local_file", data_file=case.get("data_file") or dataset_path(dataset).name, dataset=dataset))
     return merged_cases
+
+
+def read_local_dataset(dataset: str = DEFAULT_DATASET) -> list[dict[str, Any]]:
+    members = dataset_member_names(dataset)
+    if members and (len(members) > 1 or members[0] != dataset):
+        cases: list[dict[str, Any]] = []
+        for member in members:
+            cases.extend(read_single_local_dataset(member))
+        return cases
+    return read_single_local_dataset(dataset)
 
 
 def list_datasets() -> list[str]:

@@ -12,7 +12,7 @@ from .auth import authenticate
 from .constants import ATTACK_TYPES, ATTACK_TYPES_BY_TASK_TYPE, INTERACTIVE_FORMS, TASK_TYPES
 from .schema import normalize_case, validate_case
 from .simulations import calendar_meeting, docker_plan, download_url, forge_issue, mail_draft, news_report, pydio_files, status_login, stripe_payment, vendor_payment
-from .storage import DEFAULT_DATASET, list_file_datasets, read_local_dataset, set_benchmark_selected, set_expert_decision, update_case_fields, upsert_case
+from .storage import DEFAULT_DATASET, dataset_group_name, list_file_dataset_groups, list_file_datasets, read_local_dataset, set_benchmark_selected, set_expert_decision, update_case_fields, upsert_case
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -46,12 +46,16 @@ def can_access_workspace() -> bool:
 
 
 def available_datasets() -> list[str]:
-    return list_file_datasets() or [DEFAULT_DATASET]
+    return list_file_dataset_groups() or [DEFAULT_DATASET]
+
+
+def known_datasets() -> set[str]:
+    return set(available_datasets()) | set(list_file_datasets())
 
 
 def requested_dataset(raw: dict[str, Any] | None = None) -> tuple[str | None, str | None]:
     dataset = str(request.args.get("dataset") or (raw or {}).get("dataset") or DEFAULT_DATASET).strip()
-    if dataset not in available_datasets():
+    if dataset not in known_datasets():
         return None, f"unknown dataset: {dataset}"
     return dataset, None
 
@@ -1053,7 +1057,8 @@ def create_app() -> Flask:
         if not can_access_workspace():
             return jsonify({"error": "not logged in"}), 401
         datasets = available_datasets()
-        default = DEFAULT_DATASET if DEFAULT_DATASET in datasets else datasets[0]
+        default_group = dataset_group_name(DEFAULT_DATASET)
+        default = default_group if default_group in datasets else datasets[0]
         return jsonify({"datasets": datasets, "default": default})
 
     @app.get("/api/cases")
@@ -2014,8 +2019,9 @@ function renderDetail() {
 }
 async function toggleSelectedCase(id, selected) {
   const panel = document.getElementById('detailPanel');
+  const item = filteredCases.find(candidate => candidate.id === id) || allCases.find(candidate => candidate.id === id);
   try {
-    await toggleBenchmarkSelection(id, selected);
+    await toggleBenchmarkSelection(id, selected, datasetName(item || {}));
     filterReviewCases();
   } catch (error) {
     panel.insertAdjacentHTML('afterbegin', `<div class="errors">${escapeHtml(error.message)}</div>`);
@@ -2038,7 +2044,7 @@ async function submitDecision(decision) {
   const editSaved = await saveCurrentEdit({rerender:false});
   if (!editSaved) return;
   const comment = document.getElementById('decisionComment')?.value || '';
-  const res = await fetch(`/api/cases/${encodeURIComponent(item.id)}/expert-decision`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({decision, comment, dataset:selectedDataset()})});
+  const res = await fetch(`/api/cases/${encodeURIComponent(item.id)}/expert-decision`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({decision, comment, dataset:datasetName(item)})});
   const data = await res.json();
   if (!res.ok) {
     if (errorEl) errorEl.textContent = (data.errors || [data.error || '裁决失败']).join('\n');
@@ -2076,7 +2082,7 @@ async function saveCurrentEdit({rerender=true} = {}) {
   payload.failure_states = collectListValues('failure_states');
   payload.metadata = collectListValues('metadata');
   payload.graders = collectListValues('graders');
-  payload.dataset = selectedDataset();
+  payload.dataset = datasetName(item);
   const res = await fetch(`/api/cases/${encodeURIComponent(item.id)}/expert-edit`, {method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
   const data = await res.json();
   if (!res.ok) {
