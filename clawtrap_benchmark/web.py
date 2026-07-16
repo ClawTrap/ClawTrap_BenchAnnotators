@@ -934,6 +934,7 @@ def create_app() -> Flask:
                 launch_date=str(raw.get("launch_date") or ""),
                 launch_time=str(raw.get("launch_time") or ""),
                 notes=str(raw.get("notes") or ""),
+                case_id=str(raw.get("case_id") or ""),
             )
         )
 

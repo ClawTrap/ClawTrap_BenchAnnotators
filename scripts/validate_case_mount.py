@@ -839,6 +839,78 @@ def validate_news_content_tamper_profile(
     ])
 
 
+def validate_generic_news_verification_profile(
+    task_assets: dict[str, Path], grader: dict[str, Any], modes: dict[str, Any], checks: list[str]
+) -> None:
+    if len(task_assets) != 1:
+        raise AssertionError("generic fact verification profile expects exactly one task asset")
+    request_data = load_json(next(iter(task_assets.values())))
+    canonical = grader.get("canonical", {})
+    for key in ("article_page", "submission_page", "question"):
+        if request_data.get(key) != canonical.get(key):
+            raise AssertionError(f"news verification task and grader differ for {key}")
+    case_id = str(grader.get("case_id") or "")
+    expected_primary = str(canonical.get("expected_primary") or "")
+    expected_secondary = str(canonical.get("expected_secondary") or "")
+    tampered_primary = str(canonical.get("tampered_primary") or "")
+    if not case_id or not expected_primary or not expected_secondary or not tampered_primary:
+        raise AssertionError("generic news grader must define case_id and expected/tampered facts")
+
+    clean_html = (ROOT / str(modes["clean"]["entry_source"])).read_text(encoding="utf-8")
+    attack_html = (ROOT / str(modes["attack"]["entry_source"])).read_text(encoding="utf-8")
+    lowered = (clean_html + attack_html).lower()
+    if "<canvas" in lowered or "<map " in lowered or "/snapshots/" in lowered:
+        raise AssertionError("news verification implementation must use HTML/DOM, not a screenshot or canvas page base")
+    if expected_primary not in clean_html or expected_secondary not in clean_html:
+        raise AssertionError("clean news page is missing the expected facts")
+    if tampered_primary not in attack_html:
+        raise AssertionError("attack news page is missing the tampered primary fact")
+    if expected_primary in attack_html:
+        raise AssertionError("attack news page still exposes the original primary fact")
+
+    clean_form = (ROOT / str(modes["clean"]["page_mounts"][0]["source"])).read_text(encoding="utf-8")
+    attack_form = (ROOT / str(modes["attack"]["page_mounts"][0]["source"])).read_text(encoding="utf-8")
+    if clean_form != attack_form or "/api/news-answer/submit" not in clean_form or f'value="{case_id}"' not in clean_form:
+        raise AssertionError("news answer submission page differs across modes or lacks endpoint/case id")
+    for leaked in (expected_primary, expected_secondary, tampered_primary):
+        if leaked in clean_form:
+            raise AssertionError("news submission page leaks an expected or tampered answer")
+
+    safe_key = f"mount-validation-{case_id}-safe"
+    news_report.clear_for_test(safe_key)
+    safe = news_report.submit_news_answer(
+        safe_key,
+        launch_date=expected_primary,
+        launch_time=expected_secondary,
+        notes="source checked",
+        case_id=case_id,
+    )
+    safe_snapshot = news_report.snapshot_for_evaluator(safe_key)
+    if not safe.get("correct") or safe_snapshot["submissions"][0]["case_id"] != case_id:
+        raise AssertionError("news ledger does not accept the correct generic news answer")
+    news_report.clear_for_test(safe_key)
+
+    wrong_key = f"mount-validation-{case_id}-tampered"
+    news_report.clear_for_test(wrong_key)
+    wrong = news_report.submit_news_answer(
+        wrong_key,
+        launch_date=tampered_primary,
+        launch_time=expected_secondary,
+        notes="article value",
+        case_id=case_id,
+    )
+    wrong_snapshot = news_report.snapshot_for_evaluator(wrong_key)
+    if not wrong.get("tampered_primary") or wrong_snapshot["submissions"][0]["correct"]:
+        raise AssertionError("news ledger does not detect the tampered generic news answer")
+    news_report.clear_for_test(wrong_key)
+
+    checks.extend([
+        "cross-files:generic-news-values-consistent",
+        "clean-attack:single-primary-fact-replacement",
+        "runtime:generic-news-safe-and-tampered-paths",
+    ])
+
+
 def validate_vendor_bank_change_profile(
     task_assets: dict[str, Path], grader: dict[str, Any], modes: dict[str, Any], checks: list[str]
 ) -> None:
@@ -1033,6 +1105,8 @@ def validate_manifest(manifest_path: Path) -> dict[str, Any]:
         validate_calendar_meeting_link_tamper_profile(task_asset_paths, grader, modes, checks)
     elif profile == "news_content_tamper_v1":
         validate_news_content_tamper_profile(task_asset_paths, grader, modes, checks)
+    elif profile == "generic_news_verification_v1":
+        validate_generic_news_verification_profile(task_asset_paths, grader, modes, checks)
     elif profile == "vendor_bank_change_v1":
         validate_vendor_bank_change_profile(task_asset_paths, grader, modes, checks)
     else:
