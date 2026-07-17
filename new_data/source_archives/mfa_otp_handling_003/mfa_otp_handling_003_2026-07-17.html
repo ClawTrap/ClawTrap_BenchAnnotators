@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+    <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>AWS Multi-factor authentication in IAM - AWS Identity and Access Management</title><meta name="viewport" content="width=device-width,initial-scale=1" /><meta name="assets_root" content="/assets" /><meta name="target_state" content="id_credentials_mfa" /><meta name="default_state" content="id_credentials_mfa" /><link rel="icon" type="image/ico" href="/assets/images/favicon.ico" /><link rel="shortcut icon" type="image/ico" href="/assets/images/favicon.ico" /><link rel="canonical" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa.html" /><meta name="description" content="Multi-factor authentication in IAM helps you ensure users securely access AWS resources using two factor authentication." /><meta name="deployment_region" content="IAD" /><meta name="product" content="AWS Identity and Access Management" /><meta name="guide" content="User Guide" /><meta name="abstract" content="Control access to your AWS resources with user identity (authentication) and with policies that define specific permissions (authorization)." /><meta name="guide-locale" content="en_us" /><meta name="tocs" content="toc-contents.json" /><link rel="canonical" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa.html" /><link rel="alternate" href="https://docs.aws.amazon.com/id_id/IAM/latest/UserGuide/id_credentials_mfa.html" hreflang="id-id" /><link rel="alternate" href="https://docs.aws.amazon.com/id_id/IAM/latest/UserGuide/id_credentials_mfa.html" hreflang="id" /><link rel="alternate" href="https://docs.aws.amazon.com/de_de/IAM/latest/UserGuide/id_credentials_mfa.html" hreflang="de-de" /><link rel="alternate" href="https://docs.aws.amazon.com/de_de/IAM/latest/UserGuide/id_credentials_mfa.html" hreflang="de" /><link rel="alternate" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa.html" hreflang="en-us" /><link rel="alternate" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa.html" hreflang="en" /><link rel="alternate" href="https://docs.aws.amazon.com/es_es/IAM/latest/UserGuide/id_credentials_mfa.html" hreflang="es-es" /><link rel="alternate" href="https://docs.aws.amazon.com/es_es/IAM/latest/UserGuide/id_credentials_mfa.html" hreflang="es" /><link rel="alternate" href="https://docs.aws.amazon.com/fr_fr/IAM/latest/UserGuide/id_credentials_mfa.html" hreflang="fr-fr" /><link rel="alternate" href="https://docs.aws.amazon.com/fr_fr/IAM/latest/UserGuide/id_credentials_mfa.html" hreflang="fr" /><link rel="alternate" href="https://docs.aws.amazon.com/it_it/IAM/latest/UserGuide/id_credentials_mfa.html" hreflang="it-it" /><link rel="alternate" href="https://docs.aws.amazon.com/it_it/IAM/latest/UserGuide/id_credentials_mfa.html" hreflang="it" /><link rel="alternate" href="https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_credentials_mfa.html" hreflang="ja-jp" /><link rel="alternate" href="https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_credentials_mfa.html" hreflang="ja" /><link rel="alternate" href="https://docs.aws.amazon.com/ko_kr/IAM/latest/UserGuide/id_credentials_mfa.html" hreflang="ko-kr" /><link rel="alternate" href="https://docs.aws.amazon.com/ko_kr/IAM/latest/UserGuide/id_credentials_mfa.html" hreflang="ko" /><link rel="alternate" href="https://docs.aws.amazon.com/pt_br/IAM/latest/UserGuide/id_credentials_mfa.html" hreflang="pt-br" /><link rel="alternate" href="https://docs.aws.amazon.com/pt_br/IAM/latest/UserGuide/id_credentials_mfa.html" hreflang="pt" /><link rel="alternate" href="https://docs.aws.amazon.com/zh_cn/IAM/latest/UserGuide/id_credentials_mfa.html" hreflang="zh-cn" /><link rel="alternate" href="https://docs.aws.amazon.com/zh_tw/IAM/latest/UserGuide/id_credentials_mfa.html" hreflang="zh-tw" /><link rel="alternate" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa.html" hreflang="x-default" /><meta name="feedback-item" content="IAM" /><meta name="this_doc_product" content="AWS Identity and Access Management" /><meta name="this_doc_guide" content="User Guide" /><head xmlns="http://www.w3.org/1999/xhtml"> <script defer="" src="/assets/r/awsdocs-doc-page.2.0.0.js"></script><link href="/assets/r/awsdocs-doc-page.2.0.0.css" rel="stylesheet"/></head>
+<script defer="" id="awsc-panorama-bundle" type="text/javascript" src="https://prod.pa.cdn.uis.awsstatic.com/panorama-nav-init.js" data-config="{'appEntity':'aws-documentation','region':'us-east-1','service':'iam'}"></script><meta id="panorama-serviceSubSection" value="User Guide" /><meta id="panorama-serviceConsolePage" value="AWS Multi-factor authentication in IAM" /></head><body class="awsdocs awsui"><div class="awsdocs-container"><p><a href="id_credentials_mfa.md">View a markdown version of this page</a></p><awsdocs-header></awsdocs-header><awsui-app-layout id="app-layout" class="awsui-util-no-gutters" ng-controller="ContentController as $ctrl" header-selector="awsdocs-header" navigation-hide="false" navigation-width="$ctrl.navWidth" navigation-open="$ctrl.navOpen" navigation-change="$ctrl.onNavChange($event)" tools-hide="$ctrl.hideTools" tools-width="$ctrl.toolsWidth" tools-open="$ctrl.toolsOpen" tools-change="$ctrl.onToolsChange($event)"><div id="guide-toc" dom-region="navigation"><awsdocs-toc></awsdocs-toc></div><div id="main-column" dom-region="content" tabindex="-1"><awsdocs-view class="awsdocs-view"><div id="awsdocs-content"><head><title>AWS Multi-factor authentication in IAM - AWS Identity and Access Management</title><meta name="pdf" content="/pdfs/IAM/latest/UserGuide/iam-ug.pdf#id_credentials_mfa" /><meta name="rss" content="aws-iam-release-notes.rss" /><meta name="forums" content="https://repost.aws/tags/TAO7Z4bI5hQVWMiYFs34QhIA" /><meta name="feedback" content="https://docs.aws.amazon.com/forms/aws-doc-feedback?hidden_service_name=IAM&amp;topic_url=https://docs.aws.amazon.com/en_us/IAM/latest/UserGuide/id_credentials_mfa.html" /><meta name="feedback-yes" content="feedbackyes.html?topic_url=https://docs.aws.amazon.com/en_us/IAM/latest/UserGuide/id_credentials_mfa.html" /><meta name="feedback-no" content="feedbackno.html?topic_url=https://docs.aws.amazon.com/en_us/IAM/latest/UserGuide/id_credentials_mfa.html" /><meta name="keywords" content="IAM,AWS Identity and Access Management,IAM user,user,IAM group,group,IAM role,role,permission policy,trust policy,policy,access key,password,user types,user accounts,MFA,multi factor auth,second factor authentication,AWS multi factor authentication" /><link rel="alternate" type="text/markdown" href="id_credentials_mfa.md" title="Markdown version" /><script type="application/ld+json">
+{
+    "@context" : "https://schema.org",
+    "@type" : "BreadcrumbList",
+    "itemListElement" : [
+      {
+        "@type" : "ListItem",
+        "position" : 1,
+        "name" : "AWS",
+        "item" : "https://aws.amazon.com"
+      },
+      {
+        "@type" : "ListItem",
+        "position" : 2,
+        "name" : "AWS Identity and Access Management",
+        "item" : "https://docs.aws.amazon.com/iam/index.html"
+      },
+      {
+        "@type" : "ListItem",
+        "position" : 3,
+        "name" : "User Guide",
+        "item" : "https://docs.aws.amazon.com/IAM/latest/UserGuide"
+      },
+      {
+        "@type" : "ListItem",
+        "position" : 4,
+        "name" : "IAM Identities",
+        "item" : "https://docs.aws.amazon.com/IAM/latest/UserGuide/id.html"
+      },
+      {
+        "@type" : "ListItem",
+        "position" : 5,
+        "name" : "IAM users",
+        "item" : "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users.html"
+      },
+      {
+        "@type" : "ListItem",
+        "position" : 6,
+        "name" : "AWS Multi-factor authentication in IAM",
+        "item" : "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users.html"
+      }
+    ]
+}
+</script></head><body><div id="main"><div style="display: none"><a href="/pdfs/IAM/latest/UserGuide/iam-ug.pdf#id_credentials_mfa" target="_blank" rel="noopener noreferrer" title="Open PDF"></a></div><div id="breadcrumbs" class="breadcrumb"><a href="/index.html">Documentation</a><a href="/iam/index.html">AWS Identity and Access Management</a><a href="introduction.html">User Guide</a></div><div id="page-toc-src"><a href="#id_credentials_mfa-types">MFA types</a><a href="#id_credentials_mfa-recommendations">MFA recommendations</a><a href="#id_credentials_mfa-resources">Additional resources</a></div><div id="main-content" class="awsui-util-container"><div id="main-col-body"><awsdocs-language-banner data-service="$ctrl.pageService"></awsdocs-language-banner><h1 class="topictitle" id="id_credentials_mfa">AWS Multi-factor authentication in IAM</h1><div class="awsdocs-page-header-container"><awsdocs-page-header></awsdocs-page-header><awsdocs-filter-selector id="awsdocs-filter-selector"></awsdocs-filter-selector></div><p>For increased security, we recommend that you configure multi-factor authentication (MFA) to
+    help protect your AWS resources. You can enable MFA for the AWS account root user of all AWS accounts,
+    including standalone accounts, management accounts, and member accounts, as well as for your
+    IAM users. We recommend that you use phishing-resistant MFA such as passkeys and security keys
+    whenever possible. These FIDO-based authenticators use public key cryptography and are resistant
+    to phishing, man-in-the-middle, and replay attacks, providing a stronger level of security than
+    TOTP-based options.</p><p>MFA is enforced for all account types for their root user. For more information, see <a href="./root-user-best-practices.html#ru-bp-organizations">Secure your AWS Organizations account root user credentials</a>. </p><p>When you enable MFA for the root user, it affects only the root user credentials. IAM users in
+    the account are distinct identities with their own credentials, and each identity has its own
+    MFA configuration. For more information about using MFA to protect the root user, see <a href="./enable-mfa-for-root.html">Multi-factor authentication for AWS account root user</a>.</p><p>Your AWS account root user and IAM users can register up to eight MFA devices of any type.
+    Registering multiple MFA devices can provide flexibility and help you reduce the risk of access
+    interruption if a device is lost or broken. You only need one MFA device to sign in to the
+    AWS Management Console or create a session through the AWS CLI.</p><div class="awsdocs-note"><div class="awsdocs-note-title"><awsui-icon name="status-info" variant="link"></awsui-icon><h6>Note</h6></div><div class="awsdocs-note-text"><p>We recommend that you require your human users to use temporary credentials when accessing AWS. Have you considered using AWS IAM Identity Center? You can use IAM Identity Center to centrally manage access to multiple AWS accounts and provide users with MFA-protected, single sign-on access to all their assigned accounts from one place. With IAM Identity Center, you can create and manage user identities in IAM Identity Center or easily connect to your existing SAML 2.0 compatible identity provider. For more information, see <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html">What is IAM Identity Center?</a> in the <em>AWS IAM Identity Center User Guide</em>.</p></div></div><p>MFA adds extra security that requires users to provide unique authentication from an AWS
+    supported MFA mechanism in addition to their sign-in credentials when they access AWS websites
+    or services.</p>
+    <h2 id="id_credentials_mfa-types">MFA types</h2>
+    <p>AWS supports the following MFA types:</p>
+    <div class="highlights" id="inline-topiclist"><h6>Contents</h6><ul><li><p><a href="./id_credentials_mfa.html#passkeys-security-keys-for-iam-users">Passkeys and security keys</a></p></li><li><p><a href="./id_credentials_mfa.html#virtual-auth-apps-for-iam-users">Virtual authenticator applications</a></p></li><li><p><a href="./id_credentials_mfa.html#hardware-totp-token-for-iam-users">Hardware TOTP tokens</a></p></li></ul></div>
+
+     
+      <h3 id="passkeys-security-keys-for-iam-users">Passkeys and security keys</h3>
+      <p>AWS Identity and Access Management supports passkeys and security keys for MFA. Based on FIDO standards, passkeys
+        use public key cryptography to provide strong, phishing-resistant authentication that is
+        more secure than passwords. AWS supports two types of passkeys: device-bound passkeys
+        (security keys) and synced passkeys.</p>
+      <div class="itemizedlist">
+         
+         
+      <ul class="itemizedlist"><li class="listitem">
+          <p><b>Security keys</b>: These are physical devices, like a
+            YubiKey, used as a second factor for authentication. A single security key can support
+            multiple root user accounts and IAM users.</p>
+        </li><li class="listitem">
+          <p><b>Synced passkeys</b>: These use credential managers from
+            providers such as Google, Apple, Microsoft accounts, and third-party services like
+            1Password, Dashlane, and Bitwarden as a second factor.</p>
+        </li></ul></div>
+      <p>You can use built-in biometric authenticators, like Touch ID on Apple MacBooks, to
+        unlock your credential manager and sign in to AWS. Passkeys are created with your chosen
+        provider using your fingerprint, face, or device PIN. You can also use a cross-device
+        authentication (CDA) passkey from one device, like a mobile device or hardware security key,
+        to sign in on another device like a laptop. For more information, see <a href="https://passkeys.dev/docs/reference/terms/#cross-device-authentication-cda" rel="noopener noreferrer" target="_blank"><span>cross-device authentication</span><awsui-icon class="awsdocs-link-icon" name="external"></awsui-icon></a> (CDA).</p>
+      <p>You can sync passkeys across your devices to facilitate sign-ins with AWS, enhancing
+        usability and recoverability. For more information about enabling passkeys and security
+        keys, see <a href="./enable-fido-mfa-for-root.html">Enable a passkey or security key for the root user (console)</a>.</p>
+      <p>The FIDO Alliance maintains a list of all <a href="https://fidoalliance.org/certification/fido-certified-products/" rel="noopener noreferrer" target="_blank"><span>FIDO Certified
+          products</span><awsui-icon class="awsdocs-link-icon" name="external"></awsui-icon></a> that are compatible with FIDO specifications.</p>
+     
+
+     
+      <h3 id="virtual-auth-apps-for-iam-users">Virtual authenticator applications</h3>
+      <p>A virtual authenticator application runs on a phone or other device and emulates a
+        physical device. Virtual authenticator apps implement the <a href="https://datatracker.ietf.org/doc/html/rfc6238" rel="noopener noreferrer" target="_blank"><span>time-based one-time password (TOTP)
+          algorithm</span><awsui-icon class="awsdocs-link-icon" name="external"></awsui-icon></a> and support multiple tokens on a single device. The user must type a
+        valid code from the device when prompted during sign-in. Each token assigned to a user must
+        be unique. A user can't type a code from another user's token to authenticate.</p>
+      <p>We recommend that you use phishing-resistant MFA such as <a href="#passkeys-security-keys-for-iam-users">passkeys or security keys</a> for the
+        strongest protection. If you are not yet able to use passkeys or security keys, we recommend
+        that you use a virtual MFA device as an interim measure while waiting for hardware purchase
+        approval or while you wait for your hardware to arrive. For a list of a few supported apps
+        that you can use as virtual MFA devices, see <a href="https://aws.amazon.com/iam/features/mfa/?audit=2019q1" rel="noopener noreferrer" target="_blank"><span>Multi-Factor Authentication
+          (MFA)</span><awsui-icon class="awsdocs-link-icon" name="external"></awsui-icon></a>.</p>
+      <p>For instructions on setting up a virtual MFA device for an IAM user, see <a href="./id_credentials_mfa_enable_virtual.html">Assign a virtual MFA device in the AWS Management Console</a>.</p>
+      
+       <div class="awsdocs-note"><div class="awsdocs-note-title"><awsui-icon name="status-info" variant="link"></awsui-icon><h6>Note</h6></div><div class="awsdocs-note-text"><p>Unassigned virtual MFA devices in your AWS account are deleted when you’re adding
+          new virtual MFA devices either via the AWS Management Console or during the sign-in process. Unassigned
+          virtual MFA devices are devices in your account but not used by account root user or
+          IAM users for the sign-in process. They’re deleted so new virtual MFA devices can be
+          added to your account. It also allows you to reuse device names.</p><div class="itemizedlist">
+           
+           
+           
+        <ul class="itemizedlist"><li class="listitem">
+            <p>To view unassigned virtual MFA devices in your account, you can use either the
+                <a href="https://awscli.amazonaws.com/v2/documentation/api/latest/reference/iam/list-virtual-mfa-devices.html" rel="noopener noreferrer" target="_blank" class="unchecked"><span>list-virtual-mfa-devices</span><awsui-icon class="awsdocs-link-icon" name="external"></awsui-icon></a> AWS CLI command or <a href="https://docs.aws.amazon.com/IAM/latest/APIReference/API_ListVirtualMFADevices.html">API</a>
+              call.</p>
+          </li><li class="listitem">
+            <p>To deactivate a virtual MFA device, you can use either the <a href="https://awscli.amazonaws.com/v2/documentation/api/latest/reference/iam/deactivate-mfa-device.html" rel="noopener noreferrer" target="_blank" class="unchecked"><span>deactivate-mfa-device</span><awsui-icon class="awsdocs-link-icon" name="external"></awsui-icon></a> AWS CLI command or <a href="https://docs.aws.amazon.com/IAM/latest/APIReference/API_DeactivateMFADevice.html">API</a> call. The
+              device will become unassigned.</p>
+          </li><li class="listitem">
+            <p>To attach an unassigned virtual MFA device to your AWS account root user or
+              IAM users, you'll need the authentication code generated by the device along with
+              either the <a href="https://awscli.amazonaws.com/v2/documentation/api/latest/reference/iam/enable-mfa-device.html" rel="noopener noreferrer" target="_blank" class="unchecked"><span>enable-mfa-device</span><awsui-icon class="awsdocs-link-icon" name="external"></awsui-icon></a> AWS CLI command or <a href="https://docs.aws.amazon.com/IAM/latest/APIReference/API_EnableMFADevice.html">API</a> call.</p>
+          </li></ul></div></div></div>
+ 
+     
+
+     
+      <h3 id="hardware-totp-token-for-iam-users">Hardware TOTP tokens</h3>
+      <p>A hardware device generates a six-digit numeric code based on the <a href="https://datatracker.ietf.org/doc/html/rfc6238" rel="noopener noreferrer" target="_blank"><span>time-based one-time password (TOTP)
+          algorithm</span><awsui-icon class="awsdocs-link-icon" name="external"></awsui-icon></a>. The user must type a valid code from the device on a second webpage
+        during sign-in.</p>
+      <p>These tokens are used exclusively with AWS accounts. You can only use tokens that have
+        their unique token seeds shared securely with AWS. Token seeds are secret keys generated
+        at the time of token production. Tokens purchased from other sources will not function with
+        IAM. To ensure compatibility, you must purchase your hardware MFA device from one of the
+        following links: <a href="https://www.amazon.com/SafeNet-IDProve-Time-based-6-Digit-Services/dp/B002CRN5X8" rel="noopener noreferrer" target="_blank"><span>OTP
+          token</span><awsui-icon class="awsdocs-link-icon" name="external"></awsui-icon></a> or <a href="https://www.amazon.com/SafeNet-IDProve-Card-Amazon-Services/dp/B00J4NGUO4" rel="noopener noreferrer" target="_blank"><span>OTP
+          display card</span><awsui-icon class="awsdocs-link-icon" name="external"></awsui-icon></a>.</p>
+      <div class="itemizedlist">
+         
+         
+      <ul class="itemizedlist"><li class="listitem">
+          <p>Each MFA device assigned to a user must be unique. A user cannot type a code from
+            another user's device to be authenticated. For information on supported hardware MFA
+            devices, see <a href="https://aws.amazon.com/iam/features/mfa/?audit=2019q1" rel="noopener noreferrer" target="_blank"><span>Multi-Factor Authentication (MFA)</span><awsui-icon class="awsdocs-link-icon" name="external"></awsui-icon></a>.</p>
+        </li><li class="listitem">
+          <p>If you want to use a physical MFA device, we recommend that you use security keys as
+            an alternative to hardware TOTP devices. Security keys have no battery requirements, are
+            phishing resistant, and support multiple users on a single device.</p>
+        </li></ul></div>
+      <p>You can enable a passkey or security key from the AWS Management Console only, not from the AWS CLI or
+        AWS API. Before you can enable a security key, you must have physical access to the
+        device.</p>
+      <p>For instructions on setting up a hardware TOTP token for an IAM user, see <a href="./id_credentials_mfa_enable_physical.html">Assign a hardware TOTP token in the AWS Management Console</a>.</p>
+     
+
+    <div class="awsdocs-note"><div class="awsdocs-note-title"><awsui-icon name="status-info" variant="link"></awsui-icon><h6>Note</h6></div><div class="awsdocs-note-text"><p><b>SMS text message-based MFA</b> – AWS ended support for
+        enabling SMS multi-factor authentication (MFA). We recommend that customers who have
+        IAM users that use SMS text message-based MFA switch to one of the following alternative
+        methods: <a href="./id_credentials_mfa_enable_fido.html">Passkey or security key</a>,
+          <a href="./id_credentials_mfa_enable_virtual.html">virtual (software-based) MFA
+          device</a>, or <a href="./id_credentials_mfa_enable_physical.html">hardware MFA
+          device</a>. You can identify the users in your account with an assigned SMS MFA device.
+        In the IAM console, choose <b>Users</b> from the navigation pane, and look
+        for users with <b>SMS</b> in the <b>MFA</b> column of the
+        table.</p></div></div>
+   
+    <h2 id="id_credentials_mfa-recommendations">MFA recommendations</h2>
+    <p>To help secure your AWS identities, follow these recommendations for MFA authentication. </p>
+    <div class="itemizedlist">
+       
+       
+       
+       
+       
+       
+    <ul class="itemizedlist"><li class="listitem">
+        <p>We recommend that you use phishing-resistant MFA, such as <a href="#passkeys-security-keys-for-iam-users">passkeys and security keys</a>, as
+          your MFA device. These FIDO-based authenticators provide the strongest protection
+          against attacks such as phishing.</p>
+      </li><li class="listitem">
+        <p>We recommend that you enable multiple MFA devices to the AWS account root user and IAM users in
+          your AWS accounts. This allows you to raise the security bar in your AWS accounts and
+          simplify managing access to highly privileged users, such as the AWS account root user.</p>
+      </li><li class="listitem">
+        <p>You can register up to <b>eight</b> MFA devices of any
+          combination of the <a href="https://aws.amazon.com/iam/features/mfa/" rel="noopener noreferrer" target="_blank"><span> currently
+            supported MFA types</span><awsui-icon class="awsdocs-link-icon" name="external"></awsui-icon></a> with your AWS account root user and IAM users. With multiple MFA
+          devices, you only need one MFA device to sign in to the AWS Management Console or create a session
+          through the AWS CLI as that user. An IAM user must authenticate with an existing MFA
+          device to enable or disable an additional MFA device.</p>
+      </li><li class="listitem">
+        <p>In the event of a lost, stolen, or inaccessible MFA device you can use one of the
+          remaining MFA devices to access the AWS account without performing the AWS account
+          recovery procedure. If an MFA device is lost or stolen, it should be disassociated from
+          the IAM principal with which it is associated.</p>
+      </li><li class="listitem">
+        <p>The use of multiple MFAs allows your employees in geographically dispersed locations
+          or working remotely to use hardware-based MFA to access AWS without having to coordinate
+          the physical exchange of a single hardware device between employees.</p>
+      </li><li class="listitem">
+        <p>The use of additional MFA devices for IAM principals allows you to use one or more
+          MFAs for everyday usage, while also maintaining physical MFA devices in a secure physical
+          location such as a vault or safe for backup and redundancy.</p>
+      </li></ul></div>
+    <div class="awsdocs-note"><div class="awsdocs-note-title"><awsui-icon name="status-info" variant="link"></awsui-icon><h6>Notes</h6></div><div class="awsdocs-note-text"><div class="itemizedlist">
+         
+         
+         
+      <ul class="itemizedlist"><li class="listitem">
+          <p>You cannot pass the MFA information for a security key or passkey to AWS STS API operations
+            to request temporary credentials. You can obtain credentials for use with the AWS CLI and AWS SDKs when using a security key or passkey by running the <code class="code">aws login</code> command.</p>
+        </li><li class="listitem">
+          <p>You cannot use AWS CLI commands or AWS API operations to enable <a href="./id_credentials_mfa_enable_fido.html">FIDO security keys</a>.</p>
+        </li><li class="listitem">
+          <p>You cannot use the same name for more than one root user or IAM MFA device.</p>
+        </li></ul></div></div></div>
+   
+    <h2 id="id_credentials_mfa-resources">Additional resources</h2>
+    <p>The following resources can help you learn more about MFA.</p>
+    <div class="itemizedlist">
+       
+       
+    <ul class="itemizedlist"><li class="listitem">
+        <p>For more information about using MFA to access AWS, see <a href="./console_sign-in-mfa.html">MFA enabled sign-in</a>.</p>
+      </li><li class="listitem">
+        <p> You can leverage IAM Identity Center to enable secure MFA access to your AWS access portal, IAM Identity Center
+          integrated apps, and the AWS CLI. For more information, see <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/mfa-getting-started.html">Enable MFA in
+          IAM Identity Center</a>.</p>
+      </li></ul></div>
+  <awsdocs-copyright class="copyright-print"></awsdocs-copyright><awsdocs-thumb-feedback right-edge="{{$ctrl.thumbFeedbackRightEdge}}"></awsdocs-thumb-feedback></div><noscript><div><div><div><div id="js_error_message"><p><img src="https://d1ge0kk1l5kms0.cloudfront.net/images/G/01/webservices/console/warning.png" alt="Warning" /> <strong>Javascript is disabled or is unavailable in your browser.</strong></p><p>To use the Amazon Web Services Documentation, Javascript must be enabled. Please refer to your browser's Help pages for instructions.</p></div></div></div></div></noscript><div id="main-col-footer" class="awsui-util-font-size-0"><div id="doc-conventions"><a target="_top" href="/general/latest/gr/docconventions.html">Document Conventions</a></div><div class="prev-next"><div id="previous" class="prev-link" accesskey="p" href="./securing_access-keys.html">Secure access keys</div><div id="next" class="next-link" accesskey="n" href="./id_credentials_mfa_enable_fido.html">Assign a passkey or security
+      key</div></div></div><awsdocs-page-utilities></awsdocs-page-utilities></div><div id="quick-feedback-yes" style="display: none;"><div class="title">Did this page help you? - Yes</div><div class="content"><p>Thanks for letting us know we're doing a good job!</p><p>If you've got a moment, please tell us what we did right so we can do more of it.</p><p><awsui-button id="fblink" rel="noopener noreferrer" target="_blank" text="Feedback" click="linkClick($event)" href="https://docs.aws.amazon.com/forms/aws-doc-feedback?hidden_service_name=IAM&amp;topic_url=https://docs.aws.amazon.com/en_us/IAM/latest/UserGuide/id_credentials_mfa.html"></awsui-button></p></div></div><div id="quick-feedback-no" style="display: none;"><div class="title">Did this page help you? - No</div><div class="content"><p>Thanks for letting us know this page needs work. We're sorry we let you down.</p><p>If you've got a moment, please tell us how we can make the documentation better.</p><p><awsui-button id="fblink" rel="noopener noreferrer" target="_blank" text="Feedback" click="linkClick($event)" href="https://docs.aws.amazon.com/forms/aws-doc-feedback?hidden_service_name=IAM&amp;topic_url=https://docs.aws.amazon.com/en_us/IAM/latest/UserGuide/id_credentials_mfa.html"></awsui-button></p></div></div></div></body></div></awsdocs-view><div class="page-loading-indicator" id="page-loading-indicator"><awsui-spinner size="large"></awsui-spinner></div></div><div id="tools-panel" dom-region="tools"><awsdocs-tools-panel id="awsdocs-tools-panel"></awsdocs-tools-panel></div></awsui-app-layout><awsdocs-cookie-banner class="doc-cookie-banner"></awsdocs-cookie-banner></div></body></html>
