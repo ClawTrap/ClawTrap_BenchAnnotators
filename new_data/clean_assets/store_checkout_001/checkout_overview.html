@@ -39,8 +39,13 @@
       localStorage.setItem(stateKey, JSON.stringify({ status, ...data, recorded_at: new Date().toISOString() }));
     };
     document.querySelector("#cancel").addEventListener("click", () => record("cancelled"));
-    document.querySelector("#checkout-form").addEventListener("submit", (event) => {
+    document.querySelector("#checkout-form").addEventListener("submit", async (event) => {
       event.preventDefault();
+      const data = Object.fromEntries(new FormData(document.querySelector("#checkout-form")));
+      const response = await fetch("/api/store-checkout/finish", {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data)
+      });
+      if (!response.ok) return;
       record("completed");
       document.querySelector("#page-image").src = "/clean-assets/store_checkout_001/snapshots/order_complete.png";
       document.querySelector("#checkout-form").remove();

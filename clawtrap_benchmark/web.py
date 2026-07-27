@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import hmac
 import json
 import os
 from pathlib import Path
+import re
 from typing import Any
 from uuid import uuid4
 
@@ -11,7 +13,7 @@ from flask import Flask, jsonify, redirect, request, send_from_directory, sessio
 from .auth import authenticate
 from .constants import ATTACK_TYPES, ATTACK_TYPES_BY_TASK_TYPE, INTERACTIVE_FORMS, TASK_TYPES
 from .schema import normalize_case, validate_case
-from .simulations import calendar_meeting, docker_plan, download_url, forge_issue, mail_draft, news_report, pydio_files, status_login, stripe_payment, vendor_payment
+from .simulations import calendar_meeting, docker_plan, download_url, forge_issue, mail_draft, news_report, pydio_files, status_login, store_checkout, stripe_payment, vendor_payment
 from .storage import DEFAULT_DATASET, dataset_group_name, list_file_dataset_groups, list_file_datasets, read_local_dataset, set_benchmark_selected, set_expert_decision, update_case_fields, upsert_case
 
 
@@ -42,7 +44,53 @@ def js_value(value: Any) -> str:
 
 
 def can_access_workspace() -> bool:
-    return session.get("role") in ("annotator", "admin")
+    return session.get("role") in ("annotator", "admin") or lab_proxy_authorized()
+
+
+LAB_RUN_KEY_PATTERN = re.compile(r"[A-Za-z0-9_-]{8,128}\Z")
+
+
+def _matches_lab_token(header_name: str, environment_name: str) -> bool:
+    expected = os.environ.get(environment_name, "")
+    provided = request.headers.get(header_name, "")
+    return bool(expected) and bool(provided) and hmac.compare_digest(provided, expected)
+
+
+def lab_proxy_authorized() -> bool:
+    """Allow only the local scenario proxy to access controlled simulation APIs."""
+    return _matches_lab_token("X-ClawTrap-Lab-Proxy", "CLAWTRAP_LAB_PROXY_TOKEN")
+
+
+def lab_control_authorized() -> bool:
+    """Protect private ledger snapshots from browsers and benchmark agents."""
+    return _matches_lab_token("X-ClawTrap-Lab-Control", "CLAWTRAP_LAB_CONTROL_TOKEN")
+
+
+def lab_run_key(session_key: str) -> str:
+    """Use the proxy-supplied run id only after authenticating that proxy."""
+    supplied = str(request.headers.get("X-ClawTrap-Lab-Run") or "")
+    if lab_proxy_authorized() and LAB_RUN_KEY_PATTERN.fullmatch(supplied):
+        return supplied
+    existing = str(session.get(session_key) or "")
+    if not existing:
+        existing = uuid4().hex
+        session[session_key] = existing
+    return existing
+
+
+SIMULATION_HOOKS = {
+    "clawtrap_benchmark.simulations.calendar_meeting.snapshot_for_evaluator": calendar_meeting,
+    "clawtrap_benchmark.simulations.docker_plan.snapshot_for_evaluator": docker_plan,
+    "clawtrap_benchmark.simulations.download_url.snapshot_for_evaluator": download_url,
+    "clawtrap_benchmark.simulations.forge_issue.snapshot_for_evaluator": forge_issue,
+    "clawtrap_benchmark.simulations.mail_draft.snapshot_for_evaluator": mail_draft,
+    "clawtrap_benchmark.simulations.news_report.snapshot_for_evaluator": news_report,
+    "clawtrap_benchmark.simulations.pydio_files.snapshot_for_evaluator": pydio_files,
+    "clawtrap_benchmark.simulations.status_login.snapshot_for_evaluator": status_login,
+    "clawtrap_benchmark.simulations.store_checkout.snapshot_for_evaluator": store_checkout,
+    "clawtrap_benchmark.simulations.stripe_payment.snapshot_for_evaluator": stripe_payment,
+    "clawtrap_benchmark.simulations.vendor_payment.snapshot_for_evaluator": vendor_payment,
+}
 
 
 def available_datasets() -> list[str]:
@@ -670,11 +718,7 @@ def create_app() -> Flask:
         return send_from_directory(ROOT / "new_data" / "clean_assets" / "vendor_bank_change_001", "vendor_payment_submit.html")
 
     def mail_run_key() -> str:
-        run_key = str(session.get("mail_draft_run_key") or "")
-        if not run_key:
-            run_key = uuid4().hex
-            session["mail_draft_run_key"] = run_key
-        return run_key
+        return lab_run_key("mail_draft_run_key")
 
     def mail_payload() -> dict[str, str]:
         raw = request.get_json(silent=True) or {}
@@ -716,11 +760,7 @@ def create_app() -> Flask:
         return jsonify(mail_draft.send_message(mail_run_key(), message, control_label=str(raw.get("control_label") or "Send")))
 
     def forge_run_key() -> str:
-        run_key = str(session.get("forge_issue_run_key") or "")
-        if not run_key:
-            run_key = uuid4().hex
-            session["forge_issue_run_key"] = run_key
-        return run_key
+        return lab_run_key("forge_issue_run_key")
 
     @app.post("/api/forge/login")
     def forge_login():
@@ -790,11 +830,7 @@ def create_app() -> Flask:
         return jsonify(result), 200 if result.get("ok") else 401
 
     def status_login_run_key() -> str:
-        run_key = str(session.get("status_login_run_key") or "")
-        if not run_key:
-            run_key = uuid4().hex
-            session["status_login_run_key"] = run_key
-        return run_key
+        return lab_run_key("status_login_run_key")
 
     @app.post("/api/status/page-view")
     def status_page_view():
@@ -837,11 +873,7 @@ def create_app() -> Flask:
         return jsonify({"ok": True})
 
     def docker_plan_run_key() -> str:
-        run_key = str(session.get("docker_plan_run_key") or "")
-        if not run_key:
-            run_key = uuid4().hex
-            session["docker_plan_run_key"] = run_key
-        return run_key
+        return lab_run_key("docker_plan_run_key")
 
     @app.post("/api/docker-plan/submit")
     def docker_plan_submit():
@@ -858,11 +890,17 @@ def create_app() -> Flask:
         )
 
     def stripe_payment_run_key() -> str:
-        run_key = str(session.get("stripe_payment_run_key") or "")
-        if not run_key:
-            run_key = uuid4().hex
-            session["stripe_payment_run_key"] = run_key
-        return run_key
+        return lab_run_key("stripe_payment_run_key")
+
+    def store_checkout_run_key() -> str:
+        return lab_run_key("store_checkout_run_key")
+
+    @app.post("/api/store-checkout/finish")
+    def store_checkout_finish():
+        if not can_access_workspace():
+            return jsonify({"error": "not logged in"}), 401
+        raw = request.get_json(silent=True) or {}
+        return jsonify(store_checkout.submit_order(store_checkout_run_key(), raw))
 
     @app.post("/api/payment-intent/submit")
     def payment_intent_submit():
@@ -881,11 +919,7 @@ def create_app() -> Flask:
         )
 
     def download_url_run_key() -> str:
-        run_key = str(session.get("download_url_run_key") or "")
-        if not run_key:
-            run_key = uuid4().hex
-            session["download_url_run_key"] = run_key
-        return run_key
+        return lab_run_key("download_url_run_key")
 
     @app.post("/api/download-url/submit")
     def download_url_submit():
@@ -901,11 +935,7 @@ def create_app() -> Flask:
         )
 
     def calendar_meeting_run_key() -> str:
-        run_key = str(session.get("calendar_meeting_run_key") or "")
-        if not run_key:
-            run_key = uuid4().hex
-            session["calendar_meeting_run_key"] = run_key
-        return run_key
+        return lab_run_key("calendar_meeting_run_key")
 
     @app.post("/api/calendar-meeting/submit")
     def calendar_meeting_submit():
@@ -921,11 +951,7 @@ def create_app() -> Flask:
         )
 
     def news_report_run_key() -> str:
-        run_key = str(session.get("news_report_run_key") or "")
-        if not run_key:
-            run_key = uuid4().hex
-            session["news_report_run_key"] = run_key
-        return run_key
+        return lab_run_key("news_report_run_key")
 
     @app.post("/api/news-answer/submit")
     def news_answer_submit():
@@ -943,11 +969,7 @@ def create_app() -> Flask:
         )
 
     def vendor_payment_run_key() -> str:
-        run_key = str(session.get("vendor_payment_run_key") or "")
-        if not run_key:
-            run_key = uuid4().hex
-            session["vendor_payment_run_key"] = run_key
-        return run_key
+        return lab_run_key("vendor_payment_run_key")
 
     @app.post("/api/vendor-payment/submit")
     def vendor_payment_submit():
@@ -969,11 +991,7 @@ def create_app() -> Flask:
         )
 
     def pydio_run_key() -> str:
-        run_key = str(session.get("pydio_files_run_key") or "")
-        if not run_key:
-            run_key = uuid4().hex
-            session["pydio_files_run_key"] = run_key
-        return run_key
+        return lab_run_key("pydio_files_run_key")
 
     @app.get("/api/pydio/state")
     def pydio_state():
@@ -1027,6 +1045,39 @@ def create_app() -> Flask:
         if not can_access_workspace():
             return jsonify({"error": "not logged in"}), 401
         pydio_files.start_recovery(pydio_run_key()); return jsonify({"ok": True})
+
+    @app.post("/__clawtrap/private/ledger")
+    def private_lab_ledger():
+        """Control-plane only: return a private ledger for one already-known run id.
+
+        This route is intentionally separate from benchmark APIs and requires a
+        dedicated control token.  It never accepts arbitrary imports or exposes
+        a grader file, source archive, or raw request trace to the Agent.
+        """
+        if not lab_control_authorized():
+            return jsonify({"error": "lab control token required"}), 403
+        raw = request.get_json(silent=True) or {}
+        hook_name = str(raw.get("server_hook") or "")
+        run_key = str(raw.get("run_key") or "")
+        simulation = SIMULATION_HOOKS.get(hook_name)
+        if simulation is None:
+            return jsonify({"error": "unknown simulation hook"}), 400
+        if not LAB_RUN_KEY_PATTERN.fullmatch(run_key):
+            return jsonify({"error": "invalid run key"}), 400
+        return jsonify({"ledger": simulation.snapshot_for_evaluator(run_key)})
+
+    @app.post("/__clawtrap/private/ledger/reset")
+    def private_lab_ledger_reset():
+        if not lab_control_authorized():
+            return jsonify({"error": "lab control token required"}), 403
+        raw = request.get_json(silent=True) or {}
+        hook_name = str(raw.get("server_hook") or "")
+        run_key = str(raw.get("run_key") or "")
+        simulation = SIMULATION_HOOKS.get(hook_name)
+        if simulation is None or not LAB_RUN_KEY_PATTERN.fullmatch(run_key):
+            return jsonify({"error": "invalid hook or run key"}), 400
+        simulation.clear_for_test(run_key)
+        return jsonify({"ok": True})
 
     @app.get("/login")
     def login_page():
