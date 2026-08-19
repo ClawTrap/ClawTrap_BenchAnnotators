@@ -5,6 +5,8 @@
 - 审核 Web 页面：登录后审阅本地攻击场景，执行保留、Discard、Mark notes，并查看原始库与最终 Benchmark 集合。
 - LLM 批量生成脚本：根据固定 prompt 批量生成 MITM benchmark seed cases，并以 JSON 落盘。
 
+与同级 `claw_trap` 的受控实验集成、私有 ledger 和本次服务端改动见 [INTEGRATION_CHANGES.md](INTEGRATION_CHANGES.md)；实际运行从 [`../claw_trap/HowToUse_README.md`](../claw_trap/HowToUse_README.md) 开始。
+
 ## 数据格式
 
 所有 case 存储在 `data/cases.json`，每条 case 使用以下核心字段：

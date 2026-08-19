@@ -1,0 +1,1932 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="awa-expId" content="cv-downloadv2:1227264;" />
+	<meta name="awa-env" content="prod" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="google-site-verification" content="hNs7DXrTySP_X-0P_AC0WulAXvUwgSXEmgfcO2r79dw" />
+
+	<!-- Twitter and Facebook OpenGraph Metadata-->
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:site" content="@code" />
+
+	<meta name="description" content="Visual Studio Code Frequently Asked Questions" />
+<meta name="keywords" content="" />
+<meta name="ms.prod" content="vs-code" />
+<meta name="ms.TOCTitle" content="" />
+<meta name="ms.ContentId" content="E02F97FD-842B-4D27-B461-37DD18B2582E" />
+<meta name="ms.date" content="02/04/2026" />
+<meta name="ms.topic" content="conceptual" />
+<!-- Twitter and Facebook OpenGraph Metadata-->
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="og:url" content="https://code.visualstudio.com/docs/supporting/faq" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Visual Studio Code FAQ" />
+<meta property="og:description" content="Visual Studio Code Frequently Asked Questions" />
+
+<meta property="og:image" content="https://code.visualstudio.com/opengraphimg/generated/docs/supporting/faq.webp" />
+
+
+
+	<link rel="shortcut icon" href="/assets/favicon.ico" sizes="128x128" />
+	<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+
+	<title>Visual Studio Code FAQ</title>
+
+	<link rel="stylesheet" href="/dist/style.css">
+
+	<script src="https://consentdeliveryfd.azurefd.net/mscc/lib/v2/wcp-consent.js"></script>
+	<script type="text/javascript" src="https://js.monitor.azure.com/scripts/c/ms.analytics-web-4.min.js"></script>
+	
+	<script type="text/javascript">
+	// Leave as var; siteConsent is initialized and referenced elsewhere.
+	var siteConsent = null;
+	
+	const GPC_DataSharingOptIn = false;
+	WcpConsent.onInitCallback(function () {
+		window.appInsights = new oneDS.ApplicationInsights();
+		window.appInsights.initialize({
+			instrumentationKey: "1a3eb3104447440391ad5f2a6ee06a0a-62879566-bc58-4741-9650-302bf2af703f-7103",
+			propertyConfiguration: {
+				userConsented: false,
+				gpcDataSharingOptIn: false,
+				callback: {
+					// Stable closure: the SDK calls this per-event, so it picks up the
+					// real consent state once WcpConsent.init() resolves (siteConsent
+					// is still null when this callback is registered).
+					userConsentDetails: function () {
+						return siteConsent ? siteConsent.getConsent() : undefined;
+					}
+				},
+			},
+			cookieCfg: {
+				ignoreCookies: ["MSCC"]
+			},
+			webAnalyticsConfiguration:{ // Web Analytics Plugin configuration
+				urlCollectQuery: true,
+				urlCollectHash: true,
+				autoCapture: {
+					scroll: true,
+					pageView: true,
+					onLoad: true,
+					onUnload: true,
+					click: true,
+					resize: true,
+					jsError: true
+				}
+			}
+		}, []);
+	
+		window.appInsights.getPropertyManager().getPropertiesContext().web.gpcDataSharingOptIn = GPC_DataSharingOptIn;
+	});
+	</script>
+	<link rel="alternate" type="application/atom+xml" title="RSS Feed for code.visualstudio.com" href="/feed.xml" />
+</head>
+
+<body >
+	<!-- Setting theme here to avoid FOUC -->
+	<script>
+		function setTheme(themeName) {
+			if (themeName === 'dark') {
+				document.documentElement.removeAttribute('data-theme'); // dark is default, so no data-theme attribute needed
+			}
+
+			if (themeName === 'light') {
+				document.documentElement.setAttribute('data-theme', themeName);
+			}
+			return;
+		}
+
+		// Determine initial theme: user preference or system preference
+		let theme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+		setTheme(theme); // Apply the initial theme
+
+		// Listen for changes in the system theme preference
+		window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+			if (!localStorage.getItem('theme')) { // Only if no user preference is saved
+				setTheme(e.matches ? 'dark' : 'light');
+			}
+		});
+	</script>
+
+	<div id="main">
+		<div class="navbar-fixed-container">
+			<div class="navbar navbar-inverse navbar-fixed-top ">
+				<div id='cookie-banner'></div>		<nav role="navigation" aria-label="Top Level">
+					<div class="container">
+						<div class="nav navbar-header">
+							<a class="navbar-brand" href="/"><span>Visual Studio Code</span></a>
+						</div>
+						<div class="navbar-collapse collapse">
+							<ul class="nav navbar-nav navbar-left" data-m='{"cN":"top-navbar","aN":"navigation"}'>
+								<li class="nav-dropdown">
+									<a id="nav-features" href="#" class="nav-dropdown-toggle" role="button" aria-haspopup="true" aria-expanded="false" data-m='{"cN":"Features","aN":"navigation","cT":"toggle"}'>
+										Features <span class="nav-dropdown-caret" aria-hidden="true"></span>
+									</a>
+									<ul class="nav-dropdown-menu" role="menu">
+										<li role="none"><a role="menuitem" href="/features/agents" data-m='{"cN":"Agents","aN":"navigation - Features"}'>Agents</a></li>
+										<li role="none"><a role="menuitem" href="/features/customizations" data-m='{"cN":"Agent Customization","aN":"navigation - Features"}'>Agent Customization</a></li>
+										<li role="none"><a role="menuitem" href="/features/models" data-m='{"cN":"Models &amp; Agent Harnesses","aN":"navigation - Features"}'>Models &amp; Agent Harnesses</a></li>
+										<li role="none"><a role="menuitem" href="/features/enterprise" data-m='{"cN":"Enterprise","aN":"navigation - Features"}'>Enterprise</a></li>
+										<li role="none"><a role="menuitem" href="/features/extensibility" data-m='{"cN":"Extensibility","aN":"navigation - Features"}'>Extensibility</a></li>
+									</ul>
+								</li>
+								<li class="nav-dropdown">
+									<a id="nav-docs" href="#" class="nav-dropdown-toggle" role="button" aria-haspopup="true" aria-expanded="false" data-m='{"cN":"Docs","aN":"navigation","cT":"toggle"}'>
+										Docs <span class="nav-dropdown-caret" aria-hidden="true"></span>
+									</a>
+									<ul class="nav-dropdown-menu" role="menu">
+										<li role="none"><a role="menuitem" href="/docs" data-m='{"cN":"Documentation","aN":"navigation - Docs"}'>Documentation</a></li>
+										<li role="none"><a role="menuitem" href="/api" data-m='{"cN":"API","aN":"navigation - Docs"}'>API</a></li>
+										<li role="none"><a role="menuitem" id="nav-faqs" href="/docs/supporting/faq" data-m='{"cN":"FAQ","aN":"navigation - Docs"}'>FAQ</a></li>
+									</ul>
+								</li>
+								<li ><a id="nav-updates" href="/updates" data-m='{"cN":"Release Notes"}'>Release Notes</a>
+								</li>
+								<li ><a id="nav-blogs" href="/blogs" data-m='{"cN":"Blog"}'>Blog</a></li>
+								<li ><a id="nav-learn" href="/learn" data-m='{"cN":"Learn"}'>Learn</a></li>
+								<li><a id="nav-events" href="https://aka.ms/vscode/live" target="_blank" rel="noopener" data-m='{"cN":"Events"}'>Events<span class="codicon codicon-link-external nav-external-icon" aria-hidden="true"></span></a></li>
+								<li class="nav-dropdown">
+									<a id="nav-resources" href="#" class="nav-dropdown-toggle" role="button" aria-haspopup="true" aria-expanded="false" data-m='{"cN":"Resources","aN":"navigation","cT":"toggle"}'>
+										Resources <span class="nav-dropdown-caret" aria-hidden="true"></span>
+									</a>
+									<ul class="nav-dropdown-menu" role="menu">
+										<li role="none"><a role="menuitem" href="https://marketplace.visualstudio.com/VSCode" target="_blank" rel="noopener"
+												id="nav-extensions" data-m='{"cN":"Extensions","aN":"navigation - Resources"}'>Extensions<span class="codicon codicon-link-external nav-external-icon" aria-hidden="true"></span></a></li>
+										<li role="none"><a role="menuitem" id="nav-mcp" href="/mcp" target="_blank" rel="noopener" data-m='{"cN":"MCP","aN":"navigation - Resources"}'>MCP<span class="codicon codicon-link-external nav-external-icon" aria-hidden="true"></span></a></li>
+									</ul>
+								</li>
+							</ul>
+							<ul class="nav navbar-nav navbar-right" role="presentation">
+								<li>
+									<a class="link-button" href="/download" id="nav-download">
+										<span>Download</span>
+									</a>
+								</li>
+							</ul>
+						</div>
+						<div class="navbar-actions">
+							<div class="search" role="presentation">
+								<div class="nav-search search-control" role="button" tabindex="0" aria-label="Open search dialog">
+									<div class="input-group" role="presentation">
+										<span class="input-group-btn">
+											<span class="btn search-icon-container" aria-hidden="true">
+												<img class="search-icon-dark" src="/assets/icons/search-dark.svg" alt="" />
+												<img class="search-icon-light" src="/assets/icons/search.svg" alt="" />
+											</span>
+										</span>
+										<span class="search-box form-control" aria-hidden="true" role="presentation"></span>
+										<span class="search-shortcut-placeholder">Search</span>
+										<span class="search-shortcut-overlay"></span>
+									</div>
+								</div>					</div>
+							<button type="button" class="theme-switch" id="theme-toggle">
+								<img class="theme-icon-light" src="/assets/icons/theme-light.svg" alt="Switch to the dark theme" />
+								<img class="theme-icon-dark" src="/assets/icons/theme-dark.svg" alt="Switch to the light theme" />
+							</button>
+							<a class="link-button navbar-actions-download" href="/Download">
+								<span>Download</span>
+							</a>
+						</div>
+						<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"
+							aria-label="Expand and Collapse Menu">
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>
+				</nav>
+			</div>
+		</div>		<div data-announcement-version="2026-06-01-vscode-live-build" class="updates-banner ">
+			<div class="container">
+				<p class="message"><a href="https://aka.ms/VSCode/Livestage?source=vsc-website-banner" target="_blank" rel="noopener">📼 Rewatch VS Code Live at MS Build 2026</a></p>
+			</div>
+			<div tabindex="0" role="button" title="Dismiss this update" class="dismiss-btn" id="banner-dismiss-btn"><span class="sr-only">Dismiss this update</span><span aria-hidden="true" class="glyph-icon"></span></div>
+		</div>
+		<script>
+			// Hide the banner synchronously (before first paint) if this version was
+			// already dismissed, to avoid a flicker/layout shift once the main bundle loads.
+			(function () {
+				try {
+					var banner = document.currentScript.previousElementSibling;
+					if (banner && localStorage.getItem('dismissedAnnouncementVersion') === banner.getAttribute('data-announcement-version')) {
+						banner.classList.add('js-hidden');
+					}
+				} catch (e) { /* ignore */ }
+			})();
+		</script>
+		<!-- This div wraps around the entire site -->
+		<!-- The body itself should already have a main tag -->
+		<main id="main-content">
+			<script>
+    function closeReportIssue() {
+        var element = document.getElementById('surveypopup');
+        element.parentElement.removeChild(element);
+    }
+
+    function reportIssue(tutorial, page) {
+        var div = document.createElement('div');
+        div.innerHTML = '<div id="surveypopup" class="overlay visible"><div class="surveypopup"><div id="surveytitle">Tell us more<a href="javascript:void(0)" onclick="closeReportIssue()">X</a></div><div id="surveydiv"><iframe frameBorder="0" scrolling="0" src="https://www.research.net/r/PWZWZ52?tutorial=' + tutorial + '&step=' + page + '"></iframe></div></div></div>';
+        document.body.appendChild(div.children[0]);
+    }
+</script>
+
+<div class="body-content docs docs-github-layout">
+    <div class="docs-layout-wrapper">
+        <!-- Left sidebar - Table of Contents -->
+        <aside class="docs-left-sidebar">
+            <nav id="docs-navbar" aria-label="Topics" class="docs-nav visible-md visible-lg" data-m='{"cN":"docs-left-nav","aN":"navigation"}'>
+              <h4>Documentation</h4>
+              <ul class="nav" id="main-nav">
+              <li >
+                <a href="/docs" data-m='{"cN":"Overview"}' >Overview</a>
+              </li>
+              
+            <li class="panel collapsed">
+              <a class="area" role="button" href="#getstarted-articles" data-parent="#main-nav" data-toggle="collapse" data-m='{"cN":"Get Started","cT":"toggle"}'>Get Started</a>
+              <ul id="getstarted-articles" class="collapse ">
+            
+                    <li >
+                      <a href="/docs/getstarted/overview" data-m='{"cN":"Overview","aN":"Get Started"}' >Overview</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/quickstart" data-m='{"cN":"Agents Quickstart","aN":"Get Started"}' >Agents Quickstart</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/editing/getting-started" data-m='{"cN":"Editor Tutorial","aN":"Get Started"}' >Editor Tutorial</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/getstarted/introvideos" data-m='{"cN":"Intro Videos","aN":"Get Started"}' >Intro Videos</a>
+                    </li>
+                      
+              </ul>
+            </li>
+                
+            <li class="panel collapsed">
+              <a class="area" role="button" href="#agentic-articles" data-parent="#main-nav" data-toggle="collapse" data-m='{"cN":"Agents","cT":"toggle"}'>Agents</a>
+              <ul id="agentic-articles" class="collapse ">
+            
+                    <li >
+                      <a href="/docs/agents/overview" data-m='{"cN":"Overview","aN":"Agents"}' >Overview</a>
+                    </li>
+                      
+            <li class="panel collapsed">
+              <a class="area" role="button" href="#agents-articles" data-toggle="collapse" data-m='{"cN":"Get started","aN":"Agents","cT":"toggle"}'>Get started</a>
+              <ul id="agents-articles" class="collapse ">
+            
+                    <li >
+                      <a href="/docs/agents/quickstart" data-m='{"cN":"Agents Quickstart","aN":"Agents - Get started"}' >Agents Quickstart</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/agents-tutorial" data-m='{"cN":"Agents Tutorial","aN":"Agents - Get started"}' >Agents Tutorial</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/best-practices" data-m='{"cN":"Best Practices","aN":"Agents - Get started"}' >Best Practices</a>
+                    </li>
+                      
+              </ul>
+            </li>
+                    
+            <li class="panel collapsed">
+              <a class="area" role="button" href="#agents-concepts-articles" data-toggle="collapse" data-m='{"cN":"Concepts","aN":"Agents","cT":"toggle"}'>Concepts</a>
+              <ul id="agents-concepts-articles" class="collapse ">
+            
+                    <li >
+                      <a href="/docs/agents/concepts/agents" data-m='{"cN":"Agents","aN":"Agents - Concepts"}' >Agents</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/concepts/agent-harnesses" data-m='{"cN":"Agent Harnesses","aN":"Agents - Concepts"}' >Agent Harnesses</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/concepts/language-models" data-m='{"cN":"Language Models","aN":"Agents - Concepts"}' >Language Models</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/concepts/context" data-m='{"cN":"Context","aN":"Agents - Concepts"}' >Context</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/concepts/tools" data-m='{"cN":"Tools","aN":"Agents - Concepts"}' >Tools</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/concepts/sessions" data-m='{"cN":"Sessions &amp; Handoff","aN":"Agents - Concepts"}' >Sessions & Handoff</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/concepts/agent-host" data-m='{"cN":"Agent Host Architecture","aN":"Agents - Concepts"}' >Agent Host Architecture</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/concepts/customization" data-m='{"cN":"Customization","aN":"Agents - Concepts"}' >Customization</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/reference/workspace-context" data-m='{"cN":"Workspace Context","aN":"Agents - Concepts"}' >Workspace Context</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/concepts/trust-and-safety" data-m='{"cN":"Trust &amp; Safety","aN":"Agents - Concepts"}' >Trust & Safety</a>
+                    </li>
+                      
+              </ul>
+            </li>
+                    
+            <li class="panel collapsed">
+              <a class="area" role="button" href="#agents-run-articles" data-toggle="collapse" data-m='{"cN":"Run agents","aN":"Agents","cT":"toggle"}'>Run agents</a>
+              <ul id="agents-run-articles" class="collapse ">
+            
+                    <li >
+                      <a href="/docs/agents/run/agents-window" data-m='{"cN":"Agents Window","aN":"Agents - Run agents"}' >Agents Window</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/run/chat-view" data-m='{"cN":"Chat View","aN":"Agents - Run agents"}' >Chat View</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/run/agent-harnesses" data-m='{"cN":"Choose an Agent Harness","aN":"Agents - Run agents"}' >Choose an Agent Harness</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/run/tools" data-m='{"cN":"Use Tools","aN":"Agents - Run agents"}' >Use Tools</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/run/browser-tools" data-m='{"cN":"Browser Tools","aN":"Agents - Run agents"}' >Browser Tools</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/run/approvals" data-m='{"cN":"Approvals &amp; Permissions","aN":"Agents - Run agents"}' >Approvals & Permissions</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/run/review-code-edits" data-m='{"cN":"Review &amp; Revert Changes","aN":"Agents - Run agents"}' >Review & Revert Changes</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/run/artifacts" data-m='{"cN":"Artifacts","aN":"Agents - Run agents"}' >Artifacts</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/run/remote-agent-sessions" data-m='{"cN":"Remote Agent Sessions","aN":"Agents - Run agents"}' >Remote Agent Sessions</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/run/planning" data-m='{"cN":"Plan Work","aN":"Agents - Run agents"}' >Plan Work</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/run/memory" data-m='{"cN":"Memory","aN":"Agents - Run agents"}' >Memory</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/run/subagents" data-m='{"cN":"Subagents","aN":"Agents - Run agents"}' >Subagents</a>
+                    </li>
+                      
+            <li class="panel collapsed">
+              <a class="area" role="button" href="#agents-run-sessions-articles" data-toggle="collapse" data-m='{"cN":"Sessions","aN":"Agents - Run agents","cT":"toggle"}'>Sessions</a>
+              <ul id="agents-run-sessions-articles" class="collapse ">
+            
+                    <li >
+                      <a href="/docs/agents/run/sessions/manage-sessions" data-m='{"cN":"Manage Sessions","aN":"Agents - Run agents - Sessions"}' >Manage Sessions</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/run/sessions/session-history" data-m='{"cN":"Session History","aN":"Agents - Run agents - Sessions"}' >Session History</a>
+                    </li>
+                      
+              </ul>
+            </li>
+                    
+                    <li >
+                      <a href="/docs/agents/run/security" data-m='{"cN":"AI Security","aN":"Agents - Run agents"}' >AI Security</a>
+                    </li>
+                      
+              </ul>
+            </li>
+                    
+            <li class="panel collapsed">
+              <a class="area" role="button" href="#agent-customization-articles" data-toggle="collapse" data-m='{"cN":"Customize agents","aN":"Agents","cT":"toggle"}'>Customize agents</a>
+              <ul id="agent-customization-articles" class="collapse ">
+            
+                    <li >
+                      <a href="/docs/agent-customization/overview" data-m='{"cN":"Create and Manage","aN":"Agents - Customize agents"}' >Create and Manage</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agent-customization/custom-instructions" data-m='{"cN":"Instructions","aN":"Agents - Customize agents"}' >Instructions</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agent-customization/agent-skills" data-m='{"cN":"Agent Skills","aN":"Agents - Customize agents"}' >Agent Skills</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agent-customization/custom-agents" data-m='{"cN":"Custom Agents","aN":"Agents - Customize agents"}' >Custom Agents</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agent-customization/language-models" data-m='{"cN":"Language Models","aN":"Agents - Customize agents"}' >Language Models</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agent-customization/mcp-servers" data-m='{"cN":"MCP","aN":"Agents - Customize agents"}' >MCP</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agent-customization/hooks" data-m='{"cN":"Hooks","aN":"Agents - Customize agents"}' >Hooks</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agent-customization/agent-plugins" data-m='{"cN":"Plugins","aN":"Agents - Customize agents"}' >Plugins</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agent-customization/tools" data-m='{"cN":"Tools","aN":"Agents - Customize agents"}' >Tools</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agent-customization/prompt-files" data-m='{"cN":"Prompt Files","aN":"Agents - Customize agents"}' >Prompt Files</a>
+                    </li>
+                      
+              </ul>
+            </li>
+                    
+            <li class="panel collapsed">
+              <a class="area" role="button" href="#chat-articles" data-toggle="collapse" data-m='{"cN":"Use chat","aN":"Agents","cT":"toggle"}'>Use chat</a>
+              <ul id="chat-articles" class="collapse ">
+            
+                    <li >
+                      <a href="/docs/chat/chat-overview" data-m='{"cN":"Chat Basics","aN":"Agents - Use chat"}' >Chat Basics</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/chat/inline-chat" data-m='{"cN":"Inline &amp; Quick Chat","aN":"Agents - Use chat"}' >Inline & Quick Chat</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/chat/copilot-chat-context" data-m='{"cN":"Add Prompt Context","aN":"Agents - Use chat"}' >Add Prompt Context</a>
+                    </li>
+                      
+              </ul>
+            </li>
+                    
+            <li class="panel collapsed">
+              <a class="area" role="button" href="#agents-guides-articles" data-toggle="collapse" data-m='{"cN":"Tutorials &amp; guides","aN":"Agents","cT":"toggle"}'>Tutorials & guides</a>
+              <ul id="agents-guides-articles" class="collapse ">
+            
+                    <li >
+                      <a href="/docs/agents/guides/customize-copilot-guide" data-m='{"cN":"Customize AI","aN":"Agents - Tutorials &amp; guides"}' >Customize AI</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/guides/context-engineering-guide" data-m='{"cN":"Context Engineering","aN":"Agents - Tutorials &amp; guides"}' >Context Engineering</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/guides/test-driven-development-guide" data-m='{"cN":"Test-Driven Development","aN":"Agents - Tutorials &amp; guides"}' >Test-Driven Development</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/guides/test-with-copilot" data-m='{"cN":"Test with AI","aN":"Agents - Tutorials &amp; guides"}' >Test with AI</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/guides/browser-agent-testing-guide" data-m='{"cN":"Test Web Apps with Browser Tools","aN":"Agents - Tutorials &amp; guides"}' >Test Web Apps with Browser Tools</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/guides/debug-with-copilot" data-m='{"cN":"Debug with AI","aN":"Agents - Tutorials &amp; guides"}' >Debug with AI</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/guides/notebooks-with-ai" data-m='{"cN":"Edit Notebooks with AI","aN":"Agents - Tutorials &amp; guides"}' >Edit Notebooks with AI</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/guides/optimize-usage" data-m='{"cN":"Optimize AI Credit Usage","aN":"Agents - Tutorials &amp; guides"}' >Optimize AI Credit Usage</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/guides/mcp-developer-guide" data-m='{"cN":"MCP Dev Guide","aN":"Agents - Tutorials &amp; guides"}' >MCP Dev Guide</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/guides/prompt-examples" data-m='{"cN":"Prompt Examples","aN":"Agents - Tutorials &amp; guides"}' >Prompt Examples</a>
+                    </li>
+                      
+              </ul>
+            </li>
+                    
+            <li class="panel collapsed">
+              <a class="area" role="button" href="#agents-reference-articles" data-toggle="collapse" data-m='{"cN":"Reference","aN":"Agents","cT":"toggle"}'>Reference</a>
+              <ul id="agents-reference-articles" class="collapse ">
+            
+                    <li >
+                      <a href="/docs/agents/reference/ai-features-cheat-sheet" data-m='{"cN":"Cheat Sheet","aN":"Agents - Reference"}' >Cheat Sheet</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/reference/ai-settings" data-m='{"cN":"Settings Reference","aN":"Agents - Reference"}' >Settings Reference</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/reference/mcp-configuration" data-m='{"cN":"MCP Configuration","aN":"Agents - Reference"}' >MCP Configuration</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/reference/hooks-reference" data-m='{"cN":"Hooks Reference","aN":"Agents - Reference"}' >Hooks Reference</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/guides/monitoring-agents" data-m='{"cN":"OpenTelemetry Monitoring","aN":"Agents - Reference"}' >OpenTelemetry Monitoring</a>
+                    </li>
+                      
+              </ul>
+            </li>
+                    
+            <li class="panel collapsed">
+              <a class="area" role="button" href="#agents-agent-troubleshooting-articles" data-toggle="collapse" data-m='{"cN":"Troubleshooting","aN":"Agents","cT":"toggle"}'>Troubleshooting</a>
+              <ul id="agents-agent-troubleshooting-articles" class="collapse ">
+            
+                    <li >
+                      <a href="/docs/agents/agent-troubleshooting/troubleshooting" data-m='{"cN":"Troubleshooting","aN":"Agents - Troubleshooting"}' >Troubleshooting</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/agent-troubleshooting/chat-debug-view" data-m='{"cN":"Debug Chat Interactions","aN":"Agents - Troubleshooting"}' >Debug Chat Interactions</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/agent-troubleshooting/cache-explorer" data-m='{"cN":"Diagnose Prompt Caching","aN":"Agents - Troubleshooting"}' >Diagnose Prompt Caching</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/agent-troubleshooting/faq" data-m='{"cN":"FAQ","aN":"Agents - Troubleshooting"}' >FAQ</a>
+                    </li>
+                      
+              </ul>
+            </li>
+                    
+              </ul>
+            </li>
+                
+                    <li >
+                      <a class="area" href="/docs/core-editor/overview" data-m='{"cN":"Editor"}' >Editor</a>
+                    </li>
+                  
+            <li class="panel collapsed">
+              <a class="area" role="button" href="#sourcecontrol-articles" data-parent="#main-nav" data-toggle="collapse" data-m='{"cN":"Source Control","cT":"toggle"}'>Source Control</a>
+              <ul id="sourcecontrol-articles" class="collapse ">
+            
+                    <li >
+                      <a href="/docs/sourcecontrol/overview" data-m='{"cN":"Overview","aN":"Source Control"}' >Overview</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/sourcecontrol/quickstart" data-m='{"cN":"Quickstart","aN":"Source Control"}' >Quickstart</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/sourcecontrol/repos-remotes" data-m='{"cN":"Repositories &amp; Remotes","aN":"Source Control"}' >Repositories & Remotes</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/sourcecontrol/staging-commits" data-m='{"cN":"Staging &amp; Committing","aN":"Source Control"}' >Staging & Committing</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/sourcecontrol/history" data-m='{"cN":"Source Control History","aN":"Source Control"}' >Source Control History</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/sourcecontrol/branches-worktrees" data-m='{"cN":"Branches &amp; Worktrees","aN":"Source Control"}' >Branches & Worktrees</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/sourcecontrol/merge-conflicts" data-m='{"cN":"Merge Conflicts","aN":"Source Control"}' >Merge Conflicts</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/sourcecontrol/github" data-m='{"cN":"Collaborate on GitHub","aN":"Source Control"}' >Collaborate on GitHub</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/sourcecontrol/troubleshooting" data-m='{"cN":"Troubleshooting","aN":"Source Control"}' >Troubleshooting</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/sourcecontrol/faq" data-m='{"cN":"FAQ","aN":"Source Control"}' >FAQ</a>
+                    </li>
+                      
+              </ul>
+            </li>
+                
+            <li class="panel collapsed">
+              <a class="area" role="button" href="#terminal-articles" data-parent="#main-nav" data-toggle="collapse" data-m='{"cN":"Terminal","cT":"toggle"}'>Terminal</a>
+              <ul id="terminal-articles" class="collapse ">
+            
+                    <li >
+                      <a href="/docs/terminal/getting-started" data-m='{"cN":"Get Started","aN":"Terminal"}' >Get Started</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/terminal/basics" data-m='{"cN":"Terminal Basics","aN":"Terminal"}' >Terminal Basics</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/terminal/profiles" data-m='{"cN":"Terminal Profiles","aN":"Terminal"}' >Terminal Profiles</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/terminal/shell-integration" data-m='{"cN":"Shell Integration","aN":"Terminal"}' >Shell Integration</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/terminal/appearance" data-m='{"cN":"Appearance","aN":"Terminal"}' >Appearance</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/terminal/advanced" data-m='{"cN":"Advanced","aN":"Terminal"}' >Advanced</a>
+                    </li>
+                      
+              </ul>
+            </li>
+                
+            <li class="panel collapsed">
+              <a class="area" role="button" href="#debugtest-articles" data-parent="#main-nav" data-toggle="collapse" data-m='{"cN":"Debugging &amp; Testing","cT":"toggle"}'>Debugging & Testing</a>
+              <ul id="debugtest-articles" class="collapse ">
+            
+                    <li >
+                      <a href="/docs/debugtest/debugging" data-m='{"cN":"Debugging","aN":"Debugging &amp; Testing"}' >Debugging</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/debugtest/debugging-configuration" data-m='{"cN":"Debug Configuration","aN":"Debugging &amp; Testing"}' >Debug Configuration</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/debugtest/tasks" data-m='{"cN":"Tasks","aN":"Debugging &amp; Testing"}' >Tasks</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/debugtest/testing" data-m='{"cN":"Testing","aN":"Debugging &amp; Testing"}' >Testing</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/debugtest/integrated-browser" data-m='{"cN":"Integrated Browser","aN":"Debugging &amp; Testing"}' >Integrated Browser</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/debugtest/port-forwarding" data-m='{"cN":"Port Forwarding","aN":"Debugging &amp; Testing"}' >Port Forwarding</a>
+                    </li>
+                      
+            <li class="panel collapsed">
+              <a class="area" role="button" href="#debugging-guides-articles" data-toggle="collapse" data-m='{"cN":"Guides &amp; Tutorials","aN":"Debugging &amp; Testing","cT":"toggle"}'>Guides & Tutorials</a>
+              <ul id="debugging-guides-articles" class="collapse ">
+            
+                    <li >
+                      <a href="/docs/agents/guides/test-driven-development-guide" data-m='{"cN":"Test-Driven Development","aN":"Debugging &amp; Testing - Guides &amp; Tutorials"}' >Test-Driven Development</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/agents/guides/browser-agent-testing-guide" data-m='{"cN":"Test Web Apps with Browser Tools","aN":"Debugging &amp; Testing - Guides &amp; Tutorials"}' >Test Web Apps with Browser Tools</a>
+                    </li>
+                      
+              </ul>
+            </li>
+                    
+              </ul>
+            </li>
+                
+            <li class="panel collapsed">
+              <a class="area" role="button" href="#enterprise-articles" data-parent="#main-nav" data-toggle="collapse" data-m='{"cN":"Enterprise","cT":"toggle"}'>Enterprise</a>
+              <ul id="enterprise-articles" class="collapse ">
+            
+                    <li >
+                      <a href="/docs/enterprise/overview" data-m='{"cN":"Overview","aN":"Enterprise"}' >Overview</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/enterprise/policies" data-m='{"cN":"Enterprise Policies","aN":"Enterprise"}' >Enterprise Policies</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/enterprise/ai-settings" data-m='{"cN":"AI Settings","aN":"Enterprise"}' >AI Settings</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/enterprise/extensions" data-m='{"cN":"Extensions","aN":"Enterprise"}' >Extensions</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/enterprise/telemetry" data-m='{"cN":"Telemetry","aN":"Enterprise"}' >Telemetry</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/enterprise/updates" data-m='{"cN":"Updates","aN":"Enterprise"}' >Updates</a>
+                    </li>
+                      
+              </ul>
+            </li>
+                
+            <li class="panel collapsed">
+              <a class="area" role="button" href="#remote-articles" data-parent="#main-nav" data-toggle="collapse" data-m='{"cN":"Remote","cT":"toggle"}'>Remote</a>
+              <ul id="remote-articles" class="collapse ">
+            
+                    <li >
+                      <a href="/docs/remote/remote-overview" data-m='{"cN":"Overview","aN":"Remote"}' >Overview</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/remote/vscode-web" data-m='{"cN":"VS Code for the Web","aN":"Remote"}' >VS Code for the Web</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/remote/ssh" data-m='{"cN":"SSH","aN":"Remote"}' >SSH</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/remote/ssh-tutorial" data-m='{"cN":"SSH Tutorial","aN":"Remote"}' >SSH Tutorial</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/remote/tunnels" data-m='{"cN":"Tunnels","aN":"Remote"}' >Tunnels</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/remote/dev-containers" data-m='{"cN":"Dev Containers","aN":"Remote"}' >Dev Containers</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/remote/wsl" data-m='{"cN":"WSL","aN":"Remote"}' >WSL</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/remote/wsl-tutorial" data-m='{"cN":"WSL Tutorial","aN":"Remote"}' >WSL Tutorial</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/remote/codespaces" data-m='{"cN":"GitHub Codespaces","aN":"Remote"}' >GitHub Codespaces</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/remote/vscode-server" data-m='{"cN":"VS Code Server","aN":"Remote"}' >VS Code Server</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/remote/linux" data-m='{"cN":"Linux Prerequisites","aN":"Remote"}' >Linux Prerequisites</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/remote/troubleshooting" data-m='{"cN":"Tips and Tricks","aN":"Remote"}' >Tips and Tricks</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/remote/faq" data-m='{"cN":"FAQ","aN":"Remote"}' >FAQ</a>
+                    </li>
+                      
+              </ul>
+            </li>
+                
+            <li class="panel collapsed">
+              <a class="area" role="button" href="#setup-articles" data-parent="#main-nav" data-toggle="collapse" data-m='{"cN":"Advanced Setup","cT":"toggle"}'>Advanced Setup</a>
+              <ul id="setup-articles" class="collapse ">
+            
+                    <li >
+                      <a href="/docs/setup/copilot" data-m='{"cN":"GitHub Copilot Setup","aN":"Advanced Setup"}' >GitHub Copilot Setup</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/setup/linux" data-m='{"cN":"Linux","aN":"Advanced Setup"}' >Linux</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/setup/mac" data-m='{"cN":"macOS","aN":"Advanced Setup"}' >macOS</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/setup/windows" data-m='{"cN":"Windows","aN":"Advanced Setup"}' >Windows</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/setup/raspberry-pi" data-m='{"cN":"Raspberry Pi","aN":"Advanced Setup"}' >Raspberry Pi</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/setup/network" data-m='{"cN":"Network","aN":"Advanced Setup"}' >Network</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/setup/portable" data-m='{"cN":"Portable Mode","aN":"Advanced Setup"}' >Portable Mode</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/setup/additional-components" data-m='{"cN":"Additional Components","aN":"Advanced Setup"}' >Additional Components</a>
+                    </li>
+                      
+                    <li >
+                      <a href="/docs/setup/uninstall" data-m='{"cN":"Uninstall","aN":"Advanced Setup"}' >Uninstall</a>
+                    </li>
+                      
+              </ul>
+            </li>
+                
+                    <li >
+                      <a class="area" href="/docs/languages/overview" data-m='{"cN":"Languages &amp; Runtimes"}' >Languages & Runtimes</a>
+                    </li>
+                  
+                    <li >
+                      <a class="area" href="/docs/extension-docs/overview" data-m='{"cN":"Extension Docs"}' >Extension Docs</a>
+                    </li>
+                  
+              </ul>
+            </nav>
+            
+            <nav id="small-nav" aria-label="Topics" class="docs-nav hidden-md hidden-lg">
+              <label class="faux-h4" for="small-nav-dropdown">Topics</label>
+              <select id="small-nav-dropdown" aria-label="topics">
+                <option value="/docs" >Overview</option>
+            
+              <optgroup label="Get Started">
+            
+                    <option value="/docs/getstarted/overview" >Overview</option>
+                    
+                    <option value="/docs/agents/quickstart" >Agents Quickstart</option>
+                    
+                    <option value="/docs/editing/getting-started" >Editor Tutorial</option>
+                    
+                    <option value="/docs/getstarted/introvideos" >Intro Videos</option>
+                    
+              </optgroup>
+              
+              <optgroup label="Agents">
+            
+                    <option value="/docs/agents/overview" >Overview</option>
+                    
+                    <option disabled>Get started</option>
+            
+                    <option value="/docs/agents/quickstart" >    Agents Quickstart</option>
+                    
+                    <option value="/docs/agents/agents-tutorial" >    Agents Tutorial</option>
+                    
+                    <option value="/docs/agents/best-practices" >    Best Practices</option>
+                    
+                    <option disabled>Concepts</option>
+            
+                    <option value="/docs/agents/concepts/agents" >    Agents</option>
+                    
+                    <option value="/docs/agents/concepts/agent-harnesses" >    Agent Harnesses</option>
+                    
+                    <option value="/docs/agents/concepts/language-models" >    Language Models</option>
+                    
+                    <option value="/docs/agents/concepts/context" >    Context</option>
+                    
+                    <option value="/docs/agents/concepts/tools" >    Tools</option>
+                    
+                    <option value="/docs/agents/concepts/sessions" >    Sessions & Handoff</option>
+                    
+                    <option value="/docs/agents/concepts/agent-host" >    Agent Host Architecture</option>
+                    
+                    <option value="/docs/agents/concepts/customization" >    Customization</option>
+                    
+                    <option value="/docs/agents/reference/workspace-context" >    Workspace Context</option>
+                    
+                    <option value="/docs/agents/concepts/trust-and-safety" >    Trust & Safety</option>
+                    
+                    <option disabled>Run agents</option>
+            
+                    <option value="/docs/agents/run/agents-window" >    Agents Window</option>
+                    
+                    <option value="/docs/agents/run/chat-view" >    Chat View</option>
+                    
+                    <option value="/docs/agents/run/agent-harnesses" >    Choose an Agent Harness</option>
+                    
+                    <option value="/docs/agents/run/tools" >    Use Tools</option>
+                    
+                    <option value="/docs/agents/run/browser-tools" >    Browser Tools</option>
+                    
+                    <option value="/docs/agents/run/approvals" >    Approvals & Permissions</option>
+                    
+                    <option value="/docs/agents/run/review-code-edits" >    Review & Revert Changes</option>
+                    
+                    <option value="/docs/agents/run/artifacts" >    Artifacts</option>
+                    
+                    <option value="/docs/agents/run/remote-agent-sessions" >    Remote Agent Sessions</option>
+                    
+                    <option value="/docs/agents/run/planning" >    Plan Work</option>
+                    
+                    <option value="/docs/agents/run/memory" >    Memory</option>
+                    
+                    <option value="/docs/agents/run/subagents" >    Subagents</option>
+                    
+                    <option disabled>    Sessions</option>
+            
+                    <option value="/docs/agents/run/sessions/manage-sessions" >        Manage Sessions</option>
+                    
+                    <option value="/docs/agents/run/sessions/session-history" >        Session History</option>
+                    
+                    <option value="/docs/agents/run/security" >    AI Security</option>
+                    
+                    <option disabled>Customize agents</option>
+            
+                    <option value="/docs/agent-customization/overview" >    Create and Manage</option>
+                    
+                    <option value="/docs/agent-customization/custom-instructions" >    Instructions</option>
+                    
+                    <option value="/docs/agent-customization/agent-skills" >    Agent Skills</option>
+                    
+                    <option value="/docs/agent-customization/custom-agents" >    Custom Agents</option>
+                    
+                    <option value="/docs/agent-customization/language-models" >    Language Models</option>
+                    
+                    <option value="/docs/agent-customization/mcp-servers" >    MCP</option>
+                    
+                    <option value="/docs/agent-customization/hooks" >    Hooks</option>
+                    
+                    <option value="/docs/agent-customization/agent-plugins" >    Plugins</option>
+                    
+                    <option value="/docs/agent-customization/tools" >    Tools</option>
+                    
+                    <option value="/docs/agent-customization/prompt-files" >    Prompt Files</option>
+                    
+                    <option disabled>Use chat</option>
+            
+                    <option value="/docs/chat/chat-overview" >    Chat Basics</option>
+                    
+                    <option value="/docs/chat/inline-chat" >    Inline & Quick Chat</option>
+                    
+                    <option value="/docs/chat/copilot-chat-context" >    Add Prompt Context</option>
+                    
+                    <option disabled>Tutorials & guides</option>
+            
+                    <option value="/docs/agents/guides/customize-copilot-guide" >    Customize AI</option>
+                    
+                    <option value="/docs/agents/guides/context-engineering-guide" >    Context Engineering</option>
+                    
+                    <option value="/docs/agents/guides/test-driven-development-guide" >    Test-Driven Development</option>
+                    
+                    <option value="/docs/agents/guides/test-with-copilot" >    Test with AI</option>
+                    
+                    <option value="/docs/agents/guides/browser-agent-testing-guide" >    Test Web Apps with Browser Tools</option>
+                    
+                    <option value="/docs/agents/guides/debug-with-copilot" >    Debug with AI</option>
+                    
+                    <option value="/docs/agents/guides/notebooks-with-ai" >    Edit Notebooks with AI</option>
+                    
+                    <option value="/docs/agents/guides/optimize-usage" >    Optimize AI Credit Usage</option>
+                    
+                    <option value="/docs/agents/guides/mcp-developer-guide" >    MCP Dev Guide</option>
+                    
+                    <option value="/docs/agents/guides/prompt-examples" >    Prompt Examples</option>
+                    
+                    <option disabled>Reference</option>
+            
+                    <option value="/docs/agents/reference/ai-features-cheat-sheet" >    Cheat Sheet</option>
+                    
+                    <option value="/docs/agents/reference/ai-settings" >    Settings Reference</option>
+                    
+                    <option value="/docs/agents/reference/mcp-configuration" >    MCP Configuration</option>
+                    
+                    <option value="/docs/agents/reference/hooks-reference" >    Hooks Reference</option>
+                    
+                    <option value="/docs/agents/guides/monitoring-agents" >    OpenTelemetry Monitoring</option>
+                    
+                    <option disabled>Troubleshooting</option>
+            
+                    <option value="/docs/agents/agent-troubleshooting/troubleshooting" >    Troubleshooting</option>
+                    
+                    <option value="/docs/agents/agent-troubleshooting/chat-debug-view" >    Debug Chat Interactions</option>
+                    
+                    <option value="/docs/agents/agent-troubleshooting/cache-explorer" >    Diagnose Prompt Caching</option>
+                    
+                    <option value="/docs/agents/agent-troubleshooting/faq" >    FAQ</option>
+                    
+              </optgroup>
+              
+                    <option value="/docs/core-editor/overview" >Editor</option>
+                  
+              <optgroup label="Source Control">
+            
+                    <option value="/docs/sourcecontrol/overview" >Overview</option>
+                    
+                    <option value="/docs/sourcecontrol/quickstart" >Quickstart</option>
+                    
+                    <option value="/docs/sourcecontrol/repos-remotes" >Repositories & Remotes</option>
+                    
+                    <option value="/docs/sourcecontrol/staging-commits" >Staging & Committing</option>
+                    
+                    <option value="/docs/sourcecontrol/history" >Source Control History</option>
+                    
+                    <option value="/docs/sourcecontrol/branches-worktrees" >Branches & Worktrees</option>
+                    
+                    <option value="/docs/sourcecontrol/merge-conflicts" >Merge Conflicts</option>
+                    
+                    <option value="/docs/sourcecontrol/github" >Collaborate on GitHub</option>
+                    
+                    <option value="/docs/sourcecontrol/troubleshooting" >Troubleshooting</option>
+                    
+                    <option value="/docs/sourcecontrol/faq" >FAQ</option>
+                    
+              </optgroup>
+              
+              <optgroup label="Terminal">
+            
+                    <option value="/docs/terminal/getting-started" >Get Started</option>
+                    
+                    <option value="/docs/terminal/basics" >Terminal Basics</option>
+                    
+                    <option value="/docs/terminal/profiles" >Terminal Profiles</option>
+                    
+                    <option value="/docs/terminal/shell-integration" >Shell Integration</option>
+                    
+                    <option value="/docs/terminal/appearance" >Appearance</option>
+                    
+                    <option value="/docs/terminal/advanced" >Advanced</option>
+                    
+              </optgroup>
+              
+              <optgroup label="Debugging & Testing">
+            
+                    <option value="/docs/debugtest/debugging" >Debugging</option>
+                    
+                    <option value="/docs/debugtest/debugging-configuration" >Debug Configuration</option>
+                    
+                    <option value="/docs/debugtest/tasks" >Tasks</option>
+                    
+                    <option value="/docs/debugtest/testing" >Testing</option>
+                    
+                    <option value="/docs/debugtest/integrated-browser" >Integrated Browser</option>
+                    
+                    <option value="/docs/debugtest/port-forwarding" >Port Forwarding</option>
+                    
+                    <option disabled>Guides & Tutorials</option>
+            
+                    <option value="/docs/agents/guides/test-driven-development-guide" >    Test-Driven Development</option>
+                    
+                    <option value="/docs/agents/guides/browser-agent-testing-guide" >    Test Web Apps with Browser Tools</option>
+                    
+              </optgroup>
+              
+              <optgroup label="Enterprise">
+            
+                    <option value="/docs/enterprise/overview" >Overview</option>
+                    
+                    <option value="/docs/enterprise/policies" >Enterprise Policies</option>
+                    
+                    <option value="/docs/enterprise/ai-settings" >AI Settings</option>
+                    
+                    <option value="/docs/enterprise/extensions" >Extensions</option>
+                    
+                    <option value="/docs/enterprise/telemetry" >Telemetry</option>
+                    
+                    <option value="/docs/enterprise/updates" >Updates</option>
+                    
+              </optgroup>
+              
+              <optgroup label="Remote">
+            
+                    <option value="/docs/remote/remote-overview" >Overview</option>
+                    
+                    <option value="/docs/remote/vscode-web" >VS Code for the Web</option>
+                    
+                    <option value="/docs/remote/ssh" >SSH</option>
+                    
+                    <option value="/docs/remote/ssh-tutorial" >SSH Tutorial</option>
+                    
+                    <option value="/docs/remote/tunnels" >Tunnels</option>
+                    
+                    <option value="/docs/remote/dev-containers" >Dev Containers</option>
+                    
+                    <option value="/docs/remote/wsl" >WSL</option>
+                    
+                    <option value="/docs/remote/wsl-tutorial" >WSL Tutorial</option>
+                    
+                    <option value="/docs/remote/codespaces" >GitHub Codespaces</option>
+                    
+                    <option value="/docs/remote/vscode-server" >VS Code Server</option>
+                    
+                    <option value="/docs/remote/linux" >Linux Prerequisites</option>
+                    
+                    <option value="/docs/remote/troubleshooting" >Tips and Tricks</option>
+                    
+                    <option value="/docs/remote/faq" >FAQ</option>
+                    
+              </optgroup>
+              
+              <optgroup label="Advanced Setup">
+            
+                    <option value="/docs/setup/copilot" >GitHub Copilot Setup</option>
+                    
+                    <option value="/docs/setup/linux" >Linux</option>
+                    
+                    <option value="/docs/setup/mac" >macOS</option>
+                    
+                    <option value="/docs/setup/windows" >Windows</option>
+                    
+                    <option value="/docs/setup/raspberry-pi" >Raspberry Pi</option>
+                    
+                    <option value="/docs/setup/network" >Network</option>
+                    
+                    <option value="/docs/setup/portable" >Portable Mode</option>
+                    
+                    <option value="/docs/setup/additional-components" >Additional Components</option>
+                    
+                    <option value="/docs/setup/uninstall" >Uninstall</option>
+                    
+              </optgroup>
+              
+                    <option value="/docs/languages/overview" >Languages & Runtimes</option>
+                  
+                    <option value="/docs/extension-docs/overview" >Extension Docs</option>
+                  
+              </select>
+            </nav>        </aside>
+        
+        <!-- Content wrapper contains main content + right sidebar -->
+        <div class="docs-content-wrapper">
+            <!-- Main article content -->
+            <main class="docs-main-content body">
+                <h1>Visual Studio Code FAQ</h1>
+<p>Our docs contain a <strong>Common questions</strong> section as needed for specific topics. We've captured items here that don't fit in the other topics.</p>
+<p>If you don't see an answer to your question here, check our previously <a href="https://github.com/microsoft/vscode/issues" class="external-link" target="_blank">reported issues on GitHub</a> and our <a href="/updates">release notes</a>.</p>
+<h2 id="_open-sourcing-ai-in-vs-code" data-needslink="_open-sourcing-ai-in-vs-code">Open sourcing AI in VS Code</h2>
+<p>We've open sourced the GitHub Copilot Chat extension under the MIT license and are bringing relevant components into VS Code core. Read all details in our <a href="https://aka.ms/vscode-copilot-oss-blog" class="external-link" target="_blank">announcement blog post</a> and <a href="/blogs/2025/06/30/openSourceAIEditorFirstMilestone">first milestone update</a>.</p>
+<h3 id="_does-this-affect-my-current-github-copilot-subscription-is-github-copilot-free-now" data-needslink="_does-this-affect-my-current-github-copilot-subscription-is-github-copilot-free-now">Does this affect my current GitHub Copilot subscription? Is GitHub Copilot free now?</h3>
+<p>This change does not affect current GitHub Copilot subscriptions. To use GitHub Copilot, you'll continue to need both a GitHub account, and access to a GitHub Copilot subscription.</p>
+<p>Individual developers who don't have access to Copilot through an organization or enterprise have access to the <a href="https://aka.ms/github-docs-copilot-free" class="external-link" target="_blank">GitHub Copilot free plan</a> (<a href="https://docs.github.com/en/site-policy/other-site-policies/github-and-trade-controls#github-copilot" class="external-link" target="_blank">restrictions may apply</a>). If that plan doesn't meet your needs, you can sign up for a Copilot paid plan or <a href="/docs/agent-customization/language-models#_bring-your-own-language-model-key">bring your own model keys</a>.</p>
+<h3 id="_will-the-github-copilot-backend-services-also-be-open-sourced" data-needslink="_will-the-github-copilot-backend-services-also-be-open-sourced">Will the GitHub Copilot backend services also be open sourced?</h3>
+<p>The GitHub Copilot services are not affected and will remain closed source.</p>
+<h3 id="_what-is-the-timeline-when-can-i-provide-a-contribution-to-the-ai-experience-in-vs-code" data-needslink="_what-is-the-timeline-when-can-i-provide-a-contribution-to-the-ai-experience-in-vs-code">What is the timeline? When can I provide a contribution to the AI experience in VS Code?</h3>
+<p>We have <a href="https://code.visualstudio.com/blogs/2025/06/30/openSourceAIEditorFirstMilestone">completed the first step</a> of this process by open sourcing the GitHub Copilot Chat extension. The source code is available in the <a href="https://github.com/microsoft/vscode-copilot-chat" class="external-link" target="_blank">microsoft/vscode-copilot-chat</a> repository.</p>
+<p>In the coming months, we will bring the relevant components of the Copilot Chat extension into the core VS Code repository. Check our <a href="https://github.com/microsoft/vscode/issues/249031" class="external-link" target="_blank">plan item</a> for details and updates about the timeline.</p>
+<p>Our goal is to make the experience for contributing to our AI features as simple as contributing to any part of VS Code. As part of this, we want to make it possible to use the Copilot backend services for debugging and testing purposes when contributing.
+Check the <a href="https://github.com/microsoft/vscode-copilot-chat/blob/main/CONTRIBUTING.md" class="external-link" target="_blank">CONTRIBUTING.md</a> file for details on how to contribute.</p>
+<h3 id="_why-integrate-github-copilot-into-the-core-vs-code-repository" data-needslink="_why-integrate-github-copilot-into-the-core-vs-code-repository">Why integrate GitHub Copilot into the core VS Code repository?</h3>
+<p>In the time since GitHub Copilot was first released, it's become clear that AI-powered tools are core to how we write code. From usage telemetry, we can see that more users are actually using AI features in VS Code than some other features like debugging or testing.</p>
+<p>Making AI functionality a core part of VS Code is a reaffirmation in our belief that working in the open leads to a better product for our users and fosters a diverse ecosystem of extensions.</p>
+<h3 id="_im-an-extension-author-how-am-i-affected" data-needslink="_im-an-extension-author-how-am-i-affected">I'm an extension author. How am I affected?</h3>
+<p>We maintain backwards compatibility for stable APIs. You should not expect any impact on your extension.
+We're continuously evolving and expanding the VS Code extension APIs based on feedback from extension authors. If you need additional APIs to make your extension successful, we would love to hear from you – please file an API request in the <a href="https://github.com/microsoft/vscode/issues" class="external-link" target="_blank">microsoft/vscode repo</a>.</p>
+<h3 id="_i-already-use-other-ai-coding-extensions-in-vs-code-cline-roo-code-how-does-this-affect-me" data-needslink="_i-already-use-other-ai-coding-extensions-in-vs-code-cline-roo-code-how-does-this-affect-me">I already use other AI coding extensions in VS Code (Cline, Roo Code, ...). How does this affect me?</h3>
+<p>You can continue to use these extensions in VS Code!
+We love that the community is building extensions to make the developer experience in VS Code better.
+To improve the experience for other AI extensions, we're constantly adding APIs like the <a href="https://code.visualstudio.com/api/references/vscode-api#lm">Language Model</a> API for directly calling language models from an extension, the <a href="https://code.visualstudio.com/api/references/vscode-api#LanguageModelChatTool">Tools</a> API for interacting with language model tools and integrating with the built-in or your own agents, or the <a href="https://code.visualstudio.com/api/references/vscode-api#ShellExecution">Shell Execution</a> API for running and interacting with terminal commands (particularly useful for agentic experiences). Going forward, we are planning to add even more APIs to meet the needs of extension authors.</p>
+<h3 id="_will-this-change-anything-about-how-you-collect-data" data-needslink="_will-this-change-anything-about-how-you-collect-data">Will this change anything about how you collect data?</h3>
+<p>No, nothing is changing. By open sourcing GitHub Copilot Chat, we are making it fully transparent how we collect data and enable you to verify this in the source code. Learn more about <a href="/docs/configure/telemetry">telemetry in VS Code</a> and the <a href="https://copilot.github.trust.page/" class="external-link" target="_blank">GitHub Copilot Trust Center</a>.</p>
+<h3 id="_how-will-the-vs-code-team-prioritize-between-ai-features-and-non-ai-features-in-future-releases" data-needslink="_how-will-the-vs-code-team-prioritize-between-ai-features-and-non-ai-features-in-future-releases">How will the VS Code team prioritize between AI features and non-AI features in future releases?</h3>
+<p>We believe that AI-powered tools are core to how we write code. We invest in both AI features and improving the core editor experience. This is also reflected in a 50/50% split of the team working on AI versus other features.
+Many of the non-AI features might not always be as visible to the user, such as performance, security, accessibility, Electron updates, and more.</p>
+<h3 id="_will-bringing-ai-features-into-the-core-vs-code-repository-affect-the-startup-performance-of-vs-code" data-needslink="_will-bringing-ai-features-into-the-core-vs-code-repository-affect-the-startup-performance-of-vs-code">Will bringing AI features into the core VS Code repository affect the (startup) performance of VS Code?</h3>
+<p>Performance is our core priority and we are committed to maintaining the performance of VS Code as we integrate AI features. In addition, if you don't enable AI functionality in VS Code, no associated background processes will run that could affect performance.</p>
+<h3 id="_can-i-disable-ai-functionality-in-vs-code" data-needslink="_can-i-disable-ai-functionality-in-vs-code">Can I disable AI functionality in VS Code?</h3>
+<p>You can disable the built-in AI features in VS Code with the <span class="setting"><span class="setting-dropdown" data-setting-id="chat.disableAIFeatures">
+    <span class="setting-link-main">
+      <span class="codicon codicon-settings-gear dynamic-setting-icon"></span>
+      chat.disableAIFeatures
+      
+    </span>
+    <button 
+      type="button"
+      class="setting-dropdown-trigger"
+      aria-haspopup="menu"
+      aria-expanded="false"
+      aria-label="Open setting in VS Code">
+        <svg class="setting-dropdown-chevron" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+        <path d="M7.976 10.072l4.357-4.357.62.618L8.284 11h-.618L3 6.333l.619-.618 4.357 4.357z"/>
+        </svg>
+    </button>
+    <span class="setting-dropdown-menu" role="menu" aria-label="Open setting">
+      <span role="menuitem" class="setting-action-item" data-version="stable" tabindex="0">Open in VS Code</span>
+      <span role="menuitem" class="setting-action-item" data-version="insiders" tabindex="-1">Open in VS Code Insiders</span>
+    </span>
+  </span></span> setting, similar to how you configure other features in VS Code. This disables and hides features like chat or inline suggestions in VS Code and disables the Copilot extensions. You can configure the setting at the workspace or user level.</p>
+<p>Alternatively, use the <strong>Learn How to Hide AI Features</strong> action from the Chat menu in the title bar to access the setting.</p>
+<div class="markdown-alert note" dir="auto">
+      <span>
+        <svg class="markdown-alert-icon" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">
+          <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z">
+          </path>
+        </svg>
+        Note
+      </span><p>If you have previously disabled the built-in AI features, your choice is respected upon updating to a new version of VS Code.</p>
+</div><h3 id="_if-i-disable-ai-functionality-in-vs-code-is-my-data-still-sent-to-microsoft" data-needslink="_if-i-disable-ai-functionality-in-vs-code-is-my-data-still-sent-to-microsoft">If I disable AI functionality in VS Code, is my data still sent to Microsoft?</h3>
+<p>No, if you disable AI functionality in VS Code or if you don't login to your Copilot subscription from VS Code, your data is not sent to the Copilot backend services. Learn more about <a href="/docs/configure/telemetry">telemetry in VS Code</a> and the <a href="https://copilot.github.trust.page/" class="external-link" target="_blank">GitHub Copilot Trust Center</a>.</p>
+<h3 id="_are-the-models-that-vs-code-uses-in-the-copilot-extension-open-source-oss" data-needslink="_are-the-models-that-vs-code-uses-in-the-copilot-extension-open-source-oss">Are the models that VS Code uses in the Copilot extension open source (OSS)?</h3>
+<p>No. The models used by GitHub Copilot are licensed separately, and that does not change. In fact, most of those models are from third parties such as OpenAI, Anthropic and Google...</p>
+<h2 id="_what-is-the-difference-between-visual-studio-code-and-visual-studio-ide" data-needslink="_what-is-the-difference-between-visual-studio-code-and-visual-studio-ide">What is the difference between Visual Studio Code and Visual Studio IDE?</h2>
+<p>Visual Studio Code is a streamlined code editor with support for development operations like debugging, task running, and version control. It aims to provide just the tools a developer needs for a quick code-build-debug cycle and leaves more complex workflows to fuller featured IDEs, such as <a href="https://visualstudio.microsoft.com" class="external-link" target="_blank">Visual Studio IDE</a>.</p>
+<h2 id="_is-vs-code-free" data-needslink="_is-vs-code-free">Is VS Code free?</h2>
+<p>Yes, VS Code is free for private or commercial use. See the <a href="https://code.visualstudio.com/license">product license</a> for details.</p>
+<p>If you don't yet have a Copilot subscription, you can use Copilot for free by signing up for the <a href="https://github.com/github-copilot/signup" class="external-link" target="_blank">Copilot Free plan</a> and get a monthly allowance of inline suggestions and AI credits.</p>
+<h2 id="_platform-support" data-needslink="_platform-support">Platform support</h2>
+<h3 id="_which-oss-are-supported" data-needslink="_which-oss-are-supported">Which OSs are supported?</h3>
+<p>VS Code runs on macOS, Linux, and Windows. See the <a href="requirements">Requirements documentation</a> for the supported versions. You can find more platform specific details in the <a href="/docs/getstarted/overview">Setup overview</a>.</p>
+<h3 id="_can-i-run-vs-code-on-older-windows-versions" data-needslink="_can-i-run-vs-code-on-older-windows-versions">Can I run VS Code on older Windows versions?</h3>
+<p>Microsoft ended support and is no longer providing security updates for <a href="https://learn.microsoft.com/lifecycle/products/windows-7" class="external-link" target="_blank">Windows 7</a>, <a href="https://learn.microsoft.com/en-us/lifecycle/announcements/windows-8-1-end-support-january-2023" class="external-link" target="_blank">Windows 8, and Windows 8.1</a>. VS Code desktop versions starting with 1.71 (August 2022) no longer run on Windows 7 and starting with 1.80 (June 2023) will no longer run on Windows 8 and 8.1. You will need to upgrade to a newer Windows version to use later versions of VS Code.</p>
+<p>VS Code will no longer provide product updates or security fixes on old Windows versions. VS Code <a href="https://code.visualstudio.com/updates/v1_70">version 1.70.3</a> is the last available release for Windows 7 users and version 1.79 will be the last available release for Windows 8 and 8.1 users. You can learn more about upgrading your Windows version at <a href="https://support.microsoft.com/windows/windows-7-support-ended-on-january-14-2020-b75d4580-2cc7-895a-2c9c-1466d9a53962" class="external-link" target="_blank">support.microsoft.com</a>.</p>
+<p>Additionally, 32-bit OEM support has been dropped with Windows 10, version 2004. The last stable VS Code version to support Windows 32-bit is 1.83 (September 2023). You will need to update to the 64-bit release.</p>
+<h3 id="_can-i-run-vs-code-on-old-macos-versions" data-needslink="_can-i-run-vs-code-on-old-macos-versions">Can I run VS Code on old macOS versions?</h3>
+<p>VS Code desktop version starting with 1.105 (September 2025) is deprecating support for macOS Big Sur (version 11.0 and older). Starting with VS Code 1.107 (November 2025), we will stop updating VS Code on macOS Big Sur (version 11.0 and older). You will need to upgrade to a newer macOS version to use later versions of VS Code.</p>
+<p>VS Code will no longer provide product updates or security fixes on macOS Big Sur (versions 11.0 and older) and VS Code version 1.106 will be the last available release for macOS Big Sur (11.0 and older). You can learn more about upgrading your macOS version at <a href="https://support.apple.com/en-us/HT201260" class="external-link" target="_blank">support.apple.com</a>.</p>
+<h3 id="_can-i-run-vs-code-on-older-linux-distributions" data-needslink="_can-i-run-vs-code-on-older-linux-distributions">Can I run VS Code on older Linux distributions?</h3>
+<p>Starting with VS Code release 1.86.1 (January 2024), VS Code desktop is only compatible with Linux distributions based on glibc 2.28 or later, for example, Debian 10, RHEL 8, or Ubuntu 20.04.</p>
+<p>If you are unable to upgrade your Linux distribution, the recommended alternative is to use our <a href="/docs/remote/vscode-web">web client</a>. If you would like to use the desktop version, then you can download the VS Code release 1.85 from <a href="https://code.visualstudio.com/updates/v1_85">here</a>. Depending on your platform, make sure to disable updates to stay on that version. A good recommendation is to set up the installation with <a href="/docs/setup/portable">Portable Mode</a>.</p>
+<h3 id="_can-i-run-a-portable-version-of-vs-code" data-needslink="_can-i-run-a-portable-version-of-vs-code">Can I run a portable version of VS Code?</h3>
+<p>Yes, VS Code has a <a href="/docs/setup/portable">Portable Mode</a> that lets you keep settings and data in the same location as your installation, for example, on a USB drive.</p>
+<h2 id="_telemetry-and-crash-reporting" data-needslink="_telemetry-and-crash-reporting">Telemetry and crash reporting</h2>
+<h3 id="_how-to-disable-telemetry-reporting" data-needslink="_how-to-disable-telemetry-reporting">How to disable telemetry reporting</h3>
+<p>VS Code collects usage data and sends it to Microsoft to help improve our products and services. Read our <a href="https://go.microsoft.com/fwlink/?LinkID=528096&amp;clcid=0x409" class="external-link" target="_blank">privacy statement</a> and <a href="/docs/configure/telemetry">telemetry documentation</a> to learn more.</p>
+<p>If you don't want to send usage data to Microsoft, you can set the <span class="setting"><span class="setting-dropdown" data-setting-id="telemetry.telemetryLevel">
+    <span class="setting-link-main">
+      <span class="codicon codicon-settings-gear dynamic-setting-icon"></span>
+      telemetry.telemetryLevel
+      <span class="setting-policy-info codicon codicon-info" data-tooltip="This setting can be configured by an organization policy." role="note" tabindex="0" aria-label="This setting can be configured by an organization policy."></span>
+    </span>
+    <button 
+      type="button"
+      class="setting-dropdown-trigger"
+      aria-haspopup="menu"
+      aria-expanded="false"
+      aria-label="Open setting in VS Code">
+        <svg class="setting-dropdown-chevron" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+        <path d="M7.976 10.072l4.357-4.357.62.618L8.284 11h-.618L3 6.333l.619-.618 4.357 4.357z"/>
+        </svg>
+    </button>
+    <span class="setting-dropdown-menu" role="menu" aria-label="Open setting">
+      <span role="menuitem" class="setting-action-item" data-version="stable" tabindex="0">Open in VS Code</span>
+      <span role="menuitem" class="setting-action-item" data-version="insiders" tabindex="-1">Open in VS Code Insiders</span>
+    </span>
+  </span></span> user <a href="/docs/configure/settings">setting</a> to <code>off</code>.</p>
+<p>From <span class="filePreferencesPath"><strong>File</strong> &gt; <strong>Preferences</strong></span> &gt; <strong>Settings</strong>, search for <code>telemetry</code>, and set the <strong>Telemetry: Telemetry Level</strong> setting to <code>off</code>. This will silence all telemetry events from VS Code going forward.</p>
+<blockquote><p><strong>Important Notice</strong>: VS Code gives you the option to install Microsoft and third party extensions. These extensions may be collecting their own usage data and are not controlled by the <span class="setting"><span class="setting-dropdown" data-setting-id="telemetry.telemetryLevel">
+    <span class="setting-link-main">
+      <span class="codicon codicon-settings-gear dynamic-setting-icon"></span>
+      telemetry.telemetryLevel
+      <span class="setting-policy-info codicon codicon-info" data-tooltip="This setting can be configured by an organization policy." role="note" tabindex="0" aria-label="This setting can be configured by an organization policy."></span>
+    </span>
+    <button 
+      type="button"
+      class="setting-dropdown-trigger"
+      aria-haspopup="menu"
+      aria-expanded="false"
+      aria-label="Open setting in VS Code">
+        <svg class="setting-dropdown-chevron" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+        <path d="M7.976 10.072l4.357-4.357.62.618L8.284 11h-.618L3 6.333l.619-.618 4.357 4.357z"/>
+        </svg>
+    </button>
+    <span class="setting-dropdown-menu" role="menu" aria-label="Open setting">
+      <span role="menuitem" class="setting-action-item" data-version="stable" tabindex="0">Open in VS Code</span>
+      <span role="menuitem" class="setting-action-item" data-version="insiders" tabindex="-1">Open in VS Code Insiders</span>
+    </span>
+  </span></span> setting. Consult the specific extension's documentation to learn about its telemetry reporting.</p>
+</blockquote><h4 id="_how-to-disable-experiments" data-needslink="_how-to-disable-experiments">How to disable experiments</h4>
+<p>VS Code uses experiments to try out new features or progressively roll them out. Our experimentation framework calls out to a Microsoft-owned service and is therefore disabled when telemetry is disabled. However, if you want to disable experiments regardless of your telemetry preferences, you may set the <span class="setting"><span class="setting-dropdown" data-setting-id="workbench.enableExperiments">
+    <span class="setting-link-main">
+      <span class="codicon codicon-settings-gear dynamic-setting-icon"></span>
+      workbench.enableExperiments
+      
+    </span>
+    <button 
+      type="button"
+      class="setting-dropdown-trigger"
+      aria-haspopup="menu"
+      aria-expanded="false"
+      aria-label="Open setting in VS Code">
+        <svg class="setting-dropdown-chevron" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+        <path d="M7.976 10.072l4.357-4.357.62.618L8.284 11h-.618L3 6.333l.619-.618 4.357 4.357z"/>
+        </svg>
+    </button>
+    <span class="setting-dropdown-menu" role="menu" aria-label="Open setting">
+      <span role="menuitem" class="setting-action-item" data-version="stable" tabindex="0">Open in VS Code</span>
+      <span role="menuitem" class="setting-action-item" data-version="insiders" tabindex="-1">Open in VS Code Insiders</span>
+    </span>
+  </span></span> user <a href="/docs/configure/settings">setting</a> to <code>false</code>.</p>
+<p>From <span class="filePreferencesPath"><strong>File</strong> &gt; <strong>Preferences</strong></span> &gt; <strong>Settings</strong>, search for <code>experiments</code>, and uncheck the <strong>Workbench: Enable Experiments</strong> setting. This will prevent VS Code from calling out to the service and opt out of any ongoing experiments.</p>
+<h3 id="_how-to-disable-crash-reporting" data-needslink="_how-to-disable-crash-reporting">How to disable crash reporting</h3>
+<p>VS Code collects data about any crashes that occur and sends it to Microsoft to help improve our products and services. Read our <a href="https://go.microsoft.com/fwlink/?LinkID=528096&amp;clcid=0x409" class="external-link" target="_blank">privacy statement</a> and <a href="/docs/configure/telemetry">telemetry documentation</a> to learn more.</p>
+<p>If you don't want to send crash data to Microsoft, you can change the <span class="setting"><span class="setting-dropdown" data-setting-id="telemetry.telemetryLevel">
+    <span class="setting-link-main">
+      <span class="codicon codicon-settings-gear dynamic-setting-icon"></span>
+      telemetry.telemetryLevel
+      <span class="setting-policy-info codicon codicon-info" data-tooltip="This setting can be configured by an organization policy." role="note" tabindex="0" aria-label="This setting can be configured by an organization policy."></span>
+    </span>
+    <button 
+      type="button"
+      class="setting-dropdown-trigger"
+      aria-haspopup="menu"
+      aria-expanded="false"
+      aria-label="Open setting in VS Code">
+        <svg class="setting-dropdown-chevron" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+        <path d="M7.976 10.072l4.357-4.357.62.618L8.284 11h-.618L3 6.333l.619-.618 4.357 4.357z"/>
+        </svg>
+    </button>
+    <span class="setting-dropdown-menu" role="menu" aria-label="Open setting">
+      <span role="menuitem" class="setting-action-item" data-version="stable" tabindex="0">Open in VS Code</span>
+      <span role="menuitem" class="setting-action-item" data-version="insiders" tabindex="-1">Open in VS Code Insiders</span>
+    </span>
+  </span></span> user <a href="/docs/configure/settings">setting</a> to <code>off</code>.</p>
+<p>From <span class="filePreferencesPath"><strong>File</strong> &gt; <strong>Preferences</strong></span> &gt; <strong>Settings</strong>, search for <code>telemetry</code>, and set the <strong>Telemetry: Telemetry Level</strong> setting to <code>off</code>. This will silence all telemetry events including crash reporting from VS Code. You will need to restart VS Code for the setting change to take effect.</p>
+<h2 id="_gdpr-and-vs-code" data-needslink="_gdpr-and-vs-code">GDPR and VS Code</h2>
+<p>Now that the General Data Protection Regulation (GDPR) is in effect, we want to take this opportunity to reiterate that we take privacy very seriously. That's both for Microsoft as a company and specifically within the VS Code team.</p>
+<p>To support GDPR:</p>
+<ul>
+<li>The VS Code product notifies all users that they can opt out of telemetry collection.</li>
+<li>The team actively reviews and classifies all telemetry sent (documented in <a href="https://github.com/microsoft/vscode/pull/34997" class="external-link" target="_blank">our OSS codebase</a>).</li>
+<li>There are valid data retention policies in place for any data collected, for example crash dumps.</li>
+</ul>
+<p>You can learn more about VS Code's GDPR compliance in the <a href="/docs/configure/telemetry">telemetry documentation</a>.</p>
+<h2 id="_what-online-services-does-vs-code-use" data-needslink="_what-online-services-does-vs-code-use">What online services does VS Code use?</h2>
+<p>Beyond crash reporting and telemetry, VS Code uses online services for various other purposes such as downloading product updates, finding, installing, and updating extensions, or providing Natural Language Search within the Settings editor. You can learn more in <a href="/docs/configure/telemetry#_managing-online-services">Managing online services</a>.</p>
+<p>You can choose to turn on/off features that use these services. From <span class="filePreferencesPath"><strong>File</strong> &gt; <strong>Preferences</strong></span> &gt; <strong>Settings</strong>, and type the tag <code>@tag:usesOnlineServices</code>. This will display all settings that control the usage of online services and you can individually switch them on or off.</p>
+<h2 id="_licensing" data-needslink="_licensing">Licensing</h2>
+<h3 id="_location" data-needslink="_location">Location</h3>
+<p>You can find the VS Code licenses, third party notices and <a href="https://www.chromium.org" class="external-link" target="_blank">Chromium</a> Open Source credit list under your VS Code installation location <code>resources\app</code> folder. VS Code's <code>ThirdPartyNotices.txt</code>, Chromium's <code>Credits_*.html</code>, and VS Code's English language <code>LICENSE.txt</code> are available under <code>resources\app</code>. Localized versions of <code>LICENSE.txt</code> by language ID are under <code>resources\app\licenses</code>.</p>
+<h3 id="_why-does-visual-studio-code-have-a-different-license-than-the-vscode-github-repository" data-needslink="_why-does-visual-studio-code-have-a-different-license-than-the-vscode-github-repository">Why does Visual Studio Code have a different license than the vscode GitHub repository?</h3>
+<p>To learn why Visual Studio Code, the product, has a different license than the open-source <a href="https://github.com/microsoft/vscode" class="external-link" target="_blank">vscode GitHub repository</a>, see <a href="https://github.com/microsoft/vscode/issues/60#issuecomment-161792005" class="external-link" target="_blank">issue #60</a> for a detailed explanation.</p>
+<h3 id="_what-is-the-difference-between-the-vscode-repository-and-the-microsoft-visual-studio-code-distribution" data-needslink="_what-is-the-difference-between-the-vscode-repository-and-the-microsoft-visual-studio-code-distribution">What is the difference between the <code>vscode</code> repository and the Microsoft Visual Studio Code distribution?</h3>
+<p>The <a href="https://github.com/microsoft/vscode" class="external-link" target="_blank">github.com/microsoft/vscode</a> repository (<code>Code - OSS</code>) is where we develop the Visual Studio Code product. Not only do we write code and work on issues there, we also publish our roadmap and iteration and endgame plans. The source code is available to everyone under a standard <a href="https://github.com/microsoft/vscode/blob/main/LICENSE.txt" class="external-link" target="_blank">MIT license</a>.</p>
+<p>Visual Studio Code is a distribution of the <code>Code - OSS</code> repository with Microsoft specific customizations (including source code), released under a traditional <a href="https://code.visualstudio.com/License/">Microsoft product license</a>.</p>
+<p>See the <a href="https://github.com/microsoft/vscode/wiki/Differences-between-the-repository-and-Visual-Studio-Code" class="external-link" target="_blank">Visual Studio Code and 'Code - OSS' Differences</a> article for more details.</p>
+<h3 id="_what-does-built-on-open-source-mean" data-needslink="_what-does-built-on-open-source-mean">What does &quot;Built on Open Source&quot; mean?</h3>
+<p><a href="https://code.visualstudio.com">Microsoft Visual Studio Code</a> is a <a href="https://code.visualstudio.com/License/">Microsoft licensed</a> distribution of <a href="https://github.com/microsoft/vscode" class="external-link" target="_blank">'Code - OSS'</a> that includes Microsoft proprietary assets (such as icons) and features (Visual Studio Marketplace integration, small aspects of enabling Remote Development). While these additions make up a very small percentage of the overall distribution code base, it is more accurate to say that Visual Studio Code is &quot;built&quot; on open source, rather than &quot;is&quot; open source, because of these differences. More information on what each distribution includes can be found in the <a href="https://github.com/microsoft/vscode/wiki/Differences-between-the-repository-and-Visual-Studio-Code" class="external-link" target="_blank">Visual Studio Code and 'Code - OSS' Differences</a> article.</p>
+<h2 id="_extensions" data-needslink="_extensions">Extensions</h2>
+<h3 id="_are-all-vs-code-extensions-open-source" data-needslink="_are-all-vs-code-extensions-open-source">Are all VS Code extensions open source?</h3>
+<p>Extension authors are free to choose a license that fits their business needs. While many extension authors have opted to release their source code under an open-source license, some extensions like <a href="https://marketplace.visualstudio.com/items?itemName=WallabyJs.wallaby-vscode" class="external-link" target="_blank">Wallaby.js</a>, <a href="https://marketplace.visualstudio.com/items?itemName=GoogleCloudTools.cloudcode" class="external-link" target="_blank">Google Cloud Code</a>, and the <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack" class="external-link" target="_blank">VS Code Remote Development extensions</a> use proprietary licenses.</p>
+<p>At Microsoft, we have a mix of open and closed source extensions. Reliance on existing proprietary source code or libraries, source code that crosses into Microsoft licensed tools or services (e.g., the C# DevKit extension uses the Visual Studio subscription license model, see <a href="https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit" class="external-link" target="_blank">License</a>), and business model differences across the entirety of Microsoft may result in extensions choosing a proprietary license. You can find a list of Microsoft contributed Visual Studio Code extensions and their source code licenses in the <a href="/docs/supporting/oss-extensions">Microsoft Extension Licenses</a> article.</p>
+<h3 id="_how-do-i-find-the-license-for-an-extension" data-needslink="_how-do-i-find-the-license-for-an-extension">How do I find the license for an extension?</h3>
+<p>Most extensions will have a link to their license on the Marketplace page (their &quot;Read Me&quot; document), found on the right column under <strong>Resources</strong>. If you don't find a link, you may find the license in the extension's repository if it is public, or you can contact the extension author through the Q &amp; A section of the Marketplace.</p>
+<h3 id="_can-i-use-a-microsoft-extension-outside-of-vs-code" data-needslink="_can-i-use-a-microsoft-extension-outside-of-vs-code">Can I use a Microsoft extension outside of VS Code?</h3>
+<p>No. While the source code for an extension from Microsoft may be open source, we do not license extensions from Microsoft or its affiliates that are published to and acquired from the Visual Studio Marketplace for use outside of the Visual Studio family of products: Microsoft Visual Studio, Visual Studio Code, GitHub Codespaces, Azure DevOps, Azure DevOps Server, and successor products and services offered by us and Microsoft affiliates, such as GitHub, Inc. We build, test, deploy, and support these extensions and services only in the Visual Studio family of products, to ensure they meet our security and quality standards. We do not do this for extensions elsewhere, including those built on a fork of the <a href="https://github.com/microsoft/vscode" class="external-link" target="_blank">Code - OSS Repository</a>. Please see <em>Conditions: Use Rights for Marketplace/NuGet Offerings</em> in the Visual Studio Marketplace <a href="https://aka.ms/vsmarketplace-ToU" class="external-link" target="_blank">Terms of Service</a> for more information.</p>
+<h3 id="_i-cant-access-the-visual-studio-marketplace-from-product-fill-in-the-blank-why-not" data-needslink="_i-cant-access-the-visual-studio-marketplace-from-product-fill-in-the-blank-why-not">I can't access the Visual Studio Marketplace from product &lt;&lt; fill in the blank &gt;&gt;, why not?</h3>
+<p>We provide the Visual Studio Marketplace for use only by the Visual Studio family of products: Microsoft Visual Studio, Visual Studio Code, GitHub Codespaces, Azure DevOps, Azure DevOps Server, and successor products and services offered by us and Microsoft affiliates, such as GitHub, Inc. Therefore, alternative products including those built on a fork of the <a href="https://github.com/microsoft/vscode" class="external-link" target="_blank">Code - OSS Repository</a>, are not permitted to access the Visual Studio Marketplace. We do this to protect the security and quality of the ecosystem, including the following measures:</p>
+<ul>
+<li>
+<p>Extensions run in the context and with the permissions of the product, and they might contain executable code. The <a href="/docs/configure/extensions/extension-runtime-security#_marketplace-protections">Marketplace vets every extension</a> for security and to prevent them from performing malicious activity. When you install an extension with a product in the Visual Studio family, you know that it has been vetted to run in that context.</p>
+</li>
+<li>
+<p>When a malicious extension is reported and verified, or a vulnerability is found in an extension dependency, the extension is removed from the Marketplace, added to a block list, and automatically uninstalled by VS Code.</p>
+</li>
+<li>
+<p>Microsoft spends considerable resources in running, maintaining, and securing this global online service. Products in the Visual Studio family are designed to access the Marketplace in a secure and reliable manner, so that the Marketplace is available when you need it.</p>
+</li>
+<li>
+<p>Extensions might integrate deeply with the product. The Marketplace ensures that we maintain API compatibility and that extensions use the product's extensions APIs correctly. This helps ensure that extensions you install work correctly across version updates.</p>
+</li>
+</ul>
+<p>See <a href="https://github.com/microsoft/vscode/issues/31168#issuecomment-2810912914" class="external-link" target="_blank">#31168</a> for additional details on this topic.</p>
+<h3 id="_why-should-i-install-extensions-from-the-visual-studio-marketplace" data-needslink="_why-should-i-install-extensions-from-the-visual-studio-marketplace">Why should I install extensions from the Visual Studio Marketplace?</h3>
+<p>Installing extensions from the Visual Studio Marketplace has many advantages over installing them from other sources.</p>
+<ul>
+<li>
+<p>The Visual Studio Marketplace employs <a href="/docs/configure/extensions/extension-runtime-security#_marketplace-protections">several mechanisms</a> to protect you from installing malicious extensions, including malware scanning, dynamic detection, publisher verification, and more. When you install extensions from a different source, there is no guarantee that the extension is safe to run in your context.</p>
+</li>
+<li>
+<p>When a malicious extension is reported and verified, or a vulnerability is found in an extension dependency, the extension is removed from the Marketplace, added to a <em>block list</em>, and automatically uninstalled by VS Code.</p>
+</li>
+<li>
+<p>The Marketplace enables you to easily find, install, and update extensions. When an update is available, for example because of a security fix, VS Code automatically installs the updated version.</p>
+</li>
+<li>
+<p>Extensions might integrate deeply with the product. The Marketplace ensures that we maintain API compatibility and that extensions use the product's extensions APIs correctly. This helps ensure that extensions you install work correctly across version updates.</p>
+</li>
+</ul>
+<h3 id="_report-an-issue-with-a-vs-code-extension" data-needslink="_report-an-issue-with-a-vs-code-extension">Report an issue with a VS Code extension</h3>
+<p>For bugs, feature requests or to contact an extension author, you should use the links available in the <a href="https://marketplace.visualstudio.com/vscode" class="external-link" target="_blank">Visual Studio Code Marketplace</a> or use <strong>Help: Report Issue</strong> from the Command Palette. However, if there is an issue where an extension does not follow our code of conduct, for example it includes profanity, pornography or presents a risk to the user, then we have <a href="mailto:VSMarketplace@microsoft.com">an email alias to report the issue</a>. Once the mail is received, our Marketplace team will look into an appropriate course of action, up to and including unpublishing the extension.</p>
+<h2 id="_vs-code-versions" data-needslink="_vs-code-versions">VS Code versions</h2>
+<h3 id="_how-do-i-find-my-current-vs-code-version" data-needslink="_how-do-i-find-my-current-vs-code-version">How do I find my current VS Code version?</h3>
+<p>You can find the VS Code version information in the About dialog box.</p>
+<p>On macOS, go to <strong>Code</strong> &gt; <strong>About Visual Studio Code</strong>.</p>
+<p>On Windows and Linux, go to <strong>Help</strong> &gt; <strong>About</strong>.</p>
+<p>The VS Code version is the first <strong>Version</strong> number listed and has the version format 'major.minor.release', for example '1.100.0'.</p>
+<h3 id="_previous-release-versions" data-needslink="_previous-release-versions">Previous release versions</h3>
+<p>You can find links to some release downloads at the top of a version's release notes:</p>
+<p><img src="/assets/docs/supporting/faq/links-release-notes.png" alt="Download links in release notes" loading="lazy"></p>
+<p>If you need a type of installation not listed there, you can manually download via the following URLs:</p>
+<table class="table table-striped">
+<thead>
+<tr>
+<th>Download type</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Windows x64 System installer</td>
+<td>https://update.code.visualstudio.com/{version}/win32-x64/stable</td>
+</tr>
+<tr>
+<td>Windows x64 User installer</td>
+<td>https://update.code.visualstudio.com/{version}/win32-x64-user/stable</td>
+</tr>
+<tr>
+<td>Windows x64 zip</td>
+<td>https://update.code.visualstudio.com/{version}/win32-x64-archive/stable</td>
+</tr>
+<tr>
+<td>Windows x64 CLI</td>
+<td>https://update.code.visualstudio.com/{version}/cli-win32-x64/stable</td>
+</tr>
+<tr>
+<td>Windows Arm64 System installer</td>
+<td>https://update.code.visualstudio.com/{version}/win32-arm64/stable</td>
+</tr>
+<tr>
+<td>Windows Arm64 User installer</td>
+<td>https://update.code.visualstudio.com/{version}/win32-arm64-user/stable</td>
+</tr>
+<tr>
+<td>Windows Arm64 zip</td>
+<td>https://update.code.visualstudio.com/{version}/win32-arm64-archive/stable</td>
+</tr>
+<tr>
+<td>Windows Arm64 CLI</td>
+<td>https://update.code.visualstudio.com/{version}/cli-win32-arm64/stable</td>
+</tr>
+<tr>
+<td>macOS Universal</td>
+<td>https://update.code.visualstudio.com/{version}/darwin-universal/stable</td>
+</tr>
+<tr>
+<td>macOS Intel chip</td>
+<td>https://update.code.visualstudio.com/{version}/darwin/stable</td>
+</tr>
+<tr>
+<td>macOS Intel chip CLI</td>
+<td>https://update.code.visualstudio.com/{version}/cli-darwin-x64/stable</td>
+</tr>
+<tr>
+<td>macOS Apple silicon</td>
+<td>https://update.code.visualstudio.com/{version}/darwin-arm64/stable</td>
+</tr>
+<tr>
+<td>macOS Apple silicon CLI</td>
+<td>https://update.code.visualstudio.com/{version}/cli-darwin-arm64/stable</td>
+</tr>
+<tr>
+<td>Linux x64</td>
+<td>https://update.code.visualstudio.com/{version}/linux-x64/stable</td>
+</tr>
+<tr>
+<td>Linux x64 debian</td>
+<td>https://update.code.visualstudio.com/{version}/linux-deb-x64/stable</td>
+</tr>
+<tr>
+<td>Linux x64 rpm</td>
+<td>https://update.code.visualstudio.com/{version}/linux-rpm-x64/stable</td>
+</tr>
+<tr>
+<td>Linux x64 snap</td>
+<td>https://update.code.visualstudio.com/{version}/linux-snap-x64/stable</td>
+</tr>
+<tr>
+<td>Linux x64 CLI</td>
+<td>https://update.code.visualstudio.com/{version}/cli-linux-x64/stable</td>
+</tr>
+<tr>
+<td>Linux Arm32</td>
+<td>https://update.code.visualstudio.com/{version}/linux-armhf/stable</td>
+</tr>
+<tr>
+<td>Linux Arm32 debian</td>
+<td>https://update.code.visualstudio.com/{version}/linux-deb-armhf/stable</td>
+</tr>
+<tr>
+<td>Linux Arm32 rpm</td>
+<td>https://update.code.visualstudio.com/{version}/linux-rpm-armhf/stable</td>
+</tr>
+<tr>
+<td>Linux Arm32 CLI</td>
+<td>https://update.code.visualstudio.com/{version}/cli-linux-armhf/stable</td>
+</tr>
+<tr>
+<td>Linux Arm64</td>
+<td>https://update.code.visualstudio.com/{version}/linux-arm64/stable</td>
+</tr>
+<tr>
+<td>Linux Arm64 debian</td>
+<td>https://update.code.visualstudio.com/{version}/linux-deb-arm64/stable</td>
+</tr>
+<tr>
+<td>Linux Arm64 rpm</td>
+<td>https://update.code.visualstudio.com/{version}/linux-rpm-arm64/stable</td>
+</tr>
+<tr>
+<td>Linux Arm64 CLI</td>
+<td>https://update.code.visualstudio.com/{version}/cli-linux-arm64/stable</td>
+</tr>
+</tbody>
+</table>
+<p>Substitute the specific release you want in the <code>{version}</code> placeholder. For example, to download the Linux Arm64 debian version for 1.83.1, you would use</p>
+<pre class="shiki" data-lang="bash" shiki-themes dark-plus light-plus" style="--shiki-dark:#D4D4D4;--shiki-light:#000000;--shiki-dark-bg:#1E1E1E;--shiki-light-bg:#FFFFFF" tabindex="0"><code><span class="line"><span style="--shiki-dark:#DCDCAA;--shiki-light:#795E26">https://update.code.visualstudio.com/1.83.1/linux-deb-arm64/stable</span></span>
+<span class="line"></span></code></pre>
+<p>You can use the version string <code>latest</code>, if you'd like to always download the latest VS Code stable version.</p>
+<h4 id="_windows-32-bit-versions" data-needslink="_windows-32-bit-versions">Windows 32-bit versions</h4>
+<p>Windows x86 32-bit versions are no longer actively supported after release 1.83 and could pose a security risk.</p>
+<table class="table table-striped">
+<thead>
+<tr>
+<th>Download type</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Windows x86 System installer</td>
+<td>https://update.code.visualstudio.com/{version}/win32/stable</td>
+</tr>
+<tr>
+<td>Windows x86 User installer</td>
+<td>https://update.code.visualstudio.com/{version}/win32-user/stable</td>
+</tr>
+<tr>
+<td>Windows x86 zip</td>
+<td>https://update.code.visualstudio.com/{version}/win32-archive/stable</td>
+</tr>
+<tr>
+<td>Windows x86 CLI</td>
+<td>https://update.code.visualstudio.com/{version}/cli-win32-ia32/stable</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_prerelease-versions" data-needslink="_prerelease-versions">Prerelease versions</h3>
+<p>Want an early peek at new VS Code features?  You can try prerelease versions of VS Code by installing the &quot;Insiders&quot; build.  The Insiders build installs side by side to your stable VS Code install and has isolated settings, configurations, and extensions.  The Insiders build is updated nightly so you'll get the latest bug fixes and feature updates from the day before.</p>
+<p>To install the Insiders build, go to the <a href="/insiders">Insiders download page</a>.</p>
+<h3 id="_how-do-i-opt-out-of-vs-code-auto-updates" data-needslink="_how-do-i-opt-out-of-vs-code-auto-updates">How do I opt out of VS Code auto-updates?</h3>
+<p>By default, VS Code is set up to auto-update for macOS and Windows users when we release new updates. If you do not want to get automatic updates, configure the <strong>Update: Mode</strong> setting (<span class="setting"><span class="setting-dropdown" data-setting-id="update.mode">
+    <span class="setting-link-main">
+      <span class="codicon codicon-settings-gear dynamic-setting-icon"></span>
+      update.mode
+      <span class="setting-policy-info codicon codicon-info" data-tooltip="This setting can be configured by an organization policy." role="note" tabindex="0" aria-label="This setting can be configured by an organization policy."></span>
+    </span>
+    <button 
+      type="button"
+      class="setting-dropdown-trigger"
+      aria-haspopup="menu"
+      aria-expanded="false"
+      aria-label="Open setting in VS Code">
+        <svg class="setting-dropdown-chevron" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+        <path d="M7.976 10.072l4.357-4.357.62.618L8.284 11h-.618L3 6.333l.619-.618 4.357 4.357z"/>
+        </svg>
+    </button>
+    <span class="setting-dropdown-menu" role="menu" aria-label="Open setting">
+      <span role="menuitem" class="setting-action-item" data-version="stable" tabindex="0">Open in VS Code</span>
+      <span role="menuitem" class="setting-action-item" data-version="insiders" tabindex="-1">Open in VS Code Insiders</span>
+    </span>
+  </span></span>) from <code>default</code> to <code>none</code>.</p>
+<p>To modify the update mode, go to <span class="filePreferencesPath"><strong>File</strong> &gt; <strong>Preferences</strong></span> &gt; <strong>Settings</strong>, search for <code>update mode</code> and change the setting to <code>none</code>.</p>
+<p>If you use the JSON editor for your settings, add the following line:</p>
+<pre class="shiki" data-lang="json" shiki-themes dark-plus light-plus" style="--shiki-dark:#D4D4D4;--shiki-light:#000000;--shiki-dark-bg:#1E1E1E;--shiki-light-bg:#FFFFFF" tabindex="0"><code><span class="line"><span style="--shiki-dark:#D4D4D4;--shiki-light:#000000">{</span></span>
+<span class="line"><span style="--shiki-dark:#9CDCFE;--shiki-light:#0451A5">  "update.mode"</span><span style="--shiki-dark:#D4D4D4;--shiki-light:#000000">: </span><span style="--shiki-dark:#CE9178;--shiki-light:#A31515">"none"</span></span>
+<span class="line"><span style="--shiki-dark:#D4D4D4;--shiki-light:#000000">}</span></span>
+<span class="line"></span></code></pre>
+<p>You can install a previous release of VS Code by uninstalling your current version and then installing the download provided at the top of a specific <a href="/updates">release notes</a> page.</p>
+<div class="markdown-alert note" dir="auto">
+      <span>
+        <svg class="markdown-alert-icon" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">
+          <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z">
+          </path>
+        </svg>
+        Note
+      </span><p>On Linux: If the VS Code repository was installed correctly then your system package manager should handle auto-updating in the same way as other packages on the system. See <a href="/docs/setup/linux">Installing VS Code on Linux</a>.</p>
+</div><h4 id="_opt-out-of-extension-updates" data-needslink="_opt-out-of-extension-updates">Opt out of extension updates</h4>
+<p>By default, VS Code automatically updates extensions as new versions become available. If you do not want extensions to automatically update, you can set the <strong>Extensions: Auto Update</strong> setting (<span class="setting"><span class="setting-dropdown" data-setting-id="extensions.autoUpdate">
+    <span class="setting-link-main">
+      <span class="codicon codicon-settings-gear dynamic-setting-icon"></span>
+      extensions.autoUpdate
+      <span class="setting-policy-info codicon codicon-info" data-tooltip="This setting can be configured by an organization policy." role="note" tabindex="0" aria-label="This setting can be configured by an organization policy."></span>
+    </span>
+    <button 
+      type="button"
+      class="setting-dropdown-trigger"
+      aria-haspopup="menu"
+      aria-expanded="false"
+      aria-label="Open setting in VS Code">
+        <svg class="setting-dropdown-chevron" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+        <path d="M7.976 10.072l4.357-4.357.62.618L8.284 11h-.618L3 6.333l.619-.618 4.357 4.357z"/>
+        </svg>
+    </button>
+    <span class="setting-dropdown-menu" role="menu" aria-label="Open setting">
+      <span role="menuitem" class="setting-action-item" data-version="stable" tabindex="0">Open in VS Code</span>
+      <span role="menuitem" class="setting-action-item" data-version="insiders" tabindex="-1">Open in VS Code Insiders</span>
+    </span>
+  </span></span>) to <code>off</code> in the Settings editor (<span class="dynamic-keybinding" data-commandId="workbench.action.openSettings" data-osx="⌘," data-win="Ctrl+," data-linux="Ctrl+,"><span class="keybinding">⌘,</span> (Windows, Linux <span class="keybinding">Ctrl+,</span>)</span>).</p>
+<p>If you use the JSON editor to modify your settings, add the following line:</p>
+<pre class="shiki" data-lang="json" shiki-themes dark-plus light-plus" style="--shiki-dark:#D4D4D4;--shiki-light:#000000;--shiki-dark-bg:#1E1E1E;--shiki-light-bg:#FFFFFF" tabindex="0"><code><span class="line"><span style="--shiki-dark:#D4D4D4;--shiki-light:#000000">{</span></span>
+<span class="line"><span style="--shiki-dark:#9CDCFE;--shiki-light:#0451A5">  "extensions.autoUpdate"</span><span style="--shiki-dark:#D4D4D4;--shiki-light:#000000">: </span><span style="--shiki-dark:#CE9178;--shiki-light:#A31515">"off"</span></span>
+<span class="line"><span style="--shiki-dark:#D4D4D4;--shiki-light:#000000">}</span></span>
+<span class="line"></span></code></pre>
+<h2 id="_where-can-i-find-the-visual-studio-code-icons" data-needslink="_where-can-i-find-the-visual-studio-code-icons">Where can I find the Visual Studio Code icons?</h2>
+<p><strong>Are there guidelines for using the icons and names?</strong></p>
+<p>You can download the official Visual Studio Code icons and read the usage guidelines at <a href="/brand">Icons and names usage guidelines</a>.</p>
+<h2 id="_what-is-a-vs-code-workspace" data-needslink="_what-is-a-vs-code-workspace">What is a VS Code &quot;workspace&quot;?</h2>
+<p>A VS Code &quot;workspace&quot; is usually just your project root folder. VS Code uses the &quot;workspace&quot; concept in order to scope project configurations such as project-specific <a href="/docs/configure/settings">settings</a> as well as config files for <a href="/docs/debugtest/debugging">debugging</a> and <a href="/docs/debugtest/tasks">tasks</a>. Workspace files are stored at the project root in a <code>.vscode</code> folder. You can also have more than one root folder in a VS Code workspace through a feature called <a href="/docs/editing/workspaces/multi-root-workspaces">Multi-root workspaces</a>.</p>
+<p>You can learn more in the <a href="/docs/editing/workspaces/workspaces">What is a VS Code &quot;workspace&quot;?</a> article.</p>
+<h2 id="_problems-and-issues" data-needslink="_problems-and-issues">Problems and issues</h2>
+<h3 id="_installation-appears-to-be-corrupt-unsupported" data-needslink="_installation-appears-to-be-corrupt-unsupported">Installation appears to be corrupt [Unsupported]</h3>
+<p>VS Code does a background check to detect if the installation has been changed on disk and if so, you will see the text <strong>[Unsupported]</strong> in the title bar. This is done since some extensions directly modify (patch) the VS Code product in such a way that is semi-permanent (until the next update) and this can cause hard to reproduce issues. We are not trying to block VS Code patching, but we want to raise awareness that patching VS Code means you are running an unsupported version. <a href="/download">Reinstalling VS Code</a> will replace the modified files and silence the warning.</p>
+<p>You may also see the <strong>[Unsupported]</strong> message if VS Code files have been mistakenly quarantined or removed by anti-virus software (see issue <a href="https://github.com/microsoft/vscode/issues/94858" class="external-link" target="_blank">#94858</a> for an example). Check your anti-virus software settings and reinstall VS Code to repair the missing files.</p>
+<h3 id="_resolving-shell-environment-fails" data-needslink="_resolving-shell-environment-fails">Resolving shell environment fails</h3>
+<p>When VS Code is launched from a terminal (for example, via <code>code .</code>), it has access to environment settings defined in your <code>.bashrc</code> or <code>.zshrc</code> files. This means features like tasks or debug targets also have access to those settings.</p>
+<p>However, when launching from your platform's user interface (for example, the VS Code icon in the macOS dock), you normally are not running in the context of a shell and you don't have access to those environment settings. This means that depending on how you launch VS Code, you may not have the same environment.</p>
+<p>To work around this, when launched via a UI gesture, VS Code will start a small process to run (or &quot;resolve&quot;) the shell environment defined in your <code>.bashrc</code>, <code>.zshrc</code>, or PowerShell profile files. If, after a configurable timeout (via <code>application.shellEnvironmentResolutionTimeout</code>, defaults to 10 seconds), the shell environment has still not been resolved or resolving failed for any other reason, VS Code will abort the &quot;resolve&quot; process, launch without your shell's environment settings, and you will see an error like the following:</p>
+<p><img src="/assets/docs/supporting/faq/shell-env-error.png" alt="Shell environment startup error" loading="lazy"></p>
+<p>If the error message indicates that resolving your shell environment took too long, the <a href="#_investigate-slow-shell-initialization">steps below</a> can help you investigate what might be causing slowness. You can also increase the timeout by configuring the <code>application.shellEnvironmentResolutionTimeout</code> setting. But keep in mind that increasing this value means you will have to wait longer to use some of the features in VS Code, such as extensions.</p>
+<p>If you see other errors, please create an <a href="https://github.com/microsoft/vscode/issues" class="external-link" target="_blank">issue</a> to get help.</p>
+<h4 id="_investigate-slow-shell-initialization" data-needslink="_investigate-slow-shell-initialization">Investigate slow shell initialization</h4>
+<p>The process outlined below may help you identify which parts of your shell initialization are taking the most time:</p>
+<ul>
+<li>Open your shell's startup file (for example, in VS Code by typing <code>~/.bashrc</code> or <code>~/.zshrc</code> in Quick Open (<span class="dynamic-keybinding" data-commandId="workbench.action.quickOpen" data-osx="⌘P" data-win="Ctrl+P" data-linux="Ctrl+P"><span class="keybinding">⌘P</span> (Windows, Linux <span class="keybinding">Ctrl+P</span>)</span>)).</li>
+<li>Selectively comment out potentially long running operations (such as <code>nvm</code> if you find that).</li>
+<li>Save and fully restart VS Code.</li>
+<li>Continue commenting out operations until the error disappears.</li>
+</ul>
+<blockquote><p><strong>Note</strong>: While <code>nvm</code> is a powerful and useful Node.js package manager, it can cause slow shell startup times, if being run during shell initialization. You might consider package manager alternatives such as <a href="https://asdf-vm.com" class="external-link" target="_blank">asdf</a> or search on the internet for <code>nvm</code> performance suggestions.</p>
+</blockquote><h4 id="_launch-vs-code-from-a-terminal" data-needslink="_launch-vs-code-from-a-terminal">Launch VS Code from a terminal</h4>
+<p>If modifying your shell environment isn't practical, you can avoid VS Code's resolving shell environment phase by launching VS Code directly from a fully initialized terminal.</p>
+<ul>
+<li>Typing <code>code</code> from an open terminal will launch VS Code with your last workspace.</li>
+<li>Typing <code>code .</code> will launch VS Code open to the current folder.</li>
+</ul>
+<h3 id="_vs-code-is-blank" data-needslink="_vs-code-is-blank">VS Code is blank?</h3>
+<p>The Electron shell used by Visual Studio Code has trouble with some GPU (graphics processing unit) hardware acceleration. If VS Code is displaying a blank (empty) main window, you can try disabling GPU acceleration when launching VS Code by adding the Electron <code>--disable-gpu</code> command-line switch.</p>
+<pre class="shiki" data-lang="bash" shiki-themes dark-plus light-plus" style="--shiki-dark:#D4D4D4;--shiki-light:#000000;--shiki-dark-bg:#1E1E1E;--shiki-light-bg:#FFFFFF" tabindex="0"><code><span class="line"><span style="--shiki-dark:#DCDCAA;--shiki-light:#795E26">code</span><span style="--shiki-dark:#569CD6;--shiki-light:#0000FF"> --disable-gpu</span></span>
+<span class="line"></span></code></pre>
+<p>If this happened after an update, deleting the <code>GPUCache</code> directory can resolve the issue.</p>
+<pre class="shiki" data-lang="bash" shiki-themes dark-plus light-plus" style="--shiki-dark:#D4D4D4;--shiki-light:#000000;--shiki-dark-bg:#1E1E1E;--shiki-light-bg:#FFFFFF" tabindex="0"><code><span class="line"><span style="--shiki-dark:#DCDCAA;--shiki-light:#795E26">rm</span><span style="--shiki-dark:#569CD6;--shiki-light:#0000FF"> -r</span><span style="--shiki-dark:#CE9178;--shiki-light:#A31515"> ~/.config/Code/GPUCache</span></span>
+<span class="line"></span></code></pre>
+<h3 id="_vs-code-gets-unresponsive-right-after-opening-a-folder" data-needslink="_vs-code-gets-unresponsive-right-after-opening-a-folder">VS Code gets unresponsive right after opening a folder</h3>
+<p>When you open a folder, VS Code will search for typical project files to offer you additional tooling (for example, the solution picker in the Status bar to open a solution). If you open a folder with lots of files, the search can take a large amount of time and CPU resources during which VS Code might be slow to respond. We plan to improve this in the future but for now you can exclude folders from the explorer via the <span class="setting"><span class="setting-dropdown" data-setting-id="files.exclude">
+    <span class="setting-link-main">
+      <span class="codicon codicon-settings-gear dynamic-setting-icon"></span>
+      files.exclude
+      
+    </span>
+    <button 
+      type="button"
+      class="setting-dropdown-trigger"
+      aria-haspopup="menu"
+      aria-expanded="false"
+      aria-label="Open setting in VS Code">
+        <svg class="setting-dropdown-chevron" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+        <path d="M7.976 10.072l4.357-4.357.62.618L8.284 11h-.618L3 6.333l.619-.618 4.357 4.357z"/>
+        </svg>
+    </button>
+    <span class="setting-dropdown-menu" role="menu" aria-label="Open setting">
+      <span role="menuitem" class="setting-action-item" data-version="stable" tabindex="0">Open in VS Code</span>
+      <span role="menuitem" class="setting-action-item" data-version="insiders" tabindex="-1">Open in VS Code Insiders</span>
+    </span>
+  </span></span> setting and they will not be searched for project files:</p>
+<pre class="shiki" data-lang="json" shiki-themes dark-plus light-plus" style="--shiki-dark:#D4D4D4;--shiki-light:#000000;--shiki-dark-bg:#1E1E1E;--shiki-light-bg:#FFFFFF" tabindex="0"><code><span class="line"><span style="--shiki-dark:#CE9178;--shiki-light:#A31515">    "files.exclude"</span><span style="--shiki-dark:#D4D4D4;--shiki-light:#000000">: {</span></span>
+<span class="line"><span style="--shiki-dark:#9CDCFE;--shiki-light:#0451A5">        "**/largeFolder"</span><span style="--shiki-dark:#D4D4D4;--shiki-light:#000000">: </span><span style="--shiki-dark:#569CD6;--shiki-light:#0000FF">true</span></span>
+<span class="line"><span style="--shiki-dark:#D4D4D4;--shiki-light:#000000">    }</span></span>
+<span class="line"></span></code></pre>
+<h2 id="_technical-support-channels" data-needslink="_technical-support-channels">Technical support channels</h2>
+<p>You can ask questions and search for answers on <a href="https://stackoverflow.com/questions/tagged/vscode" class="external-link" target="_blank">Stack Overflow</a> and enter issues and feature requests directly in our <a href="https://github.com/microsoft/vscode/issues" class="external-link" target="_blank">GitHub repository</a>.</p>
+<p>If you'd like to contact a professional support engineer, you can open a ticket with the <a href="https://support.microsoft.com/oas/default.aspx?prid=16064" class="external-link" target="_blank">Microsoft assisted support team</a>.</p>
+
+                <div class="feedback" data-edit-url="https://vscode.dev/github/microsoft/vscode-docs/blob/main/docs/supporting/faq.md"></div>
+                
+                <div class="body-footer">02/04/2026</div>
+                
+            </main>
+            
+            <!-- Right sidebar - On This Page -->
+            <aside class="docs-right-sidebar hidden-xs">
+                <nav id="docs-subnavbar" aria-label="On Page">
+                    
+                    <h4><span class="sr-only">On this page there are 14 sections</span><span
+                            aria-hidden="true">On this page</span></h4>
+                    <ul class="nav">
+                        
+                        <li><a href="#_open-sourcing-ai-in-vs-code">Open sourcing AI in VS Code</a></li>
+                        
+                        <li><a href="#_what-is-the-difference-between-visual-studio-code-and-visual-studio-ide">What is the difference between Visual Studio Code and Visual Studio IDE?</a></li>
+                        
+                        <li><a href="#_is-vs-code-free">Is VS Code free?</a></li>
+                        
+                        <li><a href="#_platform-support">Platform support</a></li>
+                        
+                        <li><a href="#_telemetry-and-crash-reporting">Telemetry and crash reporting</a></li>
+                        
+                        <li><a href="#_gdpr-and-vs-code">GDPR and VS Code</a></li>
+                        
+                        <li><a href="#_what-online-services-does-vs-code-use">What online services does VS Code use?</a></li>
+                        
+                        <li><a href="#_licensing">Licensing</a></li>
+                        
+                        <li><a href="#_extensions">Extensions</a></li>
+                        
+                        <li><a href="#_vs-code-versions">VS Code versions</a></li>
+                        
+                        <li><a href="#_where-can-i-find-the-visual-studio-code-icons">Where can I find the Visual Studio Code icons?</a></li>
+                        
+                        <li><a href="#_what-is-a-vs-code-workspace">What is a VS Code "workspace"?</a></li>
+                        
+                        <li><a href="#_problems-and-issues">Problems and issues</a></li>
+                        
+                        <li><a href="#_technical-support-channels">Technical support channels</a></li>
+                        
+                    </ul>
+                    
+                </nav>
+            </aside>
+        </div>
+        
+        <!-- Mobile connect widget -->
+        <div class="docs-mobile-widgets visible-xs">
+            <div class="connect-widget"></div>
+        </div>
+    </div>
+</div>
+		</main>
+	</div>
+
+	<div id="search-popup-overlay" class="search-popup-overlay" role="dialog" aria-modal="true" aria-label="Search">
+		<div class="search-popup-container">
+			<div class="search-popup-header">
+				<form class="search-popup-form">
+					<div class="input-group">
+						<input type="text" name="q" class="search-box form-control" placeholder="Search the website"
+							aria-label="Search text" role="combobox" aria-expanded="false"
+							aria-autocomplete="list" aria-controls="search-results-listbox"
+							aria-activedescendant="" />
+						<span class="input-group-btn">
+							<button tabindex="0" class="btn" type="submit" aria-label="Search">
+								<img class="search-icon-dark" src="/assets/icons/search-dark.svg" alt="Search" />
+								<img class="search-icon-light" src="/assets/icons/search.svg" alt="Search" />
+							</button>
+						</span>
+					</div>
+				</form>
+				<button class="search-popup-close" type="button" aria-label="Close search"><i class="codicon codicon-close" aria-hidden="true"></i></button>
+			</div>
+			<div class="search-popup-results">
+				<ul class="search-popup-results-list" id="search-results-listbox" role="listbox" aria-label="Search results"></ul>
+			</div>
+			<div class="sr-only" role="status" aria-live="polite" aria-atomic="true" id="search-popup-status"></div>
+		</div>
+	</div>
+
+
+	<footer role="contentinfo" class="container">
+		<div class="footer-container">
+			<div class="footer-row">
+				<div class="footer-social">
+					<ul class="links">
+						<li>
+							<a href="https://github.com/microsoft/vscode"><img src="/assets/icons/github-icon.svg" alt="VS Code on Github"></a>
+						</li>
+						<li>
+							<a href="https://go.microsoft.com/fwlink/?LinkID=533687"><img src="/assets/icons/x-icon.svg" class="x-icon" alt="Follow us on X"></a>
+						</li>
+						<li>
+							<a href="https://www.linkedin.com/showcase/vs-code"><img src="/assets/icons/linkedin-icon.svg" alt="VS Code on LinkedIn"></a>
+						</li>
+						<li>
+							<a href="https://bsky.app/profile/vscode.dev"><img src="/assets/icons/bluesky-icon.svg" alt="VS Code on Bluesky"></a>
+						</li>
+						<li>
+							<a href="https://www.reddit.com/r/vscode/"><img src="/assets/icons/reddit-icon.svg" alt="Join the VS Code community on Reddit"></a>
+						</li>
+						<li>
+							<a href="https://www.vscodepodcast.com"><img src="/assets/icons/podcast-icon.svg" alt="The VS Code Insiders Podcast"></a>
+						</li>
+						<li>
+							<a href="https://www.tiktok.com/@vscode"><img src="/assets/icons/tiktok-icon.svg" alt="VS Code on TikTok"></a>
+						</li>
+						<li>
+							<a href="https://www.youtube.com/@code"><img src="/assets/icons/youtube-icon.svg" alt="VS Code on YouTube"></a>
+						</li>
+						<script>
+							function manageConsent() {
+								if (siteConsent && siteConsent.isConsentRequired) {
+									siteConsent.manageConsent();
+								}
+							}
+						</script>
+					</ul>
+					<a id="footer-microsoft-link" class="microsoft-logo" href="https://www.microsoft.com">
+						<img src="/assets/icons/microsoft.svg" alt="Microsoft homepage" />
+					</a>
+				</div>
+			</div>
+			<div class="footer-row">
+				<ul class="links">
+					<li><a id="footer-support-link" href="https://support.serviceshub.microsoft.com/supportforbusiness/create?sapId=d66407ed-3967-b000-4cfb-2c318cad363d"
+						target="_blank" rel="noopener" title="Get support for VS Code"
+						aria-label="Get support for VS Code (opens in new tab)">Support</a></li>
+					<li><a id="footer-privacy-link" href="https://go.microsoft.com/fwlink/?LinkId=521839"
+						target="_blank" rel="noopener" title="View the Microsoft privacy statement"
+						aria-label="Microsoft privacy statement (opens in new tab)">Privacy</a></li>
+					<li style="display: none;"><a id="footer-cookie-link" style="cursor: pointer;" onclick="manageConsent()"
+						target="_blank" rel="noopener">Manage Cookies</a></li>
+					<li><a id="footer-terms-link" href="https://www.microsoft.com/legal/terms-of-use"
+						target="_blank" rel="noopener" title="View the Microsoft Terms of Use"
+						aria-label="Microsoft Terms of Use (opens in new tab)">Terms of Use</a></li>
+					<li><a id="footer-license-link" href="/License"
+						target="_blank" rel="noopener" title="View the Visual Studio Code license"
+						aria-label="Visual Studio Code license (opens in new tab)">License</a></li>
+				</ul>
+			</div>
+			<div class="footer-row">
+				<ul class="links">
+					<li>
+						<svg class="privacy-choices" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 14" xml:space="preserve" height="16" width="43">
+							<title>Your Privacy Choices Opt-Out Icon</title>
+							<path d="M7.4 12.8h6.8l3.1-11.6H7.4C4.2 1.2 1.6 3.8 1.6 7s2.6 5.8 5.8 5.8z" style="fill-rule:evenodd;clip-rule:evenodd;fill:#fff"></path>
+							<path d="M22.6 0H7.4c-3.9 0-7 3.1-7 7s3.1 7 7 7h15.2c3.9 0 7-3.1 7-7s-3.2-7-7-7zm-21 7c0-3.2 2.6-5.8 5.8-5.8h9.9l-3.1 11.6H7.4c-3.2 0-5.8-2.6-5.8-5.8z" style="fill-rule:evenodd;clip-rule:evenodd;fill:#06f"></path>
+							<path d="M24.6 4c.2.2.2.6 0 .8L22.5 7l2.2 2.2c.2.2.2.6 0 .8-.2.2-.6.2-.8 0l-2.2-2.2-2.2 2.2c-.2.2-.6.2-.8 0-.2-.2-.2-.6 0-.8L20.8 7l-2.2-2.2c-.2-.2-.2-.6 0-.8.2-.2.6-.2.8 0l2.2 2.2L23.8 4c.2-.2.6-.2.8 0z" style="fill:#fff"></path>
+							<path d="M12.7 4.1c.2.2.3.6.1.8L8.6 9.8c-.1.1-.2.2-.3.2-.2.1-.5.1-.7-.1L5.4 7.7c-.2-.2-.2-.6 0-.8.2-.2.6-.2.8 0L8 8.6l3.8-4.5c.2-.2.6-.2.9 0z" style="fill:#06f"></path>
+						</svg>
+						<a id="footer-privacy-choices-link" href="https://aka.ms/YourCaliforniaPrivacyChoices"
+						target="_blank" rel="noopener" title="View Your Privacy Choices"
+						aria-label="Your Privacy Choices (opens in new tab)">Your Privacy Choices</a></li>
+					<li><a id="footer-consumer-health-privacy-link" href="https://go.microsoft.com/fwlink/?linkid=2259814"
+						target="_blank" rel="noopener" title="View the Microsoft Consumer Health Privacy policy"
+						aria-label="Microsoft Consumer Health Privacy policy (opens in new tab)">Consumer Health Privacy</a></li>
+				</ul>
+			</div>
+		</div>
+	</footer>
+	<script type="module">
+		document.addEventListener('DOMContentLoaded', () => {
+			const copilotDeepLinks = document.querySelectorAll('.copilot-deep-link');
+			if (copilotDeepLinks.length === 0) {
+				return;
+			}
+			if (window.innerWidth < 992) {
+				for (const link of copilotDeepLinks) {
+					link.href = 'https://aka.ms/vscode-activatecopilotfree';
+				}
+			}
+		});
+	</script>
+
+	<script src="/dist/index.js"></script>
+
+	
+
+	<script type="application/ld+json">
+		{
+			"@context" : "http://schema.org",
+			"@type" : "SoftwareApplication",
+			"name" : "Visual Studio Code",
+			"softwareVersion": "1.134",
+			"offers": {
+				"@type": "Offer",
+				"price": "0",
+				"priceCurrency": "USD"
+			},
+			"applicationCategory": "DeveloperApplication",
+			"applicationSubCategory": "AI Code Editor",
+			"description": "Visual Studio Code is a free, open source AI code editor for agent-first development. Build with AI agents, manage multi-agent workflows, and code across any environment.",
+			"alternateName": "VS Code",
+			"datePublished": "2021-11-03",
+			"operatingSystem": "Mac, Linux, Windows",
+			"logo": "https://code.visualstudio.com/assets/apple-touch-icon.png",
+			"screenshot": "https://code.visualstudio.com/assets/images/product-screenshot.png",
+			"releaseNotes": "https://code.visualstudio.com/updates",
+			"downloadUrl": "https://code.visualstudio.com/download",
+			"license": "https://code.visualstudio.com/license",
+			"softwareRequirements": "https://code.visualstudio.com/docs/supporting/requirements",
+			"url" : "https://code.visualstudio.com",
+			"author": {
+				"@type": "Organization",
+				"name": "Microsoft"
+			},
+			"publisher": {
+				"@type": "Organization",
+				"name": "Microsoft"
+			},
+			"maintainer": {
+				"@type": "Organization",
+				"name": "Microsoft"
+			},
+			"potentialAction": {
+				"@type": "SearchAction",
+				"target": "https://code.visualstudio.com/Search?q={search_term_string}",
+				"query-input": "required name=search_term_string"
+			},
+			"sameAs" : [
+				"https://en.wikipedia.org/wiki/Visual_Studio_Code",
+				"https://twitter.com/code",
+				"https://www.youtube.com/code",
+				"https://www.tiktok.com/@vscode",
+				"https://github.com/microsoft/vscode"
+			]
+		}
+	</script>
+</body>
+
+</html>
