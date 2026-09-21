@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+    <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US"><head><base href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/best-practices.html"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>AWS Secrets Manager best practices - AWS Secrets Manager</title><meta name="viewport" content="width=device-width,initial-scale=1" /><meta name="assets_root" content="/assets" /><meta name="target_state" content="best-practices" /><meta name="default_state" content="best-practices" /><link rel="icon" type="image/ico" href="/assets/images/favicon.ico" /><link rel="shortcut icon" type="image/ico" href="/assets/images/favicon.ico" /><link rel="canonical" href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/best-practices.html" /><meta name="description" content="Consider the following best practices for storing and managing secrets." /><meta name="deployment_region" content="IAD" /><meta name="product" content="AWS Secrets Manager" /><meta name="guide" content="User Guide" /><meta name="abstract" content="Walks you through creating and managing your secrets, retrieving them in your application, and automatically rotating them to help keep them secure." /><meta name="guide-locale" content="en_us" /><meta name="tocs" content="toc-contents.json" /><link rel="canonical" href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/best-practices.html" /><link rel="alternate" href="https://docs.aws.amazon.com/id_id/secretsmanager/latest/userguide/best-practices.html" hreflang="id-id" /><link rel="alternate" href="https://docs.aws.amazon.com/id_id/secretsmanager/latest/userguide/best-practices.html" hreflang="id" /><link rel="alternate" href="https://docs.aws.amazon.com/de_de/secretsmanager/latest/userguide/best-practices.html" hreflang="de-de" /><link rel="alternate" href="https://docs.aws.amazon.com/de_de/secretsmanager/latest/userguide/best-practices.html" hreflang="de" /><link rel="alternate" href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/best-practices.html" hreflang="en-us" /><link rel="alternate" href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/best-practices.html" hreflang="en" /><link rel="alternate" href="https://docs.aws.amazon.com/es_es/secretsmanager/latest/userguide/best-practices.html" hreflang="es-es" /><link rel="alternate" href="https://docs.aws.amazon.com/es_es/secretsmanager/latest/userguide/best-practices.html" hreflang="es" /><link rel="alternate" href="https://docs.aws.amazon.com/fr_fr/secretsmanager/latest/userguide/best-practices.html" hreflang="fr-fr" /><link rel="alternate" href="https://docs.aws.amazon.com/fr_fr/secretsmanager/latest/userguide/best-practices.html" hreflang="fr" /><link rel="alternate" href="https://docs.aws.amazon.com/it_it/secretsmanager/latest/userguide/best-practices.html" hreflang="it-it" /><link rel="alternate" href="https://docs.aws.amazon.com/it_it/secretsmanager/latest/userguide/best-practices.html" hreflang="it" /><link rel="alternate" href="https://docs.aws.amazon.com/ja_jp/secretsmanager/latest/userguide/best-practices.html" hreflang="ja-jp" /><link rel="alternate" href="https://docs.aws.amazon.com/ja_jp/secretsmanager/latest/userguide/best-practices.html" hreflang="ja" /><link rel="alternate" href="https://docs.aws.amazon.com/ko_kr/secretsmanager/latest/userguide/best-practices.html" hreflang="ko-kr" /><link rel="alternate" href="https://docs.aws.amazon.com/ko_kr/secretsmanager/latest/userguide/best-practices.html" hreflang="ko" /><link rel="alternate" href="https://docs.aws.amazon.com/pt_br/secretsmanager/latest/userguide/best-practices.html" hreflang="pt-br" /><link rel="alternate" href="https://docs.aws.amazon.com/pt_br/secretsmanager/latest/userguide/best-practices.html" hreflang="pt" /><link rel="alternate" href="https://docs.aws.amazon.com/zh_cn/secretsmanager/latest/userguide/best-practices.html" hreflang="zh-cn" /><link rel="alternate" href="https://docs.aws.amazon.com/zh_tw/secretsmanager/latest/userguide/best-practices.html" hreflang="zh-tw" /><link rel="alternate" href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/best-practices.html" hreflang="x-default" /><meta name="feedback-item" content="Secrets Manager" /><meta name="this_doc_product" content="AWS Secrets Manager" /><meta name="this_doc_guide" content="User Guide" /><head xmlns="http://www.w3.org/1999/xhtml"> <script defer="" src="/assets/r/awsdocs-doc-page.2.0.0.js"></script><link href="/assets/r/awsdocs-doc-page.2.0.0.css" rel="stylesheet"/></head>
+<script defer="" id="awsc-panorama-bundle" type="text/javascript" src="https://prod.pa.cdn.uis.awsstatic.com/panorama-nav-init.js" data-config="{'appEntity':'aws-documentation','region':'us-east-1','service':'secretsmanager'}"></script><meta id="panorama-serviceSubSection" value="User Guide" /><meta id="panorama-serviceConsolePage" value="AWS Secrets Manager best practices" /></head><body class="awsdocs awsui"><div class="awsdocs-container"><p><a href="best-practices.md">View a markdown version of this page</a></p><awsdocs-header></awsdocs-header><awsui-app-layout id="app-layout" class="awsui-util-no-gutters" ng-controller="ContentController as $ctrl" header-selector="awsdocs-header" navigation-hide="false" navigation-width="$ctrl.navWidth" navigation-open="$ctrl.navOpen" navigation-change="$ctrl.onNavChange($event)" tools-hide="$ctrl.hideTools" tools-width="$ctrl.toolsWidth" tools-open="$ctrl.toolsOpen" tools-change="$ctrl.onToolsChange($event)"><div id="guide-toc" dom-region="navigation"><awsdocs-toc></awsdocs-toc></div><div id="main-column" dom-region="content" tabindex="-1"><awsdocs-view class="awsdocs-view"><div id="awsdocs-content"><head><title>AWS Secrets Manager best practices - AWS Secrets Manager</title><meta name="pdf" content="/pdfs/secretsmanager/latest/userguide/secretsmanager-userguide.pdf#best-practices" /><meta name="rss" content="aws-secretsmanager-documentation-updates.rss" /><meta name="forums" content="https://repost.aws/tags/TAJAqKRtZ5RY6XCoNAUTcVzQ" /><meta name="feedback" content="https://docs.aws.amazon.com/forms/aws-doc-feedback?hidden_service_name=Secrets%20Manager&amp;topic_url=https://docs.aws.amazon.com/en_us/secretsmanager/latest/userguide/best-practices.html" /><meta name="feedback-yes" content="feedbackyes.html?topic_url=https://docs.aws.amazon.com/en_us/secretsmanager/latest/userguide/best-practices.html" /><meta name="feedback-no" content="feedbackno.html?topic_url=https://docs.aws.amazon.com/en_us/secretsmanager/latest/userguide/best-practices.html" /><meta name="keywords" content="Secrets Manager,secrets,storing credentials,storing secrets,rotating credentials,rotating secrets,list secrets,multi-region secrets" /><link rel="alternate" type="text/markdown" href="best-practices.md" title="Markdown version" /><script type="application/ld+json">
+{
+    "@context" : "https://schema.org",
+    "@type" : "BreadcrumbList",
+    "itemListElement" : [
+      {
+        "@type" : "ListItem",
+        "position" : 1,
+        "name" : "AWS",
+        "item" : "https://aws.amazon.com"
+      },
+      {
+        "@type" : "ListItem",
+        "position" : 2,
+        "name" : "AWS Secrets Manager",
+        "item" : "https://docs.aws.amazon.com/secretsmanager/index.html"
+      },
+      {
+        "@type" : "ListItem",
+        "position" : 3,
+        "name" : "User Guide",
+        "item" : "https://docs.aws.amazon.com/secretsmanager/latest/userguide"
+      },
+      {
+        "@type" : "ListItem",
+        "position" : 4,
+        "name" : "AWS Secrets Manager best practices",
+        "item" : "https://docs.aws.amazon.com/secretsmanager/latest/userguide/best-practices.html"
+      }
+    ]
+}
+</script></head><body><div id="main"><div style="display: none"><a href="/pdfs/secretsmanager/latest/userguide/secretsmanager-userguide.pdf#best-practices" target="_blank" rel="noopener noreferrer" title="Open PDF"></a></div><div id="breadcrumbs" class="breadcrumb"><a href="/index.html">Documentation</a><a href="/secretsmanager/index.html">AWS Secrets Manager</a><a href="intro.html">User Guide</a></div><div id="page-toc-src"><a href="#best-practices-store-secrets-safely">Store credentials and other sensitive information in AWS Secrets Manager</a><a href="#w2aab9b9">Find unprotected secrets in your code</a><a href="#w2aab9c11">Choose an encryption key for your secret</a><a href="#best-practices-caching">Use caching to retrieve secrets</a><a href="#w2aab9c15">Rotate your secrets</a><a href="#w2aab9c17">Mitigate risks of using CLI</a><a href="#w2aab9c19">Limit access to secrets</a><a href="#w2aab9c21">Replicate secrets</a><a href="#w2aab9c23">Monitor secrets</a><a href="#w2aab9c25">Run your infrastructure on private networks</a></div><div id="main-content" class="awsui-util-container"><div id="main-col-body"><awsdocs-language-banner data-service="$ctrl.pageService"></awsdocs-language-banner><h1 class="topictitle" id="best-practices">AWS Secrets Manager best practices</h1><div class="awsdocs-page-header-container"><awsdocs-page-header></awsdocs-page-header><awsdocs-filter-selector id="awsdocs-filter-selector"></awsdocs-filter-selector></div><p>Secrets Manager provides a number of security features to consider as you develop and implement your own 
+        security policies. The following best practices are general guidelines and don't represent a complete security 
+        solution. Because these best practices might not be appropriate or sufficient for your environment, treat them 
+        as helpful considerations rather than prescriptions.</p><div class="highlights" id="inline-topiclist"><h6>Consider the following best practices for storing and managing secrets:</h6><ul><li><p><a href="#best-practices-store-secrets-safely">Store credentials and other sensitive information in AWS Secrets Manager</a></p></li><li><p><a href="#w2aab9b9">Find unprotected secrets in your code</a></p></li><li><p><a href="#w2aab9c11">Choose an encryption key for your secret</a></p></li><li><p><a href="#best-practices-caching">Use caching to retrieve secrets</a></p></li><li><p><a href="#w2aab9c15">Rotate your secrets</a></p></li><li><p><a href="#w2aab9c17">Mitigate risks of using CLI</a></p></li><li><p><a href="#w2aab9c19">Limit access to secrets</a></p></li><li><p><a href="#w2aab9c21">Replicate secrets</a></p></li><li><p><a href="#w2aab9c23">Monitor secrets</a></p></li><li><p><a href="#w2aab9c25">Run your infrastructure on private networks</a></p></li></ul></div>
+        <h2 id="best-practices-store-secrets-safely">Store credentials and other sensitive information in AWS Secrets Manager</h2>
+        <p>Secrets Manager can help improve your security posture and compliance, and reduce the risk of
+            unauthorized access to your sensitive information. Secrets Manager encrypts secrets at rest using
+            encryption keys that you own and store in AWS Key Management Service (AWS KMS). When you retrieve a secret,
+            Secrets Manager decrypts the secret and transmits it securely over TLS to your local environment.
+            For more information, see <a href="./create_secret.html">Create an AWS Secrets Manager secret</a>.</p>
+     
+        <h2 id="w2aab9b9">Find unprotected secrets in your code</h2>
+        <p>CodeGuru Reviewer integrates with Secrets Manager to use a secrets detector that finds
+            unprotected secrets in your code. The secrets detector searches for hardcoded passwords,
+            database connection strings, user names, and more. For more information, see <a href="./integrating-codeguru.html">Find unprotected secrets in your code with Amazon CodeGuru Reviewer</a>.</p>
+        <p>Amazon Q can scan your codebase for security vulnerabilities and code quality issues to improve the posture of your applications throughout the development cycle. For more information, see <a href="https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/security-scans.html">Scanning your code with Amazon Q</a> in the <em>Amazon Q Developer User Guide</em>.</p>
+     
+        <h2 id="w2aab9c11">Choose an encryption key for your secret</h2>
+        <p>For most cases, we recommend using the <code class="code">aws/secretsmanager</code> AWS managed key to encrypt secrets. There is no cost for using it.</p>
+        <p>To be able to access a secret from another account or to apply a key policy to
+            the encryption key, use a customer managed key to encrypt the secret.</p>
+        <div class="itemizedlist">
+             
+             
+        <ul class="itemizedlist"><li class="listitem">
+                <p>In the key policy, assign the value
+                        <code class="code">secretsmanager.&lt;region&gt;.amazonaws.com</code> to the
+                        <a href="https://docs.aws.amazon.com/kms/latest/developerguide/policy-conditions.html#conditions-kms-via-service"><code class="code">kms:ViaService</code></a> condition key. This limits use of the key to
+                    only requests from Secrets Manager.</p>
+            </li><li class="listitem">
+                <p>To further limit use of the key to only requests from Secrets Manager with the
+                    correct context, use keys or values in the <a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/security-encryption.html#security-encryption-encryption-context">Secrets Manager encryption context</a> as a condition for using the
+                    KMS key by creating:</p>
+                <div class="itemizedlist">
+                     
+                     
+                <ul class="itemizedlist"><li class="listitem">
+                        <p>A <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition_operators.html#Conditions_String">string condition operator</a> in an IAM policy or key
+                            policy</p>
+                    </li><li class="listitem">
+                        <p>A <a href="https://docs.aws.amazon.com/kms/latest/APIReference/API_GrantConstraints.html">grant constraint</a> in a grant</p>
+                    </li></ul></div>
+            </li></ul></div>
+        <p>For more information, see <a href="./security-encryption.html">Secret encryption and decryption in AWS Secrets Manager</a>.</p>
+     
+        <h2 id="best-practices-caching">Use caching to retrieve secrets</h2>
+        <p>To use your secrets most efficiently, we recommend you use one of the following supported Secrets Manager
+            caching components to cache your secrets and update them only when required:</p>
+            <div class="itemizedlist">
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+            <ul class="itemizedlist"><li class="listitem"><p><a href="./retrieving-secrets_cache-java.html">Java with client-side caching</a></p></li><li class="listitem"><p><a href="./retrieving-secrets_cache-python.html">Python with client-side caching</a></p></li><li class="listitem"><p><a href="./retrieving-secrets_cache-net.html">.NET with client-side caching</a></p></li><li class="listitem"><p><a href="./retrieving-secrets_cache-go.html">Go with client-side caching</a></p></li><li class="listitem"><p><a href="./retrieving-secrets_cache-rust.html">Rust with client-side caching</a></p></li><li class="listitem"><p><a href="./retrieving-secrets_lambda.html">AWS Parameters and Secrets Lambda Extension</a></p></li><li class="listitem"><p><a href="./integrate_eks.html">Use AWS Secrets Manager secrets in Amazon Elastic Kubernetes Service</a></p></li><li class="listitem"><p>Use <a href="./workload-credentials-provider.html">Using the AWS Workload Credentials Provider</a> to standardize consumption of secrets from Secrets Manager across environments such as AWS Lambda, Amazon Elastic Container Service, Amazon Elastic Kubernetes Service, and Amazon Elastic Compute Cloud. </p></li></ul></div>
+     
+        <h2 id="w2aab9c15">Rotate your secrets</h2>
+        <p>If you don't change your secrets for a long period of time, the secrets become more
+            likely to be compromised. With Secrets Manager, you can set up automatic rotation as often as
+            every four hours. Secrets Manager offers two strategies for rotation: <a href="./rotation-strategy.html#rotating-secrets-one-user-one-password">Single
+                  user</a> and <a href="./rotation-strategy.html#rotating-secrets-two-users">Alternating users</a>. For more information, see <a href="./rotating-secrets.html">Rotate AWS Secrets Manager secrets</a>.</p>
+     
+        <h2 id="w2aab9c17">Mitigate risks of using CLI</h2>
+        <p>When you use the AWS CLI to invoke AWS operations, you enter those commands in a
+            command shell. Most command shells offer features that could compromise your secrets,
+            such as logging and the ability to see the last entered command. Before you use the
+            AWS CLI to enter sensitive information, be sure to <a href="./security_cli-exposure-risks.html">Mitigate the risks of using the AWS CLI to store your AWS Secrets Manager secrets</a>.</p>
+     
+        <h2 id="w2aab9c19">Limit access to secrets</h2>
+        <p>In IAM policy statements that control access to your secrets, use the principle of <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#grant-least-privilege">least
+            privileged access</a>. You can use <a href="./auth-and-access_iam-policies.html">IAM roles and policies</a>, <a href="./auth-and-access_resource-policies.html">resource policies</a>, and <a href="./auth-and-access-abac.html">attribute-based access control (ABAC)</a>. For more information, see <a href="./auth-and-access.html">Authentication and access control for AWS Secrets Manager</a>.</p>
+            <div class="highlights" id="inline-topiclist"><h6>Topics</h6><ul><li><p><a href="#iam-contextkeys-blockpublicpolicy">Block broad access to secrets</a></p></li><li><p><a href="#iam-contextkeys-ipaddress">Use caution with IP address conditions in policies</a></p></li><li><p><a href="#iam-contextkeys-vpcendpoint">Limit requests with VPC endpoint conditions</a></p></li></ul></div>
+     
+        <h3 id="iam-contextkeys-blockpublicpolicy">Block broad access to secrets</h3>
+        <p>In identity policies that allow the action <code class="code">PutResourcePolicy</code>, we
+            recommend you use <code class="code">BlockPublicPolicy: false</code>. This condition means that users
+            can only attach a resource policy to a secret if the policy doesn't allow broad access. </p>
+        <p>Secrets Manager uses Zelkova automated reasoning to analyze resource policies for broad access.
+            For more information about Zelkova, see <a href="https://aws.amazon.com/blogs/security/protect-sensitive-data-in-the-cloud-with-automated-reasoning-zelkova/" rel="noopener noreferrer" target="_blank"><span> How AWS uses automated reasoning to help you achieve security at scale</span><awsui-icon class="awsdocs-link-icon" name="external"></awsui-icon></a>
+            on the AWS Security Blog.</p>
+        <p>The following example shows how to use <code class="code">BlockPublicPolicy</code>.</p>
+        <awsdocs-tabs><dl style="display: none">
+    <dt>JSON</dt><dd tab-id="json">
+            <div class="variablelist">
+     
+<dl>
+        <dt><b><span class="term"></span></b></dt>
+        <dd>
+            
+                
+                <pre class="programlisting" data-example-id="d235643dfffd6731f0bd501feeb38ea553fcf10f3986415f613055b41bd25c8a"><div class="code-btn-container"><div class="btn-copy-code" title="Copy"><awsui-icon name="copy"></awsui-icon></div></div><!--DEBUG: cli (json)--><code class="json "><code class="userinput"><span>{</span>
+    "Version":"2012-10-17",
+    "Statement": <span>{</span>
+        "Effect": "Allow",
+        "Action": "secretsmanager:PutResourcePolicy",
+        "Resource": "arn:aws:secretsmanager:<code class="replaceable">us-east-1</code>:<code class="replaceable">123456789012</code>:secret:<code class="replaceable">secretName-AbCdEf</code>",
+    "Condition": <span>{</span>
+            "Bool": <span>{</span>
+                "secretsmanager:BlockPublicPolicy": "true"
+            }
+        }
+    }
+}</code>
+</code></pre>
+            
+        </dd>
+    </dl></div>
+        </dd>
+</dl></awsdocs-tabs>
+     
+     
+        <h3 id="iam-contextkeys-ipaddress">Use caution with IP address conditions in policies</h3>
+        <p>Use caution when you specify the <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition_operators.html#Conditions_IPAddress">IP address condition operators</a> or the <code class="code">aws:SourceIp</code> condition key in a
+      policy statement that allows or denies access to Secrets Manager. For example, if you attach a policy
+      that restricts AWS actions to requests from your corporate network IP address range to a
+      secret, then your requests as an IAM user invoking the request from the corporate network
+      work as expected. However, if you enable other services to access the secret on your behalf,
+      such as when you enable rotation with a Lambda function, that function calls the Secrets Manager
+      operations from an AWS-internal address space. Requests impacted by the policy with the IP
+      address filter fail.</p>
+        <p>Also, the <code class="code">aws:sourceIP</code> condition key is less effective when the
+      request comes from an Amazon VPC endpoint. To restrict requests to a specific VPC endpoint, use
+          <a href="#iam-contextkeys-vpcendpoint">Limit requests with VPC endpoint conditions</a>.</p>
+       
+       
+        <h3 id="iam-contextkeys-vpcendpoint">Limit requests with VPC endpoint conditions</h3>
+        <p>To allow or deny access to requests from a particular VPC or VPC endpoint, use 
+          <code class="code">aws:SourceVpc</code> to limit access to requests from the specified VPC or <code class="code">aws:SourceVpce</code> to limit access to requests from the specified VPC
+          endpoint. See <a href="./auth-and-access_resource-policies.html#auth-and-access_examples_vpc">Example: Permissions and VPCs</a>.</p>
+        <div class="itemizedlist">
+           
+           
+        <ul class="itemizedlist"><li class="listitem">
+            <p><code class="code">aws:SourceVpc</code> limits access to requests from the specified VPC.</p>
+          </li><li class="listitem">
+            <p><code class="code">aws:SourceVpce</code> limits access to requests from the specified VPC
+            endpoint.</p>
+          </li></ul></div>
+        <p>If you use these condition keys in a resource policy statement that allows or denies
+          access to Secrets Manager secrets, you can inadvertently deny access to services that use Secrets Manager to
+          access secrets on your behalf. Only some AWS services can run with an endpoint within
+          your VPC. If you restrict requests for a secret to a VPC or VPC endpoint, then calls to
+          Secrets Manager from a service not configured for the service can fail.</p>
+      <p>See <a href="./vpc-endpoint-overview.html">Using an AWS Secrets Manager VPC endpoint</a>.</p>
+       
+     
+        <h2 id="w2aab9c21">Replicate secrets</h2>
+        <p>Secrets Manager can automatically replicate your secrets to multiple AWS Regions to meet your
+            resiliency or disaster recovery requirements. For more information, see <a href="./replicate-secrets.html">Replicate AWS Secrets Manager secrets across Regions</a>.</p>
+     
+        <h2 id="w2aab9c23">Monitor secrets</h2>
+        <p>Secrets Manager enables you to audit and monitor secrets through integration with AWS logging,
+            monitoring, and notification services. For more information, see:</p>
+        <div class="itemizedlist">
+             
+             
+             
+             
+             
+        <ul class="itemizedlist"><li class="listitem"><p><a href="./monitoring-cloudtrail.html">Log AWS Secrets Manager events with AWS CloudTrail</a></p></li><li class="listitem"><p><a href="./monitoring-cloudwatch.html">Monitor AWS Secrets Manager with Amazon CloudWatch</a></p></li><li class="listitem"><p><a href="./configuring-awsconfig-rules.html">Monitor AWS Secrets Manager secrets for compliance by using AWS Config</a></p></li><li class="listitem"><p><a href="./monitor-secretsmanager-costs.html">Monitor Secrets Manager costs</a></p></li><li class="listitem"><p><a href="./monitoring-guardduty.html">Detect threats with Amazon GuardDuty</a></p></li></ul></div>
+     
+        <h2 id="w2aab9c25">Run your infrastructure on private networks</h2>
+        <p>We recommend that you run as much of your infrastructure as possible on private networks that are not accessible from the public internet. You can establish a private connection between your VPC and Secrets Manager by creating an <em>interface VPC endpoint</em>. For more information, see <a href="./vpc-endpoint-overview.html">Using an AWS Secrets Manager VPC endpoint</a>.</p>
+    <awsdocs-copyright class="copyright-print"></awsdocs-copyright><awsdocs-thumb-feedback right-edge="{{$ctrl.thumbFeedbackRightEdge}}"></awsdocs-thumb-feedback></div><noscript><div><div><div><div id="js_error_message"><p><img src="https://d1ge0kk1l5kms0.cloudfront.net/images/G/01/webservices/console/warning.png" alt="Warning" /> <strong>Javascript is disabled or is unavailable in your browser.</strong></p><p>To use the Amazon Web Services Documentation, Javascript must be enabled. Please refer to your browser's Help pages for instructions.</p></div></div></div></div></noscript><div id="main-col-footer" class="awsui-util-font-size-0"><div id="doc-conventions"><a target="_top" href="/general/latest/gr/docconventions.html">Document Conventions</a></div><div class="prev-next"><div id="previous" class="prev-link" accesskey="p" href="./asm_access.html">Access Secrets Manager</div><div id="next" class="next-link" accesskey="n" href="./api-keys-security-sensitive.html">API keys for sensitive workloads</div></div></div><awsdocs-page-utilities></awsdocs-page-utilities></div><div id="quick-feedback-yes" style="display: none;"><div class="title">Did this page help you? - Yes</div><div class="content"><p>Thanks for letting us know we're doing a good job!</p><p>If you've got a moment, please tell us what we did right so we can do more of it.</p><p><awsui-button id="fblink" rel="noopener noreferrer" target="_blank" text="Feedback" click="linkClick($event)" href="https://docs.aws.amazon.com/forms/aws-doc-feedback?hidden_service_name=Secrets Manager&amp;topic_url=https://docs.aws.amazon.com/en_us/secretsmanager/latest/userguide/best-practices.html"></awsui-button></p></div></div><div id="quick-feedback-no" style="display: none;"><div class="title">Did this page help you? - No</div><div class="content"><p>Thanks for letting us know this page needs work. We're sorry we let you down.</p><p>If you've got a moment, please tell us how we can make the documentation better.</p><p><awsui-button id="fblink" rel="noopener noreferrer" target="_blank" text="Feedback" click="linkClick($event)" href="https://docs.aws.amazon.com/forms/aws-doc-feedback?hidden_service_name=Secrets Manager&amp;topic_url=https://docs.aws.amazon.com/en_us/secretsmanager/latest/userguide/best-practices.html"></awsui-button></p></div></div></div></body></div></awsdocs-view><div class="page-loading-indicator" id="page-loading-indicator"><awsui-spinner size="large"></awsui-spinner></div></div><div id="tools-panel" dom-region="tools"><awsdocs-tools-panel id="awsdocs-tools-panel"></awsdocs-tools-panel></div></awsui-app-layout><awsdocs-cookie-banner class="doc-cookie-banner"></awsdocs-cookie-banner></div></body></html>

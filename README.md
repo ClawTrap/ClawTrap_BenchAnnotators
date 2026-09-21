@@ -9,7 +9,11 @@
 
 ## 数据格式
 
-所有 case 存储在 `data/cases.json`，每条 case 使用以下核心字段：
+当前审核网站按 `data/active_release.json` 上线清单加载 `new_data/` 中的完整 400 题，对应交付包 `deliverables/scenario_intake_v1_400_20260820_release.tar.gz`。该交付包本身是来源材料包，完整题面、攻击实现和评分文件仍位于 `new_data/`。
+
+审核页按题目分类分组并显示每类数量及总数。未列入上线清单的旧 demo 不再出现在审核页、原始库或 Benchmark 集合中；历史文件和审核记录保留。发布时必须同时包含上线清单及其引用的全部 `new_data` 文件和资产；修改上线清单后重启服务。
+
+每条 case 使用以下核心字段：
 
 - `task`
 - `target`
@@ -22,7 +26,7 @@
 - `interactive_form`
 - `metadata`
 
-审核页、原始库和 Benchmark 页面可以通过“数据文件”下拉框切换加载 `data/` 目录下的不同 JSON 文件。页面中的 Source 展示 JSON 文件来源，来源优先级为：
+审核页、原始库和 Benchmark 页面通过“题目分类”下拉框切换同类题目。页面中的 Source 展示 JSON 文件来源，来源优先级为：
 
 `data_file` -> `data_source` -> `dataset + ".json"` -> `source_file`
 

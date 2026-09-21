@@ -1,0 +1,2343 @@
+ <!DOCTYPE html>
+		<html
+			class="layout layout-holy-grail   show-table-of-contents conceptual show-breadcrumb default-focus"
+			lang="en-us"
+			dir="ltr"
+			data-authenticated="false"
+			data-auth-status-determined="false"
+			data-target="docs"
+			x-ms-format-detection="none"
+		>
+			
+		<head>
+			<title>Microsoft identity platform and OAuth 2.0 authorization code flow - Microsoft identity platform | Microsoft Learn</title>
+			<meta charset="utf-8" />
+			<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+			<meta name="color-scheme" content="light dark" />
+
+			<meta name="description" content="Protocol reference for the Microsoft identity platform&#39;s implementation of the OAuth 2.0 authorization code grant" />
+			<link rel="canonical" href="https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow" /> 
+
+			<!-- Non-customizable open graph and sharing-related metadata -->
+			<meta name="twitter:card" content="summary_large_image" />
+			<meta name="twitter:site" content="@MicrosoftLearn" />
+			<meta property="og:type" content="website" />
+			<meta property="og:image:alt" content="Microsoft Learn" />
+			<meta property="og:image" content="https://learn.microsoft.com/en-us/media/open-graph-image.png" />
+			<!-- Page specific open graph and sharing-related metadata -->
+			<meta property="og:title" content="Microsoft identity platform and OAuth 2.0 authorization code flow - Microsoft identity platform" />
+			<meta property="og:url" content="https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow" />
+			<meta property="og:description" content="Protocol reference for the Microsoft identity platform&#39;s implementation of the OAuth 2.0 authorization code grant" />
+			<meta name="platform_id" content="819b40e6-d1e9-ee3f-a033-eab9b7d15e32" /> <meta name="scope" content="Microsoft Entra" />
+			<meta name="locale" content="en-us" />
+			 
+			<meta name="uhfHeaderId" content="MSDocsHeader-Entra" />
+
+			<meta name="page_type" content="conceptual" />
+
+			<!--page specific meta tags-->
+			
+
+			<!-- custom meta tags -->
+			
+		<meta name="breadcrumb_path" content="/entra/breadcrumb/toc.json" />
+	
+		<meta name="feedback_system" content="Standard" />
+	
+		<meta name="feedback_product_url" content="/entra/identity-platform/developer-support-help-options" />
+	
+		<meta name="author" content="cilwerner" />
+	
+		<meta name="ms.author" content="cwerner" />
+	
+		<meta name="manager" content="dougeby" />
+	
+		<meta name="ms.date" content="2026-01-09T00:00:00Z" />
+	
+		<meta name="ms.service" content="identity-platform" />
+	
+		<meta name="ms.reviewer" content="jmprieur, ludwignick" />
+	
+		<meta name="ms.topic" content="reference" />
+	
+		<meta name="ms.custom" content="sfi-ga-nochange, sfi-ropc-nochange" />
+	
+		<meta name="document_id" content="13b44819-ed7b-84bc-f5d2-2b937029f7df" />
+	
+		<meta name="document_version_independent_id" content="db9f8408-c234-90d0-4817-3516e5fc3ba0" />
+	
+		<meta name="updated_at" content="2026-06-15T17:40:00Z" />
+	
+		<meta name="original_content_git_url" content="https://github.com/MicrosoftDocs/entra-docs-pr/blob/live/docs/identity-platform/v2-oauth2-auth-code-flow.md" />
+	
+		<meta name="gitcommit" content="https://github.com/MicrosoftDocs/entra-docs-pr/blob/a4be4ac419c4e857b1c4de7dee22c9f7e0c750f9/docs/identity-platform/v2-oauth2-auth-code-flow.md" />
+	
+		<meta name="git_commit_id" content="a4be4ac419c4e857b1c4de7dee22c9f7e0c750f9" />
+	
+		<meta name="site_name" content="Docs" />
+	
+		<meta name="depot_name" content="MSDN.entra-docs" />
+	
+		<meta name="schema" content="Conceptual" />
+	
+		<meta name="toc_rel" content="toc.json" />
+	
+		<meta name="feedback_help_link_type" content="" />
+	
+		<meta name="feedback_help_link_url" content="" />
+	
+		<meta name="word_count" content="5244" />
+	
+		<meta name="asset_id" content="identity-platform/v2-oauth2-auth-code-flow" />
+	
+		<meta name="moniker_range_name" content="" />
+	
+		<meta name="item_type" content="Content" />
+	
+		<meta name="source_path" content="docs/identity-platform/v2-oauth2-auth-code-flow.md" />
+	
+		<meta name="previous_tlsh_hash" content="EF8FCEE2950CCF14FA935C096857A79575F0D089AA70EAD828797BD160951EA79F589C55FB83ABC93336869301EBBE0DD2E4F339C13C739614B598A4C2EC2943AB4C37B2D8" />
+	
+		<meta name="github_feedback_content_git_url" content="https://github.com/MicrosoftDocs/entra-docs/blob/main/docs/identity-platform/v2-oauth2-auth-code-flow.md" />
+	
+		<meta name="markdown_url" content="https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow?accept=text/markdown" />
+	 
+		<meta name="cmProducts" content="https://authoring-docs-microsoft.poolparty.biz/devrel/1ae5c491-970a-4062-8301-6336e69f9026" data-source="generated" />
+	
+		<meta name="spProducts" content="https://authoring-docs-microsoft.poolparty.biz/devrel/f2c3e52e-3667-4e8a-bf11-20b9eaccdc8c" data-source="generated" />
+	
+
+			<!-- Apply persisted/system theme before first paint to prevent wrong-theme flash when scripts are deferred. -->
+			<script id="theme-preference">
+				(function () {
+			try {
+				var stored = localStorage.getItem('theme');
+				var theme = /^(light|dark|high-contrast)$/.test(stored)
+					? stored
+					: matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+				document.documentElement.classList.add('theme-' + theme);
+			} catch (e) {}
+		})();;
+			</script>
+
+			<script id="atlas-layout-preferences">
+				(function () {
+			try {
+				var state = JSON.parse(localStorage.getItem('atlas-layout-preferences') || '{}');
+				var view = state["docs-layout-persistence"] || {};
+				var excludesKey = "";
+				var blocked = {};
+				if (excludesKey) {
+					var exclusions = JSON.parse(localStorage.getItem('atlas-layout-exclusions') || '{}');
+					if (Object.prototype.hasOwnProperty.call(exclusions, excludesKey)) {
+						var scoped = exclusions[excludesKey];
+						if (scoped) {
+							if (typeof scoped === 'object') blocked = scoped;
+						}
+					}
+				}
+				var html = document.documentElement;
+				for (var c in view) {
+					if (Object.prototype.hasOwnProperty.call(blocked, c)) continue;
+					if (view[c]) html.classList.add(c);
+					else html.classList.remove(c);
+				}
+			} catch (e) {}
+		})();;
+			</script>
+
+			<!-- assets and js globals -->
+			
+			<link rel="stylesheet" href="/static/assets/0.4.03512.8135-66b9c479/styles/site.css" />
+			
+			<script src="https://wcpstatic.microsoft.com/mscc/lib/v2/wcp-consent.js"></script>
+			<!-- Keep this URL in sync with oneDSScriptSelector in instrumentation/one-ds.ts. -->
+			<script async src="https://js.monitor.azure.com/scripts/c/ms.jsll-4.min.js"></script>
+			
+
+			<!-- msdocs global object -->
+			<script id="msdocs-script">
+		var msDocs = {
+  "environment": {
+    "accessLevel": "online",
+    "azurePortalHostname": "portal.azure.com",
+    "reviewFeatures": false,
+    "supportLevel": "production",
+    "systemContent": true,
+    "siteName": "learn",
+    "legacyHosting": false
+  },
+  "data": {
+    "contentLocale": "en-us",
+    "contentDir": "ltr",
+    "userLocale": "en-us",
+    "userDir": "ltr",
+    "pageTemplate": "Conceptual",
+    "layoutStateStorageKey": "docs-layout-persistence",
+    "brand": "entra",
+    "context": {},
+    "standardFeedback": true,
+    "showFeedbackReport": false,
+    "feedbackHelpLinkType": "",
+    "feedbackHelpLinkUrl": "",
+    "feedbackSystem": "Standard",
+    "feedbackGitHubRepo": "MicrosoftDocs/entra-docs",
+    "feedbackProductUrl": "/entra/identity-platform/developer-support-help-options",
+    "extendBreadcrumb": false,
+    "isEditDisplayable": true,
+    "isPrivateUnauthorized": false,
+    "hideViewSource": false,
+    "isPermissioned": false,
+    "hasRecommendations": false,
+    "contributors": [
+      {
+        "name": "cilwerner",
+        "url": "https://github.com/cilwerner"
+      },
+      {
+        "name": "ShawnKupfer",
+        "url": "https://github.com/ShawnKupfer"
+      },
+      {
+        "name": "v-dirichards",
+        "url": "https://github.com/v-dirichards"
+      },
+      {
+        "name": "anfield27",
+        "url": "https://github.com/anfield27"
+      },
+      {
+        "name": "Dickson-Mwendia",
+        "url": "https://github.com/Dickson-Mwendia"
+      },
+      {
+        "name": "OwenRichards1",
+        "url": "https://github.com/OwenRichards1"
+      },
+      {
+        "name": "NamsooChoi-MSFT",
+        "url": "https://github.com/NamsooChoi-MSFT"
+      },
+      {
+        "name": "SHERMANOUKO",
+        "url": "https://github.com/SHERMANOUKO"
+      },
+      {
+        "name": "ManoharLakkoju-MSFT",
+        "url": "https://github.com/ManoharLakkoju-MSFT"
+      },
+      {
+        "name": "vadi2",
+        "url": "https://github.com/vadi2"
+      },
+      {
+        "name": "alexbuckgit",
+        "url": "https://github.com/alexbuckgit"
+      },
+      {
+        "name": "BuckeyeGuyJFlo",
+        "url": "https://github.com/BuckeyeGuyJFlo"
+      },
+      {
+        "name": "prmerger-automator[bot]",
+        "url": "https://github.com/prmerger-automator[bot]"
+      },
+      {
+        "name": "dstrockis",
+        "url": "https://github.com/dstrockis"
+      },
+      {
+        "name": "garrodonnell",
+        "url": "https://github.com/garrodonnell"
+      },
+      {
+        "name": "merill",
+        "url": "https://github.com/merill"
+      },
+      {
+        "name": "davidmu1",
+        "url": "https://github.com/davidmu1"
+      },
+      {
+        "name": "mmacy",
+        "url": "https://github.com/mmacy"
+      },
+      {
+        "name": "nickludwig",
+        "url": "https://github.com/nickludwig"
+      },
+      {
+        "name": "TimShererWithAquent",
+        "url": "https://github.com/TimShererWithAquent"
+      },
+      {
+        "name": "AngusWarren",
+        "url": "https://github.com/AngusWarren"
+      },
+      {
+        "name": "hpsin",
+        "url": "https://github.com/hpsin"
+      },
+      {
+        "name": "kendaleiv",
+        "url": "https://github.com/kendaleiv"
+      },
+      {
+        "name": "ktoliver",
+        "url": "https://github.com/ktoliver"
+      },
+      {
+        "name": "jiasli",
+        "url": "https://github.com/jiasli"
+      },
+      {
+        "name": "JamesTran-MSFT",
+        "url": "https://github.com/JamesTran-MSFT"
+      },
+      {
+        "name": "msewaweru",
+        "url": "https://github.com/msewaweru"
+      },
+      {
+        "name": "rolyon",
+        "url": "https://github.com/rolyon"
+      },
+      {
+        "name": "DCtheGeek",
+        "url": "https://github.com/DCtheGeek"
+      },
+      {
+        "name": "rwike77",
+        "url": "https://github.com/rwike77"
+      },
+      {
+        "name": "shashishailaj",
+        "url": "https://github.com/shashishailaj"
+      },
+      {
+        "name": "CelesteDG",
+        "url": "https://github.com/CelesteDG"
+      },
+      {
+        "name": "Ja-Dunn",
+        "url": "https://github.com/Ja-Dunn"
+      },
+      {
+        "name": "eric-urban",
+        "url": "https://github.com/eric-urban"
+      },
+      {
+        "name": "nschonni",
+        "url": "https://github.com/nschonni"
+      },
+      {
+        "name": "AllisonAm",
+        "url": "https://github.com/AllisonAm"
+      },
+      {
+        "name": "TErenberger",
+        "url": "https://github.com/TErenberger"
+      },
+      {
+        "name": "Saisang",
+        "url": "https://github.com/Saisang"
+      },
+      {
+        "name": "v-kents",
+        "url": "https://github.com/v-kents"
+      }
+    ]
+  },
+  "functions": {}
+};;
+	</script>
+
+			<!-- base scripts, msdocs global should be before this -->
+			<script
+				src="/static/assets/0.4.03512.8135-66b9c479/scripts/en-us/index-docs.js"
+				async
+			></script>
+			
+
+			<!-- json-ld -->
+			
+		</head>
+	
+			<body
+				id="body"
+				data-bi-name="body"
+				class="layout-body "
+				lang="en-us"
+				dir="ltr"
+			>
+				<header class="layout-body-header background-color-body-medium">
+		<div class="header-holder has-default-focus">
+			
+		<a
+			href="#main"
+			
+			style="z-index: 1070"
+			class="outline-color-text visually-hidden-until-focused position-fixed inner-focus focus-visible top-0 left-0 right-0 padding-xs text-align-center background-color-body"
+			
+		>
+			Skip to main content
+		</a>
+	
+		<a
+			href="#"
+			data-skip-to-ask-learn
+			style="z-index: 1070"
+			class="outline-color-text visually-hidden-until-focused position-fixed inner-focus focus-visible top-0 left-0 right-0 padding-xs text-align-center background-color-body"
+			hidden
+		>
+			Skip to Ask Learn chat experience
+		</a>
+	
+
+			<div hidden id="cookie-consent-holder" data-test-id="cookie-consent-container"></div>
+			<!-- Unsupported browser warning -->
+			<div
+				id="unsupported-browser"
+				style="background-color: white; color: black; padding: 16px; border-bottom: 1px solid grey;"
+				hidden
+			>
+				<div style="max-width: 800px; margin: 0 auto;">
+					<p style="font-size: 24px">This browser is no longer supported.</p>
+					<p style="font-size: 16px; margin-top: 16px;">
+						Upgrade to Microsoft Edge to take advantage of the latest features, security updates, and technical support.
+					</p>
+					<div style="margin-top: 12px;">
+						<a
+							href="https://go.microsoft.com/fwlink/p/?LinkID=2092881 "
+							style="background-color: #0078d4; border: 1px solid #0078d4; color: white; padding: 6px 12px; border-radius: 2px; display: inline-block;"
+						>
+							Download Microsoft Edge
+						</a>
+						<a
+							href="https://learn.microsoft.com/en-us/lifecycle/faq/internet-explorer-microsoft-edge"
+							style="background-color: white; padding: 6px 12px; border: 1px solid #505050; color: #171717; border-radius: 2px; display: inline-block;"
+						>
+							More info about Internet Explorer and Microsoft Edge
+						</a>
+					</div>
+				</div>
+			</div>
+			<!-- site header -->
+			<div
+				id="ms--site-header"
+				data-test-id="site-header-wrapper"
+				itemscope="itemscope"
+				itemtype="http://schema.org/Organization"
+			>
+				<div
+					id="ms--mobile-nav"
+					class="site-header display-none-tablet padding-inline-none gap-none"
+					data-bi-name="mobile-header"
+					data-test-id="mobile-header"
+				></div>
+				<div
+					id="ms--primary-nav"
+					class="site-header display-none display-flex-tablet"
+					data-bi-name="L1-header"
+					data-test-id="primary-header"
+				></div>
+				<div
+					id="ms--secondary-nav"
+					class="site-header display-none display-flex-tablet"
+					data-bi-name="L2-header"
+					data-test-id="secondary-header"
+					
+				></div>
+			</div>
+			
+		<!-- banner -->
+		<div data-banner>
+			<div id="disclaimer-holder"></div>
+			
+		</div>
+		<!-- banner end -->
+	
+		</div>
+	</header>
+				 <section
+					id="layout-body-menu"
+					class="layout-body-menu border-right display-flex background-color-body-medium"
+					data-bi-name="menu"
+			  >
+					
+		<div
+			id="left-container"
+			class="left-container display-none padding-none display-block-tablet width-full display-none-until-layout-restored"
+			data-toc-container="true"
+		>
+			<div
+				id="ms--toc-content"
+				class="padding-left-sm padding-right-none padding-bottom-sm height-full"
+			>
+				<nav
+					id="affixed-left-container"
+					class="margin-top-xxs-tablet position-sticky display-flex flex-direction-column width-full"
+					aria-label="Primary"
+					data-bi-name="left-toc"
+					role="navigation"
+				>
+					<div
+						id="ms--collapsible-toc-header"
+						class="display-flex flex-direction-row-reverse justify-content-center align-items-center margin-bottom-xxs margin-right-xxs"
+					>
+						<button
+							type="button"
+							class="button button-clear button-sm inner-focus"
+							data-collapsible-toc-toggle
+							aria-expanded="true"
+							hidden
+							aria-controls="ms--toc-content"
+							aria-label="Table of contents"
+						>
+							<span class="icon icon-mirrored-rtl" aria-hidden="true">
+								<span
+									class="docon docon-panel-left-contract display-none-layout-menu-collapsed"
+								></span>
+								<span
+									class="docon docon-panel-left-expand display-none display-inline-layout-menu-collapsed"
+								></span>
+							</span>
+						</button>
+						<div
+							id="ms--collapsible-toc-moniker-slot"
+							class="flex-grow-1 display-none-layout-menu-collapsed"
+						></div>
+					</div>
+				</nav>
+			</div>
+		</div>
+	
+			  </section>
+
+				<main
+					id="main"
+					role="main"
+					class="layout-body-main "
+					data-bi-name="content"
+					lang="en-us"
+					dir="ltr"
+				>
+					
+			<div
+		id="ms--content-header"
+		class="content-header default-focus border-bottom-none"
+		data-bi-name="content-header"
+	>
+		<div class="content-header-controls margin-xxs margin-inline-sm-tablet">
+			<button
+				type="button"
+				class="contents-button button button-sm margin-right-xxs"
+				data-bi-name="contents-expand"
+				aria-haspopup="true"
+				data-contents-button
+			>
+				<span class="icon" aria-hidden="true"><span class="docon docon-menu"></span></span>
+				<span class="contents-expand-title"> Table of contents </span>
+			</button>
+			<button
+				type="button"
+				class="ap-collapse-behavior ap-expanded button button-sm"
+				data-bi-name="ap-collapse"
+				aria-controls="action-panel"
+			>
+				<span class="icon" aria-hidden="true"><span class="docon docon-exit-mode"></span></span>
+				<span>Exit editor mode</span>
+			</button>
+		</div>
+	</div>
+			<div
+				data-main-column
+				class="reading-width margin-inline-auto layout-padding padding-top-none padding-top-sm-tablet padding-bottom-sm"
+			>
+				<div>
+					
+		<div id="article-header" class="background-color-body margin-bottom-xs display-none-print">
+			<div class="display-flex align-items-center justify-content-space-between">
+				
+		<details
+			id="article-header-breadcrumbs-overflow-popover"
+			class="popover popover-left"
+			data-for="article-header-breadcrumbs"
+		>
+			<summary
+				class="button button-clear button-primary button-sm inner-focus"
+				aria-label="All breadcrumbs"
+			>
+				<span class="icon" aria-hidden="true">
+					<span class="docon docon-more"></span>
+				</span>
+			</summary>
+			<div id="article-header-breadcrumbs-overflow" class="popover-content"></div>
+		</details>
+
+		<bread-crumbs
+			id="article-header-breadcrumbs"
+			role="group"
+			aria-label="Breadcrumbs"
+			data-test-id="article-header-breadcrumbs"
+			class="overflow-hidden flex-grow-1 margin-right-sm margin-right-md-tablet margin-right-lg-desktop margin-left-negative-xxs padding-left-xxs"
+		></bread-crumbs>
+	 
+		<div
+			id="article-header-page-actions"
+			class="opacity-none margin-left-auto display-flex flex-wrap-no-wrap align-items-stretch"
+		>
+			
+		<button
+			class="button button-sm border-none inner-focus display-none-tablet flex-shrink-0 "
+			data-bi-name="ask-learn-assistant-entry"
+			data-test-id="ask-learn-assistant-modal-entry-mobile"
+			data-ask-learn-modal-entry
+			
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			aria-label="Ask Learn"
+			hidden
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+		</button>
+		<button
+			class="button button-sm display-none display-inline-flex-tablet display-none-desktop flex-shrink-0 margin-right-xxs border-color-ask-learn "
+			data-bi-name="ask-learn-assistant-entry"
+			
+			data-test-id="ask-learn-assistant-modal-entry-tablet"
+			data-ask-learn-modal-entry
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			hidden
+		>
+			<span class="icon font-size-lg" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+			<span>Ask Learn</span>
+		</button>
+		<button
+			class="button button-sm display-none flex-shrink-0 display-inline-flex-desktop margin-right-xxs border-color-ask-learn "
+			data-bi-name="ask-learn-assistant-entry"
+			
+			data-test-id="ask-learn-assistant-flyout-entry"
+			data-ask-learn-flyout-entry
+			data-flyout-button="toggle"
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			aria-controls="ask-learn-flyout"
+			hidden
+		>
+			<span class="icon font-size-lg" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+			<span>Ask Learn</span>
+		</button>
+	 
+
+			<details class="popover popover-right" id="article-header-page-actions-overflow">
+				<summary
+					class="justify-content-flex-start button button-clear button-sm button-primary inner-focus"
+					aria-label="More actions"
+					title="More actions"
+				>
+					<span class="icon" aria-hidden="true">
+						<span class="docon docon-more-vertical"></span>
+					</span>
+				</summary>
+				<div class="popover-content">
+					
+		<button
+			type="button"
+			id="ms--focus-mode-button"
+			data-focus-mode
+			data-bi-name="focus-mode-entry"
+			data-page-action-item="overflow-all"
+			data-popover-close
+			class="button button-clear button-sm button-block justify-content-flex-start text-align-left inner-focus display-none display-inline-flex-tablet"
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-glasses"></span>
+			</span>
+			<span>Reading mode</span>
+		</button>
+	 
+		<button
+			data-page-action-item="overflow-mobile"
+			type="button"
+			class="display-block-layout-menu-collapsed button-block button-sm inner-focus button button-clear display-none-tablet justify-content-flex-start text-align-left"
+			data-bi-name="contents-expand"
+			data-contents-button
+			data-popover-close
+		>
+			<span class="icon" aria-hidden="true"
+				><span class="docon docon-editor-list-bullet"></span
+			></span>
+			<span class="contents-expand-title">Table of contents</span>
+		</button>
+	 
+		<a
+			id="lang-link-overflow"
+			class="button-sm inner-focus button button-clear button-block justify-content-flex-start text-align-left"
+			data-bi-name="language-toggle"
+			data-page-action-item="overflow-all"
+			data-check-hidden="true"
+			data-read-in-link
+			href="#"
+			hidden
+		>
+			<span class="icon" aria-hidden="true" data-read-in-link-icon>
+				<span class="docon docon-locale-globe"></span>
+			</span>
+			<span data-read-in-link-text>Read in English</span>
+		</a>
+	
+					
+		<button
+			type="button"
+			class="collection button button-clear button-sm button-block justify-content-flex-start text-align-left inner-focus"
+			data-list-type="collection"
+			data-bi-name="collection"
+			data-page-action-item="overflow-all"
+			data-check-hidden="true"
+			data-popover-close
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-circle-addition"></span>
+			</span>
+			<span class="collection-status">Add</span>
+		</button>
+	 
+		<button
+			type="button"
+			class="collection button button-block button-clear button-sm justify-content-flex-start text-align-left inner-focus"
+			data-list-type="plan"
+			data-bi-name="plan"
+			data-page-action-item="overflow-all"
+			data-check-hidden="true"
+			data-popover-close
+			hidden
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-circle-addition"></span>
+			</span>
+			<span class="plan-status">Add to Plans</span>
+		</button>
+	 
+					
+		<a
+			data-contenteditbtn
+			class="button button-clear button-block button-sm inner-focus justify-content-flex-start text-align-left text-decoration-none"
+			data-bi-name="edit"
+			data-page-action-item="overflow-all"
+			data-check-hidden="true"
+			
+			href="https://github.com/MicrosoftDocs/entra-docs/blob/main/docs/identity-platform/v2-oauth2-auth-code-flow.md"
+			data-original_content_git_url="https://github.com/MicrosoftDocs/entra-docs-pr/blob/live/docs/identity-platform/v2-oauth2-auth-code-flow.md"
+			data-original_content_git_url_template="{repo}/blob/{branch}/docs/identity-platform/v2-oauth2-auth-code-flow.md"
+			data-pr_repo=""
+			data-pr_branch=""
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-edit-outline"></span>
+			</span>
+			<span>Edit</span>
+		</a>
+	  
+		<hr class="margin-block-xxs" />
+		
+				<button
+					class="button button-block button-clear button-sm justify-content-flex-start text-align-left inner-focus"
+					type="button"
+					data-bi-name="copy-markdown"
+					data-page-action-item="overflow-all"
+					data-copy-markdown
+					data-copy-state="idle"
+					data-check-hidden="true"
+				>
+					<span class="icon color-primary" aria-hidden="true">
+						<span data-show-when="idle" class="docon docon-code-lang"></span>
+						<span data-show-when="loading" class="loader" hidden></span>
+						<span data-show-when="success" class="docon docon-check-mark" hidden></span>
+					</span>
+					<span>Copy Markdown</span>
+				</button>
+		   
+				<button
+					class="button button-block button-clear button-sm justify-content-flex-start text-align-left inner-focus"
+					type="button"
+					data-bi-name="print"
+					data-page-action-item="overflow-all"
+					data-popover-close
+					data-print-page
+					data-check-hidden="true"
+				>
+					<span class="icon color-primary" aria-hidden="true">
+						<span class="docon docon-print"></span>
+					</span>
+					<span>Print</span>
+				</button>
+		  
+	
+				</div>
+			</details>
+		</div>
+	
+			</div>
+		</div>
+	  
+		<!-- privateUnauthorizedTemplate is hidden by default -->
+		<div unauthorized-private-section data-bi-name="permission-content-unauthorized-private" hidden>
+			<hr class="hr margin-top-xs margin-bottom-sm" />
+			<div class="notification notification-info">
+				<div class="notification-content">
+					<p class="margin-top-none notification-title">
+						<span class="icon" aria-hidden="true"
+							><span class="docon docon-exclamation-circle-solid"></span
+						></span>
+						<span>Note</span>
+					</p>
+					<p class="margin-top-none authentication-determined not-authenticated">
+						Access to this page requires authorization. You can try <a class="docs-sign-in" href="#" data-bi-name="permission-content-sign-in">signing in</a> or <a  class="docs-change-directory" data-bi-name="permisson-content-change-directory">changing directories</a>.
+					</p>
+					<p class="margin-top-none authentication-determined authenticated">
+						Access to this page requires authorization. You can try <a class="docs-change-directory" data-bi-name="permisson-content-change-directory">changing directories</a>.
+					</p>
+				</div>
+			</div>
+		</div>
+	
+					<div class="content"><h1 id="microsoft-identity-platform-and-oauth-20-authorization-code-flow">Microsoft identity platform and OAuth 2.0 authorization code flow</h1></div>
+					
+		<div
+			id="article-metadata"
+			data-bi-name="article-metadata"
+			data-test-id="article-metadata"
+			class="page-metadata-container display-flex gap-xxs justify-content-space-between align-items-center flex-wrap-wrap"
+		>
+			 
+				<div
+					id="user-feedback"
+					class="margin-block-xxs display-none display-none-print"
+					hidden
+					data-hide-on-archived
+				>
+					
+		<button
+			id="user-feedback-button"
+			data-test-id="conceptual-feedback-button"
+			class="button button-sm button-clear button-primary display-none"
+			type="button"
+			data-bi-name="user-feedback-button"
+			data-user-feedback-button
+			hidden
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-like"></span>
+			</span>
+			<span>Feedback</span>
+		</button>
+	
+				</div>
+		  
+		</div>
+	 
+		<div data-id="ai-summary" class="display-none-print">
+			<div id="ms--ai-summary-cta" class="margin-top-xs display-flex align-items-center">
+				<span class="icon" aria-hidden="true">
+					<span class="docon docon-sparkle-fill gradient-text-vivid"></span>
+				</span>
+				<button
+					id="ms--ai-summary"
+					type="button"
+					class="tag tag-sm tag-suggestion margin-left-xxs"
+					data-test-id="ai-summary-cta"
+					data-bi-name="ai-summary-cta"
+					data-an="ai-summary"
+				>
+					<span class="ai-summary-cta-text">
+						Summarize this article for me
+					</span>
+				</button>
+			</div>
+			<!-- Slot where the client will render the summary card after the user clicks the CTA -->
+			<div id="ms--ai-summary-header" class="margin-top-xs"></div>
+		</div>
+	 
+		<nav
+			id="center-doc-outline"
+			class="doc-outline display-none-desktop display-none-print margin-bottom-sm"
+			data-bi-name="intopic toc"
+			aria-label="In this article"
+		>
+			<h2 id="ms--in-this-article" class="title is-6 margin-block-xs">
+				In this article
+			</h2>
+		</nav>
+	
+					<div class="content"><p>The OAuth 2.0 authorization code grant type, or <em>auth code flow</em>, enables a client application to obtain authorized access to protected resources like web APIs. The auth code flow requires a user-agent that supports redirection from the authorization server (the Microsoft identity platform) back to your application. For example, a web browser, desktop, or mobile application operated by a user to sign in to your app and access their data.</p>
+<p>This article describes low-level protocol details required only when manually crafting and issuing raw HTTP requests to execute the flow, which we do <strong>not</strong> recommend. Instead, use a <a href="reference-v2-libraries" data-linktype="relative-path">Microsoft-built and supported authentication library</a> to get security tokens and call protected web APIs in your apps.</p>
+<h2 id="applications-that-support-the-auth-code-flow">Applications that support the auth code flow</h2>
+<p>Use the auth code flow paired with Proof Key for Code Exchange (PKCE) and OpenID Connect (OIDC) to get access tokens and ID tokens in these types of apps:</p>
+<ul>
+<li><a href="v2-app-types#single-page-apps" data-linktype="relative-path">Single-page web application (SPA)</a></li>
+<li><a href="v2-app-types#web-apps" data-linktype="relative-path">Standard (server-based) web application</a></li>
+<li><a href="v2-app-types#mobile-and-native-apps" data-linktype="relative-path">Desktop and mobile apps</a></li>
+</ul>
+<h2 id="protocol-details">Protocol details</h2>
+<p>The OAuth 2.0 authorization code flow is described in <a href="https://tools.ietf.org/html/rfc6749" data-linktype="external">section 4.1 of the OAuth 2.0 specification</a>. Apps using the OAuth 2.0 authorization code flow acquire an <code>access_token</code> to include in requests to resources protected by the Microsoft identity platform (typically APIs). Apps can also request new ID and access tokens for previously authenticated entities by using a refresh mechanism.</p>
+<p>This diagram shows a high-level view of the authentication flow:</p>
+<p><img src="media/v2-oauth2-auth-code-flow/convergence-scenarios-native.svg" alt="Diagram shows OAuth authorization code flow. Native app and Web A P I interact by using tokens as described in this article." data-linktype="relative-path"></p>
+<h2 id="redirect-uris-for-single-page-apps-spas">Redirect URIs for single-page apps (SPAs)</h2>
+<p>Redirect URIs for SPAs that use the auth code flow require special configuration.</p>
+<ul>
+<li><strong>Add a redirect URI</strong> that supports auth code flow with PKCE and cross-origin resource sharing (CORS): Follow the steps in <a href="how-to-add-redirect-uri" data-linktype="relative-path">How to add a redirect URI to your application</a>.</li>
+<li><strong>Update a redirect URI</strong>: Set the redirect URI's <code>type</code> to <code>spa</code> by using the <a href="reference-microsoft-graph-app-manifest" data-linktype="relative-path">application manifest editor</a> in the Microsoft Entra admin center.</li>
+</ul>
+<p>The <code>spa</code> redirect type is backward-compatible with the implicit flow. Apps currently using the implicit flow to get tokens can move to the <code>spa</code> redirect URI type without issues and continue using the implicit flow. Despite this backward compatibility, we recommend that you use the auth code flow with PKCE for SPAs.</p>
+<p>If you attempt to use the authorization code flow without setting up CORS for your redirect URI, you'll see this error in the console:</p>
+<pre><code class="lang-http">access to XMLHttpRequest at 'https://login.microsoftonline.com/common/oauth2/v2.0/token' from origin 'yourApp.com' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+</code></pre>
+<p>If so, visit your app registration and update the redirect URI for your app to use the <code>spa</code> type.</p>
+<p>Applications can't use a <code>spa</code> redirect URI with non-SPA flows, for example, native applications or client credential flows. To ensure security and best practices, the Microsoft identity platform returns an error if you attempt to use a <code>spa</code> redirect URI without an <code>Origin</code> header. Similarly, the Microsoft identity platform also prevents the use of client credentials in all flows in the presence of an <code>Origin</code> header, to ensure that secrets aren't used from within the browser.</p>
+<h2 id="request-an-authorization-code">Request an authorization code</h2>
+<p>The authorization code flow begins with the client directing the user to the <code>/authorize</code> endpoint. In this example request, the client requests the <code>openid</code>, <code>offline_access</code>, and <code>https://graph.microsoft.com/mail.read</code> permissions from the user.</p>
+<p>Some permissions are admin-restricted, for example, writing data to an organization's directory by using <code>Directory.ReadWrite.All</code>. If your application requests access to one of these permissions from an organizational user, the user receives an error message that says they're not authorized to consent to your app's permissions. To request access to admin-restricted scopes, you should request them directly from a Global Administrator. For more information, see <a href="scopes-oidc#admin-restricted-permissions" data-linktype="relative-path">Admin-restricted permissions</a>.</p>
+<p>Unless specified otherwise, there are no default values for optional parameters. There is, however, default behavior for a request omitting optional parameters. The default behavior is to either sign in the sole current user, show the account picker if there are multiple users, or show the login page if there are no users signed in.</p>
+<pre><code class="lang-http">// Line breaks for legibility only
+
+https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize?
+client_id=00001111-aaaa-2222-bbbb-3333cccc4444
+&amp;response_type=code
+&amp;redirect_uri=http%3A%2F%2Flocalhost%2Fmyapp%2F
+&amp;response_mode=query
+&amp;scope=https%3A%2F%2Fgraph.microsoft.com%2Fmail.read
+&amp;state=12345
+&amp;code_challenge=YTFjNjI1OWYzMzA3MTI4ZDY2Njg5M2RkNmVjNDE5YmEyZGRhOGYyM2IzNjdmZWFhMTQ1ODg3NDcxY2Nl
+&amp;code_challenge_method=S256
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Required/optional</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tenant</code></td>
+<td>required</td>
+<td>The <code>{tenant}</code> value in the path of the request can be used to control who can sign into the application. Valid values are <code>common</code>, <code>organizations</code>, <code>consumers</code>, and tenant identifiers. For guest scenarios where you sign a user from one tenant into another tenant, you <em>must</em> provide the tenant identifier to sign them into the resource tenant. For more information, see <a href="v2-protocols#endpoints" data-linktype="relative-path">Endpoints</a>.</td>
+</tr>
+<tr>
+<td><code>client_id</code></td>
+<td>required</td>
+<td>The <strong>Application (client) ID</strong> that the <a href="https://go.microsoft.com/fwlink/?linkid=2083908" data-linktype="external">Microsoft Entra admin center – App registrations</a> experience assigned to your app.</td>
+</tr>
+<tr>
+<td><code>response_type</code></td>
+<td>required</td>
+<td>Must include <code>code</code> for the authorization code flow. Can also include <code>id_token</code> or <code>token</code> if using the <a href="#request-an-id-token-as-well-or-hybrid-flow" data-linktype="self-bookmark">hybrid flow</a>.</td>
+</tr>
+<tr>
+<td><code>redirect_uri</code></td>
+<td>required</td>
+<td>The <code>redirect_uri</code> of your app, where authentication responses can be sent and received by your app. It must exactly match one of the redirect URIs you registered in the Microsoft Entra admin center, except it must be URL-encoded. For native and mobile apps, use one of the recommended values: <code>https://login.microsoftonline.com/common/oauth2/nativeclient</code> for apps using embedded browsers or <code>http://localhost</code> for apps that use system browsers.</td>
+</tr>
+<tr>
+<td><code>scope</code></td>
+<td>required</td>
+<td>A space-separated list of <a href="permissions-consent-overview" data-linktype="relative-path">scopes</a> that you want the user to consent to.  For the <code>/authorize</code> leg of the request, this parameter can cover multiple resources. This value allows your app to get consent for multiple web APIs you want to call.</td>
+</tr>
+<tr>
+<td><code>response_mode</code></td>
+<td>recommended</td>
+<td>Specifies how the identity platform should return the requested token to your app. <br><br>Supported values:<br><br>- <code>query</code>: Default when requesting an access token. Provides the code as a query string parameter on your redirect URI. The <code>query</code> parameter isn't supported when requesting an ID token by using the implicit flow. <br>- <code>fragment</code>: Default when requesting an ID token by using the implicit flow. Also supported if requesting <em>only</em> a code.<br>- <code>form_post</code>: Executes a POST containing the code to your redirect URI. Supported when requesting a code.<br><br></td>
+</tr>
+<tr>
+<td><code>prompt</code></td>
+<td>optional</td>
+<td>Indicates the type of user interaction that is required. Valid values are <code>login</code>, <code>none</code>, <code>consent</code>, and <code>select_account</code>.<br><br>- <code>prompt=login</code> forces the user to enter their credentials on that request, negating single-sign on.<br>- <code>prompt=none</code> is the opposite. It ensures that the user isn't presented with any interactive prompt. If the request can't be completed silently by using single-sign on, the Microsoft identity platform returns an <code>interaction_required</code> error.<br>- <code>prompt=consent</code> triggers the OAuth consent dialog after the user signs in, asking the user to grant permissions to the app.<br>- <code>prompt=select_account</code> interrupts single sign-on providing account selection experience listing all the accounts either in session or any remembered account or an option to choose to use a different account altogether.<br></td>
+</tr>
+<tr>
+<td><code>login_hint</code></td>
+<td>optional</td>
+<td>You can use this parameter to pre-fill the username and email address field of the sign-in page for the user. Apps can use this parameter during reauthentication, after already extracting the <code>login_hint</code> <a href="optional-claims" data-linktype="relative-path">optional claim</a> from an earlier sign-in.</td>
+</tr>
+<tr>
+<td><code>domain_hint</code></td>
+<td>optional</td>
+<td>If included, the app skips the email-based discovery process that user goes through on the sign-in page, leading to a slightly more streamlined user experience. For example, sending them to their federated identity provider. Apps can use this parameter during reauthentication, by extracting the <code>tid</code> from a previous sign-in.</td>
+</tr>
+<tr>
+<td><code>code_challenge</code></td>
+<td>recommended / required</td>
+<td>Used to secure authorization code grants by using Proof Key for Code Exchange (PKCE). Required if <code>code_challenge_method</code> is included. For more information, see the <a href="https://tools.ietf.org/html/rfc7636" data-linktype="external">PKCE RFC</a>. This parameter is now recommended for all application types, both public and confidential clients, and required by the Microsoft identity platform for <a href="reference-third-party-cookies-spas" data-linktype="relative-path">single page apps using the authorization code flow</a>.</td>
+</tr>
+<tr>
+<td><code>code_challenge_method</code></td>
+<td>recommended / required</td>
+<td>The method used to encode the <code>code_verifier</code> for the <code>code_challenge</code> parameter. This <em>SHOULD</em> be <code>S256</code>, but the spec allows the use of <code>plain</code> if the client can't support SHA256. <br><br>If excluded, <code>code_challenge</code> is assumed to be plaintext if <code>code_challenge</code> is included. The Microsoft identity platform supports both <code>plain</code> and <code>S256</code>. For more information, see the <a href="https://tools.ietf.org/html/rfc7636" data-linktype="external">PKCE RFC</a>. This parameter is required for <a href="reference-third-party-cookies-spas" data-linktype="relative-path">single page apps using the authorization code flow</a>.</td>
+</tr>
+<tr>
+<td><code>state</code></td>
+<td>recommended</td>
+<td>A value included in the request that is also returned in the token response. It can be a string of any content that you wish. A randomly generated unique value is typically used for <a href="https://tools.ietf.org/html/rfc6749#section-10.12" data-linktype="external">preventing cross-site request forgery attacks</a>. The value can also encode information about the user's state in the app before the authentication request occurred. For instance, it could encode the page or view they were on.</td>
+</tr>
+</tbody>
+</table>
+<p>For security and privacy, do not put URLs or other sensitive data directly in the state parameter. Instead, use a key or identifier that corresponds to data stored in browser storage, such as localStorage or sessionStorage. This approach lets your app securely reference the necessary data after authentication.</p>
+<p>At this point, the user is asked to enter their credentials and complete the authentication. The Microsoft identity platform also ensures that the user has consented to the permissions indicated in the <code>scope</code> query parameter. If the user hasn't consented to any of those permissions, it asks the user to consent to the required permissions. For more information, see <a href="permissions-consent-overview" data-linktype="relative-path">Permissions and consent in the Microsoft identity platform</a>.</p>
+<p>Once the user authenticates and grants consent, the Microsoft identity platform returns a response to your app at the indicated <code>redirect_uri</code>, using the method specified in the <code>response_mode</code> parameter.</p>
+<h4 id="successful-response">Successful response</h4>
+<p>This example shows a successful response using <code>response_mode=query</code>:</p>
+<pre><code class="lang-HTTP">GET http://localhost?
+code=AwABAAAAvPM1KaPlrEqdFSBzjqfTGBCmLdgfSTLEMPGYuNHSUYBrq...
+&amp;state=12345
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>code</code></td>
+<td>The <code>authorization_code</code> that the app requested. The app can use the authorization code to request an access token for the target resource. Authorization codes are short lived. Typically, they expire after about 1 minute.</td>
+</tr>
+<tr>
+<td><code>state</code></td>
+<td>If a <code>state</code> parameter is included in the request, the same value should appear in the response. The app should verify that the state values in the request and response are identical.</td>
+</tr>
+</tbody>
+</table>
+<p>You can also receive an ID token if you request one and have the implicit grant enabled in your application registration. This behavior is sometimes referred to as the <a href="#request-an-id-token-as-well-or-hybrid-flow" data-linktype="self-bookmark"><em>hybrid flow</em></a>. It's used by frameworks like ASP.NET.</p>
+<h4 id="error-response">Error response</h4>
+<p>Error responses may also be sent to the <code>redirect_uri</code> so the app can handle them appropriately:</p>
+<pre><code class="lang-HTTP">GET http://localhost?
+error=access_denied
+&amp;error_description=the+user+canceled+the+authentication
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>error</code></td>
+<td>An error code string that can be used to classify types of errors, and to react to errors. This part of the error is provided so that the app can react appropriately to the error, but doesn't explain in depth why an error occurred.</td>
+</tr>
+<tr>
+<td><code>error_description</code></td>
+<td>A specific error message that can help a developer identify the cause of an authentication error. This part of the error contains most of the useful information about <em>why</em> the error occurred.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="error-codes-for-authorization-endpoint-errors">Error codes for authorization endpoint errors</h4>
+<p>The following table describes the various error codes that can be returned in the <code>error</code> parameter of the error response.</p>
+<table>
+<thead>
+<tr>
+<th>Error Code</th>
+<th>Description</th>
+<th>Client Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>invalid_request</code></td>
+<td>Protocol error, such as a missing required parameter.</td>
+<td>Fix and resubmit the request. This error is a development error typically caught during initial testing.</td>
+</tr>
+<tr>
+<td><code>unauthorized_client</code></td>
+<td>The client application isn't permitted to request an authorization code.</td>
+<td>This error usually occurs when the client application isn't registered in Microsoft Entra ID or isn't added to the user's Microsoft Entra tenant. The application can prompt the user with instruction for installing the application and adding it to Microsoft Entra ID.</td>
+</tr>
+<tr>
+<td><code>access_denied</code></td>
+<td>Resource owner denied consent</td>
+<td>The client application can notify the user that it can't continue unless the user consents.</td>
+</tr>
+<tr>
+<td><code>unsupported_response_type</code></td>
+<td>The authorization server doesn't support the response type in the request.</td>
+<td>Fix and resubmit the request. This error is a development error typically caught during initial testing. In the <a href="#request-an-id-token-as-well-or-hybrid-flow" data-linktype="self-bookmark">hybrid flow</a>, this error signals that you must enable the ID token implicit grant setting on the client app registration.</td>
+</tr>
+<tr>
+<td><code>server_error</code></td>
+<td>The server encountered an unexpected error.</td>
+<td>Retry the request. These errors can result from temporary conditions. The client application might explain to the user that its response is delayed to a temporary error.</td>
+</tr>
+<tr>
+<td><code>temporarily_unavailable</code></td>
+<td>The server is temporarily too busy to handle the request.</td>
+<td>Retry the request. The client application might explain to the user that its response is delayed because of a temporary condition.</td>
+</tr>
+<tr>
+<td><code>invalid_resource</code></td>
+<td>The target resource is invalid because it doesn't exist, Microsoft Entra ID can't find it, or it's not correctly configured.</td>
+<td>This error indicates the resource, if it exists, hasn't been configured in the tenant. The application can prompt the user with instruction for installing the application and adding it to Microsoft Entra ID.</td>
+</tr>
+<tr>
+<td><code>login_required</code></td>
+<td>Too many or no users found.</td>
+<td>The client requested silent authentication (<code>prompt=none</code>), but a single user couldn't be found. This error may mean there are multiple users active in the session, or no users. This error takes into account the tenant chosen. For example, if there are two Microsoft Entra accounts active and one Microsoft account, and <code>consumers</code> is chosen, silent authentication works.</td>
+</tr>
+<tr>
+<td><code>interaction_required</code></td>
+<td>The request requires user interaction.</td>
+<td>Another authentication step or consent is required. Retry the request without <code>prompt=none</code>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="request-an-id-token-as-well-or-hybrid-flow">Request an ID token as well or hybrid flow</h3>
+<p>To learn who the user is before redeeming an authorization code, it's common for applications to also request an ID token when they request the authorization code. This approach is called the <em>hybrid flow</em> because it mixes OIDC with the OAuth2 authorization code flow.</p>
+<p>The hybrid flow is commonly used in web apps to render a page for a user without blocking on code redemption, notably in <a href="quickstart-v2-aspnet-core-webapp" data-linktype="relative-path">ASP.NET</a>. Both single-page apps and traditional web apps benefit from reduced latency in this model.</p>
+<p>The hybrid flow is the same as the authorization code flow described earlier but with three additions. All of these additions are required to request an ID token: new scopes, a new response_type, and a new <code>nonce</code> query parameter.</p>
+<pre><code class="lang-http">// Line breaks for legibility only
+
+https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize?
+client_id=00001111-aaaa-2222-bbbb-3333cccc4444
+&amp;response_type=code%20id_token
+&amp;redirect_uri=http%3A%2F%2Flocalhost%2Fmyapp%2F
+&amp;response_mode=fragment
+&amp;scope=openid%20offline_access%20https%3A%2F%2Fgraph.microsoft.com%2Fuser.read
+&amp;state=12345
+&amp;nonce=abcde
+&amp;code_challenge=YTFjNjI1OWYzMzA3MTI4ZDY2Njg5M2RkNmVjNDE5YmEyZGRhOGYyM2IzNjdmZWFhMTQ1ODg3NDcxY2Nl
+&amp;code_challenge_method=S256
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Updated Parameter</th>
+<th>Required/optional</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>response_type</code></td>
+<td>required</td>
+<td>The addition of <code>id_token</code> indicates to the server that the application would like an ID token in the response from the <code>/authorize</code> endpoint.</td>
+</tr>
+<tr>
+<td><code>scope</code></td>
+<td>required</td>
+<td>For ID tokens, this parameter must be updated to include the ID token scopes: <code>openid</code> and optionally <code>profile</code> and <code>email</code>.</td>
+</tr>
+<tr>
+<td><code>nonce</code></td>
+<td>required</td>
+<td>A value included in the request, generated by the app, that is included in the resulting <code>id_token</code> as a claim. The app can then verify this value to mitigate token replay attacks. The value is typically a randomized, unique string that can be used to identify the origin of the request.</td>
+</tr>
+<tr>
+<td><code>response_mode</code></td>
+<td>recommended</td>
+<td>Specifies the method that should be used to send the resulting token back to your app. Default value is <code>query</code> for just an authorization code, but <code>fragment</code> if the request includes an <code>id_token</code> <code>response_type</code> as specified in the <a href="https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html#Combinations" data-linktype="external">OpenID spec</a>. We recommend apps use <code>form_post</code>, especially when using <code>http://localhost</code> as a redirect URI.</td>
+</tr>
+</tbody>
+</table>
+<p>The use of <code>fragment</code> as a response mode causes issues for web apps that read the code from the redirect. Browsers don't pass the fragment to the web server. In these situations, apps should use the <code>form_post</code> response mode to ensure that all data is sent to the server.</p>
+<h4 id="successful-response-1">Successful response</h4>
+<p>This example shows a successful response using <code>response_mode=fragment</code>:</p>
+<pre><code class="lang-http">GET https://login.microsoftonline.com/common/oauth2/nativeclient#
+code=AwABAAAAvPM1KaPlrEqdFSBzjqfTGBCmLdgfSTLEMPGYuNHSUYBrq...
+&amp;id_token=eYj...
+&amp;state=12345
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>code</code></td>
+<td>The authorization code that the app requested. The app can use the authorization code to request an access token for the target resource. Authorization codes are short lived, typically expiring after about 1 minute.</td>
+</tr>
+<tr>
+<td><code>id_token</code></td>
+<td>An ID token for the user, issued by using the <em>implicit grant</em>. Contains a special <code>c_hash</code> claim that is the hash of the <code>code</code> in the same request.</td>
+</tr>
+<tr>
+<td><code>state</code></td>
+<td>If a <code>state</code> parameter is included in the request, the same value should appear in the response. The app should verify that the state values in the request and response are identical.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="redeem-a-code-for-an-access-token">Redeem a code for an access token</h2>
+<p>All confidential clients have a choice of using client secrets or certificate credentials. Symmetric shared secrets are generated by the Microsoft identity platform. Certificate credentials are asymmetric keys uploaded by the developer. For more information, see <a href="certificate-credentials" data-linktype="relative-path">Microsoft identity platform application authentication certificate credentials</a>.</p>
+<p>For best security, we recommend using certificate credentials. Public clients, which include native applications and single page apps, must not use secrets or certificates when redeeming an authorization code. Always ensure that your redirect URIs include the type of application and <a href="reply-url#localhost-exceptions" data-linktype="relative-path">are unique</a>.</p>
+<h3 id="request-an-access-token-with-a-client_secret">Request an access token with a client_secret</h3>
+<p>Now that you've acquired an <code>authorization_code</code> and have been granted permission by the user, you can redeem the <code>code</code> for an <code>access_token</code> to the resource. Redeem the <code>code</code> by sending a <code>POST</code> request to the <code>/token</code> endpoint:</p>
+<pre><code class="lang-http">// Line breaks for legibility only
+
+POST /{tenant}/oauth2/v2.0/token HTTP/1.1
+Host: https://login.microsoftonline.com
+Content-Type: application/x-www-form-urlencoded
+
+client_id=11112222-bbbb-3333-cccc-4444dddd5555
+&amp;scope=https%3A%2F%2Fgraph.microsoft.com%2Fmail.read
+&amp;code=OAAABAAAAiL9Kn2Z27UubvWFPbm0gLWQJVzCTE9UkP3pSx1aXxUjq3n8b2JRLk4OxVXr...
+&amp;redirect_uri=http%3A%2F%2Flocalhost%2Fmyapp%2F
+&amp;grant_type=authorization_code
+&amp;code_verifier=ThisIsntRandomButItNeedsToBe43CharactersLong 
+&amp;client_secret=sampleCredentia1s    // NOTE: Only required for web apps. This secret needs to be URL-Encoded.
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Required/optional</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tenant</code></td>
+<td>required</td>
+<td>The <code>{tenant}</code> value in the path of the request can be used to control who can sign into the application. Valid values are <code>common</code>, <code>organizations</code>, <code>consumers</code>, and tenant identifiers. For more information, see <a href="v2-protocols#endpoints" data-linktype="relative-path">Endpoints</a>.</td>
+</tr>
+<tr>
+<td><code>client_id</code></td>
+<td>required</td>
+<td>The <strong>Application (client) ID</strong> that the <a href="https://go.microsoft.com/fwlink/?linkid=2083908" data-linktype="external">Microsoft Entra admin center – App registrations</a> page assigned to your app.</td>
+</tr>
+<tr>
+<td><code>scope</code></td>
+<td>optional</td>
+<td>A space-separated list of scopes. The scopes must all be from a single resource, along with OIDC scopes (<code>profile</code>, <code>openid</code>, <code>email</code>). For more information, see <a href="permissions-consent-overview" data-linktype="relative-path">Permissions and consent in the Microsoft identity platform</a>. This parameter is a Microsoft extension to the authorization code flow, intended to allow apps to declare the resource they want the token for during token redemption.</td>
+</tr>
+<tr>
+<td><code>code</code></td>
+<td>required</td>
+<td>The <code>authorization_code</code> that you acquired in the first leg of the flow.</td>
+</tr>
+<tr>
+<td><code>redirect_uri</code></td>
+<td>required</td>
+<td>The same <code>redirect_uri</code> value that was used to acquire the <code>authorization_code</code>.</td>
+</tr>
+<tr>
+<td><code>grant_type</code></td>
+<td>required</td>
+<td>Must be <code>authorization_code</code> for the authorization code flow.</td>
+</tr>
+<tr>
+<td><code>code_verifier</code></td>
+<td>recommended</td>
+<td>The same <code>code_verifier</code> that was used to obtain the authorization_code. Required if PKCE was used in the authorization code grant request. For more information, see the <a href="https://tools.ietf.org/html/rfc7636" data-linktype="external">PKCE RFC</a>.</td>
+</tr>
+<tr>
+<td><code>client_secret</code></td>
+<td>required for confidential web apps</td>
+<td>The application secret that you created in the app registration portal for your app. Don't use the application secret in a native app or single page app because a <code>client_secret</code> can't be reliably stored on devices or web pages. It's required for web apps and web APIs, which can store the <code>client_secret</code> securely on the server side. Like all parameters here, the client secret must be URL-encoded before being sent. This step is done by the SDK. For more information on URI encoding, see the <a href="https://tools.ietf.org/html/rfc3986#page-12" data-linktype="external">URI Generic Syntax specification</a>. The Basic auth pattern of instead providing credentials in the Authorization header, per <a href="https://datatracker.ietf.org/doc/html/rfc6749#section-2.3.1" data-linktype="external">RFC 6749</a> is also supported.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="request-an-access-token-with-a-certificate-credential">Request an access token with a certificate credential</h3>
+<pre><code class="lang-http">// Line breaks for legibility only
+POST /{tenant}/oauth2/v2.0/token HTTP/1.1
+Host: login.microsoftonline.com
+Content-Type: application/x-www-form-urlencoded
+
+client_id=00001111-aaaa-2222-bbbb-3333cccc4444
+&amp;scope=https%3A%2F%2Fgraph.microsoft.com%2Fmail.read
+&amp;code=OAAABAAAAiL9Kn2Z27UubvWFPbm0gLWQJVzCTE9UkP3pSx1aXxUjq3n8b2JRLk4OxVXr...
+&amp;redirect_uri=http%3A%2F%2Flocalhost%2Fmyapp%2F
+&amp;grant_type=authorization_code
+&amp;code_verifier=ThisIsntRandomButItNeedsToBe43CharactersLong
+&amp;client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer
+&amp;client_assertion=eyJhbGciOiJSUzI1NiIsIng1dCI6Imd4OHRHeXN5amNScUtqRlBuZDdSRnd2d1pJMCJ9.eyJ{a lot of characters here}M8U3bSUKKJDEg
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Required/optional</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tenant</code></td>
+<td>required</td>
+<td>The <code>{tenant}</code> value in the path of the request can be used to control who can sign into the application. Valid values are <code>common</code>, <code>organizations</code>, <code>consumers</code>, and tenant identifiers. For more detail, see <a href="v2-protocols#endpoints" data-linktype="relative-path">Endpoints</a>.</td>
+</tr>
+<tr>
+<td><code>client_id</code></td>
+<td>required</td>
+<td>The <strong>Application (client) ID</strong> that the <a href="https://go.microsoft.com/fwlink/?linkid=2083908" data-linktype="external">Microsoft Entra admin center – App registrations</a> page assigned to your app.</td>
+</tr>
+<tr>
+<td><code>scope</code></td>
+<td>optional</td>
+<td>A space-separated list of scopes. The scopes must all be from a single resource, along with OIDC scopes (<code>profile</code>, <code>openid</code>, <code>email</code>). For more information, see <a href="permissions-consent-overview" data-linktype="relative-path">permissions, consent, and scopes</a>. This parameter is a Microsoft extension to the authorization code flow. This extension allows apps to declare the resource they want the token for during token redemption.</td>
+</tr>
+<tr>
+<td><code>code</code></td>
+<td>required</td>
+<td>The <code>authorization_code</code> that you acquired in the first leg of the flow.</td>
+</tr>
+<tr>
+<td><code>redirect_uri</code></td>
+<td>required</td>
+<td>The same <code>redirect_uri</code> value that was used to acquire the <code>authorization_code</code>.</td>
+</tr>
+<tr>
+<td><code>grant_type</code></td>
+<td>required</td>
+<td>Must be <code>authorization_code</code> for the authorization code flow.</td>
+</tr>
+<tr>
+<td><code>code_verifier</code></td>
+<td>recommended</td>
+<td>The same <code>code_verifier</code> that was used to obtain the <code>authorization_code</code>. Required if PKCE was used in the authorization code grant request. For more information, see the <a href="https://tools.ietf.org/html/rfc7636" data-linktype="external">PKCE RFC</a>.</td>
+</tr>
+<tr>
+<td><code>client_assertion_type</code></td>
+<td>required for confidential web apps</td>
+<td>The value must be set to <code>urn:ietf:params:oauth:client-assertion-type:jwt-bearer</code> to use a certificate credential.</td>
+</tr>
+<tr>
+<td><code>client_assertion</code></td>
+<td>required for confidential web apps</td>
+<td>An assertion, which is a JSON web token (JWT), that you need to create and sign with the certificate you registered as credentials for your application. Read about <a href="certificate-credentials" data-linktype="relative-path">certificate credentials</a> to learn how to register your certificate and the format of the assertion.</td>
+</tr>
+</tbody>
+</table>
+<p>The parameters are same as the request by shared secret except that the <code>client_secret</code> parameter is replaced by two parameters: a <code>client_assertion_type</code> and <code>client_assertion</code>.</p>
+<h3 id="successful-response-2">Successful response</h3>
+<p>This example shows a successful token response:</p>
+<pre><code class="lang-json">{
+    "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ik5HVEZ2ZEstZnl0aEV1Q...",
+    "token_type": "Bearer",
+    "expires_in": 3599,
+    "scope": "https%3A%2F%2Fgraph.microsoft.com%2Fmail.read",
+    "refresh_token": "AwABAAAAvPM1KaPlrEqdFSBzjqfTGAMxZGUTdM0t4B4...",
+    "id_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJhdWQiOiIyZDRkMTFhMi1mODE0LTQ2YTctOD..."
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>access_token</code></td>
+<td>The requested access token. The app can use this token to authenticate to the secured resource, such as a web API.</td>
+</tr>
+<tr>
+<td><code>token_type</code></td>
+<td>Indicates the token type value. The only type that Microsoft Entra ID supports is <code>Bearer</code>.</td>
+</tr>
+<tr>
+<td><code>expires_in</code></td>
+<td>How long the access token is valid, in seconds.</td>
+</tr>
+<tr>
+<td><code>scope</code></td>
+<td>The scopes that the <code>access_token</code> is valid for. Optional. This parameter is non-standard and, if omitted, the token is for the scopes requested on the initial leg of the flow.</td>
+</tr>
+<tr>
+<td><code>refresh_token</code></td>
+<td>An OAuth 2.0 refresh token. The app can use this token to acquire other access tokens after the current access token expires. Refresh tokens are long-lived. They can maintain access to resources for extended periods. For more detail on refreshing an access token, refer to <a href="#refresh-the-access-token" data-linktype="self-bookmark">Refresh the access token</a> later in this article.<br> <strong>Note:</strong> Only provided if <code>offline_access</code> scope was requested.</td>
+</tr>
+<tr>
+<td><code>id_token</code></td>
+<td>A JSON Web Token. The app can decode the segments of this token to request information about the user who signed in. The app can cache the values and display them, and confidential clients can use this token for authorization. For more information about id_tokens, see the <a href="id-tokens" data-linktype="relative-path"><code>id_token reference</code></a>. <br> <strong>Note:</strong> Only provided if <code>openid</code> scope was requested.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="error-response-1">Error response</h3>
+<p>This example is an Error response:</p>
+<pre><code class="lang-json">{
+  "error": "invalid_scope",
+  "error_description": "AADSTS70011: The provided value for the input parameter 'scope' is not valid. The scope https://foo.microsoft.com/mail.read is not valid.\r\nTrace ID: 0000aaaa-11bb-cccc-dd22-eeeeee333333\r\nCorrelation ID: aaaa0000-bb11-2222-33cc-444444dddddd\r\nTimestamp: 2016-01-09 02:02:12Z",
+  "error_codes": [
+    70011
+  ],
+  "timestamp": "2016-01-09 02:02:12Z",
+  "trace_id": "0000aaaa-11bb-cccc-dd22-eeeeee333333",
+  "correlation_id": "aaaa0000-bb11-2222-33cc-444444dddddd"
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>error</code></td>
+<td>An error code string that can be used to classify types of errors, and to react to errors.</td>
+</tr>
+<tr>
+<td><code>error_description</code></td>
+<td>A specific error message that can help a developer identify the cause of an authentication error.</td>
+</tr>
+<tr>
+<td><code>error_codes</code></td>
+<td>A list of STS-specific error codes that can help in diagnostics.</td>
+</tr>
+<tr>
+<td><code>timestamp</code></td>
+<td>The time at which the error occurred.</td>
+</tr>
+<tr>
+<td><code>trace_id</code></td>
+<td>A unique identifier for the request that can help in diagnostics.</td>
+</tr>
+<tr>
+<td><code>correlation_id</code></td>
+<td>A unique identifier for the request that can help in diagnostics across components.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="error-codes-for-token-endpoint-errors">Error codes for token endpoint errors</h3>
+<table>
+<thead>
+<tr>
+<th>Error Code</th>
+<th>Description</th>
+<th>Client Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>invalid_request</code></td>
+<td>Protocol error, such as a missing required parameter.</td>
+<td>Fix the request or app registration and resubmit the request.</td>
+</tr>
+<tr>
+<td><code>invalid_grant</code></td>
+<td>The authorization code or PKCE code verifier is invalid or has expired.</td>
+<td>Try a new request to the <code>/authorize</code> endpoint and verify that the <code>code_verifier</code> parameter was correct.</td>
+</tr>
+<tr>
+<td><code>unauthorized_client</code></td>
+<td>The authenticated client isn't authorized to use this authorization grant type.</td>
+<td>This error usually occurs when the client application isn't registered in Microsoft Entra ID or isn't added to the user's Microsoft Entra tenant. The application can prompt the user with instruction for installing the application and adding it to Microsoft Entra ID.</td>
+</tr>
+<tr>
+<td><code>invalid_client</code></td>
+<td>Client authentication failed.</td>
+<td>The client credentials aren't valid. To fix, the Application Administrator updates the credentials.</td>
+</tr>
+<tr>
+<td><code>unsupported_grant_type</code></td>
+<td>The authorization server doesn't support the authorization grant type.</td>
+<td>Change the grant type in the request. This type of error should occur only during development and be detected during initial testing.</td>
+</tr>
+<tr>
+<td><code>invalid_resource</code></td>
+<td>The target resource is invalid because it doesn't exist, Microsoft Entra ID can't find it, or it's not correctly configured.</td>
+<td>This code indicates the resource, if it exists, hasn't been configured in the tenant. The application can prompt the user with instruction for installing the application and adding it to Microsoft Entra ID.</td>
+</tr>
+<tr>
+<td><code>interaction_required</code></td>
+<td>Non-standard, as the OIDC specification calls for this code only on the <code>/authorize</code> endpoint. The request requires user interaction. For example, another authentication step is required.</td>
+<td>Retry the <code>/authorize</code> request with the same scopes.</td>
+</tr>
+<tr>
+<td><code>temporarily_unavailable</code></td>
+<td>The server is temporarily too busy to handle the request.</td>
+<td>Retry the request after a small delay. The client application might explain to the user that its response is delayed because of a temporary condition.</td>
+</tr>
+<tr>
+<td><code>consent_required</code></td>
+<td>The request requires user consent. This error is non-standard. It's usually only returned on the <code>/authorize</code> endpoint per OIDC specifications. Returned when a <code>scope</code> parameter was used on the code redemption flow that the client app doesn't have permission to request.</td>
+<td>The client should send the user back to the <code>/authorize</code> endpoint with the correct scope to trigger consent.</td>
+</tr>
+<tr>
+<td><code>invalid_scope</code></td>
+<td>The scope requested by the app is invalid.</td>
+<td>Update the value of the <code>scope</code> parameter in the authentication request to a valid value.</td>
+</tr>
+</tbody>
+</table>
+<div class="NOTE">
+<p>Note</p>
+<p>Single page apps may receive an <code>invalid_request</code> error indicating that cross-origin token redemption is permitted only for the 'Single-Page Application' client-type. This indicates that the redirect URI used to request the token has not been marked as a <code>spa</code> redirect URI. Review the <a href="#redirect-uris-for-single-page-apps-spas" data-linktype="self-bookmark">application registration steps</a> on how to enable this flow.</p>
+</div>
+<h2 id="use-the-access-token">Use the access token</h2>
+<p>Now that you have successfully acquired an <code>access_token</code>, you can use the token in requests to web APIs by including it in the <code>Authorization</code> header:</p>
+<pre><code class="lang-http">GET /v1.0/me/messages
+Host: https://graph.microsoft.com
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ik5HVEZ2ZEstZnl0aEV1Q...
+</code></pre>
+<h2 id="refresh-the-access-token">Refresh the access token</h2>
+<p>Access tokens are short lived. Refresh them after they expire to continue accessing resources. You can do so by submitting another <code>POST</code> request to the <code>/token</code> endpoint. Provide the <code>refresh_token</code> instead of the <code>code</code>.  Refresh tokens are valid for all permissions that your client has already received consent for. For example, a refresh token issued on a request for <code>scope=mail.read</code> can be used to request a new access token for <code>scope=api://contoso.com/api/UseResource</code>.</p>
+<p>Refresh tokens for web apps and native apps don't have specified lifetimes. Typically, the lifetimes of refresh tokens are relatively long. However, in some cases, refresh tokens expire, are revoked, or lack sufficient privileges for the action. Your application needs to expect and handle <a href="#error-codes-for-token-endpoint-errors" data-linktype="self-bookmark">errors returned by the token issuance endpoint</a>. Single page apps get a token with a 24-hour lifetime, requiring a new authentication every day. This action can be done silently in an iframe when third-party cookies are enabled. It must be done in a top-level frame, either full page navigation or a pop-up window, in browsers without third-party cookies, such as Safari.</p>
+<p>Refresh tokens aren't revoked when used to acquire new access tokens. You're expected to discard the old refresh token. The <a href="https://tools.ietf.org/html/rfc6749#section-6" data-linktype="external">OAuth 2.0 spec</a> says: "The authorization server MAY issue a new refresh token, in which case the client MUST discard the old refresh token and replace it with the new refresh token. The authorization server MAY revoke the old refresh token after issuing a new refresh token to the client."</p>
+<div class="IMPORTANT">
+<p>Important</p>
+<p>For refresh tokens sent to a redirect URI registered as <code>spa</code>, the refresh token expires after 24 hours. Additional refresh tokens acquired using the initial refresh token carries over that expiration time, so apps must be prepared to re-run the authorization code flow using an interactive authentication to get a new refresh token every 24 hours. Users do not have to enter their credentials, and usually don't even see any user experience, just a reload of your application. The browser must visit the login page in a top level frame in order to see the login session. This is due to <a href="reference-third-party-cookies-spas" data-linktype="relative-path">privacy features in browsers that block third party cookies</a>.</p>
+</div>
+<pre><code class="lang-http">// Line breaks for legibility only
+
+POST /{tenant}/oauth2/v2.0/token HTTP/1.1
+Host: https://login.microsoftonline.com
+Content-Type: application/x-www-form-urlencoded
+
+client_id=00001111-aaaa-2222-bbbb-3333cccc4444
+&amp;scope=https%3A%2F%2Fgraph.microsoft.com%2Fmail.read
+&amp;refresh_token=OAAABAAAAiL9Kn2Z27UubvWFPbm0gLWQJVzCTE9UkP3pSx1aXxUjq...
+&amp;grant_type=refresh_token
+&amp;client_secret=sampleCredentia1s    // NOTE: Only required for web apps. This secret needs to be URL-Encoded
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tenant</code></td>
+<td>required</td>
+<td>The <code>{tenant}</code> value in the path of the request can be used to control who can sign into the application. Valid values are <code>common</code>, <code>organizations</code>, <code>consumers</code>, and tenant identifiers. For more information, see <a href="v2-protocols#endpoints" data-linktype="relative-path">Endpoints</a>.</td>
+</tr>
+<tr>
+<td><code>client_id</code></td>
+<td>required</td>
+<td>The <strong>Application (client) ID</strong> that the <a href="https://go.microsoft.com/fwlink/?linkid=2083908" data-linktype="external">Microsoft Entra admin center – App registrations</a> experience assigned to your app.</td>
+</tr>
+<tr>
+<td><code>grant_type</code></td>
+<td>required</td>
+<td>Must be <code>refresh_token</code> for this leg of the authorization code flow.</td>
+</tr>
+<tr>
+<td><code>scope</code></td>
+<td>optional</td>
+<td>A space-separated list of scopes. The scopes requested in this leg must be equivalent to or a subset of the scopes requested in the original <code>authorization_code</code> request leg. If the scopes specified in this request span multiple resource server, then the Microsoft identity platform returns a token for the resource specified in the first scope. For more information, see <a href="permissions-consent-overview" data-linktype="relative-path">Permissions and consent in the Microsoft identity platform</a>.</td>
+</tr>
+<tr>
+<td><code>refresh_token</code></td>
+<td>required</td>
+<td>The <code>refresh_token</code> that you acquired in the second leg of the flow.</td>
+</tr>
+<tr>
+<td><code>client_secret</code></td>
+<td>required for web apps</td>
+<td>The application secret that you created in the app registration portal for your app. It shouldn't be used in a native app, because a <code>client_secret</code> can't be reliably stored on devices. It's required for web apps and web APIs, which can store the <code>client_secret</code> securely on the server side. This secret needs to be URL-Encoded. For more information, see the <a href="https://tools.ietf.org/html/rfc3986#page-12" data-linktype="external">URI Generic Syntax specification</a>.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="successful-response-3">Successful response</h4>
+<p>This example shows a successful token response:</p>
+<pre><code class="lang-json">{
+    "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ik5HVEZ2ZEstZnl0aEV1Q...",
+    "token_type": "Bearer",
+    "expires_in": 3599,
+    "scope": "https%3A%2F%2Fgraph.microsoft.com%2Fmail.read",
+    "refresh_token": "AwABAAAAvPM1KaPlrEqdFSBzjqfTGAMxZGUTdM0t4B4...",
+    "id_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJhdWQiOiIyZDRkMTFhMi1mODE0LTQ2YTctOD..."
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>access_token</code></td>
+<td>The requested access token. The app can use this token to authenticate to the secured resource, such as a web API.</td>
+</tr>
+<tr>
+<td><code>token_type</code></td>
+<td>Indicates the token type value. The only type that Microsoft Entra ID supports is Bearer.</td>
+</tr>
+<tr>
+<td><code>expires_in</code></td>
+<td>How long the access token is valid, in seconds.</td>
+</tr>
+<tr>
+<td><code>scope</code></td>
+<td>The scopes that the <code>access_token</code> is valid for.</td>
+</tr>
+<tr>
+<td><code>refresh_token</code></td>
+<td>A new OAuth 2.0 refresh token. Replace the old refresh token with this newly acquired refresh token to ensure your refresh tokens remain valid for as long as possible. <br> <strong>Note:</strong> Only provided if <code>offline_access</code> scope was requested.</td>
+</tr>
+<tr>
+<td><code>id_token</code></td>
+<td>An unsigned JSON Web Token. The app can decode the segments of this token to request information about the user who signed in. The app can cache the values and display them, but it shouldn't rely on them for any authorization or security boundaries. For more information about <code>id_token</code>, see the <a href="id-tokens" data-linktype="relative-path">Microsoft identity platform ID tokens</a>. <br> <strong>Note:</strong> Only provided if <code>openid</code> scope was requested.</td>
+</tr>
+</tbody>
+</table>
+<div class="WARNING">
+<p>Warning</p>
+<p>Don't attempt to validate or read tokens for any API you don't own, including the tokens in this example, in your code. Tokens for Microsoft services can use a special format that will not validate as a JWT, and may also be encrypted for consumer (Microsoft account) users. While reading tokens is a useful debugging and learning tool, do not take dependencies on this in your code or assume specifics about tokens that aren't for an API you control.</p>
+</div>
+<h4 id="error-response-2">Error response</h4>
+<pre><code class="lang-json">{
+  "error": "invalid_scope",
+  "error_description": "AADSTS70011: The provided value for the input parameter 'scope' is not valid. The scope https://foo.microsoft.com/mail.read is not valid.\r\nTrace ID: 0000aaaa-11bb-cccc-dd22-eeeeee333333\r\nCorrelation ID: aaaa0000-bb11-2222-33cc-444444dddddd\r\nTimestamp: 2016-01-09 02:02:12Z",
+  "error_codes": [
+    70011
+  ],
+  "timestamp": "2016-01-09 02:02:12Z",
+  "trace_id": "0000aaaa-11bb-cccc-dd22-eeeeee333333",
+  "correlation_id": "aaaa0000-bb11-2222-33cc-444444dddddd"
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>error</code></td>
+<td>An error code string that can be used to classify types of errors, and to react to errors.</td>
+</tr>
+<tr>
+<td><code>error_description</code></td>
+<td>A specific error message that can help a developer identify the root cause of an authentication error.</td>
+</tr>
+<tr>
+<td><code>error_codes</code></td>
+<td>A list of STS-specific error codes that can help in diagnostics.</td>
+</tr>
+<tr>
+<td><code>timestamp</code></td>
+<td>The time at which the error occurred.</td>
+</tr>
+<tr>
+<td><code>trace_id</code></td>
+<td>A unique identifier for the request that can help in diagnostics.</td>
+</tr>
+<tr>
+<td><code>correlation_id</code></td>
+<td>A unique identifier for the request that can help in diagnostics across components.</td>
+</tr>
+</tbody>
+</table>
+<p>For a description of the error codes and the recommended client action, see <a href="#error-codes-for-token-endpoint-errors" data-linktype="self-bookmark">Error codes for token endpoint errors</a>.</p>
+<h2 id="next-steps">Next steps</h2>
+<ul>
+<li>Go over the <a href="sample-v2-code" data-linktype="relative-path">MSAL JS samples</a> to get started coding.</li>
+<li>Learn about <a href="scenario-token-exchange-saml-oauth" data-linktype="relative-path">token exchange scenarios</a>.</li>
+</ul>
+</div>
+					
+		<div
+			id="ms--inline-notifications"
+			class="margin-block-xs"
+			data-bi-name="inline-notification"
+		></div>
+	 
+		<div
+			id="assertive-live-region"
+			role="alert"
+			aria-live="assertive"
+			class="visually-hidden"
+			aria-relevant="additions"
+			aria-atomic="true"
+		></div>
+		<div
+			id="polite-live-region"
+			role="status"
+			aria-live="polite"
+			class="visually-hidden"
+			aria-relevant="additions"
+			aria-atomic="true"
+		></div>
+	
+					
+		<!-- feedback section -->
+		<section
+			id="site-user-feedback-footer"
+			class="font-size-sm margin-top-md display-none-print display-none-desktop"
+			data-test-id="site-user-feedback-footer"
+			data-bi-name="site-feedback-section"
+		>
+			<hr class="hr" />
+			<h2 id="ms--feedback" class="title is-3">Feedback</h2>
+			<div class="display-flex flex-wrap-wrap align-items-center">
+				<p class="font-weight-semibold margin-xxs margin-left-none">
+					Was this page helpful?
+				</p>
+				<div class="buttons">
+					<button
+						class="thumb-rating-button like button button-primary button-sm"
+						data-test-id="footer-rating-yes"
+						data-binary-rating-response="rating-yes"
+						type="button"
+						title="This article is helpful"
+						data-bi-name="button-rating-yes"
+						aria-pressed="false"
+					>
+						<span class="icon" aria-hidden="true">
+							<span class="docon docon-like"></span>
+						</span>
+						<span>Yes</span>
+					</button>
+					<button
+						class="thumb-rating-button dislike button button-primary button-sm"
+						id="standard-rating-no-button"
+						hidden
+						data-test-id="footer-rating-no"
+						data-binary-rating-response="rating-no"
+						type="button"
+						title="This article is not helpful"
+						data-bi-name="button-rating-no"
+						aria-pressed="false"
+					>
+						<span class="icon" aria-hidden="true">
+							<span class="docon docon-dislike"></span>
+						</span>
+						<span>No</span>
+					</button>
+					<details
+						class="popover popover-top"
+						id="mobile-help-popover"
+						data-test-id="footer-feedback-popover"
+					>
+						<summary
+							class="thumb-rating-button dislike button button-primary button-sm"
+							data-test-id="details-footer-rating-no"
+							data-binary-rating-response="rating-no"
+							title="This article is not helpful"
+							data-bi-name="button-rating-no"
+							aria-pressed="false"
+							data-bi-an="feedback-unhelpful-popover"
+						>
+							<span class="icon" aria-hidden="true">
+								<span class="docon docon-dislike"></span>
+							</span>
+							<span>No</span>
+						</summary>
+						<div
+							class="popover-content width-200 width-300-tablet"
+							role="dialog"
+							aria-labelledby="popover-heading"
+							aria-describedby="popover-description"
+						>
+							<p id="popover-heading" class="font-size-lg margin-bottom-xxs font-weight-semibold">
+								Need help with this topic?
+							</p>
+							<p id="popover-description" class="font-size-sm margin-bottom-xs">
+								Want to try using Ask Learn to clarify or guide you through this topic?
+							</p>
+							
+		<div class="buttons flex-direction-row flex-wrap justify-content-center gap-xxs">
+			<div>
+		<button
+			class="button button-sm border inner-focus display-none margin-right-xxs"
+			data-bi-name="ask-learn-assistant-entry-troubleshoot"
+			data-test-id="ask-learn-assistant-modal-entry-mobile-feedback"
+			data-ask-learn-modal-entry-feedback
+			data-bi-an=feedback-unhelpful-popover
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			aria-label="Ask Learn"
+			hidden
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+		</button>
+		<button
+			class="button button-sm display-inline-flex display-none-desktop flex-shrink-0 margin-right-xxs border-color-ask-learn margin-right-xxs"
+			data-bi-name="ask-learn-assistant-entry-troubleshoot"
+			data-bi-an=feedback-unhelpful-popover
+			data-test-id="ask-learn-assistant-modal-entry-tablet-feedback"
+			data-ask-learn-modal-entry-feedback
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			hidden
+		>
+			<span class="icon font-size-lg" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+			<span>Ask Learn</span>
+		</button>
+		<button
+			class="button button-sm display-none flex-shrink-0 display-inline-flex-desktop margin-right-xxs border-color-ask-learn margin-right-xxs"
+			data-bi-name="ask-learn-assistant-entry-troubleshoot"
+			data-bi-an=feedback-unhelpful-popover
+			data-test-id="ask-learn-assistant-flyout-entry-feedback"
+			data-ask-learn-flyout-entry-show-only
+			data-flyout-button="toggle"
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			aria-controls="ask-learn-flyout"
+			hidden
+		>
+			<span class="icon font-size-lg" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+			<span>Ask Learn</span>
+		</button>
+	</div>
+			<button
+				type="button"
+				class="button button-sm margin-right-xxs"
+				data-help-option="suggest-fix"
+				data-bi-name="feedback-suggest"
+				data-bi-an="feedback-unhelpful-popover"
+				data-test-id="suggest-fix"
+			>
+				<span class="icon" aria-hidden="true">
+					<span class="docon docon-feedback"></span>
+				</span>
+				<span> Suggest a fix? </span>
+			</button>
+		</div>
+	
+						</div>
+					</details>
+				</div>
+			</div>
+		</section>
+		<!-- end feedback section -->
+	
+				</div>
+				
+		<div id="ms--additional-resources-mobile" class="display-none-print">
+			<hr class="hr" hidden />
+			<h2 id="ms--additional-resources-mobile-heading" class="title is-3" hidden>
+				Additional resources
+			</h2>
+			 
+		<section
+			id="right-rail-training-mobile"
+			class=""
+			data-bi-name="learning-resource-card"
+			hidden
+		></section>
+	 
+		<section
+			id="right-rail-events-mobile"
+			class=""
+			data-bi-name="events-card"
+			hidden
+		></section>
+	
+		</div>
+	 
+		<div
+			id="article-metadata-footer"
+			data-bi-name="article-metadata-footer"
+			data-test-id="article-metadata-footer"
+			class="page-metadata-container"
+		>
+			<hr class="hr" />
+			<ul class="metadata page-metadata" data-bi-name="page info" lang="en-us" dir="ltr">
+				<li class="visibility-hidden-visual-diff">
+			<span class="badge badge-sm text-wrap-pretty">
+				<span>Last updated on <local-time format="twoDigitNumeric"
+		datetime="2026-01-09T08:00:00.000Z"
+		data-article-date-source="calculated"
+		class="is-invisible"
+	>
+		2026-01-09
+	</local-time></span>
+			</span>
+		</li>
+			</ul>
+		</div>
+	
+			</div>
+			
+		<div
+			id="action-panel"
+			role="region"
+			aria-label="Action Panel"
+			class="action-panel"
+			tabindex="-1"
+		></div>
+	
+		
+				</main>
+				<aside
+					id="layout-body-aside"
+					class="layout-body-aside  "
+					data-bi-name="aside"
+					aria-label="Additional resources"
+			  >
+					
+		<div
+			id="ms--additional-resources"
+			class="right-container padding-sm display-none display-block-desktop height-full"
+			data-bi-name="pageactions"
+		>
+			<div id="affixed-right-container" data-bi-name="right-column">
+				
+		<nav
+			id="side-doc-outline"
+			class="doc-outline border-bottom padding-bottom-xs margin-bottom-xs scrollbar-width-thin"
+			data-bi-name="intopic toc"
+			aria-label="In this article"
+		>
+			<h3>In this article</h3>
+		</nav>
+	
+				<!-- Feedback -->
+				
+		<section
+			id="ms--site-user-feedback-right-rail"
+			class="font-size-sm display-none-print"
+			data-test-id="site-user-feedback-right-rail"
+			data-bi-name="site-feedback-right-rail"
+		>
+			<div class="display-flex flex-wrap-wrap align-items-center">
+				<p class="font-weight-semibold margin-xxs margin-left-none">
+					Was this page helpful?
+				</p>
+				<div class="display-flex flex-wrap-nowrap">
+					<button
+						class="thumb-rating-button like inner-focus"
+						data-test-id="right-rail-rating-yes"
+						data-binary-rating-response="rating-yes"
+						type="button"
+						title="This article is helpful"
+						aria-label="This article is helpful"
+						data-bi-name="button-rating-yes"
+						aria-pressed="false"
+					>
+						<span class="icon" aria-hidden="true">
+							<span class="docon docon-like"></span>
+						</span>
+					</button>
+					<button
+						class="thumb-rating-button dislike inner-focus"
+						id="right-rail-no-button"
+						hidden
+						data-test-id="right-rail-rating-no"
+						data-binary-rating-response="rating-no"
+						type="button"
+						title="This article is not helpful"
+						aria-label="This article is not helpful"
+						data-bi-name="button-rating-no"
+						aria-pressed="false"
+					>
+						<span class="icon" aria-hidden="true">
+							<span class="docon docon-dislike"></span>
+						</span>
+					</button>
+					<details class="popover popover-right" id="help-popover" data-test-id="feedback-popover">
+						<summary
+							tabindex="0"
+							class="thumb-rating-button dislike inner-focus"
+							data-test-id="details-right-rail-rating-no"
+							data-binary-rating-response="rating-no"
+							title="This article is not helpful"
+							aria-label="This article is not helpful"
+							data-bi-name="button-rating-no"
+							aria-pressed="false"
+							data-bi-an="feedback-unhelpful-popover"
+						>
+							<span class="icon" aria-hidden="true">
+								<span class="docon docon-dislike"></span>
+							</span>
+						</summary>
+						<div
+							class="popover-content width-200 width-300-tablet"
+							role="dialog"
+							aria-labelledby="popover-heading-right-rail"
+							aria-describedby="popover-description-right-rail"
+						>
+							<p
+								id="popover-heading-right-rail"
+								class="font-size-lg margin-bottom-xxs font-weight-semibold"
+							>
+								Need help with this topic?
+							</p>
+							<p id="popover-description-right-rail" class="font-size-sm margin-bottom-xs">
+								Want to try using Ask Learn to clarify or guide you through this topic?
+							</p>
+							
+		<div class="buttons flex-direction-row flex-wrap justify-content-center gap-xxs">
+			<div>
+		<button
+			class="button button-sm border inner-focus display-none margin-right-xxs"
+			data-bi-name="ask-learn-assistant-entry-troubleshoot"
+			data-test-id="ask-learn-assistant-modal-entry-mobile-feedback"
+			data-ask-learn-modal-entry-feedback
+			data-bi-an=feedback-unhelpful-popover
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			aria-label="Ask Learn"
+			hidden
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+		</button>
+		<button
+			class="button button-sm display-inline-flex display-none-desktop flex-shrink-0 margin-right-xxs border-color-ask-learn margin-right-xxs"
+			data-bi-name="ask-learn-assistant-entry-troubleshoot"
+			data-bi-an=feedback-unhelpful-popover
+			data-test-id="ask-learn-assistant-modal-entry-tablet-feedback"
+			data-ask-learn-modal-entry-feedback
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			hidden
+		>
+			<span class="icon font-size-lg" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+			<span>Ask Learn</span>
+		</button>
+		<button
+			class="button button-sm display-none flex-shrink-0 display-inline-flex-desktop margin-right-xxs border-color-ask-learn margin-right-xxs"
+			data-bi-name="ask-learn-assistant-entry-troubleshoot"
+			data-bi-an=feedback-unhelpful-popover
+			data-test-id="ask-learn-assistant-flyout-entry-feedback"
+			data-ask-learn-flyout-entry-show-only
+			data-flyout-button="toggle"
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			aria-controls="ask-learn-flyout"
+			hidden
+		>
+			<span class="icon font-size-lg" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+			<span>Ask Learn</span>
+		</button>
+	</div>
+			<button
+				type="button"
+				class="button button-sm margin-right-xxs"
+				data-help-option="suggest-fix"
+				data-bi-name="feedback-suggest"
+				data-bi-an="feedback-unhelpful-popover"
+				data-test-id="suggest-fix"
+			>
+				<span class="icon" aria-hidden="true">
+					<span class="docon docon-feedback"></span>
+				</span>
+				<span> Suggest a fix? </span>
+			</button>
+		</div>
+	
+						</div>
+					</details>
+				</div>
+			</div>
+		</section>
+	
+			</div>
+		</div>
+	
+			  </aside> <section
+					id="layout-body-flyout"
+					class="layout-body-flyout "
+					data-bi-name="flyout"
+			  >
+					 <div
+	class="height-full border-left background-color-body-medium"
+	id="ask-learn-flyout"
+></div>
+			  </section> <div class="layout-body-footer " data-bi-name="layout-footer">
+		<footer
+			id="footer"
+			data-test-id="footer"
+			data-bi-name="footer"
+			class="footer-layout padding-xs padding-sm-desktop has-default-focus border-top"
+			role="contentinfo"
+		>
+			<div class="display-flex gap-xs flex-wrap-wrap is-full-height padding-right-lg-desktop">
+				
+		<a
+			data-mscc-ic="false"
+			href="#"
+			data-bi-name="select-locale"
+			class="locale-selector-link flex-shrink-0 button button-sm button-clear external-link-indicator"
+			id=""
+			title=""
+			><span class="icon" aria-hidden="true"
+				><span class="docon docon-world"></span></span
+			><span class="local-selector-link-text">en-us</span></a
+		>
+	 <div class="ccpa-privacy-link" data-ccpa-privacy-link hidden>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://aka.ms/yourcaliforniaprivacychoices"
+			data-bi-name="your-privacy-choices"
+			class="button button-sm button-clear flex-shrink-0 external-link-indicator"
+			id=""
+			title=""
+			>
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 30 14"
+			xml:space="preserve"
+			height="16"
+			width="43"
+			aria-hidden="true"
+			focusable="false"
+		>
+			<path
+				d="M7.4 12.8h6.8l3.1-11.6H7.4C4.2 1.2 1.6 3.8 1.6 7s2.6 5.8 5.8 5.8z"
+				style="fill-rule:evenodd;clip-rule:evenodd;fill:#fff"
+			></path>
+			<path
+				d="M22.6 0H7.4c-3.9 0-7 3.1-7 7s3.1 7 7 7h15.2c3.9 0 7-3.1 7-7s-3.2-7-7-7zm-21 7c0-3.2 2.6-5.8 5.8-5.8h9.9l-3.1 11.6H7.4c-3.2 0-5.8-2.6-5.8-5.8z"
+				style="fill-rule:evenodd;clip-rule:evenodd;fill:#06f"
+			></path>
+			<path
+				d="M24.6 4c.2.2.2.6 0 .8L22.5 7l2.2 2.2c.2.2.2.6 0 .8-.2.2-.6.2-.8 0l-2.2-2.2-2.2 2.2c-.2.2-.6.2-.8 0-.2-.2-.2-.6 0-.8L20.8 7l-2.2-2.2c-.2-.2-.2-.6 0-.8.2-.2.6-.2.8 0l2.2 2.2L23.8 4c.2-.2.6-.2.8 0z"
+				style="fill:#fff"
+			></path>
+			<path
+				d="M12.7 4.1c.2.2.3.6.1.8L8.6 9.8c-.1.1-.2.2-.3.2-.2.1-.5.1-.7-.1L5.4 7.7c-.2-.2-.2-.6 0-.8.2-.2.6-.2.8 0L8 8.6l3.8-4.5c.2-.2.6-.2.9 0z"
+				style="fill:#06f"
+			></path>
+		</svg>
+	
+			<span>Your Privacy Choices</span></a
+		>
+	
+	</div>
+				<div class="flex-shrink-0">
+		<div class="dropdown has-caret-up">
+			<button
+				data-test-id="theme-selector-button"
+				class="dropdown-trigger button button-clear button-sm inner-focus theme-dropdown-trigger"
+				aria-controls="{{ themeMenuId }}"
+				aria-haspopup="true"
+				aria-expanded="false"
+				data-bi-name="theme"
+			>
+				<span class="icon" aria-hidden="true"><span class="docon docon-sun"></span></span>
+				<span>Theme</span>
+				<span class="icon expanded-indicator" aria-hidden="true">
+					<span class="docon docon-chevron-down-light"></span>
+				</span>
+			</button>
+			<div class="dropdown-menu" id="{{ themeMenuId }}" role="menu">
+				<ul class="theme-selector padding-xxs" data-test-id="theme-dropdown-menu" role="none">
+					<li class="theme display-block" role="none">
+						<button
+							class="button button-clear button-sm theme-control button-block justify-content-flex-start text-align-left"
+							role="menuitemradio"
+							aria-checked="false"
+							data-theme-to="light"
+							tabindex="-1"
+						>
+							<span class="theme-light margin-right-xxs">
+								<span
+									class="theme-selector-icon border display-inline-block has-body-background"
+									aria-hidden="true"
+								>
+									<svg class="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 14">
+										<rect width="22" height="14" class="has-fill-body-background" />
+										<rect x="5" y="5" width="12" height="4" class="has-fill-secondary" />
+										<rect x="5" y="2" width="2" height="1" class="has-fill-secondary" />
+										<rect x="8" y="2" width="2" height="1" class="has-fill-secondary" />
+										<rect x="11" y="2" width="3" height="1" class="has-fill-secondary" />
+										<rect x="1" y="1" width="2" height="2" class="has-fill-secondary" />
+										<rect x="5" y="10" width="7" height="2" rx="0.3" class="has-fill-primary" />
+										<rect x="19" y="1" width="2" height="2" rx="1" class="has-fill-secondary" />
+									</svg>
+								</span>
+							</span>
+							<span> Light </span>
+						</button>
+					</li>
+					<li class="theme display-block" role="none">
+						<button
+							class="button button-clear button-sm theme-control button-block justify-content-flex-start text-align-left"
+							role="menuitemradio"
+							aria-checked="false"
+							data-theme-to="dark"
+							tabindex="-1"
+						>
+							<span class="theme-dark margin-right-xxs">
+								<span
+									class="border theme-selector-icon display-inline-block has-body-background"
+									aria-hidden="true"
+								>
+									<svg class="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 14">
+										<rect width="22" height="14" class="has-fill-body-background" />
+										<rect x="5" y="5" width="12" height="4" class="has-fill-secondary" />
+										<rect x="5" y="2" width="2" height="1" class="has-fill-secondary" />
+										<rect x="8" y="2" width="2" height="1" class="has-fill-secondary" />
+										<rect x="11" y="2" width="3" height="1" class="has-fill-secondary" />
+										<rect x="1" y="1" width="2" height="2" class="has-fill-secondary" />
+										<rect x="5" y="10" width="7" height="2" rx="0.3" class="has-fill-primary" />
+										<rect x="19" y="1" width="2" height="2" rx="1" class="has-fill-secondary" />
+									</svg>
+								</span>
+							</span>
+							<span> Dark </span>
+						</button>
+					</li>
+					<li class="theme display-block" role="none">
+						<button
+							class="button button-clear button-sm theme-control button-block justify-content-flex-start text-align-left"
+							role="menuitemradio"
+							aria-checked="false"
+							data-theme-to="high-contrast"
+							tabindex="-1"
+						>
+							<span class="theme-high-contrast margin-right-xxs">
+								<span
+									class="border theme-selector-icon display-inline-block has-body-background"
+									aria-hidden="true"
+								>
+									<svg class="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 14">
+										<rect width="22" height="14" class="has-fill-body-background" />
+										<rect x="5" y="5" width="12" height="4" class="has-fill-secondary" />
+										<rect x="5" y="2" width="2" height="1" class="has-fill-secondary" />
+										<rect x="8" y="2" width="2" height="1" class="has-fill-secondary" />
+										<rect x="11" y="2" width="3" height="1" class="has-fill-secondary" />
+										<rect x="1" y="1" width="2" height="2" class="has-fill-secondary" />
+										<rect x="5" y="10" width="7" height="2" rx="0.3" class="has-fill-primary" />
+										<rect x="19" y="1" width="2" height="2" rx="1" class="has-fill-secondary" />
+									</svg>
+								</span>
+							</span>
+							<span> High contrast </span>
+						</button>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+			</div>
+			<ul class="links" data-bi-name="footerlinks">
+				<li class="manage-cookies-holder" hidden=""></li>
+				<li>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://learn.microsoft.com/en-us/principles-for-ai-generated-content"
+			data-bi-name="aiDisclaimer"
+			class=" external-link-indicator"
+			id=""
+			title=""
+			>AI Disclaimer</a
+		>
+	
+	</li><li>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://learn.microsoft.com/en-us/previous-versions/"
+			data-bi-name="archivelink"
+			class=" external-link-indicator"
+			id=""
+			title=""
+			>Previous Versions</a
+		>
+	
+	</li> <li>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://techcommunity.microsoft.com/t5/microsoft-learn-blog/bg-p/MicrosoftLearnBlog"
+			data-bi-name="bloglink"
+			class=" external-link-indicator"
+			id=""
+			title=""
+			>Blog</a
+		>
+	
+	</li> <li>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://learn.microsoft.com/en-us/contribute"
+			data-bi-name="contributorGuide"
+			class=" external-link-indicator"
+			id=""
+			title=""
+			>Contribute</a
+		>
+	
+	</li><li>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://go.microsoft.com/fwlink/?LinkId=521839"
+			data-bi-name="privacy"
+			class=" external-link-indicator"
+			id=""
+			title=""
+			>Privacy</a
+		>
+	
+	</li><li>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://go.microsoft.com/fwlink/?linkid=2259814"
+			data-bi-name="consumer-health-privacy"
+			class=" external-link-indicator"
+			id=""
+			title=""
+			>Consumer Health Privacy</a
+		>
+	
+	</li><li>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://learn.microsoft.com/en-us/legal/termsofuse"
+			data-bi-name="termsofuse"
+			class=" external-link-indicator"
+			id=""
+			title=""
+			>Terms of Use</a
+		>
+	
+	</li><li>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://www.microsoft.com/legal/intellectualproperty/Trademarks/"
+			data-bi-name="trademarks"
+			class=" external-link-indicator"
+			id=""
+			title=""
+			>Trademarks</a
+		>
+	
+	</li>
+				<li>&copy; Microsoft 2026</li>
+			</ul>
+		</footer>
+	</footer>
+			</body>
+		</html>

@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 import re
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +19,7 @@ DEFAULT_DATASET = "store_checkout_001"
 TASK_FILE_PREVIEW_ROOT = NEW_DATA_DIR / "task_assets"
 TASK_FILE_PREVIEW_LIMIT = 40_000
 SOURCE_URL_STOP_HEADINGS = ("## Original resources", "## Project", "## Archived original")
+ACTIVE_RELEASE_PATH = ROOT / "data" / "active_release.json"
 EDITABLE_CASE_FIELDS = {
     "task",
     "target",
@@ -397,15 +399,17 @@ def append_cases(new_cases: list[dict[str, Any]]) -> None:
     write_cases(cases)
 
 
+@lru_cache(maxsize=1)
+def active_release() -> dict[str, Any]:
+    release = json.loads(ACTIVE_RELEASE_PATH.read_text(encoding="utf-8"))
+    ids = [case_id for values in release["datasets"].values() for case_id in values]
+    if len(ids) != release["case_count"] or len(set(ids)) != len(ids):
+        raise ValueError("Active release must contain the declared number of unique cases")
+    return release
+
+
 def list_file_datasets() -> list[str]:
-    names = []
-    for path in data_files():
-        try:
-            read_case_file(path)
-        except (OSError, ValueError, json.JSONDecodeError):
-            continue
-        names.append(path.stem)
-    return names
+    return sorted(active_release()["datasets"])
 
 
 NUMBERED_DATASET_RE = re.compile(r"^(?P<group>.+)_\d{3}$")
@@ -428,21 +432,7 @@ def dataset_member_names(dataset: str) -> list[str]:
 
 
 def data_files() -> list[Path]:
-    paths: list[Path] = []
-    if NEW_DATA_DIR.exists():
-        paths.extend(sorted(NEW_DATA_DIR.glob("*.jsonl")))
-        paths.extend(sorted(NEW_DATA_DIR.glob("*.json")))
-    if not paths and DATA_DIR.exists():
-        paths.extend(sorted(DATA_DIR.glob("*.json")))
-    seen = set()
-    unique_paths = []
-    for path in paths:
-        key = path.stem
-        if key in seen:
-            continue
-        seen.add(key)
-        unique_paths.append(path)
-    return unique_paths
+    return [dataset_path(name) for name in list_file_datasets()]
 
 
 def dataset_path(dataset: str) -> Path:
@@ -494,8 +484,14 @@ def read_json_objects(text: str, path: Path) -> list[dict[str, Any]]:
 
 
 def read_file_dataset(dataset: str) -> list[dict[str, Any]]:
+    allowed = active_release()["datasets"].get(dataset)
+    if allowed is None:
+        return []
     path = dataset_path(dataset)
     data = read_case_file(path)
+    data = [case for case in data if case.get("id") in allowed]
+    if sorted(case["id"] for case in data) != sorted(allowed):
+        raise ValueError(f"{dataset}: missing or duplicate active release cases")
     return [enrich_case(case, storage_origin="local_file", data_file=path.name, dataset=dataset) for case in data]
 
 

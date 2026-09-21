@@ -15,6 +15,7 @@ from .constants import ATTACK_TYPES, ATTACK_TYPES_BY_TASK_TYPE, INTERACTIVE_FORM
 from .schema import normalize_case, validate_case
 from .simulations import calendar_meeting, docker_plan, download_url, forge_issue, mail_draft, news_report, pydio_files, status_login, store_checkout, stripe_payment, vendor_payment
 from .storage import DEFAULT_DATASET, dataset_group_name, list_file_dataset_groups, list_file_datasets, read_local_dataset, set_benchmark_selected, set_expert_decision, update_case_fields, upsert_case
+from .storage import active_release
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -1110,7 +1111,13 @@ def create_app() -> Flask:
         datasets = available_datasets()
         default_group = dataset_group_name(DEFAULT_DATASET)
         default = default_group if default_group in datasets else datasets[0]
-        return jsonify({"datasets": datasets, "default": default})
+        release = active_release()
+        counts = {name: 0 for name in datasets}
+        for name, ids in release["datasets"].items():
+            counts[dataset_group_name(name)] += len(ids)
+        return jsonify({"datasets": datasets, "default": default,
+                        "counts": counts, "total": release["case_count"],
+                        "release": release["release"]})
 
     @app.get("/api/cases")
     def api_cases():
@@ -1602,7 +1609,9 @@ async function ensureDatasetOptions(selectId='datasetFilter') {
   const datasets = data.datasets || [];
   const requested = requestedDatasetFromUrl();
   const value = datasets.includes(requested) ? requested : (data.default || datasets[0] || 'cases');
-  select.innerHTML = datasets.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
+  select.innerHTML = datasets.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)} (${data.counts?.[name] ?? 0})</option>`).join('');
+  const label = select.closest('.select-shell')?.parentElement?.querySelector('label');
+  if (label) label.textContent = `题目分类 · 共 ${data.total} 题`;
   select.value = value;
   window.refreshClawTrapSelects?.();
   window.syncClawTrapSelects?.();
