@@ -16,6 +16,7 @@ from .schema import normalize_case, validate_case
 from .simulations import calendar_meeting, docker_plan, download_url, forge_issue, mail_draft, news_report, pydio_files, status_login, store_checkout, stripe_payment, vendor_payment
 from .storage import DEFAULT_DATASET, dataset_group_name, list_file_dataset_groups, list_file_datasets, read_local_dataset, set_benchmark_selected, set_expert_decision, update_case_fields, upsert_case
 from .storage import active_release
+from .review_workspace import blueprint as review_blueprint, workspace_page
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -639,12 +640,13 @@ def create_app() -> Flask:
     load_dotenv()
     app = Flask(__name__)
     app.secret_key = os.environ.get("SECRET_KEY", "dev-only-change-me")
+    app.register_blueprint(review_blueprint)
 
     @app.get("/")
     def index():
         if not can_access_workspace():
             return redirect("/login")
-        return menu_page(session["username"])
+        return workspace_page('review')
 
     @app.get("/design")
     def design():
@@ -656,19 +658,25 @@ def create_app() -> Flask:
     def review():
         if not can_access_workspace():
             return redirect("/login")
-        return review_page(session["username"])
+        return workspace_page('review')
+
+    @app.get("/diversity")
+    def diversity():
+        if not can_access_workspace():
+            return redirect("/login")
+        return workspace_page('diversity')
 
     @app.get("/scenes")
     def scenes():
         if not can_access_workspace():
             return redirect("/login")
-        return scenes_page(session["username"])
+        return workspace_page('diversity')
 
     @app.get("/benchmark")
     def benchmark():
         if not can_access_workspace():
             return redirect("/login")
-        return benchmark_page(session["username"])
+        return workspace_page('benchmark')
 
     @app.get("/attack-assets/<path:asset_path>")
     def attack_asset(asset_path: str):

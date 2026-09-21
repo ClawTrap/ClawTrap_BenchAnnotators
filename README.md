@@ -7,6 +7,16 @@
 
 与同级 `claw_trap` 的受控实验集成、私有 ledger 和本次服务端改动见 [INTEGRATION_CHANGES.md](INTEGRATION_CHANGES.md)；实际运行从 [`../claw_trap/HowToUse_README.md`](../claw_trap/HowToUse_README.md) 开始。
 
+## 设计审核工作区
+
+- `/review`：以题目自身的 `scenario.domain` / `scenario.workflow` 标签为审核基准，展示类别设计参考、实际任务、原始/攻击值、判定依据与原始 HTML 对照。没有对应参考的类别保留原始标签，不重新归类。
+- `/diversity`（原 `/scenes` 入口同样可用）：按当前筛选统计类别、来源网站、改动模式和归一化题面模板；支持最多三题并排比较。这些统计是人工检查线索，不是自动质量分数。
+- `/benchmark`：查看已保留的题目及分布，导出审核记录。
+
+审核判断、问题标签和备注保存在 `design_review`，沿用既有数据库或本地 `data/cases.json` 持久化。不会改写 `new_data` 中的题面或 HTML。切题时暂存的未保存意见保留在当前浏览器会话，点击“保存意见”才写入服务端。判定可单独保存或撤销。
+
+新工作区的目录和详情接口仅允许登录的人工审核账号访问，不接受实验代理令牌。检查命令：`python scripts/check_review_workspace.py`，以及 `python scripts/check_review_release.py`。
+
 ## 数据格式
 
 当前审核网站按 `data/active_release.json` 上线清单加载 `new_data/` 中的完整 400 题，对应交付包 `deliverables/scenario_intake_v1_400_20260820_release.tar.gz`。该交付包本身是来源材料包，完整题面、攻击实现和评分文件仍位于 `new_data/`。

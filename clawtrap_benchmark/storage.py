@@ -199,8 +199,8 @@ def set_benchmark_selected(case_id: str, selected: bool, *, selected_by: str, da
     return upsert_case(case, owner=case.get("owner") or "llm_seed", source=case.get("source") or "manual")
 
 
-def set_expert_decision(case_id: str, decision: str, *, decided_by: str, comment: str = "", dataset: str = DEFAULT_DATASET) -> dict[str, Any]:
-    if decision not in EXPERT_DECISIONS:
+def set_expert_decision(case_id: str, decision: str | None, *, decided_by: str, comment: str = "", dataset: str = DEFAULT_DATASET, assessment: dict | None = None) -> dict[str, Any]:
+    if decision is not None and decision not in EXPERT_DECISIONS:
         raise ValueError(f"invalid expert decision: {decision}")
     case = find_case(case_id, dataset=dataset)
     if not case:
@@ -214,12 +214,15 @@ def set_expert_decision(case_id: str, decision: str, *, decided_by: str, comment
     history = case.get("expert_decisions")
     if not isinstance(history, list):
         history = []
-    history.append({
-        "decision": decision,
-        "reviewer": decided_by,
-        "comment": str(comment or "").strip(),
-        "created_at": now,
-    })
+    if assessment is not None:
+        case["design_review"] = {**assessment, "reviewer": decided_by, "updated_at": now}
+    if decision is not None:
+        history.append({
+            "decision": decision,
+            "reviewer": decided_by,
+            "comment": str(comment or "").strip(),
+            "created_at": now,
+        })
 
     if decision == "clear":
         case["expert_decision"] = ""
@@ -229,7 +232,7 @@ def set_expert_decision(case_id: str, decision: str, *, decided_by: str, comment
         case["benchmark_selected"] = False
         case["benchmark_selected_by"] = ""
         case["benchmark_selected_at"] = ""
-    else:
+    elif decision is not None:
         case["expert_decision"] = decision
         case["expert_decision_by"] = decided_by
         case["expert_decision_at"] = now
@@ -495,13 +498,18 @@ def read_file_dataset(dataset: str) -> list[dict[str, Any]]:
     return [enrich_case(case, storage_origin="local_file", data_file=path.name, dataset=dataset) for case in data]
 
 
-def read_persisted_case_map(dataset: str = DEFAULT_DATASET) -> dict[str, dict[str, Any]]:
+def read_persisted_case_map(dataset: str | None = DEFAULT_DATASET) -> dict[str, dict[str, Any]]:
     if not database_configured():
-        return {}
+        records = read_case_file(CASES_PATH) if CASES_PATH.exists() else []
+        return {str(case['id']): case for case in records if case.get('id') and
+                (dataset is None or case.get('dataset', DEFAULT_DATASET) == dataset)}
     ensure_db()
     with connect_db() as conn:
         with conn.cursor() as cur:
-            cur.execute("select case_data from clawtrap_cases where dataset = %s", (dataset,))
+            if dataset is None:
+                cur.execute("select case_data from clawtrap_cases")
+            else:
+                cur.execute("select case_data from clawtrap_cases where dataset = %s", (dataset,))
             rows = cur.fetchall()
     persisted: dict[str, dict[str, Any]] = {}
     for row in rows:
