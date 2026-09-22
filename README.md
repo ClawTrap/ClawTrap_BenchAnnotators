@@ -218,4 +218,26 @@ www.clawtrap.cn
 - `www.clawtrap.cn` 配 `CNAME` 到 Vercel 指定域名。
 
 DNS 生效后，Vercel 会自动签发 HTTPS 证书。
+### Snapshot Packaging on Vercel
+
+Vercel uses the Flask entrypoint `app.py` and runs
+`python3 scripts/build_preview_bundle.py` before packaging the function.
+The build creates `runtime_assets/previews.zip`, verifies every decompressed
+file against its original SHA-256, and copies only UI static files to
+`public/static`. Generated outputs are not committed.
+
+The function excludes uncompressed clean/attack assets and archived HTML;
+the original files remain unchanged in Git. Source provenance markdown,
+task data, mount manifests and private evaluators remain available to the
+server. Preview routes retain authentication and read one ZIP member at a
+time, returning the exact original bytes. The ZIP is not a public download.
+Local development still reads the original asset directories.
+
+To verify both integrity and the 400-case review routes without raw assets:
+
+```bash
+python3 scripts/build_preview_bundle.py
+python3 scripts/check_preview_bundle.py
+```
+
 # ClawTrap_BenchAnnotators

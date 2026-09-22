@@ -8,7 +8,8 @@ import re
 from typing import Any
 from uuid import uuid4
 
-from flask import Flask, jsonify, redirect, request, send_from_directory, session
+from flask import Flask, jsonify, redirect, request, session
+from .preview_assets import send_preview as send_from_directory
 
 from .auth import authenticate
 from .constants import ATTACK_TYPES, ATTACK_TYPES_BY_TASK_TYPE, INTERACTIVE_FORMS, TASK_TYPES
