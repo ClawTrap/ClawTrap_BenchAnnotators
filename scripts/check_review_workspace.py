@@ -29,7 +29,7 @@ def main():
             response = client.get('/api/review/catalog')
             assert response.status_code == 200
             rows = response.get_json()['cases']
-            assert len(rows) == len({r['id'] for r in rows}) == 400
+            assert len(rows) == len({r['id'] for r in rows}) == storage.active_release()['case_count']
             for row in rows:
                 assert row['scenario_key'] == row['declared_workflow']
                 assert row['domain'] == row['declared_domain']
@@ -60,7 +60,7 @@ def main():
             with patch.dict('os.environ', CLAWTRAP_LAB_PROXY_TOKEN='test-proxy'):
                 assert client.get('/api/review/catalog', headers={'X-ClawTrap-Lab-Proxy':'test-proxy'}).status_code == 401
     assert hashlib.sha256(source.read_bytes()).hexdigest() == before
-    print(json.dumps(dict(cases=400, own_labels_preserved=True, source_unchanged=True,
+    print(json.dumps(dict(cases=len(rows), own_labels_preserved=True, source_unchanged=True,
                           notes_persist=True, decision_and_undo=True, human_auth_required=True), indent=2))
 
 

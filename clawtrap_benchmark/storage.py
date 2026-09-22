@@ -408,6 +408,19 @@ def active_release() -> dict[str, Any]:
     ids = [case_id for values in release["datasets"].values() for case_id in values]
     if len(ids) != release["case_count"] or len(set(ids)) != len(ids):
         raise ValueError("Active release must contain the declared number of unique cases")
+    exclusion_file = release.get("excluded_cases_file")
+    if exclusion_file:
+        rows = json.loads((ROOT / exclusion_file).read_text(encoding="utf-8"))
+        excluded = {row["scenario_id"] for row in rows}
+        if excluded - set(ids):
+            raise ValueError("Review exclusions contain cases outside the source release")
+        release["source_case_count"] = release["case_count"]
+        release["datasets"] = {
+            dataset: remaining
+            for dataset, values in release["datasets"].items()
+            if (remaining := [case_id for case_id in values if case_id not in excluded])
+        }
+        release["case_count"] = len(ids) - len(excluded)
     return release
 
 

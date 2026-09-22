@@ -233,7 +233,13 @@ server. Preview routes retain authentication and read one ZIP member at a
 time, returning the exact original bytes. The ZIP is not a public download.
 Local development still reads the original asset directories.
 
-To verify both integrity and the 400-case review routes without raw assets:
+The source release contains 400 cases. `data/active_release.json` references
+`excluded_cases.json` for the current review round: its 38 excluded case IDs
+are omitted from review lists, category counts, diversity statistics and
+review detail/save endpoints, leaving 362 reviewable cases. Source files,
+snapshots and previous review records are retained.
+
+To verify both integrity and the current review routes without raw assets:
 
 ```bash
 python3 scripts/build_preview_bundle.py
