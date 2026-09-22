@@ -141,6 +141,7 @@ def describe(case):
         source=url, host=urlsplit(url).hostname or '来源未记录',
         pattern=pattern, task_pattern=task_pattern(case.get('task', '')),
         flags=flags, forms=case.get('interactive_form', []),
+        attack_form=attack.get('channel') or ' / '.join(case.get('interactive_form', [])),
         task=case.get('task', ''), target=case.get('target', ''),
         transformation=attack.get('transformation') or case.get('attack_method', ''),
         timing=attack.get('timing', ''), logic=case.get('logic', ''),

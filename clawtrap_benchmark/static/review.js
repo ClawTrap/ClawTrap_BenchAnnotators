@@ -12,6 +12,9 @@ function safeURL(value) { try {const u=new URL(value,location.origin);return val
 function link(value,label) {const url=safeURL(value);return url?`<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(label)}${icon('arrow-up-right')}</a>`:'';}
 function option(value,label,current) {return `<option value="${esc(value)}" ${value===current?'selected':''}>${esc(label)}</option>`;}
 function current() {return state.rows.find(r=>r.id===state.selected);}
+function readingText(value) {
+  return esc(value).replace(/`([^`]+)`|\[([^\]\n]+)\]/g, (match,code,key)=>code?`<strong class="inline-value">${code}</strong>`:`<span class="file-key">[${key}]</span>`);
+}
 function toast(message) {$('#toast').textContent=message;$('#toast').classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('#toast').classList.remove('show'),3500);}
 async function api(url,options) {
   const response=await fetch(url,options);
@@ -35,7 +38,7 @@ function render() {
     <select id="status" aria-label="审核状态" ${state.busy?'disabled':''}>${option('','全部状态',state.status)}${option('pending','未审核',state.status)}${Object.entries(labels).filter(([k])=>k).map(([k,v])=>option(k,v,state.status)).join('')}</select>
     <div class="case-nav"><span>${r?index+1:0} / ${state.visible.length}</span><button class="icon" data-action="prev" title="上一题" aria-label="上一题" ${index<=0||state.busy?'disabled':''}>${icon('chevron-left')}</button><button class="icon" data-action="next" title="下一题" aria-label="下一题" ${index>=state.visible.length-1||state.busy?'disabled':''}>${icon('chevron-right')}</button></div></section>
     ${r?`<section class="brief"><div class="heading"><div><div class="eyebrow">${esc(r.domain_title)}</div><h1>${esc(r.scenario_title)}</h1><div class="identity">${esc(r.id)}<span title="原始类别标签">${esc(r.declared_workflow)}</span></div></div><span class="status ${esc(r.decision||'pending')}">${labels[r.decision]||labels['']}</span></div>
-      <div class="brief-columns"><section><h2>任务</h2><p>${esc(r.task)}</p><div id="task-files"></div></section><section><h2>攻击描述</h2><p>${esc(r.transformation||r.target)}</p>${r.original||r.changed?`<dl class="changes"><dt>原始</dt><dd>${esc(r.original||'见原始页面')}</dd><dt>攻击</dt><dd>${esc(r.changed||'见攻击页面')}</dd></dl>`:''}</section></div></section>
+      <div class="brief-columns"><section class="reading-task"><h2>${icon('file-text')}任务文本</h2><p>${readingText(r.task)}</p><div id="task-files"></div></section><section class="reading-attack"><div class="attack-form"><h2>${icon('layers')}攻击形式</h2><p>${esc(r.attack_form||(r.forms||[]).join(' / ')||'未单独声明')}</p></div><h2>${icon('file-diff')}具体篡改</h2><p>${readingText(r.transformation||r.target)}</p>${r.original||r.changed?`<dl class="changes"><dt>原始值</dt><dd><mark class="original-value">${esc(r.original||'见原始页面')}</mark></dd><dt>攻击值</dt><dd><mark class="changed-value">${esc(r.changed||'见攻击页面')}</mark></dd></dl>`:''}</section></div></section>
       <section class="previews" aria-label="HTML 页面对照"><div class="preview-toolbar"><h2>页面对照</h2><div class="preview-options">${(r.assets||[]).length>1?`<select id="asset" aria-label="预览资产">${r.assets.map((a,i)=>option(String(i),a.title||`页面 ${i+1}`,String(state.asset))).join('')}</select>`:''}<div class="segmented">${[['split','并排'],['clean','原始'],['attack','攻击']].map(([k,v])=>`<button data-mode="${k}" aria-pressed="${state.mode===k}">${v}</button>`).join('')}</div></div></div><div id="frames"></div></section>
       ${judgment(r)}`:'<section class="empty"><h1>没有匹配的题目</h1><button data-action="reset">查看全部题目</button></section>'}`;
   if(r){renderFrames();loadFiles(r);const u=new URL(location);u.searchParams.set('case',r.id);u.searchParams.set('dataset',r.dataset);history.replaceState(null,'',u);}

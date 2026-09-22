@@ -33,6 +33,7 @@ def main():
             for row in rows:
                 assert row['scenario_key'] == row['declared_workflow']
                 assert row['domain'] == row['declared_domain']
+                assert isinstance(row['attack_form'], str)
             row = next(r for r in rows if r['dataset'] == 'academic_citation_tamper_001')
             endpoint = '/api/review/cases/' + row['id']
             assessment = dict(checks=dict(intent='pass', causality='question', realism='pass', diversity='fail'),
@@ -51,6 +52,10 @@ def main():
             assert response.status_code == 200 and not response.get_json()['selected']
             assert client.post(endpoint, json=dict(assessment={'checks': {'intent': 'invented'}})).status_code == 400
             assert client.get('/api/review/cases/unknown').status_code == 404
+            assert b'/static/diversity.js' in client.get('/diversity').data
+            assert b'/static/review.js' in client.get('/review').data
+            assert client.get('/static/diversity.css').status_code == 200
+            assert client.get('/static/diversity.js').status_code == 200
             for route in ('/', '/review', '/scenes', '/diversity', '/benchmark', '/static/review.css', '/static/review.js', '/static/vendor/lucide.min.js'):
                 response = client.get(route)
                 assert response.status_code == 200, route
