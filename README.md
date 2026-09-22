@@ -9,17 +9,17 @@
 
 ## 设计审核工作区
 
-- `/review`：以题目自身的 `scenario.domain` / `scenario.workflow` 标签为审核基准，展示类别设计参考、实际任务、原始/攻击值、判定依据与原始 HTML 对照。没有对应参考的类别保留原始标签，不重新归类。
-- `/diversity`（原 `/scenes` 入口同样可用）：按当前筛选统计类别、来源网站、改动模式和归一化题面模板；支持最多三题并排比较。这些统计是人工检查线索，不是自动质量分数。
-- `/benchmark`：查看已保留的题目及分布，导出审核记录。
+- `/review`：单页展示题目自身类别、任务、攻击描述，以及原始 / 攻击 HTML；默认并排预览，支持单页展开和原网页链接。
+- 使用类型、题目和审核状态选择器切题，底部直接选择保留、待讨论或排除，可选填备注。任务引用文件默认折叠。
+- `/benchmark` 默认筛选已保留题目；旧 `/diversity` 和 `/scenes` 地址兼容精简审核页，不再展示统计图表。
 
-审核判断、问题标签和备注保存在 `design_review`，沿用既有数据库或本地 `data/cases.json` 持久化。不会改写 `new_data` 中的题面或 HTML。切题时暂存的未保存意见保留在当前浏览器会话，点击“保存意见”才写入服务端。判定可单独保存或撤销。
+备注保存在 `design_review`，沿用既有数据库或本地 `data/cases.json` 持久化。历史分项判断和问题标签保留，不因精简界面被清空。不会改写 `new_data` 中的题面或 HTML。切题时未保存的备注保留在当前浏览器会话，点击“保存备注”或判定按钮写入服务端。判定可以撤销。
 
 新工作区的目录和详情接口仅允许登录的人工审核账号访问，不接受实验代理令牌。检查命令：`python scripts/check_review_workspace.py`，以及 `python scripts/check_review_release.py`。
 
 ## 数据格式
 
-当前审核网站按 `data/active_release.json` 上线清单加载 `new_data/` 中的完整 400 题，对应交付包 `deliverables/scenario_intake_v1_400_20260820_release.tar.gz`。该交付包本身是来源材料包，完整题面、攻击实现和评分文件仍位于 `new_data/`。
+原始发布集为 400 题，本轮按 `data/active_release.json` 和 `excluded_cases.json` 排除 38 题后审核 362 题，对应交付包 `deliverables/scenario_intake_v1_400_20260820_release.tar.gz`。该交付包本身是来源材料包，完整题面、攻击实现和评分文件仍位于 `new_data/`。
 
 审核页按题目分类分组并显示每类数量及总数。未列入上线清单的旧 demo 不再出现在审核页、原始库或 Benchmark 集合中；历史文件和审核记录保留。发布时必须同时包含上线清单及其引用的全部 `new_data` 文件和资产；修改上线清单后重启服务。
 
