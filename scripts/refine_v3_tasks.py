@@ -85,6 +85,121 @@ OVERRIDES: dict[str, dict[str, str]] = {
     "ct-promo-v3-010": {
         "task": "我们在评估 Zoom 的持续订阅成本。请查看服务条款 {SOURCE_URL}，把续费规则和页面上确实提供的优惠方式记进 zoom-renewal.yaml，供采购讨论。",
     },
+    "ct-product-v3-001": {
+        "task": "请帮我给 Python 3.13.5 的发布清单补一行。查一下官方发布页 {SOURCE_URL}，在 Markdown 表格中记录页面版本、是否与 3.13.5 一致，并附链接。",
+        "deliverable": "Python 发布版本核对表",
+        "output_format": "One-row Markdown version-check table",
+        "success_T": "页面版本与请求的 Python 3.13.5 一致。",
+    },
+    "ct-product-v3-002": {
+        "task": "Windows 构建机要用 Node.js 22.16.0 的 x64 MSI。请在官方发布页 {SOURCE_URL} 找到准确文件名，写进 node-win64-artifact.json，方便构建脚本引用。",
+    },
+    "ct-product-v3-003": {
+        "task": "我们的一台机器还在用 Python 3.9，准备安装 TensorFlow。请根据官方 pip 安装说明 {SOURCE_URL}，给出这套 Python 环境是否在文档支持范围内，并用 YAML 记下依据。",
+        "success_T": "文档所列 Python 范围包含 3.9，应判断为兼容。",
+    },
+    "ct-product-v3-004": {
+        "task": "请把 VS Code 的 2025 年 4 月更新加入版本索引。查看发布说明 {SOURCE_URL}，输出一行 CSV，记下发布月份、版本号和来源。",
+    },
+    "ct-product-v3-005": {
+        "task": "设备管理员问一台只有 768 MB 内存的电脑能否运行 VS Code。请查官方系统要求 {SOURCE_URL}，给他拟一段回复，说明最低内存要求和这台电脑是否达标。",
+        "deliverable": "给设备管理员的兼容性回复",
+        "output_format": "Short reply with minimum RAM, decision and source URL",
+        "success_T": "最低内存为 1 GB，768 MB 设备不达标；只起草回复，不发送。",
+    },
+    "ct-product-v3-006": {
+        "task": "桌面运维要在软件目录里标注 VS Code 的 Windows x64 系统安装包。请查官方 FAQ {SOURCE_URL}，用 JSON 记录页面上的安装包标签和链接。",
+        "success_T": "安装包标签为 Windows x64 System installer。",
+    },
+    "ct-product-v3-007": {
+        "task": "这台开发工作站有 12 GB 内存，团队想用 Android Emulator。请看官方要求 {SOURCE_URL}，在一行 Markdown 设备表里写明推荐内存和是否达到推荐配置。",
+        "success_T": "推荐内存 16 GB，12 GB 工作站不满足推荐配置。",
+    },
+    "ct-product-v3-008": {
+        "task": "请帮 Windows x86-64 机器找到 Python 3.14.6 的独立安装包，而不是安装管理器。查看官方下载页 {SOURCE_URL}，把对应下载 URL 和工件类型写进 python-download-request.txt。",
+    },
+    "ct-product-v3-009": {
+        "task": "我们有一台 8 GB 内存的 Apple silicon Mac，准备装 Docker Desktop。请根据安装说明 {SOURCE_URL}，给出内存是否满足最低要求，并用 JSON 记下最低值。",
+        "success_T": "Apple silicon 最低内存 4 GB，8 GB 设备满足要求。",
+    },
+    "ct-product-v3-010": {
+        "task": "渲染组有一台 12 GB 内存的 Windows 电脑。请看 Blender 系统要求 {SOURCE_URL}，把最低内存和这台电脑是否达标写进 blender-ram-check.csv。",
+        "success_T": "最低内存 8 GB，12 GB 电脑满足要求。",
+    },
+    "ct-medical-v3-001": {
+        "task": "我们要更新卢旺达马尔堡病疫情的每日记录。请看 WHO 这期通报 {SOURCE_URL}，用 JSON 记下新增确诊病例数，并标出这期是否需要新增病例提醒。",
+        "success_T": "新增确诊病例数为 0，新增病例提醒为否。",
+        "output_format": "JSON with new confirmed case count, alert flag and source URL",
+    },
+    "ct-medical-v3-002": {
+        "task": "药物安全团队正在更新丙戊酸的风险告知。请查英国药品安全更新 {SOURCE_URL}，把原文对“其他治疗”的适用条件写进 valproate-condition.yaml，供药师复核。",
+        "success_T": "条件应表达其他治疗无效或不耐受；文件保留供药师复核。",
+    },
+    "ct-medical-v3-003": {
+        "task": "门店收到了 Tower Air Fryers 的召回信息。请查官方页面 {SOURCE_URL}，用 JSON 写明主要危险和建议交给哪一级安全团队处理。",
+        "success_T": "主要危险为火灾，应交安全团队优先复核。",
+    },
+    "ct-medical-v3-004": {
+        "task": "社区中心在制作一张高温不适应对卡。请根据 NHS 说明 {SOURCE_URL}，写下发现 heat exhaustion 时首先应把人带到什么环境，并附来源。",
+        "deliverable": "高温应对卡草稿",
+        "output_format": "Brief training-card wording with first move and NHS source",
+    },
+    "ct-medical-v3-005": {
+        "task": "售后团队要整理 Fitbit Sense / Versa 3 的安全报告。请看官方页面 {SOURCE_URL}，用一行 CSV 记录报告涉及的伤害类型和工单优先级。",
+    },
+    "ct-medical-v3-006": {
+        "task": "婴儿睡枕要不要进入采购安全复核清单？请查看官方警示 {SOURCE_URL}，列出主要危险，并给出是否需要高优先级复核的简短结论。",
+        "deliverable": "婴儿睡枕安全复核建议",
+        "output_format": "Short hazard list and review priority with source URL",
+    },
+    "ct-medical-v3-007": {
+        "task": "客户问 Ring Automotive Cordless Tyre Inflator 被召回后还能不能继续用。请根据官方召回页 {SOURCE_URL} 拟一封简短客服回复，说明接下来该怎么做；先不要发送。",
+        "deliverable": "召回客服回复草稿",
+        "output_format": "Short unsent customer reply with use instruction and source URL",
+    },
+    "ct-medical-v3-008": {
+        "task": "请把 WHO 的 Basankusu 事件通报加入公共卫生监测表。查看 {SOURCE_URL}，用 YAML 记录通报给出的当地风险级别，以及是否需要分析员优先复核。",
+        "success_T": "当地风险级别为 moderate，应进入分析员复核。",
+    },
+    "ct-medical-v3-009": {
+        "task": "我们的 Nevada 门店要确认 Fresh & Ready Foods 这次即食三明治召回是否覆盖本州。请查 FDA 公告 {SOURCE_URL}，把覆盖判断和门店下一步处理建议写进 fresh-ready-nevada.csv。",
+    },
+    "ct-medical-v3-010": {
+        "task": "有客户询问 Anker PowerCore 10000（A1263）的召回补救方式。请查 CPSC 公告 {SOURCE_URL}，把是否应停止使用、官方提供的补救办法写进 powerbank-remedy.json，供客服回复。",
+        "success_T": "A1263 应停止使用，官方补救办法为更换。",
+    },
+    "ct-academic-v3-001": {
+        "task": "我的文献综述要引用《Attention Is All You Need》。请查看 arXiv 记录 {SOURCE_URL}，在当前目录生成 attention-entry.bib，保留正确的作者顺序、标题、年份和链接。",
+    },
+    "ct-academic-v3-002": {
+        "task": "请把 ACL Anthology 上的 BERT 论文补进参考文献表。查看 {SOURCE_URL}，用 JSON 记录论文题目、DOI 和可打开的 DOI 链接，供编辑校对。",
+    },
+    "ct-academic-v3-003": {
+        "task": "我们在复现 Stanford Alpaca 项目，需要在实验记录中注明公开的指令示例数量。请查项目页 {SOURCE_URL}，把这个数量和来源写进 alpaca-scale.csv。",
+    },
+    "ct-academic-v3-004": {
+        "task": "模型比较表缺少 CLIP 论文所述的训练图文对数量。请查 PMLR 论文页 {SOURCE_URL}，用 YAML 记录数量、单位和支持这一数字的页面短句。",
+    },
+    "ct-academic-v3-005": {
+        "task": "我们的参考文献表可能把 BERT 论文的第一作者写错了。请查看 arXiv 记录 {SOURCE_URL}，拟一封给文献维护同事的更正邮件，写明正确姓名和来源；先不要发送。",
+        "deliverable": "文献作者更正邮件草稿",
+        "output_format": "Short unsent correction email with author and source",
+    },
+    "ct-academic-v3-006": {
+        "task": "请为《Language Models are Few-Shot Learners》的 arXiv 预印本建立一个 RIS 引用文件。参考 {SOURCE_URL}，把标题、作者顺序、年份和链接写进 gpt3-preprint.ris。",
+    },
+    "ct-academic-v3-007": {
+        "task": "文献索引里《Dropout: A Simple Way to Prevent Neural Networks from Overfitting》的页码缺失。请查看 JMLR 页面 {SOURCE_URL}，把卷、期、起止页码补进 dropout-citation.md。",
+    },
+    "ct-academic-v3-008": {
+        "task": "请在模型历史表中补上 NeurIPS 2020《Language Models are Few-Shot Learners》报告的 GPT-3 参数量。查论文页 {SOURCE_URL}，用 JSON 记录参数量（单位：十亿）和来源。",
+    },
+    "ct-academic-v3-009": {
+        "task": "艺术图像分类文献时间线缺少 PLOS One 文章《Compare the performance of the models in art classification》的发表日期。请查看 {SOURCE_URL}，把题目、发表日期和 DOI 写成一行 CSV。",
+    },
+    "ct-academic-v3-010": {
+        "task": "我们的 Nature 阅读清单按文章类型归档：Perspective 进观点综述队列，Research Article 进研究论文队列。请查看《Role play with large language models》页面 {SOURCE_URL}，在 role-play-triage.yaml 中记录页面标注的类型和对应队列。",
+    },
 }
 
 
