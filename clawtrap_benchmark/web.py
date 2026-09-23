@@ -647,19 +647,19 @@ def create_app() -> Flask:
     def index():
         if not can_access_workspace():
             return redirect("/login")
-        return workspace_page('review')
+        return redirect('/contract-review')
 
     @app.get("/design")
     def design():
         if not can_access_workspace():
             return redirect("/login")
-        return design_page(session["username"])
+        return redirect('/contract-review')
 
     @app.get("/review")
     def review():
         if not can_access_workspace():
             return redirect("/login")
-        return workspace_page('review')
+        return redirect('/contract-review')
 
     @app.get("/contract-review")
     def contract_review_page():
@@ -677,13 +677,13 @@ def create_app() -> Flask:
     def scenes():
         if not can_access_workspace():
             return redirect("/login")
-        return workspace_page('diversity')
+        return redirect('/diversity')
 
     @app.get("/benchmark")
     def benchmark():
         if not can_access_workspace():
             return redirect("/login")
-        return workspace_page('benchmark')
+        return redirect('/contract-review')
 
     @app.get("/attack-assets/<path:asset_path>")
     def attack_asset(asset_path: str):

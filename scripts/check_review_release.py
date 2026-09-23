@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check the published review corpus through the authenticated website API."""
+"""Check that the archived 362-case release remains intact but its UI is retired."""
 import json
 import sys
 from pathlib import Path
@@ -40,16 +40,16 @@ def main():
                 assert not any(p.get("error") for p in case["task_file_previews"]), case["id"]
         assert len(seen) == len(set(seen)) == len(expected)
         assert set(seen) == expected
-        catalog = client.get("/api/review/catalog").get_json()
-        assert {row["id"] for row in catalog["cases"]} == expected
+        assert client.get("/api/review/catalog").status_code == 410
         for case_id in excluded:
-            assert client.get("/api/review/cases/" + case_id).status_code == 404
-            assert client.post("/api/review/cases/" + case_id, json={}).status_code == 404
+            assert client.get("/api/review/cases/" + case_id).status_code == 410
+            assert client.post("/api/review/cases/" + case_id, json={}).status_code == 410
         for retired in ("cases", "demo_cases_new_taxonomy_8", "demo1"):
             assert client.get("/api/all-cases", query_string={"dataset": retired}).status_code == 400
             assert read_file_dataset(retired) == []
-        for route in ("/review", "/scenes", "/benchmark"):
-            assert client.get(route).status_code == 200, route
+        for route in ("/review", "/benchmark"):
+            assert client.get(route).headers["Location"] == "/contract-review", route
+        assert client.get("/scenes").headers["Location"] == "/diversity"
         previews = 0
         for dataset in release["datasets"]:
             mount = json.loads((ROOT / "new_data/mount_manifests" / f"{dataset}.json").read_text())

@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, render_template, request, session
 
-from . import contract_review, review_design, storage
+from . import contract_review
 
 blueprint = Blueprint('review_workspace', __name__)
 
@@ -17,7 +17,7 @@ def human_reviewer_only():
 
 @blueprint.get('/api/review/catalog')
 def catalog():
-    return jsonify(review_design.catalog())
+    return jsonify(error='旧版审核已下线，请使用新题审核'), 410
 
 
 @blueprint.get('/api/contracts/catalog')
@@ -56,38 +56,16 @@ def export_confirmed_contracts():
     return jsonify(contract_review.confirmed_export())
 
 
-def get_case(case_id):
-    item = next((r for r in review_design.base_catalog() if r['id'] == case_id), None)
-    return storage.find_case(case_id, dataset=item['dataset']) if item else None
+@blueprint.get('/api/contracts/selected-export')
+def export_selected_contracts():
+    return jsonify(contract_review.selected_export())
 
 
 @blueprint.get('/api/review/cases/<case_id>')
 def detail(case_id):
-    case = get_case(case_id)
-    if not case:
-        return jsonify(error='题目不存在'), 404
-    return jsonify(case=case)
+    return jsonify(error='旧版审核已下线，请使用新题审核'), 410
 
 
 @blueprint.post('/api/review/cases/<case_id>')
 def save(case_id):
-    raw = request.get_json(silent=True)
-    if not isinstance(raw, dict):
-        return jsonify(error='请求格式不正确'), 400
-    case = get_case(case_id)
-    if not case:
-        return jsonify(error='题目不存在'), 404
-    try:
-        assessment = review_design.validate_assessment(raw.get('assessment'))
-        decision = raw.get('decision')
-        if decision is not None and decision not in storage.EXPERT_DECISIONS:
-            raise ValueError('审核结论不正确')
-        saved = storage.set_expert_decision(case_id, decision, decided_by=session['username'],
-                    dataset=case['dataset'], comment=assessment['notes'], assessment=assessment)
-    except (ValueError, TypeError) as exc:
-        return jsonify(error=str(exc)), 400
-    except RuntimeError as exc:
-        return jsonify(error=str(exc)), 503
-    return jsonify(id=saved['id'], decision=saved.get('expert_decision', ''),
-                   selected=saved.get('benchmark_selected', False),
-                   assessment=saved.get('design_review', {}), comment=saved.get('expert_decision_comment', ''))
+    return jsonify(error='旧版审核已下线，请使用新题审核'), 410

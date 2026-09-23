@@ -13,12 +13,24 @@ from .schema import utc_now
 V3_BATCH_PATH = storage.ROOT / "data/v3_batches"
 LOCAL_REVIEWS_PATH = storage.ROOT / "data/contract_reviews.json"
 LOCAL_CONTENT_PATH = storage.ROOT / "data/contract_content_edits.json"
-VERDICTS = {"retain_material", "revise_contract", "exclude", "clear"}
-CHECKS = {"category_fit", "task_and_boundary", "snapshot_and_injection", "t_a_evidence"}
-CHECK_VALUES = {"pass", "needs_work", "unknown"}
 CONTENT_FIELDS = {
     "scenario", "task", "deliverable", "output_format", "authorized_boundary",
     "success_T", "success_A", "observation", "runtime_gap",
+}
+LABEL_FIELDS = {"category", "form", "position", "evidence_structure", "risk", "timing"}
+STANDARD_LABELS = {
+    "form": {"full-page replacement", "iframe/popup injection", "selective substitution",
+             "redirect rewriting", "API JSON mutation", "file replacement", "mixed benign–malicious content"},
+    "position": {"search results", "target webpage", "third-party citation", "API response",
+                 "download file", "login page", "checkout page", "error page", "redirect chain",
+                 "asynchronous update"},
+    "evidence_structure": {"single source", "multiple polluted sources", "trusted–polluted conflict",
+                           "polluted majority / trusted minority", "internal policy / external page conflict",
+                           "cache / live page conflict"},
+    "risk": {"read-only", "reversible write", "cross-system write", "external communication",
+             "data disclosure", "permission change", "financial action", "irreversible execution"},
+    "timing": {"first step", "before decision", "before confirmation", "repeated across turns",
+               "delayed trigger", "memory contamination then trigger", "clean/attack alternation"},
 }
 
 
@@ -31,6 +43,18 @@ def candidate_index() -> dict:
     if len({row["id"] for row in cases}) != len(cases):
         raise ValueError("Contract review index has duplicate case IDs")
     return {"version": "contract-review-v3", "scope": "new workflow review batches only", "cases": cases}
+
+
+def label_options() -> dict:
+    cases = candidate_index()["cases"]
+    categories = {row["category"]: {"key": row["category"], "title": row["category_title"],
+                                   "domain": row["domain"], "number": row["category_number"]}
+                  for row in cases}
+    options = {"categories": sorted(categories.values(), key=lambda item: item["number"])}
+    for field in LABEL_FIELDS - {"category"}:
+        options[field] = sorted(STANDARD_LABELS[field] | {row["v3_contract"]["attack"][field]
+                                                      for row in cases})
+    return options
 
 
 def _v3_row(batch: dict, item: dict) -> dict:
@@ -102,15 +126,21 @@ def read_content_edits() -> dict:
 def _edited_row(row: dict, edit: dict | None) -> dict:
     if not edit:
         return {**row, "content_edit": {"status": "source", "revision": 0}}
-    contract = {**row["v3_contract"], **edit["fields"]}
+    labels = edit.get("labels", {})
+    contract = {**row["v3_contract"], **edit.get("fields", {})}
+    attack = {**contract["attack"], **{key: value for key, value in labels.items() if key != "category"}}
+    contract["attack"] = attack
+    category = next((item for item in label_options()["categories"] if item["key"] == labels.get("category")), None)
     public = {**row["public_draft"], "objective": contract["task"],
               "boundary": contract["authorized_boundary"], "required_world": contract["runtime_gap"]}
     private = {**row["private_review"], "task_success_T_draft": contract["success_T"],
                "attack_success_A_draft": contract["success_A"],
                "scoring_evidence_needed": contract["observation"],
-               "missing_or_rework": contract["runtime_gap"]}
+               "missing_or_rework": contract["runtime_gap"], "timing": attack["timing"]}
     return {**row, "v3_contract": contract, "public_draft": public,
             "private_review": private,
+            **({"category": category["key"], "category_title": category["title"],
+                "category_number": category["number"], "domain": category["domain"]} if category else {}),
             "content_edit": {key: edit[key] for key in ("status", "revision", "editor", "updated_at")}}
 
 
@@ -130,33 +160,52 @@ def catalog() -> dict:
     payload = candidate_index()
     reviews = read_reviews()
     edits = read_content_edits()
-    rows = [{**_edited_row(case, edits.get(case["id"])), "review": reviews.get(case["id"], {})}
+    rows = [{**_edited_row(case, edits.get(case["id"])),
+             "review": _normalized_review(reviews.get(case["id"]))}
             for case in payload["cases"]]
     return {"version": payload["version"], "scope": payload["scope"], "cases": rows,
-            "total": len(rows), "reviewed": sum(bool(r["review"].get("verdict")) for r in rows),
+            "total": len(rows), "selected": sum(r["review"]["selected"] for r in rows),
             "confirmed": sum(r["content_edit"]["status"] == "confirmed" for r in rows),
-            "content_writable": not storage.is_vercel_runtime() or storage.database_configured()}
+            "content_writable": not storage.is_vercel_runtime() or storage.database_configured(),
+            "label_options": label_options()}
+
+
+def _normalized_review(value: dict | None) -> dict:
+    value = value or {}
+    return {"selected": value.get("selected", value.get("verdict") == "retain_material"),
+            "reviewer": value.get("reviewer", ""), "updated_at": value.get("updated_at", "")}
 
 
 def save_content_edit(case_id: str, raw: dict, editor: str) -> dict:
-    if case_id not in {row["id"] for row in candidate_index()["cases"]}:
+    source = next((row for row in candidate_index()["cases"] if row["id"] == case_id), None)
+    if source is None:
         raise KeyError(case_id)
     if not isinstance(raw, dict) or raw.get("status") not in {"draft", "confirmed"}:
         raise ValueError("编辑状态不正确")
-    fields = raw.get("fields")
-    if not isinstance(fields, dict) or set(fields) != CONTENT_FIELDS:
-        raise ValueError("编辑字段不完整或包含不可修改字段")
+    fields, labels = raw.get("fields", {}), raw.get("labels", {})
+    if (not isinstance(fields, dict) or not isinstance(labels, dict)
+            or (not fields and not labels) or set(fields) - CONTENT_FIELDS or set(labels) - LABEL_FIELDS):
+        raise ValueError("编辑字段为空或包含不可修改字段")
     for key, value in fields.items():
         limit = 12000 if key == "task" else 4000
         if not isinstance(value, str) or not value.strip() or len(value) > limit:
             raise ValueError(f"{key} 不能为空或超过长度限制")
+    options = label_options()
+    for key, value in labels.items():
+        allowed = {item["key"] for item in options["categories"]} if key == "category" else set(options[key])
+        if not isinstance(value, str) or value not in allowed:
+            raise ValueError(f"{key} 标签不在可选范围内")
     expected = raw.get("revision")
     if isinstance(expected, bool) or not isinstance(expected, int) or expected < 0:
         raise ValueError("版本号不正确")
     current = read_content_edits().get(case_id)
     if expected != (current["revision"] if current else 0):
         raise ValueError("题目已由其他审核员修改，请刷新后重试")
-    record = {"fields": {key: value.strip() for key, value in fields.items()},
+    original = {key: source["v3_contract"][key] for key in CONTENT_FIELDS}
+    merged_fields = {**original, **(current.get("fields", {}) if current else {}),
+                     **{key: value.strip() for key, value in fields.items()}}
+    merged_labels = {**(current.get("labels", {}) if current else {}), **labels}
+    record = {"fields": merged_fields, "labels": merged_labels,
               "status": raw["status"], "revision": expected + 1,
               "editor": editor, "updated_at": utc_now()}
     if storage.database_configured():
@@ -191,29 +240,30 @@ def confirmed_export() -> dict:
     for row in candidate_index()["cases"]:
         edit = edits.get(row["id"])
         if edit and edit["status"] == "confirmed":
-            rows.append({"batch": row["batch"], "case": {**row["v3_contract"], **edit["fields"]},
+            effective = _edited_row(row, edit)
+            rows.append({"batch": row["batch"], "category": effective["category"],
+                         "domain": effective["domain"], "case": effective["v3_contract"],
                          "revision": edit["revision"], "confirmed_at": edit["updated_at"]})
     return {"version": "contract-content-export-v1", "cases": rows}
 
 
+def selected_export() -> dict:
+    edits, reviews = read_content_edits(), read_reviews()
+    rows = []
+    for source in candidate_index()["cases"]:
+        if not _normalized_review(reviews.get(source["id"]))["selected"]:
+            continue
+        effective = _edited_row(source, edits.get(source["id"]))
+        rows.append({"batch": source["batch"], "category": effective["category"],
+                     "domain": effective["domain"], "case": effective["v3_contract"],
+                     "revision": effective["content_edit"]["revision"]})
+    return {"version": "selected-workflow-contracts-v1", "cases": rows}
+
+
 def validate_review(raw: dict) -> dict:
-    if not isinstance(raw, dict):
-        raise ValueError("审核记录必须是 JSON 对象")
-    verdict = raw.get("verdict", "")
-    if verdict not in VERDICTS:
-        raise ValueError("审核结论不正确")
-    checks = raw.get("checks", {})
-    if not isinstance(checks, dict) or set(checks) - CHECKS:
-        raise ValueError("审核维度不正确")
-    if any(value not in CHECK_VALUES for value in checks.values()):
-        raise ValueError("审核维度的值不正确")
-    notes = raw.get("notes", "")
-    if not isinstance(notes, str) or len(notes) > 12000:
-        raise ValueError("备注过长或格式不正确")
-    if verdict == "retain_material" and any(checks.get(key) != "pass" for key in ("category_fit", "snapshot_and_injection")):
-        raise ValueError("保留素材前须确认类别匹配、原网页和篡改位置")
-    return {"verdict": "" if verdict == "clear" else verdict,
-            "checks": checks, "notes": notes.strip()}
+    if not isinstance(raw, dict) or set(raw) != {"selected"} or type(raw["selected"]) is not bool:
+        raise ValueError("仅接受入选状态 true 或 false")
+    return {"selected": raw["selected"]}
 
 
 def save_review(case_id: str, raw: dict, reviewer: str) -> dict:

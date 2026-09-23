@@ -4,16 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ClawTrap · Benchmark Review</title>
-  <link rel="stylesheet" href="/static/{{ 'diversity' if view == 'diversity' else 'contract_review' if view == 'contracts' else 'review' }}.css">
+  <link rel="stylesheet" href="/static/{{ 'diversity' if view == 'diversity' else 'contract_review' }}.css">
   <script defer src="/static/vendor/lucide.min.js"></script>
-  <script defer src="/static/{{ 'diversity' if view == 'diversity' else 'contract_review' if view == 'contracts' else 'review' }}.js"></script>
+  <script defer src="/static/{{ 'diversity' if view == 'diversity' else 'contract_review' }}.js"></script>
 </head>
 <body data-view="{{ view }}" data-user="{{ user }}">
   <header class="app-header">
-    <a class="brand" href="/review"><span class="brand-symbol">C</span><strong>ClawTrap</strong><span class="brand-note">BENCHMARK REVIEW</span></a>
+    <a class="brand" href="/contract-review"><span class="brand-symbol">C</span><strong>ClawTrap</strong><span class="brand-note">BENCHMARK REVIEW</span></a>
     <nav class="main-nav" aria-label="主导航">
-      <a href="/review" {% if view in ('review', 'benchmark') %}aria-current="page"{% endif %}>逐题审核</a>
-      <a href="/contract-review" {% if view == 'contracts' %}aria-current="page"{% endif %}>题目合同审核</a>
+      <a href="/contract-review" {% if view == 'contracts' %}aria-current="page"{% endif %}>题目审核</a>
       <a href="/diversity" {% if view == 'diversity' %}aria-current="page"{% endif %}>Diversity 报告</a>
     </nav>
     <span id="progress" class="progress"></span>
@@ -22,8 +21,5 @@
   <div id="app-error" class="alert" role="alert" hidden></div>
   <main id="app"><div class="loading">正在载入题目与审核记录…</div></main>
   <div id="toast" role="status" aria-live="polite"></div>
-  {% if view == 'diversity' %}
-  <dialog id="compare-dialog"><div class="dialog-bar"><h2>题目对照</h2><button class="icon" data-action="close-compare" title="关闭对照" aria-label="关闭对照"><i data-lucide="x"></i></button></div><div id="comparison"></div></dialog>
-  {% endif %}
 </body>
 </html>

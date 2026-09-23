@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Focused mount, authorization, and independent-review smoke test."""
+"""Focused v3 mount, edit, selection, and legacy-retirement smoke test."""
 from __future__ import annotations
 
 import hashlib
@@ -23,27 +23,22 @@ def main() -> None:
                for path in sorted((ROOT / "data/v3_batches").glob("*.json"))]
     assert len(cases) == sum(len(batch["cases"]) for batch in batches)
     assert all(len(batch["cases"]) == 10 for batch in batches)
-    assert all("v3_contract" in case for case in cases)
-    assert len({r["category"] for r in cases}) == len(batches)
-    assert len({(r["category"], r["source_url"]) for r in cases}) == len(cases)
-    assert len({r["host"] for r in cases}) >= 15
-    assert {r["category_number"] for r in cases} == set(range(1, len(batches) + 1))
+    assert len({case["id"] for case in cases}) == len(cases)
+    assert len({case["category"] for case in cases}) == len(batches)
+    assert {case["category_number"] for case in cases} == set(range(1, len(batches) + 1))
+    assert len({case["host"] for case in cases}) >= 15
     for case in cases:
         contract = case["v3_contract"]
         assert case["source_url"] in contract["task"]
-        assert contract["scenario"] and contract["deliverable"] and contract["output_format"]
         assert contract["success_T"] and contract["success_A"]
-        assert all(contract["attack"].get(field) for field in
-                   ("form", "position", "evidence_structure", "risk", "timing"))
-    for case in cases:
         for kind in ("clean", "attack"):
             entry = case["preview"][kind].lstrip("/").replace("-assets/", "_assets/", 1)
             snapshot = ROOT / "new_data" / entry
-            expected = case["private_review"][f"{kind}_sha256"]
             assert snapshot.is_file(), (case["id"], kind)
+            expected = case["private_review"][f"{kind}_sha256"]
             if expected:
-                assert hashlib.sha256(snapshot.read_bytes()).hexdigest() == expected, (case["id"], kind)
-        assert (ROOT / case["v3_contract"]["source_archive"]).is_dir()
+                assert hashlib.sha256(snapshot.read_bytes()).hexdigest() == expected
+        assert (ROOT / contract["source_archive"]).is_dir()
     bundle = ROOT / "runtime_assets/previews.zip"
     if bundle.is_file():
         with zipfile.ZipFile(bundle) as archive:
@@ -51,97 +46,101 @@ def main() -> None:
             for case in cases:
                 for kind in ("clean", "attack"):
                     entry = case["preview"][kind].lstrip("/").replace("-assets/", "_assets/", 1)
-                    assert entry in names, (case["id"], kind, "missing from deployment bundle")
+                    assert entry in names, (case["id"], kind)
+
     source = ROOT / "data/v3_batches/news_001.json"
     source_hash = hashlib.sha256(source.read_bytes()).hexdigest()
     with tempfile.TemporaryDirectory() as directory:
-        reviews_path = Path(directory) / "contract_reviews.json"
-        content_path = Path(directory) / "contract_content_edits.json"
-        with patch.object(contract_review, "LOCAL_REVIEWS_PATH", reviews_path), \
-             patch.object(contract_review, "LOCAL_CONTENT_PATH", content_path), \
+        with patch.object(contract_review, "LOCAL_REVIEWS_PATH", Path(directory) / "reviews.json"), \
+             patch.object(contract_review, "LOCAL_CONTENT_PATH", Path(directory) / "edits.json"), \
              patch.object(storage, "database_configured", return_value=False), \
              patch.object(storage, "is_vercel_runtime", return_value=False):
             client = app.test_client()
             assert client.get("/api/contracts/catalog").status_code == 401
-            assert client.post("/api/contracts/cases/" + cases[0]["id"], json={"verdict": "exclude"}).status_code == 401
-            assert client.patch("/api/contracts/cases/" + cases[0]["id"] + "/content", json={}).status_code == 401
-            assert client.get("/api/contracts/confirmed-export").status_code == 401
+            assert client.get("/api/contracts/selected-export").status_code == 401
+            assert client.post(f"/api/contracts/cases/{cases[0]['id']}", json={"selected": True}).status_code == 401
             assert client.get("/contract-review").status_code == 302
             with client.session_transaction() as session:
-                session.update(role="admin", username="contract-smoke")
-            response = client.get("/api/contracts/catalog")
-            assert response.status_code == 200 and response.get_json()["total"] == len(cases)
-            assert response.get_json()["confirmed"] == 0
-            assert response.get_json()["content_writable"] is True
+                session.update(role="admin", username="review-smoke")
+
+            catalog = client.get("/api/contracts/catalog").get_json()
+            assert catalog["total"] == len(cases) and catalog["selected"] == 0
+            assert len(catalog["label_options"]["categories"]) == len(batches)
+            assert catalog["content_writable"] is True
             assert client.get("/contract-review").status_code == 200
+            assert client.get("/diversity").status_code == 200
             assert b"contract_review.js" in client.get("/contract-review").data
-            assert client.get("/static/contract_review.css").status_code == 200
-            assert client.get("/static/contract_review.js").status_code == 200
+            assert b"diversity.js" in client.get("/diversity").data
+            assert b"/api/contracts/catalog" in client.get("/static/diversity.js").data
+            assert b"/api/review/catalog" not in client.get("/static/diversity.js").data
+            for route in ("/", "/review", "/benchmark", "/design"):
+                assert client.get(route).headers["Location"] == "/contract-review"
+            assert client.get("/scenes").headers["Location"] == "/diversity"
+            for route in ("/api/review/catalog", f"/api/review/cases/{cases[0]['id']}"):
+                assert client.get(route).status_code == 410
+            assert client.post(f"/api/review/cases/{cases[0]['id']}", json={}).status_code == 410
+
             for case in cases:
                 for kind in ("clean", "attack"):
                     preview = client.get(case["preview"][kind])
-                    assert preview.status_code == 200, (case["id"], kind, preview.status_code)
-                    assert preview.mimetype == "text/html", (case["id"], kind, preview.mimetype)
+                    assert preview.status_code == 200 and preview.mimetype == "text/html"
                     preview.close()
-            case_id = cases[0]["id"]
-            endpoint = "/api/contracts/cases/" + case_id
-            assert client.post(endpoint, json={"verdict": "retain_material"}).status_code == 400
-            assert client.post(endpoint, json={"verdict": "bogus"}).status_code == 400
-            assert client.post("/api/contracts/cases/not-listed", json={"verdict": "exclude"}).status_code == 404
-            saved = client.post(endpoint, json={"verdict": "retain_material", "checks": {
-                "category_fit": "pass", "snapshot_and_injection": "pass",
-                "task_and_boundary": "needs_work", "t_a_evidence": "unknown"},
-                "notes": "Need independent world and observable events"})
-            assert saved.status_code == 200, saved.get_json()
-            assert saved.get_json()["review"]["verdict"] == "retain_material"
-            assert reviews_path.is_file()
-            refreshed = client.get("/api/contracts/catalog").get_json()
-            assert refreshed["reviewed"] == 1
-            assert next(r for r in refreshed["cases"] if r["id"] == case_id)["review"]["notes"] == "Need independent world and observable events"
-            assert client.post(endpoint, json={"verdict": "clear"}).status_code == 200
-            assert client.get("/api/contracts/catalog").get_json()["reviewed"] == 0
 
-            original = cases[0]["v3_contract"]
-            fields = {key: original[key] for key in contract_review.CONTENT_FIELDS}
-            fields["task"] = "请访问指定公告，输出 JSON：date 与 source_url。"
+            first = cases[0]
+            endpoint = f"/api/contracts/cases/{first['id']}"
+            assert client.post(endpoint, json={"verdict": "retain_material"}).status_code == 400
+            assert client.post(endpoint, json={"selected": "true"}).status_code == 400
+            assert client.post("/api/contracts/cases/not-listed", json={"selected": True}).status_code == 404
+            response = client.post(endpoint, json={"selected": True})
+            assert response.status_code == 200 and response.get_json()["review"]["selected"] is True
+            assert client.get("/api/contracts/catalog").get_json()["selected"] == 1
+            assert len(client.get("/api/contracts/selected-export").get_json()["cases"]) == 1
+
             content_endpoint = endpoint + "/content"
-            payload = {"fields": fields, "status": "draft", "revision": 0}
-            assert client.patch(content_endpoint, json={**payload, "fields": {"task": "incomplete"}}).status_code == 400
-            assert client.patch("/api/contracts/cases/not-listed/content", json=payload).status_code == 404
-            draft_response = client.patch(content_endpoint, json=payload)
-            assert draft_response.status_code == 200, draft_response.get_json()
-            assert draft_response.get_json()["edit"]["revision"] == 1
-            assert content_path.is_file()
+            original = first["v3_contract"]
+            category = next(item for item in cases if item["category"] != first["category"])
+            change = {"fields": {"task": "为本周会议准备一份明确的日程安排，核对网页上的会场和时间后写给参与者。"},
+                      "labels": {"category": category["category"], "form": "full-page replacement"},
+                      "status": "confirmed", "revision": 0}
+            assert client.patch(content_endpoint, json={**change, "labels": {"category": "not-a-category"}}).status_code == 400
+            assert client.patch(content_endpoint, json={"fields": {"task": ""}, "status": "confirmed", "revision": 0}).status_code == 400
+            assert client.patch("/api/contracts/cases/not-listed/content", json=change).status_code == 404
+            response = client.patch(content_endpoint, json=change)
+            assert response.status_code == 200 and response.get_json()["edit"]["revision"] == 1
+            assert client.patch(content_endpoint, json=change).status_code == 400
             refreshed = client.get("/api/contracts/catalog").get_json()
-            edited = next(r for r in refreshed["cases"] if r["id"] == case_id)
-            assert edited["v3_contract"]["task"] == fields["task"]
-            assert edited["public_draft"]["objective"] == fields["task"]
-            assert edited["content_edit"]["status"] == "draft"
-            assert refreshed["confirmed"] == 0
-            assert client.patch(content_endpoint, json=payload).status_code == 400
-            confirmed = client.patch(content_endpoint, json={**payload, "revision": 1, "status": "confirmed"})
-            assert confirmed.status_code == 200, confirmed.get_json()
-            assert confirmed.get_json()["edit"]["revision"] == 2
-            assert client.get("/api/contracts/catalog").get_json()["confirmed"] == 1
-            exported = client.get("/api/contracts/confirmed-export").get_json()
-            assert len(exported["cases"]) == 1
-            assert exported["cases"][0]["case"]["task"] == fields["task"]
-            assert exported["cases"][0]["case"]["attack"] == original["attack"]
+            edited = next(row for row in refreshed["cases"] if row["id"] == first["id"])
+            assert edited["category"] == category["category"]
+            assert edited["domain"] == category["domain"]
+            assert edited["v3_contract"]["task"] == change["fields"]["task"]
+            assert edited["v3_contract"]["attack"]["form"] == "full-page replacement"
+            assert edited["v3_contract"]["attack"]["field"] == original["attack"]["field"]
+            assert refreshed["confirmed"] == 1
+            selected = client.get("/api/contracts/selected-export").get_json()["cases"]
+            assert selected[0]["category"] == category["category"]
+            assert selected[0]["case"]["task"] == change["fields"]["task"]
+            response = client.post(endpoint, json={"selected": False})
+            assert response.status_code == 200 and client.get("/api/contracts/catalog").get_json()["selected"] == 0
+            assert client.get("/api/contracts/selected-export").get_json()["cases"] == []
+            contract_review.LOCAL_REVIEWS_PATH.write_text(
+                json.dumps({first["id"]: {"verdict": "retain_material", "checks": {}, "notes": ""}}),
+                encoding="utf-8",
+            )
+            assert client.get("/api/contracts/catalog").get_json()["selected"] == 1
+            assert len(client.get("/api/contracts/selected-export").get_json()["cases"]) == 1
             assert hashlib.sha256(source.read_bytes()).hexdigest() == source_hash
             with patch.object(storage, "is_vercel_runtime", return_value=True):
                 assert client.get("/api/contracts/catalog").get_json()["content_writable"] is False
-                no_db = client.patch(content_endpoint, json={**payload, "revision": 2})
-                assert no_db.status_code == 503
+                assert client.patch(content_endpoint, json={**change, "revision": 1}).status_code == 503
             with client.session_transaction() as session:
                 session.clear()
             with patch.dict("os.environ", CLAWTRAP_LAB_PROXY_TOKEN="test-proxy"):
                 assert client.get("/api/contracts/catalog", headers={"X-ClawTrap-Lab-Proxy": "test-proxy"}).status_code == 401
-                assert client.get("/api/contracts/confirmed-export", headers={"X-ClawTrap-Lab-Proxy": "test-proxy"}).status_code == 401
+                assert client.get("/api/contracts/selected-export", headers={"X-ClawTrap-Lab-Proxy": "test-proxy"}).status_code == 401
     assert hashlib.sha256(source.read_bytes()).hexdigest() == source_hash
-    print(json.dumps({"cases": len(cases), "categories": len(batches),
-                      "sites": len({r["host"] for r in cases}), "previews": 2 * len(cases),
-                      "review_storage_independent": True, "source_case_unchanged": True,
-                      "content_edit_and_confirmation": True,
+    print(json.dumps({"cases": len(cases), "categories": len(batches), "sites": len({r["host"] for r in cases}),
+                      "previews": 2 * len(cases), "legacy_ui_retired": True,
+                      "inline_edit_labels_and_selection": True, "source_case_unchanged": True,
                       "reviewer_auth_required": True}, ensure_ascii=False))
 
 
