@@ -30,7 +30,7 @@ def save_contract_review(case_id):
     try:
         review = contract_review.save_review(case_id, request.get_json(silent=True), session['username'])
     except KeyError:
-        return jsonify(error='题目不在80题合同审核清单中'), 404
+        return jsonify(error='题目不在合同审核清单中'), 404
     except (ValueError, TypeError) as exc:
         return jsonify(error=str(exc)), 400
     except RuntimeError as exc:

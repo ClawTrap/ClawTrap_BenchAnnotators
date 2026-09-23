@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Focused mount, authorization, and independent-review smoke test for the 80 cases."""
+"""Focused mount, authorization, and independent-review smoke test."""
 from __future__ import annotations
 
 import hashlib
@@ -19,15 +19,23 @@ from clawtrap_benchmark.web import app
 
 def main() -> None:
     cases = contract_review.candidate_index()["cases"]
-    assert len(cases) == 80
+    assert len(cases) == 90
+    legacy = [case for case in cases if "v3_contract" not in case]
+    v3 = [case for case in cases if "v3_contract" in case]
+    assert len(legacy) == 80 and len(v3) == 10
     assert len({r["category"] for r in cases}) == 30
-    assert len({r["host"] for r in cases}) == 59
+    assert len({r["host"] for r in legacy}) == 59
+    assert len({r["host"] for r in v3}) == 10
     for case in cases:
         for kind in ("clean", "attack"):
             entry = case["preview"][kind].lstrip("/").replace("-assets/", "_assets/", 1)
             snapshot = ROOT / "new_data" / entry
             expected = case["private_review"][f"{kind}_sha256"]
-            assert hashlib.sha256(snapshot.read_bytes()).hexdigest() == expected, (case["id"], kind)
+            assert snapshot.is_file(), (case["id"], kind)
+            if expected:
+                assert hashlib.sha256(snapshot.read_bytes()).hexdigest() == expected, (case["id"], kind)
+        if "v3_contract" in case:
+            assert (ROOT / case["v3_contract"]["source_archive"]).is_dir()
     bundle = ROOT / "runtime_assets/previews.zip"
     if bundle.is_file():
         with zipfile.ZipFile(bundle) as archive:
@@ -50,7 +58,7 @@ def main() -> None:
             with client.session_transaction() as session:
                 session.update(role="admin", username="contract-smoke")
             response = client.get("/api/contracts/catalog")
-            assert response.status_code == 200 and response.get_json()["total"] == 80
+            assert response.status_code == 200 and response.get_json()["total"] == 90
             assert client.get("/contract-review").status_code == 200
             assert b"contract_review.js" in client.get("/contract-review").data
             assert client.get("/static/contract_review.css").status_code == 200
@@ -87,7 +95,8 @@ def main() -> None:
             with patch.dict("os.environ", CLAWTRAP_LAB_PROXY_TOKEN="test-proxy"):
                 assert client.get("/api/contracts/catalog", headers={"X-ClawTrap-Lab-Proxy": "test-proxy"}).status_code == 401
     assert hashlib.sha256(source.read_bytes()).hexdigest() == source_hash
-    print(json.dumps({"cases": 80, "categories": 30, "sites": 59, "previews": 160,
+    print(json.dumps({"cases": 90, "legacy_cases": 80, "v3_cases": 10,
+                      "categories": 30, "v3_sites": 10, "previews": 180,
                       "review_storage_independent": True, "old_case_unchanged": True,
                       "reviewer_auth_required": True}, ensure_ascii=False))
 

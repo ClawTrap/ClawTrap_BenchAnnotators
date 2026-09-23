@@ -1,15 +1,17 @@
-"""Reviewer-only view of the 80 candidate task contracts and their decisions."""
+"""Reviewer-only view of candidate task contracts and their decisions."""
 from __future__ import annotations
 
 import json
 import os
 from functools import lru_cache
 from pathlib import Path
+from urllib.parse import urlparse
 
 from . import storage
 from .schema import utc_now
 
 CATALOG_PATH = storage.ROOT / "data/contract_candidates_80.json"
+V3_BATCH_PATH = storage.ROOT / "data/v3_batches"
 LOCAL_REVIEWS_PATH = storage.ROOT / "data/contract_reviews.json"
 VERDICTS = {"retain_material", "revise_contract", "exclude", "clear"}
 CHECKS = {"category_fit", "task_and_boundary", "snapshot_and_injection", "t_a_evidence"}
@@ -19,10 +21,48 @@ CHECK_VALUES = {"pass", "needs_work", "unknown"}
 @lru_cache(maxsize=1)
 def candidate_index() -> dict:
     payload = json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
-    cases = payload["cases"]
-    if len(cases) != 80 or len({r["id"] for r in cases}) != 80:
-        raise ValueError("Contract review index must contain exactly 80 unique cases")
-    return payload
+    cases = list(payload["cases"])
+    if len(cases) != 80:
+        raise ValueError("The retained baseline must contain exactly 80 cases")
+    for batch_path in sorted(V3_BATCH_PATH.glob("*.json")):
+        batch = json.loads(batch_path.read_text(encoding="utf-8"))
+        cases.extend(_v3_row(batch, item) for item in batch["cases"])
+    if len({row["id"] for row in cases}) != len(cases):
+        raise ValueError("Contract review index has duplicate case IDs")
+    return {"version": "contract-review-v3", "scope": "80 retained candidates plus workflow review batches", "cases": cases}
+
+
+def _v3_row(batch: dict, item: dict) -> dict:
+    attack = item["attack"]
+    asset = Path(item["clean_asset"])
+    dataset = asset.parent.name
+    return {
+        "id": item["id"], "dataset": dataset,
+        "category": batch["category"], "category_title": batch["category_title"],
+        "category_number": 1, "domain": batch["domain"],
+        "host": urlparse(item["source_url"]).hostname,
+        "source_url": item["source_url"],
+        "candidate_version": batch["version"], "readiness": batch["review_status"],
+        "legacy_task": "", "v3_contract": item,
+        "public_draft": {
+            "objective": item["task"], "boundary": item["authorized_boundary"],
+            "entry": item["source_url"], "required_world": item["runtime_gap"],
+        },
+        "private_review": {
+            "field": attack["field"], "original": attack["clean_value"],
+            "tampered": attack["attack_value"], "transformation": attack["description"],
+            "timing": attack["timing"],
+            "task_success_T_draft": item["success_T"],
+            "attack_success_A_draft": item["success_A"],
+            "scoring_evidence_needed": item["observation"],
+            "missing_or_rework": item["runtime_gap"],
+            "clean_sha256": "", "attack_sha256": "",
+        },
+        "preview": {
+            "clean": "/" + item["clean_asset"].replace("new_data/", "").replace("clean_assets/", "clean-assets/"),
+            "attack": "/" + item["attack_asset"].replace("new_data/", "").replace("attack_assets/", "attack-assets/"),
+        },
+    }
 
 
 def _ensure_table(cursor) -> None:
