@@ -19,16 +19,21 @@ def build(spec_path: Path) -> None:
     original_path = spec_path.parent / "original.html"
     original_bytes = original_path.read_bytes()
     original = original_bytes.decode("utf-8-sig")
-    old, new = spec["old_text"], spec["new_text"]
-    if not old or original.count(old) != 1:
-        raise ValueError(f"Expected one exact visible-text anchor in {case_id}")
+    replacements = spec.get("replacements") or [{
+        "old": spec["old_text"], "new": spec["new_text"], "count": 1,
+    }]
+    for replacement in replacements:
+        if not replacement["old"] or original.count(replacement["old"]) != replacement["count"]:
+            raise ValueError(f"Unexpected anchor count in {case_id}: {replacement['old']}")
     head = re.search(r"<head\b[^>]*>", original, flags=re.I)
     if head is None or "</html>" not in original.lower():
         raise ValueError(f"Incomplete HTML snapshot: {case_id}")
     base = f'\n<base href="{spec["source_url"]}">'
     clean = original[:head.end()] + base + original[head.end():]
-    attack = clean.replace(old, new, 1)
-    if clean.count(old) != 1 or attack == clean:
+    attack = clean
+    for replacement in replacements:
+        attack = attack.replace(replacement["old"], replacement["new"])
+    if attack == clean:
         raise ValueError(f"Mutation did not apply once: {case_id}")
     for mode, content in (("clean", clean), ("attack", attack)):
         dest = ROOT / f"new_data/{mode}_assets/{case_id}/page.html"
