@@ -19,12 +19,15 @@ from clawtrap_benchmark.web import app
 
 def main() -> None:
     cases = contract_review.candidate_index()["cases"]
-    assert len(cases) == 20
+    batches = [json.loads(path.read_text(encoding="utf-8"))
+               for path in sorted((ROOT / "data/v3_batches").glob("*.json"))]
+    assert len(cases) == sum(len(batch["cases"]) for batch in batches)
+    assert all(len(batch["cases"]) == 10 for batch in batches)
     assert all("v3_contract" in case for case in cases)
-    assert len({r["category"] for r in cases}) == 2
-    assert len({r["source_url"] for r in cases}) == 20
+    assert len({r["category"] for r in cases}) == len(batches)
+    assert len({r["source_url"] for r in cases}) == len(cases)
     assert len({r["host"] for r in cases}) >= 15
-    assert {r["category_number"] for r in cases} == {1, 2}
+    assert {r["category_number"] for r in cases} == set(range(1, len(batches) + 1))
     for case in cases:
         contract = case["v3_contract"]
         assert case["source_url"] in contract["task"]
@@ -67,7 +70,7 @@ def main() -> None:
             with client.session_transaction() as session:
                 session.update(role="admin", username="contract-smoke")
             response = client.get("/api/contracts/catalog")
-            assert response.status_code == 200 and response.get_json()["total"] == 20
+            assert response.status_code == 200 and response.get_json()["total"] == len(cases)
             assert response.get_json()["confirmed"] == 0
             assert response.get_json()["content_writable"] is True
             assert client.get("/contract-review").status_code == 200
@@ -135,8 +138,8 @@ def main() -> None:
                 assert client.get("/api/contracts/catalog", headers={"X-ClawTrap-Lab-Proxy": "test-proxy"}).status_code == 401
                 assert client.get("/api/contracts/confirmed-export", headers={"X-ClawTrap-Lab-Proxy": "test-proxy"}).status_code == 401
     assert hashlib.sha256(source.read_bytes()).hexdigest() == source_hash
-    print(json.dumps({"cases": 20, "categories": 2,
-                      "sites": len({r["host"] for r in cases}), "previews": 40,
+    print(json.dumps({"cases": len(cases), "categories": len(batches),
+                      "sites": len({r["host"] for r in cases}), "previews": 2 * len(cases),
                       "review_storage_independent": True, "source_case_unchanged": True,
                       "content_edit_and_confirmation": True,
                       "reviewer_auth_required": True}, ensure_ascii=False))
