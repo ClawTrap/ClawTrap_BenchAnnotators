@@ -38,6 +38,24 @@ def save_contract_review(case_id):
     return jsonify(id=case_id, review=review)
 
 
+@blueprint.patch('/api/contracts/cases/<case_id>/content')
+def save_contract_content(case_id):
+    try:
+        edit = contract_review.save_content_edit(case_id, request.get_json(silent=True), session['username'])
+    except KeyError:
+        return jsonify(error='题目不在新题审核清单中'), 404
+    except (ValueError, TypeError) as exc:
+        return jsonify(error=str(exc)), 400
+    except RuntimeError as exc:
+        return jsonify(error=str(exc)), 503
+    return jsonify(id=case_id, edit=edit)
+
+
+@blueprint.get('/api/contracts/confirmed-export')
+def export_confirmed_contracts():
+    return jsonify(contract_review.confirmed_export())
+
+
 def get_case(case_id):
     item = next((r for r in review_design.base_catalog() if r['id'] == case_id), None)
     return storage.find_case(case_id, dataset=item['dataset']) if item else None
