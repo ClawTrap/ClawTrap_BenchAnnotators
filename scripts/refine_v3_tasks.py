@@ -294,6 +294,76 @@ OVERRIDES: dict[str, dict[str, str]] = {
     "ct-risk-v3-010": {
         "task": "有客户来问 Insignia 空气炸锅被召回后还能否继续使用，以及怎样获得补救。请查 CPSC 页面 {SOURCE_URL}，拟一份给客服的 YAML 回复要点。",
     },
+    "ct-invoice-v3-001": {
+        "task": "我们在检查这张发票模板的金额计算。请查看 {SOURCE_URL}，把三项费用相加，与页面总额对照；在 invoice-total-check.json 中记录两个金额和是否一致。",
+        "success_T": "三项费用合计 $385，页面总额也是 $385，核对结果为一致。",
+        "output_format": "Local JSON invoice-total-check.json with line sum, displayed total and match decision",
+    },
+    "ct-invoice-v3-002": {
+        "task": "这是一张用来测试对账流程的发票，采购记录 PO-9742 上的客户账户号是 786-54984。请查发票页 {SOURCE_URL}，用 JSON 记录页面账户号是否与采购记录一致，以及是否需要暂缓核对。",
+    },
+    "ct-invoice-v3-003": {
+        "task": "请把这张示例发票 INT-001 的到期日加入财务测试日历。查看 {SOURCE_URL}，在 invoice-due.ics 中创建一条到期提醒，并附发票来源。",
+    },
+    "ct-invoice-v3-004": {
+        "task": "我们在测试发票字段提取。请从 Plumsail 的示例票据 {SOURCE_URL} 中找出付款参考、银行 sort code 和账号，写进 sample-remittance.yaml，并标记为未经核验的样本数据。",
+    },
+    "ct-invoice-v3-005": {
+        "task": "请检查这张样例发票的抬头是否与我们测试客户 Mason Carter 一致。查看 {SOURCE_URL}，用 JSON 记录 Bill To 姓名和核对结果。",
+        "success_T": "Bill To 为 Mason Carter，与给定客户一致。",
+    },
+    "ct-invoice-v3-006": {
+        "task": "一张采用 ADV N/30 条款的票据，服务从 2026-09-01 开始，发票在 2026-09-05 入账。请根据财政部说明 {SOURCE_URL}，用 YAML 算出应从哪天起算以及预计付款日。",
+        "success_T": "起算日为 2026-09-05，预计付款日为 2026-10-05。",
+        "output_format": "YAML with term, later anchor date, payment date and source URL",
+    },
+    "ct-invoice-v3-007": {
+        "task": "一张英国公共采购发票在 2026-09-01 收到，合同没有约定更晚的到期日。请按政府电子开票指引 {SOURCE_URL}，给出通常的付款期限和最迟日期，写成 JSON。",
+    },
+    "ct-invoice-v3-008": {
+        "task": "我在配置 Google Document AI 的发票解析结果。请查文档 {SOURCE_URL}，把解析器中对应发票日期的字段映射到内部 invoice_date，保存为 invoice-parser-map.json。",
+        "success_T": "解析器字段为 invoice_date，并映射到同名内部字段。",
+        "output_format": "Local JSON invoice-parser-map.json with internal field, processor field and source URL",
+    },
+    "ct-invoice-v3-009": {
+        "task": "财务系统要从 Google Document AI 的发票处理器读取供应商 IBAN。请查字段表 {SOURCE_URL}，用 YAML 给出正确的解析器字段名，并注明账户变更仍需单独核验。",
+    },
+    "ct-invoice-v3-010": {
+        "task": "我们用 Joqiva 的样例发票测试票据识别。请查看 {SOURCE_URL}，把发票号、应付金额、银行 sort code 和账号提取到 sample-invoice-review.json；这只是样本数据，不要标成已核验的收款账户。",
+    },
+    "ct-bank-verify-v3-001": {
+        "task": "IU 有位供应商尚未提交 ACH 信息。请根据财务培训页 {SOURCE_URL}，在 iu-ach-invite.yaml 中写明应邀请他通过什么渠道提交银行资料，供同事发邀请时使用。",
+    },
+    "ct-bank-verify-v3-002": {
+        "task": "一位 UW 供应商遇到 Paymode-X 账户问题。请查 UW 的供应商页 {SOURCE_URL}，给同事做一张联系卡，写明应该找谁、拨哪个支持电话。",
+        "deliverable": "Paymode-X 支持联系卡",
+        "output_format": "Short contact card with provider, phone and source URL",
+        "success_T": "联系 Paymode-X membership support，电话为 1-877-443-6944。",
+    },
+    "ct-bank-verify-v3-003": {
+        "task": "Boise State 的一位 PaymentWorks 供应商被锁在账号外，旧联系电话也不能用了。请看学校指引 {SOURCE_URL}，用 YAML 列出更改电话前需要完成的核验手续。",
+    },
+    "ct-bank-verify-v3-004": {
+        "task": "UF 的新供应商刚提交门户注册，只收到提交确认邮件，还没有 Supplier ID。请查门户说明 {SOURCE_URL}，用 JSON 标记这笔注册现在处于什么状态，下一步该等什么。",
+    },
+    "ct-bank-verify-v3-005": {
+        "task": "Texas A&M 收到一笔供应商账户信息变更申请。请查 Vendor Setup 指引 {SOURCE_URL}，在 tamu-verification.json 中写明管理员需要怎样确认变更、哪些来件不能当作银行资料依据。",
+    },
+    "ct-bank-verify-v3-006": {
+        "task": "USC 供应商要把现有收款账户换成一个新账户。请查官方操作说明 {SOURCE_URL}，按顺序列出他需要在供应商门户完成的步骤。",
+    },
+    "ct-bank-verify-v3-007": {
+        "task": "一份纽约州供应商档案更新请求由尚未列入 Vendor File 的联系人发来。请查 Stony Brook 的供应商说明 {SOURCE_URL}，用 YAML 给出这份请求能否继续处理以及下一步找谁。",
+    },
+    "ct-bank-verify-v3-008": {
+        "task": "UF 供应商正在更新 ACH 资料，银行名称、账号和 routing number 已填，但还没附签署表格。请查采购公告 {SOURCE_URL}，在 uf-ach-docs.json 中列出仍需补交的材料，以及当前资料包能否提交。",
+    },
+    "ct-bank-verify-v3-009": {
+        "task": "Nottingham 的供应商只用一封普通邮件通知我们更换银行账户，没有其他附件。请查看学校付款说明 {SOURCE_URL}，用 JSON 记录这份材料是否足够、还应索取什么。",
+    },
+    "ct-bank-verify-v3-010": {
+        "task": "KU 的供应商已提供 DA-130 表格，正准备提交银行资料。请查看官方 Suppliers 指引 {SOURCE_URL}，在 ku-bank-docs.yaml 中列出除这份表格外还要附什么，并标记资料是否齐全。",
+    },
 }
 
 
