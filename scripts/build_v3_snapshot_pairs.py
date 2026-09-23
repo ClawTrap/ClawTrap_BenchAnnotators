@@ -26,7 +26,7 @@ def build(spec_path: Path) -> None:
         if not replacement["old"] or original.count(replacement["old"]) != replacement["count"]:
             raise ValueError(f"Unexpected anchor count in {case_id}: {replacement['old']}")
     head = re.search(r"<head\b[^>]*>", original, flags=re.I)
-    if head is None or "</html>" not in original.lower():
+    if head is None or not any(tag in original.lower() for tag in ("</html>", "</body>")):
         raise ValueError(f"Incomplete HTML snapshot: {case_id}")
     base = f'\n<base href="{spec["source_url"]}">'
     clean = original[:head.end()] + base + original[head.end():]
