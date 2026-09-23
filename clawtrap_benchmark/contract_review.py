@@ -20,8 +20,11 @@ CONTENT_FIELDS = {
     "scenario", "task", "deliverable", "output_format", "authorized_boundary",
     "success_T", "success_A", "observation", "runtime_gap",
 }
-LABEL_FIELDS = {"category", "form", "position", "evidence_structure", "risk", "granularity", "timing"}
+LABEL_FIELDS = {"category", "task_action", "authority_direction", "form", "position", "evidence_structure", "risk", "granularity", "timing"}
 STANDARD_LABELS = {
+    "task_action": {"retrieve", "judge", "select", "compose", "modify", "prepare",
+                    "transfer", "execute", "communicate", "authorize"},
+    "authority_direction": {"READ", "WRITE", "ACT", "SEND", "RECEIVE", "GRANT"},
     "form": {"full-page replacement", "iframe/popup injection", "selective substitution",
              "redirect rewriting", "API JSON mutation", "file replacement", "mixed benign–malicious content"},
     "position": {"search results", "target webpage", "third-party citation", "API response",
@@ -36,6 +39,11 @@ STANDARD_LABELS = {
                     "timestamp", "numeric value"},
     "timing": {"first step", "before decision", "before confirmation", "repeated across turns",
                "delayed trigger", "memory contamination then trigger", "clean/attack alternation"},
+}
+ACTION_DIRECTIONS = {
+    "retrieve": "READ", "judge": "READ", "select": "READ", "compose": "WRITE",
+    "modify": "WRITE", "prepare": "WRITE", "transfer": "RECEIVE", "execute": "ACT",
+    "communicate": "SEND", "authorize": "GRANT",
 }
 
 
@@ -57,8 +65,9 @@ def label_options() -> dict:
                   for row in cases}
     options = {"categories": sorted(categories.values(), key=lambda item: item["number"])}
     for field in LABEL_FIELDS - {"category"}:
-        observed = {row["v3_contract"]["attack"][field] for row in cases}
-        options[field] = sorted(STANDARD_LABELS[field] if field in {"risk", "granularity", "timing"}
+        observed = {(row["v3_contract"][field] if field in {"task_action", "authority_direction"}
+                     else row["v3_contract"]["attack"][field]) for row in cases}
+        options[field] = sorted(STANDARD_LABELS[field] if field in {"task_action", "authority_direction", "risk", "granularity", "timing"}
                                 else STANDARD_LABELS[field] | observed)
     return options
 
@@ -154,8 +163,17 @@ def _edited_row(row: dict, edit: dict | None) -> dict:
         return {**row, "content_edit": {"status": "source", "revision": 0}}
     labels = edit.get("labels", {})
     contract = {**row["v3_contract"], **_effective_edit_fields(row, edit.get("fields", {}))}
+    action = labels.get("task_action")
+    if action in STANDARD_LABELS["task_action"]:
+        contract["task_action"] = action
+        contract["action_chain"] = [*contract["action_chain"][:-1], action]
+        if action != row["v3_contract"]["task_action"]:
+            contract["authority_direction"] = ACTION_DIRECTIONS[action]
+    direction = labels.get("authority_direction")
+    if direction in STANDARD_LABELS["authority_direction"]:
+        contract["authority_direction"] = direction
     attack = {**contract["attack"], **{key: value for key, value in labels.items()
-                                      if key != "category" and
+                                      if key not in {"category", "task_action", "authority_direction"} and
                                       (key not in {"risk", "granularity", "timing"}
                                        or value in STANDARD_LABELS[key])}}
     contract["attack"] = attack

@@ -8,6 +8,8 @@ const state = {
   domain:'',category:'',status:'',query:'',mode:'split',busy:false,contentWritable:false,editing:null
 };
 const labelChoices = {
+  task_action:[['retrieve','检索'],['judge','判断'],['select','选择'],['compose','编写'],['modify','修改'],['prepare','准备'],['transfer','转移'],['execute','执行'],['communicate','通信'],['authorize','授权']],
+  authority_direction:[['READ','读取'],['WRITE','写入工件'],['ACT','改变系统状态'],['SEND','外发'],['RECEIVE','接收资源'],['GRANT','授权']],
   form:[['full-page replacement','整页替换'],['iframe/popup injection','弹窗 / iframe'],['selective substitution','局部替换'],['redirect rewriting','重定向改写'],['API JSON mutation','API JSON 改写'],['file replacement','文件替换'],['mixed benign–malicious content','良恶内容混合']],
   position:[['search results','搜索结果'],['target webpage','目标网页'],['third-party citation','第三方引用'],['API response','API 响应'],['download file','下载文件'],['login page','登录页'],['checkout page','结算页'],['error page','错误页'],['redirect chain','重定向链'],['asynchronous update','异步更新']],
   evidence_structure:[['single source','单一来源'],['multiple polluted sources','多个污染来源'],['trusted–polluted conflict','可信与污染来源冲突'],['polluted majority / trusted minority','多数污染、少数可信'],['internal policy / external page conflict','内部政策与外部页面冲突'],['cache / live page conflict','缓存与实时页面冲突']],
@@ -49,17 +51,19 @@ function renderFrames(){
 function caseView(row){
   const contract=row.v3_contract,attack=contract.attack,review=row.private_review;
   const dimensions=[
-    ['任务类别',categorySelect(row)],['任务场景',editable('scenario',contract.scenario,'span')],['交付产物',editable('deliverable',contract.deliverable,'span')],
+    ['任务类别',categorySelect(row)],['任务场景',editable('scenario',contract.scenario,'span')],['终态对象',editable('deliverable',contract.deliverable,'span')],
+    ['主动作',labelSelect('task_action',contract.task_action)],['动作链',escapeHTML((contract.action_chain||[]).map(action=>labelChoices.task_action.find(([key])=>key===action)?.[1]||action).join(' → '))],
+    ['权限方向',labelSelect('authority_direction',contract.authority_direction)],
     ['攻击形式',labelSelect('form',attack.form)],['攻击位置',labelSelect('position',attack.position)],
     ['证据结构',labelSelect('evidence_structure',attack.evidence_structure)],['动作风险',labelSelect('risk',attack.risk)],
     ['篡改粒度',labelSelect('granularity',attack.granularity)],
     ['攻击时序',labelSelect('timing',attack.timing)]
   ];
   return `<section class="case-head"><div><div class="eyebrow">${escapeHTML(row.domain)} / ${escapeHTML(row.category_title)}</div><h1>${escapeHTML(contract.scenario)} <small>${escapeHTML(row.id)}</small></h1><p>${escapeHTML(row.host)} · ${row.content_edit?.revision?'题目已修改':'原题'} · ${escapeHTML(row.readiness)}</p></div><span id="selection-badge" class="verdict ${row.review?.selected?'retain_material':''}">${row.review?.selected?'已入选':'未入选'}</span></section>
-    <div class="summary-grid"><section class="reading normal"><h2>${icon('file-text')}发给 Agent 的任务</h2>${editable('task',contract.task,'p')}<div class="output-format"><strong>交付方式</strong>${editable('output_format',contract.output_format,'p')}</div><dl><dt>授权边界</dt><dd>${editable('authorized_boundary',contract.authorized_boundary,'span')}</dd><dt>任务入口</dt><dd><a href="${escapeHTML(safeURL(row.source_url))}" target="_blank" rel="noopener noreferrer">${escapeHTML(row.source_url)} ${icon('arrow-up-right')}</a></dd></dl></section>
+    <div class="summary-grid"><section class="reading normal"><h2>${icon('file-text')}发给 Agent 的任务</h2>${editable('task',contract.task,'p')}<dl><dt>授权边界</dt><dd>${editable('authorized_boundary',contract.authorized_boundary,'span')}</dd><dt>任务入口</dt><dd><a href="${escapeHTML(safeURL(row.source_url))}" target="_blank" rel="noopener noreferrer">${escapeHTML(row.source_url)} ${icon('arrow-up-right')}</a></dd></dl></section>
     <section class="reading attack"><h2>${icon('file-diff')}攻击内容</h2><p class="lead">${escapeHTML(review.transformation)}</p><dl><dt>被改字段</dt><dd>${escapeHTML(review.field)}</dd><dt>原值</dt><dd><mark class="clean-value">${escapeHTML(review.original||'请对照原始 HTML')}</mark></dd><dt>攻击值</dt><dd><mark class="attack-value">${escapeHTML(review.tampered||'请对照攻击 HTML')}</mark></dd></dl></section></div>
     <section class="workflow-dimensions"><div class="band-title"><h2>任务与攻击标签</h2><span>标签修改即时保存</span></div><dl class="dimension-grid">${dimensions.map(([label,control])=>`<div><dt>${label}</dt><dd>${control}</dd></div>`).join('')}</dl></section>
-    <section class="contract-band"><div class="band-title"><h2>结果判定</h2><span>T / A 分开记录</span></div><div class="criteria-grid"><div><span class="metric">T · 任务成功</span>${editable('success_T',contract.success_T)}</div><div><span class="metric attack-metric">A · 攻击成功</span>${editable('success_A',contract.success_A)}</div><div><span class="metric">观察证据</span>${editable('observation',contract.observation)}</div></div></section>
+    <section class="contract-band"><div class="band-title"><h2>结果判定</h2><span>T / A 分开记录 · 私有审核信息</span></div><div class="criteria-grid"><div><span class="metric">T · 任务成功</span>${editable('success_T',contract.success_T)}</div><div><span class="metric attack-metric">A · 攻击成功</span>${editable('success_A',contract.success_A)}</div><div><span class="metric">观察证据</span>${editable('observation',contract.observation)}</div></div><div class="output-format"><strong>验收对象（不发给 Agent）</strong>${editable('output_format',contract.output_format,'p')}</div></section>
     <section class="previews" aria-label="HTML 页面对照"><div class="preview-toolbar"><h2>原始 / 攻击 HTML</h2><div class="segmented">${[['split','并排'],['clean','原始'],['attack','攻击']].map(([key,label])=>`<button data-mode="${key}" aria-pressed="${state.mode===key}">${label}</button>`).join('')}</div></div><div id="frames"></div></section>`;
 }
 function render(){
@@ -140,7 +144,7 @@ document.addEventListener('change',event=>{
   const node=event.target;
   if(node.id==='select-case'){node.disabled=true;saveSelection(node.checked);return;}
   if(node.dataset.labelField){
-    if(state.editing){node.value=node.dataset.labelField==='category'?current().category:current().v3_contract.attack[node.dataset.labelField];toast('请先保存或取消文字修改');return;}
+    if(state.editing){node.value=node.dataset.labelField==='category'?current().category:['task_action','authority_direction'].includes(node.dataset.labelField)?current().v3_contract[node.dataset.labelField]:current().v3_contract.attack[node.dataset.labelField];toast('请先保存或取消文字修改');return;}
     patchContent({labels:{[node.dataset.labelField]:node.value}});return;
   }
   if(state.editing){node.value={'domain':state.domain,'category':state.category,'status':state.status,'case-select':state.selected}[node.id]??node.value;toast('请先保存或取消文字修改');return;}
