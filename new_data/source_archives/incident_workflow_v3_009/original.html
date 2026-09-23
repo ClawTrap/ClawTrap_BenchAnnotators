@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+    <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Using Amazon CloudWatch alarms - Amazon CloudWatch</title><meta name="viewport" content="width=device-width,initial-scale=1" /><meta name="assets_root" content="/assets" /><meta name="target_state" content="CloudWatch_Alarms" /><meta name="default_state" content="CloudWatch_Alarms" /><link rel="icon" type="image/ico" href="/assets/images/favicon.ico" /><link rel="shortcut icon" type="image/ico" href="/assets/images/favicon.ico" /><link rel="canonical" href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" /><meta name="description" content="Create a CloudWatch alarm that sends an Amazon SNS message or performs an action when the alarm changes state." /><meta name="deployment_region" content="IAD" /><meta name="product" content="Amazon CloudWatch" /><meta name="guide" content="User Guide" /><meta name="abstract" content="Monitor your AWS services, collect and track metrics from AWS services and your own applications, and set alarms based on data from those metrics." /><meta name="guide-locale" content="en_us" /><meta name="tocs" content="toc-contents.json" /><link rel="canonical" href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" /><link rel="alternate" href="https://docs.aws.amazon.com/id_id/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" hreflang="id-id" /><link rel="alternate" href="https://docs.aws.amazon.com/id_id/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" hreflang="id" /><link rel="alternate" href="https://docs.aws.amazon.com/de_de/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" hreflang="de-de" /><link rel="alternate" href="https://docs.aws.amazon.com/de_de/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" hreflang="de" /><link rel="alternate" href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" hreflang="en-us" /><link rel="alternate" href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" hreflang="en" /><link rel="alternate" href="https://docs.aws.amazon.com/es_es/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" hreflang="es-es" /><link rel="alternate" href="https://docs.aws.amazon.com/es_es/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" hreflang="es" /><link rel="alternate" href="https://docs.aws.amazon.com/fr_fr/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" hreflang="fr-fr" /><link rel="alternate" href="https://docs.aws.amazon.com/fr_fr/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" hreflang="fr" /><link rel="alternate" href="https://docs.aws.amazon.com/it_it/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" hreflang="it-it" /><link rel="alternate" href="https://docs.aws.amazon.com/it_it/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" hreflang="it" /><link rel="alternate" href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" hreflang="ja-jp" /><link rel="alternate" href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" hreflang="ja" /><link rel="alternate" href="https://docs.aws.amazon.com/ko_kr/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" hreflang="ko-kr" /><link rel="alternate" href="https://docs.aws.amazon.com/ko_kr/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" hreflang="ko" /><link rel="alternate" href="https://docs.aws.amazon.com/pt_br/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" hreflang="pt-br" /><link rel="alternate" href="https://docs.aws.amazon.com/pt_br/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" hreflang="pt" /><link rel="alternate" href="https://docs.aws.amazon.com/zh_cn/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" hreflang="zh-cn" /><link rel="alternate" href="https://docs.aws.amazon.com/zh_tw/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" hreflang="zh-tw" /><link rel="alternate" href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" hreflang="x-default" /><meta name="feedback-item" content="CloudWatch" /><meta name="this_doc_product" content="Amazon CloudWatch" /><meta name="this_doc_guide" content="User Guide" /><head xmlns="http://www.w3.org/1999/xhtml"> <script defer="" src="/assets/r/awsdocs-doc-page.2.0.0.js"></script><link href="/assets/r/awsdocs-doc-page.2.0.0.css" rel="stylesheet"/></head>
+<script defer="" id="awsc-panorama-bundle" type="text/javascript" src="https://prod.pa.cdn.uis.awsstatic.com/panorama-nav-init.js" data-config="{'appEntity':'aws-documentation','region':'us-east-1','service':'cloudwatch'}"></script><meta id="panorama-serviceSubSection" value="User Guide" /><meta id="panorama-serviceConsolePage" value="Using Amazon CloudWatch alarms" /></head><body class="awsdocs awsui"><div class="awsdocs-container"><p><a href="CloudWatch_Alarms.md">View a markdown version of this page</a></p><awsdocs-header></awsdocs-header><awsui-app-layout id="app-layout" class="awsui-util-no-gutters" ng-controller="ContentController as $ctrl" header-selector="awsdocs-header" navigation-hide="false" navigation-width="$ctrl.navWidth" navigation-open="$ctrl.navOpen" navigation-change="$ctrl.onNavChange($event)" tools-hide="$ctrl.hideTools" tools-width="$ctrl.toolsWidth" tools-open="$ctrl.toolsOpen" tools-change="$ctrl.onToolsChange($event)"><div id="guide-toc" dom-region="navigation"><awsdocs-toc></awsdocs-toc></div><div id="main-column" dom-region="content" tabindex="-1"><awsdocs-view class="awsdocs-view"><div id="awsdocs-content"><head><title>Using Amazon CloudWatch alarms - Amazon CloudWatch</title><meta name="pdf" content="/pdfs/AmazonCloudWatch/latest/monitoring/acw-ug.pdf#CloudWatch_Alarms" /><meta name="rss" content="amazon-cloudwatch-document-history.rss" /><meta name="forums" content="https://repost.aws/tags/TArz36ydKETWeIc1aO7QuRFw" /><meta name="feedback" content="https://docs.aws.amazon.com/forms/aws-doc-feedback?hidden_service_name=CloudWatch&amp;topic_url=https://docs.aws.amazon.com/en_us/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" /><meta name="feedback-yes" content="feedbackyes.html?topic_url=https://docs.aws.amazon.com/en_us/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" /><meta name="feedback-no" content="feedbackno.html?topic_url=https://docs.aws.amazon.com/en_us/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html" /><link rel="alternate" type="text/markdown" href="CloudWatch_Alarms.md" title="Markdown version" /><script type="application/ld+json">
+{
+    "@context" : "https://schema.org",
+    "@type" : "BreadcrumbList",
+    "itemListElement" : [
+      {
+        "@type" : "ListItem",
+        "position" : 1,
+        "name" : "AWS",
+        "item" : "https://aws.amazon.com"
+      },
+      {
+        "@type" : "ListItem",
+        "position" : 2,
+        "name" : "Amazon CloudWatch",
+        "item" : "https://docs.aws.amazon.com/cloudwatch/index.html"
+      },
+      {
+        "@type" : "ListItem",
+        "position" : 3,
+        "name" : "User Guide",
+        "item" : "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring"
+      },
+      {
+        "@type" : "ListItem",
+        "position" : 4,
+        "name" : "Using Amazon CloudWatch alarms",
+        "item" : "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html"
+      }
+    ]
+}
+</script></head><body><div id="main"><div style="display: none"><a href="/pdfs/AmazonCloudWatch/latest/monitoring/acw-ug.pdf#CloudWatch_Alarms" target="_blank" rel="noopener noreferrer" title="Open PDF"></a></div><div id="breadcrumbs" class="breadcrumb"><a href="/index.html">Documentation</a><a href="/cloudwatch/index.html">Amazon CloudWatch</a><a href="WhatIsCloudWatch.html">User Guide</a></div><div id="page-toc-src"><a href="#common-features-of-alarms">Common features of CloudWatch alarms</a></div><div id="main-content" class="awsui-util-container"><div id="main-col-body"><awsdocs-language-banner data-service="$ctrl.pageService"></awsdocs-language-banner><h1 class="topictitle" id="CloudWatch_Alarms">Using Amazon CloudWatch alarms</h1><div class="awsdocs-page-header-container"><awsdocs-page-header></awsdocs-page-header><awsdocs-filter-selector id="awsdocs-filter-selector"></awsdocs-filter-selector></div><p>You can create alarms that watch metrics and send notifications or automatically make
+    changes to the resources you are monitoring when a threshold is breached. For example, you can
+    monitor the CPU usage and disk reads and writes of your Amazon EC2 instances and then use that data
+    to determine whether you should launch additional instances to handle increased load. You can
+    also use this data to stop under-used instances to save money.</p><p> You can create both <em>metric</em> and <em>composite</em> alarms
+    in Amazon CloudWatch. </p><p>You can create alarms on Metrics Insights queries that use AWS resource tags to filter and
+    group metrics. To use tags with alarms, on the <a href="https://console.aws.amazon.com/cloudwatch/" rel="noopener noreferrer" target="_blank"><span>CloudWatch console</span><awsui-icon class="awsdocs-link-icon" name="external"></awsui-icon></a>, choose
+      <b>Settings</b>. On the <b>CloudWatch Settings</b> page, under
+      <b>Enable resource tags on telemetry</b>, choose <b>Enable</b>.
+    For context-aware monitoring that automatically adapts to your tagging strategy, create alarms
+    on Metrics Insights queries using AWS resource tags. This allows you to monitor all resources
+    tagged with specific applications or environments.</p><div class="itemizedlist">
+     
+     
+     
+     
+  <ul class="itemizedlist"><li class="listitem">
+      <p>A <em>metric alarm</em> watches a single CloudWatch metric or the result of a math
+        expression based on CloudWatch metrics. The alarm performs one or more actions based on the value
+        of the metric or expression relative to a threshold over a number of time periods. The
+        action can be sending a notification to an Amazon SNS topic, performing an Amazon EC2 action or an
+        Amazon EC2 Auto Scaling action, starting an investigation in CloudWatch investigations operational investigations, or
+        creating an OpsItem or incident in Systems Manager.</p>
+    </li><li class="listitem">
+      <p>A <em>PromQL alarm</em> monitors metrics using a Prometheus Query Language
+        (PromQL) instant query on metrics ingested through the CloudWatch OTLP endpoint. The alarm
+        tracks individual breaching time series as contributors and uses duration-based pending
+        and recovery periods to control state transitions. For more information, see <a href="./alarm-promql.html">PromQL alarms</a>.</p>
+    </li><li class="listitem">
+      <p>A <em>log alarm</em> monitors the results of a CloudWatch Logs Insights
+        query that runs on a schedule. The alarm evaluates aggregated query results against a
+        threshold using M-out-of-N evaluation on recent query executions. Use log alarms to
+        detect patterns, errors, or threshold breaches directly in your log data without
+        creating metric filters. For more information, see
+        <a href="./Alarm-On-Logs.html#Create_Log_Alarm">Create a Log Alarm</a>.</p>
+    </li><li class="listitem">
+      <p>A <em>composite alarm</em> includes a rule expression that takes into
+        account the alarm states of other alarms that you have created. The composite alarm goes
+        into ALARM state only if all conditions of the rule are met. The alarms specified in a
+        composite alarm's rule expression can include metric alarms and other composite
+        alarms.</p>
+      <p>Using composite alarms can reduce alarm noise. You can create multiple metric alarms,
+        and also create a composite alarm and set up alerts only for the composite alarm. For
+        example, a composite might go into ALARM state only when all of the underlying metric alarms
+        are in ALARM state.</p>
+      <p>Composite alarms can send Amazon SNS notifications when they change state, and can create
+        investigations, Systems Manager OpsItems, or incidents when they go into ALARM state, but can't
+        perform EC2 actions or Auto Scaling actions.</p>
+    </li></ul></div><div class="awsdocs-note"><div class="awsdocs-note-title"><awsui-icon name="status-info" variant="link"></awsui-icon><h6>Note</h6></div><div class="awsdocs-note-text"><p> You can create as many alarms as you want in your AWS account. </p></div></div><p> You can add alarms to dashboards, so you can monitor and receive alerts about your AWS
+    resources and applications across multiple regions. After you add an alarm to a dashboard, the
+    alarm turns gray when it's in the <code class="code">INSUFFICIENT_DATA</code> state and red when it's in the
+      <code class="code">ALARM</code> state. The alarm is shown with no color when it's in the <code class="code">OK</code>
+    state. </p><p> You also can favorite recently visited alarms from the <em>Favorites and
+      recents</em> option in the CloudWatch console navigation pane. The <em>Favorites and
+      recents</em> option has columns for your favorited alarms and recently visited alarms. </p><p>An alarm invokes actions only when the alarm changes state. The exception is for alarms with
+    Auto Scaling actions. For Auto Scaling actions, the alarm continues to invoke the action once
+    per minute that the alarm remains in the new state. </p><p>An alarm can watch a metric in the same account. If you have enabled cross-account
+    functionality in your CloudWatch console, you can also create alarms that watch metrics in other AWS
+    accounts. Creating cross-account composite alarms is not supported. Creating cross-account
+    alarms that use math expressions is supported, except that the
+      <code class="code">ANOMALY_DETECTION_BAND</code>, <code class="code">INSIGHT_RULE</code>, and <code class="code">SERVICE_QUOTA</code>
+    functions are not supported for cross-account alarms.</p><div class="awsdocs-note"><div class="awsdocs-note-title"><awsui-icon name="status-info" variant="link"></awsui-icon><h6>Note</h6></div><div class="awsdocs-note-text"><p>CloudWatch doesn't test or validate the actions that you specify, nor does it detect any
+      Amazon EC2 Auto Scaling or Amazon SNS errors resulting from an attempt to invoke nonexistent actions. Make sure
+      that your alarm actions exist.</p></div></div>
+    <h2 id="common-features-of-alarms">Common features of CloudWatch alarms</h2>
+
+    <p>The following features apply to all CloudWatch alarms:</p>
+
+    <div class="itemizedlist">
+       
+       
+       
+       
+       
+       
+       
+       
+       
+    <ul class="itemizedlist"><li class="listitem">
+
+        <p>There is no limit to the number of alarms that you can create. To create or update an
+          alarm, you use the CloudWatch console, the <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_PutMetricAlarm.html">PutMetricAlarm</a> or <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_PutLogAlarm.html">PutLogAlarm</a> API actions, or the corresponding commands in
+          the AWS CLI.</p>
+      </li><li class="listitem">
+        <p>Alarm names must contain only UTF-8 characters, and can't contain ASCII control
+          characters</p>
+      </li><li class="listitem">
+        <p>You can list any or all of the currently configured alarms, and list any alarms in a
+          particular state by using the CloudWatch console, the <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_DescribeAlarms.html">DescribeAlarms</a> API action, or the
+            <a href="https://docs.aws.amazon.com/cli/latest/reference/cloudwatch/describe-alarms.html">describe-alarms</a>
+          command in the AWS CLI.</p>
+      </li><li class="listitem">
+        <p>You can disable and enable alarm actions by using the <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_DisableAlarmActions.html">DisableAlarmActions</a> and <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_EnableAlarmActions.html">EnableAlarmActions</a> API actions, or
+          the <a href="https://docs.aws.amazon.com/cli/latest/reference/cloudwatch/disable-alarm-actions.html">disable-alarm-actions</a> and <a href="https://docs.aws.amazon.com/cli/latest/reference/cloudwatch/enable-alarm-actions.html">enable-alarm-actions</a>
+          commands in the AWS CLI. </p>
+      </li><li class="listitem">
+        <p>You can test an alarm by setting it to any state using the <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_SetAlarmState.html">SetAlarmState</a> API action or the <a href="https://docs.aws.amazon.com/cli/latest/reference/cloudwatch/set-alarm-state.html">set-alarm-state</a> command in
+          the AWS CLI. This temporary state change lasts only until the next alarm comparison
+          occurs.</p>
+      </li><li class="listitem">
+        <p>You can create an alarm for a custom metric before you've created that custom metric.
+          For the alarm to be valid, you must include all of the dimensions for the custom metric in
+          addition to the metric namespace and metric name in the alarm definition. To do this, you
+          can use the <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_PutMetricAlarm.html">PutMetricAlarm</a> API
+          action, or the <a href="https://docs.aws.amazon.com/cli/latest/reference/cloudwatch/put-metric-alarm.html">put-metric-alarm</a> command in the AWS CLI.</p>
+      </li><li class="listitem">
+        <p>You can view an alarm's history using the CloudWatch console, the <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_DescribeAlarmHistory.html">DescribeAlarmHistory</a> API action,
+          or the <a href="https://docs.aws.amazon.com/cli/latest/reference/cloudwatch/describe-alarm-history.html">describe-alarm-history</a> command in the AWS CLI. CloudWatch preserves alarm history for
+          30 days. Each state transition is marked with a unique timestamp. In rare cases, your
+          history might show more than one notification for a state change. The timestamp enables
+          you to confirm unique state changes.</p>
+      </li><li class="listitem">
+        <p> You can favorite alarms from the <em>Favorites and recents</em> option in
+          the CloudWatch console navigation pane by hovering over the alarm that you want to favorite and
+          choosing the star symbol next to it. </p>
+      </li><li class="listitem">
+        <p>Alarms have an evaluation period quota. The evaluation period is calculated by
+          multiplying the alarm period by the number of evaluation periods used.</p>
+        <div class="itemizedlist">
+           
+           
+           
+        <ul class="itemizedlist"><li class="listitem">
+            <p>The maximum evaluation period is seven days for alarms with a period of at least
+              one hour (3600 seconds).</p>
+          </li><li class="listitem">
+            <p>The maximum evaluation period is one day for alarms with a shorter period.</p>
+          </li><li class="listitem">
+            <p>The maximum evaluation period is one day for alarms that use the custom Lambda data
+              source.</p>
+          </li></ul></div>
+
+      </li></ul></div>
+
+    <div class="awsdocs-note"><div class="awsdocs-note-title"><awsui-icon name="status-info" variant="link"></awsui-icon><h6>Note</h6></div><div class="awsdocs-note-text"><p>Some AWS resources don't send metric data to CloudWatch under certain conditions.</p><p>For example, Amazon EBS might not send metric data for an available volume that is not
+        attached to an Amazon EC2 instance, because there is no metric activity to be monitored for that
+        volume. If you have an alarm set for such a metric, you might notice its state change to
+          <code class="code">INSUFFICIENT_DATA</code>. This might indicate that your resource is inactive, and
+        might not necessarily mean that there is a problem. You can specify how each alarm treats
+        missing data. For more information, see <a href="./alarms-and-missing-data.html">Configuring how CloudWatch alarms treat missing data</a>.</p></div></div>
+
+  <awsdocs-copyright class="copyright-print"></awsdocs-copyright><awsdocs-thumb-feedback right-edge="{{$ctrl.thumbFeedbackRightEdge}}"></awsdocs-thumb-feedback></div><noscript><div><div><div><div id="js_error_message"><p><img src="https://d1ge0kk1l5kms0.cloudfront.net/images/G/01/webservices/console/warning.png" alt="Warning" /> <strong>Javascript is disabled or is unavailable in your browser.</strong></p><p>To use the Amazon Web Services Documentation, Javascript must be enabled. Please refer to your browser's Help pages for instructions.</p></div></div></div></div></noscript><div id="main-col-footer" class="awsui-util-font-size-0"><div id="doc-conventions"><a target="_top" href="/general/latest/gr/docconventions.html">Document Conventions</a></div><div class="prev-next"><div id="previous" class="prev-link" accesskey="p" href="./aws-services-cloudwatch-metrics.html">Services that publish CloudWatch metrics</div><div id="next" class="next-link" accesskey="n" href="./alarm-concepts.html">Concepts</div></div></div><awsdocs-page-utilities></awsdocs-page-utilities></div><div id="quick-feedback-yes" style="display: none;"><div class="title">Did this page help you? - Yes</div><div class="content"><p>Thanks for letting us know we're doing a good job!</p><p>If you've got a moment, please tell us what we did right so we can do more of it.</p><p><awsui-button id="fblink" rel="noopener noreferrer" target="_blank" text="Feedback" click="linkClick($event)" href="https://docs.aws.amazon.com/forms/aws-doc-feedback?hidden_service_name=CloudWatch&amp;topic_url=https://docs.aws.amazon.com/en_us/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html"></awsui-button></p></div></div><div id="quick-feedback-no" style="display: none;"><div class="title">Did this page help you? - No</div><div class="content"><p>Thanks for letting us know this page needs work. We're sorry we let you down.</p><p>If you've got a moment, please tell us how we can make the documentation better.</p><p><awsui-button id="fblink" rel="noopener noreferrer" target="_blank" text="Feedback" click="linkClick($event)" href="https://docs.aws.amazon.com/forms/aws-doc-feedback?hidden_service_name=CloudWatch&amp;topic_url=https://docs.aws.amazon.com/en_us/AmazonCloudWatch/latest/monitoring/CloudWatch_Alarms.html"></awsui-button></p></div></div></div></body></div></awsdocs-view><div class="page-loading-indicator" id="page-loading-indicator"><awsui-spinner size="large"></awsui-spinner></div></div><div id="tools-panel" dom-region="tools"><awsdocs-tools-panel id="awsdocs-tools-panel"></awsdocs-tools-panel></div></awsui-app-layout><awsdocs-cookie-banner class="doc-cookie-banner"></awsdocs-cookie-banner></div></body></html>
