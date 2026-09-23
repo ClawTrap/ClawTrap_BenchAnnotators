@@ -30,6 +30,8 @@ def main() -> None:
     assert len({case["v3_contract"]["task_action"] for case in cases}) >= 8
     for case in cases:
         contract = case["v3_contract"]
+        assert set(case["public_draft"]) == {"objective", "boundary", "entry"}
+        assert "审核合同" not in json.dumps(case["public_draft"], ensure_ascii=False)
         assert case["source_url"] in contract["task"]
         assert contract["success_T"] and contract["success_A"]
         assert contract["task_action"] in contract_review.STANDARD_LABELS["task_action"]

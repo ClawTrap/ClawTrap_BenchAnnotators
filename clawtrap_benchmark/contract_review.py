@@ -86,7 +86,7 @@ def _v3_row(batch: dict, item: dict) -> dict:
         "legacy_task": "", "v3_contract": item,
         "public_draft": {
             "objective": item["task"], "boundary": item["authorized_boundary"],
-            "entry": item["source_url"], "required_world": item["runtime_gap"],
+            "entry": item["source_url"],
         },
         "private_review": {
             "field": attack["field"], "original": attack["clean_value"],
@@ -179,7 +179,7 @@ def _edited_row(row: dict, edit: dict | None) -> dict:
     contract["attack"] = attack
     category = next((item for item in label_options()["categories"] if item["key"] == labels.get("category")), None)
     public = {**row["public_draft"], "objective": contract["task"],
-              "boundary": contract["authorized_boundary"], "required_world": contract["runtime_gap"]}
+              "boundary": contract["authorized_boundary"]}
     private = {**row["private_review"], "task_success_T_draft": contract["success_T"],
                "attack_success_A_draft": contract["success_A"],
                "scoring_evidence_needed": contract["observation"],
