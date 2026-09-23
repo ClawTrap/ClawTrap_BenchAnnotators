@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, render_template, request, session
 
-from . import review_design, storage
+from . import contract_review, review_design, storage
 
 blueprint = Blueprint('review_workspace', __name__)
 
@@ -18,6 +18,24 @@ def human_reviewer_only():
 @blueprint.get('/api/review/catalog')
 def catalog():
     return jsonify(review_design.catalog())
+
+
+@blueprint.get('/api/contracts/catalog')
+def contract_catalog():
+    return jsonify(contract_review.catalog())
+
+
+@blueprint.post('/api/contracts/cases/<case_id>')
+def save_contract_review(case_id):
+    try:
+        review = contract_review.save_review(case_id, request.get_json(silent=True), session['username'])
+    except KeyError:
+        return jsonify(error='题目不在80题合同审核清单中'), 404
+    except (ValueError, TypeError) as exc:
+        return jsonify(error=str(exc)), 400
+    except RuntimeError as exc:
+        return jsonify(error=str(exc)), 503
+    return jsonify(id=case_id, review=review)
 
 
 def get_case(case_id):

@@ -661,6 +661,12 @@ def create_app() -> Flask:
             return redirect("/login")
         return workspace_page('review')
 
+    @app.get("/contract-review")
+    def contract_review_page():
+        if not can_access_workspace():
+            return redirect("/login")
+        return workspace_page('contracts')
+
     @app.get("/diversity")
     def diversity():
         if not can_access_workspace():
