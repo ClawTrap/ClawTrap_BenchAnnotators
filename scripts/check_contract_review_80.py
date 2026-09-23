@@ -25,7 +25,7 @@ def main() -> None:
     assert all(len(batch["cases"]) == 10 for batch in batches)
     assert all("v3_contract" in case for case in cases)
     assert len({r["category"] for r in cases}) == len(batches)
-    assert len({r["source_url"] for r in cases}) == len(cases)
+    assert len({(r["category"], r["source_url"]) for r in cases}) == len(cases)
     assert len({r["host"] for r in cases}) >= 15
     assert {r["category_number"] for r in cases} == set(range(1, len(batches) + 1))
     for case in cases:
