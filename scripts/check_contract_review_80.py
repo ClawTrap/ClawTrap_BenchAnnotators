@@ -26,6 +26,11 @@ def main() -> None:
     assert len({r["category"] for r in cases}) == 30
     assert len({r["host"] for r in legacy}) == 59
     assert len({r["host"] for r in v3}) == 10
+    for case in v3:
+        contract = case["v3_contract"]
+        assert contract["scenario"]
+        assert all(contract["attack"].get(field) for field in
+                   ("form", "position", "evidence_structure", "risk", "timing"))
     for case in cases:
         for kind in ("clean", "attack"):
             entry = case["preview"][kind].lstrip("/").replace("-assets/", "_assets/", 1)
