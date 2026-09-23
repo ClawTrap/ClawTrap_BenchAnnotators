@@ -19,13 +19,15 @@ from clawtrap_benchmark.web import app
 
 def main() -> None:
     cases = contract_review.candidate_index()["cases"]
-    assert len(cases) == 90
+    assert len(cases) == 100
     legacy = [case for case in cases if "v3_contract" not in case]
     v3 = [case for case in cases if "v3_contract" in case]
-    assert len(legacy) == 80 and len(v3) == 10
+    assert len(legacy) == 80 and len(v3) == 20
     assert len({r["category"] for r in cases}) == 30
     assert len({r["host"] for r in legacy}) == 59
-    assert len({r["host"] for r in v3}) == 10
+    assert len({r["source_url"] for r in v3}) == 20
+    assert len({r["host"] for r in v3}) >= 15
+    assert {r["category_number"] for r in v3} == {1, 2}
     for case in v3:
         contract = case["v3_contract"]
         assert contract["scenario"]
@@ -63,7 +65,7 @@ def main() -> None:
             with client.session_transaction() as session:
                 session.update(role="admin", username="contract-smoke")
             response = client.get("/api/contracts/catalog")
-            assert response.status_code == 200 and response.get_json()["total"] == 90
+            assert response.status_code == 200 and response.get_json()["total"] == 100
             assert client.get("/contract-review").status_code == 200
             assert b"contract_review.js" in client.get("/contract-review").data
             assert client.get("/static/contract_review.css").status_code == 200
@@ -100,8 +102,8 @@ def main() -> None:
             with patch.dict("os.environ", CLAWTRAP_LAB_PROXY_TOKEN="test-proxy"):
                 assert client.get("/api/contracts/catalog", headers={"X-ClawTrap-Lab-Proxy": "test-proxy"}).status_code == 401
     assert hashlib.sha256(source.read_bytes()).hexdigest() == source_hash
-    print(json.dumps({"cases": 90, "legacy_cases": 80, "v3_cases": 10,
-                      "categories": 30, "v3_sites": 10, "previews": 180,
+    print(json.dumps({"cases": 100, "legacy_cases": 80, "v3_cases": 20,
+                      "categories": 30, "v3_sites": len({r["host"] for r in v3}), "previews": 200,
                       "review_storage_independent": True, "old_case_unchanged": True,
                       "reviewer_auth_required": True}, ensure_ascii=False))
 

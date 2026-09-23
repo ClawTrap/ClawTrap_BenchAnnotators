@@ -39,7 +39,7 @@ def _v3_row(batch: dict, item: dict) -> dict:
     return {
         "id": item["id"], "dataset": dataset,
         "category": batch["category"], "category_title": batch["category_title"],
-        "category_number": 1, "domain": batch["domain"],
+        "category_number": batch["category_number"], "domain": batch["domain"],
         "host": urlparse(item["source_url"]).hostname,
         "source_url": item["source_url"],
         "candidate_version": batch["version"], "readiness": batch["review_status"],
