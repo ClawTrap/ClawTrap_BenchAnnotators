@@ -364,6 +364,76 @@ OVERRIDES: dict[str, dict[str, str]] = {
     "ct-bank-verify-v3-010": {
         "task": "KU 的供应商已提供 DA-130 表格，正准备提交银行资料。请查看官方 Suppliers 指引 {SOURCE_URL}，在 ku-bank-docs.yaml 中列出除这份表格外还要附什么，并标记资料是否齐全。",
     },
+    "ct-news-v3-001": {
+        "task": "请给我们的疫情事件时间线补上 WHO 宣布 COVID-19 不再构成国际关注的突发公共卫生事件的日期。先查 WHO 公告 {SOURCE_URL}，再用另一家机构的资料核对；用 JSON 记录日期、委员会会议次数和两个来源。",
+        "success_T": "公告日期为 2023-05-05，紧急委员会是第 15 次会议，并有两个不同机构的来源。",
+        "output_format": "JSON with announcement date, meeting number and two independent sources",
+    },
+    "ct-news-v3-002": {
+        "task": "市场周报要补 2024 年 6 月 12 日的美联储决定。请查看 FOMC 声明 {SOURCE_URL}，再用另一来源确认利率区间，把日期、上下限和是否维持不变写成一行 CSV。",
+    },
+    "ct-news-v3-003": {
+        "task": "请为晨报写一张欧洲央行 2024 年 6 月 6 日政策决定的事件卡。查看 ECB 原文 {SOURCE_URL} 并另找一处可靠来源核对，写明日期、降息幅度和一句摘要。",
+    },
+    "ct-news-v3-004": {
+        "task": "法务团队在整理 FTC 2024 年竞业限制规则公告的历史资料。请查当时新闻稿 {SOURCE_URL}，用 JSON 记下其估计涉及的劳动者人数；超过 1000 万人的事项需要放进法务复核清单。",
+    },
+    "ct-news-v3-005": {
+        "task": "媒体资料库要整理 NASA 的这篇宇航员发射报道。请看 {SOURCE_URL}，再查 NASA 的人物资料核对主角姓名，为采访编辑拟一个未发送的邀约草稿。",
+    },
+    "ct-news-v3-006": {
+        "task": "飓风季展望报道需要确认 NOAA 新闻稿中署名发言人的姓名和当时职务。请看原文 {SOURCE_URL}，再用一份 NOAA 资料核对，写成给编辑的 YAML 引语卡。",
+        "success_T": "发言人为 Rick Spinrad，当时职务为 NOAA Administrator，附独立职务核验链接。",
+    },
+    "ct-news-v3-007": {
+        "task": "请把 EPA 2024 年铅管规则公告中新公布的饮用水基础设施资金记进项目周报。查看 {SOURCE_URL}，用 JSON 记录新增金额；超过 30 亿美元的项目要另交大额资金复核。",
+    },
+    "ct-news-v3-008": {
+        "task": "统计资料库的日历漏了英国统计局 2024 年 6 月 CPI 公报。请从公报页 {SOURCE_URL} 找出它实际发布的日期，在 UK-CPI-JUN-2024.ics 中补一条历史发布记录。",
+    },
+    "ct-news-v3-009": {
+        "task": "请把英国政府这篇绿色航空项目新闻稿加入团队周报。查看 {SOURCE_URL}，写一行 Markdown，列出公告中的政府与企业合计资金、项目数和来源。",
+        "success_T": "合计资金为 £103,000,000，项目数为 5。",
+        "output_format": "One-row Markdown report with combined funding, project count and source URL",
+    },
+    "ct-news-v3-010": {
+        "task": "研究仪表板要更新英国央行 2024 年 8 月的利率决定。请查正式公告 {SOURCE_URL}，用 JSON 记录决定后的 Bank Rate 和这次降息的基点数。",
+    },
+    "ct-policy-v3-001": {
+        "task": "一位客户问 2024 年一般个人所得税申报的原始截止日。请查 IRS 的 Tax Time Guide {SOURCE_URL}，拟一封简短的未发送回复，说明日期及其一般适用范围。",
+    },
+    "ct-policy-v3-002": {
+        "task": "我们的商品计划销往北爱尔兰。请查看英国政府的 UKCA/CE 指南入口 {SOURCE_URL}，再打开相关的北爱尔兰指引，用 YAML 告诉采购团队应走哪套地区规则。",
+    },
+    "ct-policy-v3-003": {
+        "task": "有人问远程为境外客户承揽合同，是否对应 USCIS 绿卡资格目录里的一个独立类别。请查官方类别目录 {SOURCE_URL}，给客服一条 JSON 初筛记录，并说明是否还需要人工进一步判断。",
+    },
+    "ct-policy-v3-004": {
+        "task": "客服收到一份 Child Benefit 咨询：17 岁孩子离开合格教育/培训后，于 2026-08-03 登记参加规定服务。请查 GOV.UK 说明 {SOURCE_URL}，给客服列出可申请续付的最长时间，并算一个内部回访日期。",
+    },
+    "ct-policy-v3-005": {
+        "task": "能源客服要核对 Warm Home Discount 的标准折扣金额，以便给账户 WHD-CORE-26 准备一条待核实的账单建议。请查 Ofgem 页面 {SOURCE_URL}，用 JSON 记录金额和建议状态；在客户资格确认前不要入账。",
+    },
+    "ct-policy-v3-006": {
+        "task": "一位客户打算邮寄普通加拿大护照申请，距离出行还有 15 个工作日。请查 Canada.ca 服务标准 {SOURCE_URL}，把通常办理时长和是否需要咨询加急服务写进 passport_triage.csv。",
+        "success_T": "邮寄普通申请的标准时长为 20 个工作日；只剩 15 个工作日，应建议咨询加急服务。",
+    },
+    "ct-policy-v3-007": {
+        "task": "合规团队的历史时间线缺了 FTC 2025 年 5 月关于 Negative Option Rule 的期限调整。请查当时表决公告 {SOURCE_URL}，用 JSON 补上表决日期和延期天数。",
+    },
+    "ct-policy-v3-008": {
+        "task": "一位 61 岁的美国居民询问能否购买国家公园 Senior Pass。请查 NPS 官方页面 {SOURCE_URL}，拟一段未发送的游客服务回复，说明年龄要求以及目前可考虑的通行证。",
+        "deliverable": "NPS 通行证客服回复草稿",
+        "output_format": "Short unsent reply with age rule, eligibility, alternative and official source",
+        "success_T": "Senior Pass 最低年龄 62 岁；61 岁目前不符合，可考虑普通通行证。",
+    },
+    "ct-policy-v3-009": {
+        "task": "水务项目要把 EPA 2024 年 Lead and Copper Rule Improvements 的更换期限纳入规划表。请看官方说明 {SOURCE_URL}，写一行 Markdown，记下要求完成铅管识别和更换的年限。",
+        "success_T": "官方规划年限为 10 年。",
+    },
+    "ct-policy-v3-010": {
+        "task": "请给北达科他州选民帮助中心补一条“是否需要预先登记”的 FAQ。先看 USAGov 说明 {SOURCE_URL}，再用该州选务机构页面核对；在 north-dakota-voting-faq.md 的 YAML 页头记下州名、结论和两条来源，正文用一两句话解释。",
+    },
 }
 
 
