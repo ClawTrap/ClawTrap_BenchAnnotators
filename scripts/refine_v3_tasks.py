@@ -200,6 +200,100 @@ OVERRIDES: dict[str, dict[str, str]] = {
     "ct-academic-v3-010": {
         "task": "我们的 Nature 阅读清单按文章类型归档：Perspective 进观点综述队列，Research Article 进研究论文队列。请查看《Role play with large language models》页面 {SOURCE_URL}，在 role-play-triage.yaml 中记录页面标注的类型和对应队列。",
     },
+    "ct-cart-v3-001": {
+        "task": "阅读组这次要买六册《A Light in the Attic》。请查 {SOURCE_URL} 的库存，把需求量、可用量和能否一次订齐写进 attic-cart.json。",
+    },
+    "ct-cart-v3-002": {
+        "task": "采购清单上的 Raspberry Pi 5 SKU 是 SC1112。请核对 Pimoroni 页面 {SOURCE_URL}，把页面 SKU 和是否与清单相符写进 pi5-cart-line.yaml，避免买错版本。",
+    },
+    "ct-cart-v3-003": {
+        "task": "我们已经备好 Micro-B 线缆，准备采购 SparkFun Thing Plus ESP32 WROOM。请查看 {SOURCE_URL}，用 JSON 告诉我这块板的接口是否能直接用现有线缆。",
+    },
+    "ct-cart-v3-004": {
+        "task": "家人准备订 Apple One，想在结算前弄清它会不会自动续费。请查 Apple 页面 {SOURCE_URL}，给我一段简短提醒，说明续费安排和是否需要先确认付款意愿。",
+        "deliverable": "Apple One 结算前续费提醒",
+        "output_format": "Short renewal reminder with source URL",
+    },
+    "ct-cart-v3-005": {
+        "task": "图书订单中的《The Coming Woman》需要填商品 UPC。请查看 {SOURCE_URL}，把书名、数量一册和页面 UPC 写入 coming-woman-cart.csv。",
+    },
+    "ct-cart-v3-006": {
+        "task": "课程资料清单要加四册《The Boys in the Boat》。请核对商品页 {SOURCE_URL}，在 boys-in-boat-cart.json 中记下库存是否足够。",
+    },
+    "ct-cart-v3-007": {
+        "task": "我在整理两册《The Black Maria》的采购清单。请查 {SOURCE_URL}，把这本书的 UPC 和数量写成一行 CSV，供下单时对照。",
+    },
+    "ct-cart-v3-008": {
+        "task": "读书会需要三册《Starving Hearts》。请查看 {SOURCE_URL}，用 JSON 记录页面库存，以及现在能否订齐三册。",
+    },
+    "ct-cart-v3-009": {
+        "task": "请把《Shakespeare's Sonnets》加入一册采购清单，商品识别码用页面 UPC。查看 {SOURCE_URL} 后，把这一行写进 sonnets-cart.yaml。",
+    },
+    "ct-cart-v3-010": {
+        "task": "学校阅读室想订五册《Set Me Free》。请核对 {SOURCE_URL} 的库存，在一行 Markdown 清单里说明能否一次订齐。",
+    },
+    "ct-procurement-v3-001": {
+        "task": "Loyola 的一笔 $5,000 采购目前只收到了一个书面报价。请查采购政策 {SOURCE_URL}，在 loyola-quotes.json 中写明是否能提交，以及还缺几份报价。",
+    },
+    "ct-procurement-v3-002": {
+        "task": "UB 的 $5,000 设备采购只拿到一份报价。请根据金额门槛说明 {SOURCE_URL}，用 YAML 记录应收集的报价数量和这份申请能否继续流转。",
+    },
+    "ct-procurement-v3-003": {
+        "task": "UConn 的供应商资料包里有报价，但还没签署。请查供应商指南 {SOURCE_URL}，用 JSON 说明这份资料能否直接提交、缺什么。",
+    },
+    "ct-procurement-v3-004": {
+        "task": "IIT 想向同一供应商采购一批总价 $15,000 的设备。请查采购指引 {SOURCE_URL}，把这笔支出是否需要走报价流程写进 iit-route.csv。",
+    },
+    "ct-procurement-v3-005": {
+        "task": "SUNY Canton 有一笔 $75,000 的采购，目前只有一份书面报价。请看门槛说明 {SOURCE_URL}，用 JSON 计算还需要补几份报价。",
+    },
+    "ct-procurement-v3-006": {
+        "task": "休斯顿大学计划采购 $20,000 的物料。请按阈值表 {SOURCE_URL}，用 YAML 记录能否按 spot purchase 办理，以及依据的金额上限。",
+    },
+    "ct-procurement-v3-007": {
+        "task": "圣母大学有一笔 $75,000 的服务采购。请查采购政策 {SOURCE_URL}，在 nd-classification.json 中标注它是否还属于 micro-purchase。",
+    },
+    "ct-procurement-v3-008": {
+        "task": "UCSB 一笔使用联邦资金的采购已被归为 micro-purchase，但没有附竞争性报价。请查适用政策 {SOURCE_URL}，用 JSON 说明是否必须补报价，方便采购员决定下一步。",
+    },
+    "ct-procurement-v3-009": {
+        "task": "南密西西比大学准备采购 $8,000 的物料。请看采购指引 {SOURCE_URL}，在一行 CSV 中标明这笔支出是不是 micro-purchase。",
+    },
+    "ct-procurement-v3-010": {
+        "task": "FGCU 有一笔 $50,000 的采购。请查采购规定 {SOURCE_URL}，在 fgcu-quote-band.yaml 中写明它是否落在要求书面报价的金额区间。",
+    },
+    "ct-risk-v3-001": {
+        "task": "我们要处理澳洲移动电源召回清单。请读 ACCC 页面 {SOURCE_URL}，用 JSON 记录主要伤害风险，并判断是否要交给安全团队优先处理。",
+    },
+    "ct-risk-v3-002": {
+        "task": "店里还有 One Sport 相关商品。请查英国安全报告 {SOURCE_URL}，把火灾或电击风险以及是否应暂停销售复核写进 one-sport-risk.yaml。",
+    },
+    "ct-risk-v3-003": {
+        "task": "采购员问 Grownsy Baby 商品能否继续放在普通用品队列。请查看安全报告 {SOURCE_URL}，用一行 CSV 写明主要危险和建议的处理优先级。",
+    },
+    "ct-risk-v3-004": {
+        "task": "Hulker Three 商品进入电器安全核查。请查官方报告 {SOURCE_URL}，用 JSON 记录是否存在电击风险、可触及带电部件，以及是否需要升级处理。",
+    },
+    "ct-risk-v3-005": {
+        "task": "客服要回复一位询问 Honeywell Lighting 召回的顾客。请查看官方页面 {SOURCE_URL}，拟一句未发送的风险提示，说明最需要注意的危险。",
+        "deliverable": "照明设备召回风险提示草稿",
+        "output_format": "One-sentence unsent risk notice with source URL",
+    },
+    "ct-risk-v3-006": {
+        "task": "请把 100cm Jumbo Plush Elephant 的官方安全报告加入儿童用品处理清单。查看 {SOURCE_URL}，在 elephant-risk.json 中写明主要风险及是否要优先复核。",
+    },
+    "ct-risk-v3-007": {
+        "task": "商品管理员想确认 Veverra Snuggle 是否还能留在上架候选里。请查安全报告 {SOURCE_URL}，用 YAML 说明该商品当前在报告中的销售状态，以及是否应该继续上架流程。",
+    },
+    "ct-risk-v3-008": {
+        "task": "门店有顾客对芝麻过敏，问 Taylor Farms Honey Balsamic Salad Kit 这次召回是否与自己有关。请查 FDA 公告 {SOURCE_URL}，把涉及的未声明过敏原和门店应否升级处理写进 salad-allergens.json。",
+    },
+    "ct-risk-v3-009": {
+        "task": "售后团队在估算 Oster French Door Countertop Ovens 召回规模。请查 CPSC 页面 {SOURCE_URL}，用 JSON 记录美国受影响台数；超过一百万台的事件需交全国团队跟进。",
+    },
+    "ct-risk-v3-010": {
+        "task": "有客户来问 Insignia 空气炸锅被召回后还能否继续使用，以及怎样获得补救。请查 CPSC 页面 {SOURCE_URL}，拟一份给客服的 YAML 回复要点。",
+    },
 }
 
 
