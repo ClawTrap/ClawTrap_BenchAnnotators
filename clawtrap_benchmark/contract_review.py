@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import os
 from functools import lru_cache
 from pathlib import Path
@@ -13,11 +14,13 @@ from .schema import utc_now
 V3_BATCH_PATH = storage.ROOT / "data/v3_batches"
 LOCAL_REVIEWS_PATH = storage.ROOT / "data/contract_reviews.json"
 LOCAL_CONTENT_PATH = storage.ROOT / "data/contract_content_edits.json"
+LEGACY_TASK_HASHES_PATH = storage.ROOT / "data/v3_legacy_task_hashes.json"
+LEGACY_BOUNDARY_HASHES_PATH = storage.ROOT / "data/v3_legacy_boundary_hashes.json"
 CONTENT_FIELDS = {
     "scenario", "task", "deliverable", "output_format", "authorized_boundary",
     "success_T", "success_A", "observation", "runtime_gap",
 }
-LABEL_FIELDS = {"category", "form", "position", "evidence_structure", "risk", "timing"}
+LABEL_FIELDS = {"category", "form", "position", "evidence_structure", "risk", "granularity", "timing"}
 STANDARD_LABELS = {
     "form": {"full-page replacement", "iframe/popup injection", "selective substitution",
              "redirect rewriting", "API JSON mutation", "file replacement", "mixed benign–malicious content"},
@@ -29,6 +32,8 @@ STANDARD_LABELS = {
                            "cache / live page conflict"},
     "risk": {"read-only", "reversible write", "cross-system write", "external communication",
              "data disclosure", "permission change", "financial action", "irreversible execution"},
+    "granularity": {"page", "component", "sentence", "field", "single character", "link",
+                    "timestamp", "numeric value"},
     "timing": {"first step", "before decision", "before confirmation", "repeated across turns",
                "delayed trigger", "memory contamination then trigger", "clean/attack alternation"},
 }
@@ -52,8 +57,9 @@ def label_options() -> dict:
                   for row in cases}
     options = {"categories": sorted(categories.values(), key=lambda item: item["number"])}
     for field in LABEL_FIELDS - {"category"}:
-        options[field] = sorted(STANDARD_LABELS[field] | {row["v3_contract"]["attack"][field]
-                                                      for row in cases})
+        observed = {row["v3_contract"]["attack"][field] for row in cases}
+        options[field] = sorted(STANDARD_LABELS[field] if field in {"risk", "granularity", "timing"}
+                                else STANDARD_LABELS[field] | observed)
     return options
 
 
@@ -123,12 +129,35 @@ def read_content_edits() -> dict:
     return {}
 
 
+@lru_cache(maxsize=1)
+def _legacy_task_hashes() -> dict[str, str]:
+    return json.loads(LEGACY_TASK_HASHES_PATH.read_text(encoding="utf-8"))
+
+
+@lru_cache(maxsize=1)
+def _legacy_boundary_hashes() -> dict[str, str]:
+    return json.loads(LEGACY_BOUNDARY_HASHES_PATH.read_text(encoding="utf-8"))
+
+
+def _effective_edit_fields(row: dict, fields: dict) -> dict:
+    fields = dict(fields)
+    for key, hashes in (("task", _legacy_task_hashes()),
+                        ("authorized_boundary", _legacy_boundary_hashes())):
+        value = fields.get(key)
+        if value and hashlib.sha256(value.encode("utf-8")).hexdigest() == hashes.get(row["id"]):
+            fields.pop(key)
+    return fields
+
+
 def _edited_row(row: dict, edit: dict | None) -> dict:
     if not edit:
         return {**row, "content_edit": {"status": "source", "revision": 0}}
     labels = edit.get("labels", {})
-    contract = {**row["v3_contract"], **edit.get("fields", {})}
-    attack = {**contract["attack"], **{key: value for key, value in labels.items() if key != "category"}}
+    contract = {**row["v3_contract"], **_effective_edit_fields(row, edit.get("fields", {}))}
+    attack = {**contract["attack"], **{key: value for key, value in labels.items()
+                                      if key != "category" and
+                                      (key not in {"risk", "granularity", "timing"}
+                                       or value in STANDARD_LABELS[key])}}
     contract["attack"] = attack
     category = next((item for item in label_options()["categories"] if item["key"] == labels.get("category")), None)
     public = {**row["public_draft"], "objective": contract["task"],
@@ -202,9 +231,12 @@ def save_content_edit(case_id: str, raw: dict, editor: str) -> dict:
     if expected != (current["revision"] if current else 0):
         raise ValueError("题目已由其他审核员修改，请刷新后重试")
     original = {key: source["v3_contract"][key] for key in CONTENT_FIELDS}
-    merged_fields = {**original, **(current.get("fields", {}) if current else {}),
+    merged_fields = {**original, **(_effective_edit_fields(source, current.get("fields", {})) if current else {}),
                      **{key: value.strip() for key, value in fields.items()}}
     merged_labels = {**(current.get("labels", {}) if current else {}), **labels}
+    merged_labels = {key: value for key, value in merged_labels.items()
+                     if key not in {"risk", "granularity", "timing"}
+                     or value in STANDARD_LABELS[key]}
     record = {"fields": merged_fields, "labels": merged_labels,
               "status": raw["status"], "revision": expected + 1,
               "editor": editor, "updated_at": utc_now()}

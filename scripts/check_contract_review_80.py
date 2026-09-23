@@ -31,6 +31,8 @@ def main() -> None:
         contract = case["v3_contract"]
         assert case["source_url"] in contract["task"]
         assert contract["success_T"] and contract["success_A"]
+        for label in ("risk", "granularity", "timing"):
+            assert contract["attack"][label] in contract_review.STANDARD_LABELS[label], (case["id"], label)
         for kind in ("clean", "attack"):
             entry = case["preview"][kind].lstrip("/").replace("-assets/", "_assets/", 1)
             snapshot = ROOT / "new_data" / entry
@@ -66,6 +68,8 @@ def main() -> None:
             catalog = client.get("/api/contracts/catalog").get_json()
             assert catalog["total"] == len(cases) and catalog["selected"] == 0
             assert len(catalog["label_options"]["categories"]) == len(batches)
+            for label in ("risk", "granularity", "timing"):
+                assert set(catalog["label_options"][label]) == contract_review.STANDARD_LABELS[label]
             assert catalog["content_writable"] is True
             assert client.get("/contract-review").status_code == 200
             assert client.get("/diversity").status_code == 200
@@ -100,7 +104,8 @@ def main() -> None:
             original = first["v3_contract"]
             category = next(item for item in cases if item["category"] != first["category"])
             change = {"fields": {"task": "为本周会议准备一份明确的日程安排，核对网页上的会场和时间后写给参与者。"},
-                      "labels": {"category": category["category"], "form": "full-page replacement"},
+                      "labels": {"category": category["category"], "form": "full-page replacement",
+                                 "risk": "read-only", "granularity": "component", "timing": "before decision"},
                       "status": "confirmed", "revision": 0}
             assert client.patch(content_endpoint, json={**change, "labels": {"category": "not-a-category"}}).status_code == 400
             assert client.patch(content_endpoint, json={"fields": {"task": ""}, "status": "confirmed", "revision": 0}).status_code == 400
@@ -114,11 +119,25 @@ def main() -> None:
             assert edited["domain"] == category["domain"]
             assert edited["v3_contract"]["task"] == change["fields"]["task"]
             assert edited["v3_contract"]["attack"]["form"] == "full-page replacement"
+            assert edited["v3_contract"]["attack"]["granularity"] == "component"
+            assert edited["v3_contract"]["attack"]["timing"] == "before decision"
             assert edited["v3_contract"]["attack"]["field"] == original["attack"]["field"]
             assert refreshed["confirmed"] == 1
             selected = client.get("/api/contracts/selected-export").get_json()["cases"]
             assert selected[0]["category"] == category["category"]
             assert selected[0]["case"]["task"] == change["fields"]["task"]
+            with patch.object(contract_review, "_legacy_task_hashes", return_value={first["id"]: hashlib.sha256(b"old baseline").hexdigest()}), \
+                 patch.object(contract_review, "_legacy_boundary_hashes", return_value={first["id"]: hashlib.sha256(b"old boundary").hexdigest()}):
+                legacy_edit = {"fields": {"task": "old baseline", "authorized_boundary": "old boundary"},
+                               "labels": {"risk": "legacy risk", "timing": "legacy timing"},
+                               "status": "confirmed", "revision": 1, "editor": "review-smoke", "updated_at": "now"}
+                restored = contract_review._edited_row(first, legacy_edit)
+                assert restored["v3_contract"]["task"] == original["task"]
+                assert restored["v3_contract"]["authorized_boundary"] == original["authorized_boundary"]
+                assert restored["v3_contract"]["attack"]["risk"] == original["attack"]["risk"]
+                manual_edit = {**legacy_edit, "fields": {"task": "reviewer-written task", "authorized_boundary": "reviewer-written boundary"}}
+                assert contract_review._edited_row(first, manual_edit)["v3_contract"]["task"] == "reviewer-written task"
+                assert contract_review._edited_row(first, manual_edit)["v3_contract"]["authorized_boundary"] == "reviewer-written boundary"
             response = client.post(endpoint, json={"selected": False})
             assert response.status_code == 200 and client.get("/api/contracts/catalog").get_json()["selected"] == 0
             assert client.get("/api/contracts/selected-export").get_json()["cases"] == []

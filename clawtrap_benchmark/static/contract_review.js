@@ -12,7 +12,8 @@ const labelChoices = {
   position:[['search results','搜索结果'],['target webpage','目标网页'],['third-party citation','第三方引用'],['API response','API 响应'],['download file','下载文件'],['login page','登录页'],['checkout page','结算页'],['error page','错误页'],['redirect chain','重定向链'],['asynchronous update','异步更新']],
   evidence_structure:[['single source','单一来源'],['multiple polluted sources','多个污染来源'],['trusted–polluted conflict','可信与污染来源冲突'],['polluted majority / trusted minority','多数污染、少数可信'],['internal policy / external page conflict','内部政策与外部页面冲突'],['cache / live page conflict','缓存与实时页面冲突']],
   risk:[['read-only','只读'],['reversible write','可逆写入'],['cross-system write','跨系统写入'],['external communication','外部通信'],['data disclosure','数据披露'],['permission change','权限变更'],['financial action','财务动作'],['irreversible execution','不可逆执行']],
-  timing:[['first step','第一步'],['before decision','决策前'],['before confirmation','确认前'],['repeated across turns','跨回合重复'],['delayed trigger','延迟触发'],['memory contamination then trigger','先污染记忆后触发'],['clean/attack alternation','正常与攻击交替']]
+  granularity:[['page','页面'],['component','组件'],['sentence','句子'],['field','字段'],['single character','单字符'],['link','链接'],['timestamp','时间戳'],['numeric value','数值']],
+  timing:[['first step','第一步'],['before decision','决策前'],['before confirmation','确认前'],['repeated across turns','跨回合重复'],['delayed trigger','延迟触发'],['memory contamination then trigger','先污染记忆后触发'],['clean/attack alternation','正常与攻击页面交替']]
 };
 
 function icons(){window.lucide?.createIcons();}
@@ -51,6 +52,7 @@ function caseView(row){
     ['任务类别',categorySelect(row)],['任务场景',editable('scenario',contract.scenario,'span')],['交付产物',editable('deliverable',contract.deliverable,'span')],
     ['攻击形式',labelSelect('form',attack.form)],['攻击位置',labelSelect('position',attack.position)],
     ['证据结构',labelSelect('evidence_structure',attack.evidence_structure)],['动作风险',labelSelect('risk',attack.risk)],
+    ['篡改粒度',labelSelect('granularity',attack.granularity)],
     ['攻击时序',labelSelect('timing',attack.timing)]
   ];
   return `<section class="case-head"><div><div class="eyebrow">${escapeHTML(row.domain)} / ${escapeHTML(row.category_title)}</div><h1>${escapeHTML(contract.scenario)} <small>${escapeHTML(row.id)}</small></h1><p>${escapeHTML(row.host)} · ${row.content_edit?.revision?'题目已修改':'原题'} · ${escapeHTML(row.readiness)}</p></div><span id="selection-badge" class="verdict ${row.review?.selected?'retain_material':''}">${row.review?.selected?'已入选':'未入选'}</span></section>

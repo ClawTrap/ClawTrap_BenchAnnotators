@@ -3,9 +3,12 @@
 const $ = selector => document.querySelector(selector);
 const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const state = {rows:[],domain:'',scope:'all'};
-const label = {form:'攻击形式',position:'攻击位置',evidence_structure:'证据结构',risk:'动作风险',timing:'攻击时序'};
+const label = {form:'攻击形式',position:'攻击位置',evidence_structure:'证据结构',risk:'动作风险',granularity:'篡改粒度',timing:'攻击时序'};
 const formNames = {'full-page replacement':'整页替换','iframe/popup injection':'弹窗 / iframe','selective substitution':'局部替换','mixed benign–malicious content':'良恶内容混合','redirect rewriting':'重定向改写','API JSON mutation':'API JSON 改写','file replacement':'文件替换'};
 const positionNames = {'target webpage':'目标网页','search results':'搜索结果','third-party citation':'第三方引用','API response':'API 响应','download file':'下载文件','login page':'登录页','checkout page':'结算页','error page':'错误页','redirect chain':'重定向链','asynchronous update':'异步更新'};
+const riskNames = {'read-only':'只读','reversible write':'可逆写入','cross-system write':'跨系统写入','external communication':'外部通信','data disclosure':'数据披露','permission change':'权限变更','financial action':'财务动作','irreversible execution':'不可逆执行'};
+const granularityNames = {page:'页面',component:'组件',sentence:'句子',field:'字段','single character':'单字符',link:'链接',timestamp:'时间戳','numeric value':'数值'};
+const timingNames = {'first step':'第一步','before decision':'决策前','before confirmation':'确认前','repeated across turns':'跨回合重复','delayed trigger':'延迟触发','memory contamination then trigger':'先污染记忆后触发','clean/attack alternation':'正常与攻击页面交替'};
 
 function count(rows,key){const result=new Map();for(const row of rows){const value=key(row);result.set(value,(result.get(value)||0)+1);}return [...result].sort((a,b)=>b[1]-a[1]||String(a[0]).localeCompare(String(b[0])));}
 function pct(part,total){return total?`${(part*100/total).toFixed(1)}%`:'0%';}
@@ -36,7 +39,7 @@ function render(){
   $('#app').innerHTML=`<div class="report-heading"><div><div class="eyebrow">WORKFLOW CONTRACTS · V3</div><h1>多样性报告</h1><p>统计当前 ${all.length} 道新题及已保存的标签修改，不包含旧版审核池。</p></div><a class="report-action" href="/contract-review">返回题目审核</a></div>
     <div class="report-filters"><label>领域 <select id="report-domain">${option('','全部领域',state.domain)}${domains.map(domain=>option(domain,domain,state.domain)).join('')}</select></label><div class="segmented" aria-label="统计范围"><button data-scope="all" aria-pressed="${state.scope==='all'}">全部题目</button><button data-scope="selected" aria-pressed="${state.scope==='selected'}">已入选</button></div></div>
     <section class="report-metrics">${metric(rows.length,'当前范围题目',`${all.length} 道候选`)}${metric(new Set(rows.map(row=>row.category)).size,'覆盖类别')}${metric(new Set(rows.map(row=>row.host)).size,'来源网站')}${metric(rows.filter(row=>row.review?.selected).length,'已入选')}${metric(forms[0]?pct(forms[0][1],rows.length):'—','最大攻击形式占比',forms[0]?(formNames[forms[0][0]]||forms[0][0]):'')}${metric(positions[0]?pct(positions[0][1],rows.length):'—','最大攻击位置占比',positions[0]?(positionNames[positions[0][0]]||positions[0][0]):'')}</section>
-    ${rows.length?`${bars(rows,'form',formNames)}${bars(rows,'position',positionNames)}<div class="report-two-column">${bars(rows,'evidence_structure',{},8)}${bars(rows,'timing',{},8)}</div>${bars(rows,'risk',{},10)}${categoryTable(rows)}${sourceTable(rows)}`:'<div class="empty">当前筛选条件下没有题目</div>'}`;
+    ${rows.length?`${bars(rows,'form',formNames)}${bars(rows,'position',positionNames)}<div class="report-two-column">${bars(rows,'evidence_structure',{},8)}${bars(rows,'timing',timingNames,8)}</div><div class="report-two-column">${bars(rows,'risk',riskNames,8)}${bars(rows,'granularity',granularityNames,8)}</div>${categoryTable(rows)}${sourceTable(rows)}`:'<div class="empty">当前筛选条件下没有题目</div>'}`;
 }
 document.addEventListener('change',event=>{if(event.target.id==='report-domain'){state.domain=event.target.value;render();}});
 document.addEventListener('click',event=>{const button=event.target.closest('[data-scope]');if(button){state.scope=button.dataset.scope;render();}});
