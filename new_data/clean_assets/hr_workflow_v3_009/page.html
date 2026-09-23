@@ -1,0 +1,2178 @@
+ <!DOCTYPE html>
+		<html
+			class="layout layout-holy-grail   show-table-of-contents conceptual show-breadcrumb default-focus"
+			lang="en-us"
+			dir="ltr"
+			data-authenticated="false"
+			data-auth-status-determined="false"
+			data-target="docs"
+			x-ms-format-detection="none"
+		>
+			
+		<head>
+<base href="https://learn.microsoft.com/en-us/entra/identity/users/groups-dynamic-membership">
+			<title>Manage rules for dynamic membership groups in Microsoft Entra ID - Microsoft Entra ID | Microsoft Learn</title>
+			<meta charset="utf-8" />
+			<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+			<meta name="color-scheme" content="light dark" />
+
+			<meta name="description" content="Learn how to manage rules for dynamic membership groups to automatically populate group members and rule references." />
+			<link rel="canonical" href="https://learn.microsoft.com/en-us/entra/identity/users/groups-dynamic-membership" /> 
+
+			<!-- Non-customizable open graph and sharing-related metadata -->
+			<meta name="twitter:card" content="summary_large_image" />
+			<meta name="twitter:site" content="@MicrosoftLearn" />
+			<meta property="og:type" content="website" />
+			<meta property="og:image:alt" content="Microsoft Learn" />
+			<meta property="og:image" content="https://learn.microsoft.com/en-us/media/open-graph-image.png" />
+			<!-- Page specific open graph and sharing-related metadata -->
+			<meta property="og:title" content="Manage rules for dynamic membership groups in Microsoft Entra ID - Microsoft Entra ID" />
+			<meta property="og:url" content="https://learn.microsoft.com/en-us/entra/identity/users/groups-dynamic-membership" />
+			<meta property="og:description" content="Learn how to manage rules for dynamic membership groups to automatically populate group members and rule references." />
+			<meta name="platform_id" content="1cd114b0-5b2f-beb9-40db-0a6f7aeaa349" /> <meta name="scope" content="Microsoft Entra" />
+			<meta name="locale" content="en-us" />
+			 
+			<meta name="uhfHeaderId" content="MSDocsHeader-Entra" />
+
+			<meta name="page_type" content="conceptual" />
+
+			<!--page specific meta tags-->
+			
+
+			<!-- custom meta tags -->
+			
+		<meta name="breadcrumb_path" content="/entra/breadcrumb/toc.json" />
+	
+		<meta name="feedback_system" content="Standard" />
+	
+		<meta name="feedback_product_url" content="https://feedback.azure.com/d365community/forum/22920db1-ad25-ec11-b6e6-000d3a4f0789" />
+	
+		<meta name="author" content="kenwith" />
+	
+		<meta name="ms.author" content="kenwith" />
+	
+		<meta name="ms.service" content="entra-id" />
+	
+		<meta name="ms.subservice" content="users" />
+	
+		<meta name="manager" content="dougeby" />
+	
+		<meta name="ms.topic" content="how-to" />
+	
+		<meta name="ms.date" content="2026-08-13T00:00:00Z" />
+	
+		<meta name="ms.reviewer" content="mbhargav" />
+	
+		<meta name="ms.custom" content="it-pro" />
+	
+		<meta name="ai-usage" content="ai-assisted" />
+	
+		<meta name="document_id" content="5f7a4070-1be8-5f1f-0092-68fb6b9e2305" />
+	
+		<meta name="document_version_independent_id" content="cd34312f-b507-affe-555e-1e0c63e7d494" />
+	
+		<meta name="updated_at" content="2026-08-13T22:35:00Z" />
+	
+		<meta name="original_content_git_url" content="https://github.com/MicrosoftDocs/entra-docs-pr/blob/live/docs/identity/users/groups-dynamic-membership.md" />
+	
+		<meta name="gitcommit" content="https://github.com/MicrosoftDocs/entra-docs-pr/blob/af37138d7608db0579438118337d71a3ea3f27c3/docs/identity/users/groups-dynamic-membership.md" />
+	
+		<meta name="git_commit_id" content="af37138d7608db0579438118337d71a3ea3f27c3" />
+	
+		<meta name="site_name" content="Docs" />
+	
+		<meta name="depot_name" content="MSDN.entra-docs" />
+	
+		<meta name="schema" content="Conceptual" />
+	
+		<meta name="toc_rel" content="toc.json" />
+	
+		<meta name="feedback_help_link_type" content="" />
+	
+		<meta name="feedback_help_link_url" content="" />
+	
+		<meta name="word_count" content="3969" />
+	
+		<meta name="asset_id" content="identity/users/groups-dynamic-membership" />
+	
+		<meta name="moniker_range_name" content="" />
+	
+		<meta name="item_type" content="Content" />
+	
+		<meta name="source_path" content="docs/identity/users/groups-dynamic-membership.md" />
+	
+		<meta name="previous_tlsh_hash" content="5A32F9C2953EC606EEC25D9BA91FB76053F0D148B9F8BB941636269B8A675C731B9A7CFFE322B684133209C740D0ED4C24D3FB39403D237525F9A4ED826A1901E2C927B5E5" />
+	
+		<meta name="github_feedback_content_git_url" content="https://github.com/MicrosoftDocs/entra-docs/blob/main/docs/identity/users/groups-dynamic-membership.md" />
+	
+		<meta name="markdown_url" content="https://learn.microsoft.com/en-us/entra/identity/users/groups-dynamic-membership?accept=text/markdown" />
+	 
+		<meta name="cmProducts" content="https://authoring-docs-microsoft.poolparty.biz/devrel/68cb9039-df60-49b0-8ef8-89ad96497f63" data-source="generated" />
+	
+		<meta name="cmProducts" content="https://authoring-docs-microsoft.poolparty.biz/devrel/8b896464-3b7d-4e1f-84b0-9bb45aeb5f64" data-source="generated" />
+	
+		<meta name="spProducts" content="https://authoring-docs-microsoft.poolparty.biz/devrel/725b6df3-93e8-472d-834e-e7e0d2953d35" data-source="generated" />
+	
+		<meta name="spProducts" content="https://authoring-docs-microsoft.poolparty.biz/devrel/b1d2d671-9549-46e8-918c-24349120dbf5" data-source="generated" />
+	
+
+			<!-- Apply persisted/system theme before first paint to prevent wrong-theme flash when scripts are deferred. -->
+			<script id="theme-preference">
+				(function () {
+			try {
+				var stored = localStorage.getItem('theme');
+				var theme = /^(light|dark|high-contrast)$/.test(stored)
+					? stored
+					: matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+				document.documentElement.classList.add('theme-' + theme);
+			} catch (e) {}
+		})();;
+			</script>
+
+			<script id="atlas-layout-preferences">
+				(function () {
+			try {
+				var state = JSON.parse(localStorage.getItem('atlas-layout-preferences') || '{}');
+				var view = state["docs-layout-persistence"] || {};
+				var excludesKey = "";
+				var blocked = {};
+				if (excludesKey) {
+					var exclusions = JSON.parse(localStorage.getItem('atlas-layout-exclusions') || '{}');
+					if (Object.prototype.hasOwnProperty.call(exclusions, excludesKey)) {
+						var scoped = exclusions[excludesKey];
+						if (scoped) {
+							if (typeof scoped === 'object') blocked = scoped;
+						}
+					}
+				}
+				var html = document.documentElement;
+				for (var c in view) {
+					if (Object.prototype.hasOwnProperty.call(blocked, c)) continue;
+					if (view[c]) html.classList.add(c);
+					else html.classList.remove(c);
+				}
+			} catch (e) {}
+		})();;
+			</script>
+
+			<!-- assets and js globals -->
+			
+			<link rel="stylesheet" href="/static/assets/0.4.03547.8249-7a3b4850/styles/site.css" />
+			
+			<script src="https://wcpstatic.microsoft.com/mscc/lib/v2/wcp-consent.js"></script>
+			<!-- Keep this URL in sync with oneDSScriptSelector in instrumentation/one-ds.ts. -->
+			<script async src="https://js.monitor.azure.com/scripts/c/ms.jsll-4.min.js"></script>
+			
+
+			<!-- msdocs global object -->
+			<script id="msdocs-script">
+		var msDocs = {
+  "environment": {
+    "accessLevel": "online",
+    "azurePortalHostname": "portal.azure.com",
+    "reviewFeatures": false,
+    "supportLevel": "production",
+    "systemContent": true,
+    "siteName": "learn",
+    "legacyHosting": false
+  },
+  "data": {
+    "contentLocale": "en-us",
+    "contentDir": "ltr",
+    "userLocale": "en-us",
+    "userDir": "ltr",
+    "pageTemplate": "Conceptual",
+    "layoutStateStorageKey": "docs-layout-persistence",
+    "brand": "entra",
+    "context": {},
+    "standardFeedback": true,
+    "showFeedbackReport": false,
+    "feedbackHelpLinkType": "",
+    "feedbackHelpLinkUrl": "",
+    "feedbackSystem": "Standard",
+    "feedbackGitHubRepo": "MicrosoftDocs/entra-docs",
+    "feedbackProductUrl": "https://feedback.azure.com/d365community/forum/22920db1-ad25-ec11-b6e6-000d3a4f0789",
+    "extendBreadcrumb": false,
+    "isEditDisplayable": true,
+    "isPrivateUnauthorized": false,
+    "hideViewSource": false,
+    "isPermissioned": false,
+    "hasRecommendations": true
+  },
+  "functions": {}
+};;
+	</script>
+
+			<!-- base scripts, msdocs global should be before this -->
+			<script
+				src="/static/assets/0.4.03547.8249-7a3b4850/scripts/en-us/index-docs.js"
+				async
+			></script>
+			
+
+			<!-- json-ld -->
+			
+		</head>
+	
+			<body
+				id="body"
+				data-bi-name="body"
+				class="layout-body "
+				lang="en-us"
+				dir="ltr"
+			>
+				<header class="layout-body-header background-color-body-medium">
+		<div class="header-holder has-default-focus">
+			
+		<a
+			href="#main"
+			
+			style="z-index: 1070"
+			class="outline-color-text visually-hidden-until-focused position-fixed inner-focus focus-visible top-0 left-0 right-0 padding-xs text-align-center background-color-body"
+			
+		>
+			Skip to main content
+		</a>
+	
+		<a
+			href="#"
+			data-skip-to-ask-learn
+			style="z-index: 1070"
+			class="outline-color-text visually-hidden-until-focused position-fixed inner-focus focus-visible top-0 left-0 right-0 padding-xs text-align-center background-color-body"
+			hidden
+		>
+			Skip to Ask Learn chat experience
+		</a>
+	
+
+			<div hidden id="cookie-consent-holder" data-test-id="cookie-consent-container"></div>
+			<!-- Unsupported browser warning -->
+			<div
+				id="unsupported-browser"
+				style="background-color: white; color: black; padding: 16px; border-bottom: 1px solid grey;"
+				hidden
+			>
+				<div style="max-width: 800px; margin: 0 auto;">
+					<p style="font-size: 24px">This browser is no longer supported.</p>
+					<p style="font-size: 16px; margin-top: 16px;">
+						Upgrade to Microsoft Edge to take advantage of the latest features, security updates, and technical support.
+					</p>
+					<div style="margin-top: 12px;">
+						<a
+							href="https://go.microsoft.com/fwlink/p/?LinkID=2092881 "
+							style="background-color: #0078d4; border: 1px solid #0078d4; color: white; padding: 6px 12px; border-radius: 2px; display: inline-block;"
+						>
+							Download Microsoft Edge
+						</a>
+						<a
+							href="https://learn.microsoft.com/en-us/lifecycle/faq/internet-explorer-microsoft-edge"
+							style="background-color: white; padding: 6px 12px; border: 1px solid #505050; color: #171717; border-radius: 2px; display: inline-block;"
+						>
+							More info about Internet Explorer and Microsoft Edge
+						</a>
+					</div>
+				</div>
+			</div>
+			<!-- site header -->
+			<div
+				id="ms--site-header"
+				data-test-id="site-header-wrapper"
+				itemscope="itemscope"
+				itemtype="http://schema.org/Organization"
+			>
+				<div
+					id="ms--mobile-nav"
+					class="site-header display-none-tablet padding-inline-none gap-none"
+					data-bi-name="mobile-header"
+					data-test-id="mobile-header"
+				></div>
+				<div
+					id="ms--primary-nav"
+					class="site-header display-none display-flex-tablet"
+					data-bi-name="L1-header"
+					data-test-id="primary-header"
+				></div>
+				<div
+					id="ms--secondary-nav"
+					class="site-header display-none display-flex-tablet"
+					data-bi-name="L2-header"
+					data-test-id="secondary-header"
+					
+				></div>
+			</div>
+			
+		<!-- banner -->
+		<div data-banner>
+			<div id="disclaimer-holder"></div>
+			
+		</div>
+		<!-- banner end -->
+	
+		</div>
+	</header>
+				 <section
+					id="layout-body-menu"
+					class="layout-body-menu border-right display-flex background-color-body-medium"
+					data-bi-name="menu"
+			  >
+					
+		<div
+			id="left-container"
+			class="left-container display-none padding-none display-block-tablet width-full display-none-until-layout-restored"
+			data-toc-container="true"
+		>
+			<div
+				id="ms--toc-content"
+				class="padding-left-sm padding-right-none padding-bottom-sm height-full"
+			>
+				<nav
+					id="affixed-left-container"
+					class="margin-top-xxs-tablet position-sticky display-flex flex-direction-column width-full"
+					aria-label="Primary"
+					data-bi-name="left-toc"
+					role="navigation"
+				>
+					<div
+						id="ms--collapsible-toc-header"
+						class="display-flex flex-direction-row-reverse justify-content-center align-items-center margin-bottom-xxs margin-right-xxs"
+					>
+						<button
+							type="button"
+							class="button button-clear button-sm inner-focus"
+							data-collapsible-toc-toggle
+							aria-expanded="true"
+							hidden
+							aria-controls="ms--toc-content"
+							aria-label="Table of contents"
+						>
+							<span class="icon icon-mirrored-rtl" aria-hidden="true">
+								<span
+									class="docon docon-panel-left-contract display-none-layout-menu-collapsed"
+								></span>
+								<span
+									class="docon docon-panel-left-expand display-none display-inline-layout-menu-collapsed"
+								></span>
+							</span>
+						</button>
+						<div
+							id="ms--collapsible-toc-moniker-slot"
+							class="flex-grow-1 display-none-layout-menu-collapsed"
+						></div>
+					</div>
+				</nav>
+			</div>
+		</div>
+	
+			  </section>
+
+				<main
+					id="main"
+					role="main"
+					class="layout-body-main "
+					data-bi-name="content"
+					lang="en-us"
+					dir="ltr"
+				>
+					
+			<div
+		id="ms--content-header"
+		class="content-header default-focus border-bottom-none"
+		data-bi-name="content-header"
+	>
+		<div class="content-header-controls margin-xxs margin-inline-sm-tablet">
+			<button
+				type="button"
+				class="contents-button button button-sm margin-right-xxs"
+				data-bi-name="contents-expand"
+				aria-haspopup="true"
+				data-contents-button
+			>
+				<span class="icon" aria-hidden="true"><span class="docon docon-menu"></span></span>
+				<span class="contents-expand-title"> Table of contents </span>
+			</button>
+			<button
+				type="button"
+				class="ap-collapse-behavior ap-expanded button button-sm"
+				data-bi-name="ap-collapse"
+				aria-controls="action-panel"
+			>
+				<span class="icon" aria-hidden="true"><span class="docon docon-exit-mode"></span></span>
+				<span>Exit editor mode</span>
+			</button>
+		</div>
+	</div> 
+		<div
+			id="action-panel"
+			role="region"
+			aria-label="Action Panel"
+			class="action-panel"
+			tabindex="-1"
+		></div>
+	
+			<div
+				data-main-column
+				class="reading-width margin-inline-auto layout-padding padding-top-none padding-top-sm-tablet padding-bottom-sm"
+			>
+				<div>
+					
+		<div id="article-header" class="background-color-body margin-bottom-xs display-none-print">
+			<div class="display-flex align-items-center justify-content-space-between">
+				
+		<details
+			id="article-header-breadcrumbs-overflow-popover"
+			class="popover popover-left"
+			data-for="article-header-breadcrumbs"
+		>
+			<summary
+				class="button button-clear button-primary button-sm inner-focus"
+				aria-label="All breadcrumbs"
+			>
+				<span class="icon" aria-hidden="true">
+					<span class="docon docon-more"></span>
+				</span>
+			</summary>
+			<div id="article-header-breadcrumbs-overflow" class="popover-content"></div>
+		</details>
+
+		<bread-crumbs
+			id="article-header-breadcrumbs"
+			role="group"
+			aria-label="Breadcrumbs"
+			data-test-id="article-header-breadcrumbs"
+			class="overflow-hidden flex-grow-1 margin-right-sm margin-right-md-tablet margin-right-lg-desktop margin-left-negative-xxs padding-left-xxs"
+		></bread-crumbs>
+	 
+		<div
+			id="article-header-page-actions"
+			class="opacity-none margin-left-auto display-flex flex-wrap-no-wrap align-items-stretch"
+		>
+			
+		<button
+			class="button button-sm border-none inner-focus display-none-tablet flex-shrink-0 "
+			data-bi-name="ask-learn-assistant-entry"
+			data-test-id="ask-learn-assistant-modal-entry-mobile"
+			data-ask-learn-modal-entry
+			
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			aria-label="Ask Learn"
+			hidden
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+		</button>
+		<button
+			class="button button-sm display-none display-inline-flex-tablet display-none-desktop flex-shrink-0 margin-right-xxs border-color-ask-learn "
+			data-bi-name="ask-learn-assistant-entry"
+			
+			data-test-id="ask-learn-assistant-modal-entry-tablet"
+			data-ask-learn-modal-entry
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			hidden
+		>
+			<span class="icon font-size-lg" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+			<span>Ask Learn</span>
+		</button>
+		<button
+			class="button button-sm display-none flex-shrink-0 display-inline-flex-desktop margin-right-xxs border-color-ask-learn "
+			data-bi-name="ask-learn-assistant-entry"
+			
+			data-test-id="ask-learn-assistant-flyout-entry"
+			data-ask-learn-flyout-entry
+			data-flyout-button="toggle"
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			aria-controls="ask-learn-flyout"
+			hidden
+		>
+			<span class="icon font-size-lg" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+			<span>Ask Learn</span>
+		</button>
+	 
+
+			<details class="popover popover-right" id="article-header-page-actions-overflow">
+				<summary
+					class="justify-content-flex-start button button-clear button-sm button-primary inner-focus"
+					aria-label="More actions"
+					title="More actions"
+				>
+					<span class="icon" aria-hidden="true">
+						<span class="docon docon-more-vertical"></span>
+					</span>
+				</summary>
+				<div class="popover-content">
+					
+		<button
+			type="button"
+			id="ms--focus-mode-button"
+			data-focus-mode
+			data-bi-name="focus-mode-entry"
+			data-page-action-item="overflow-all"
+			data-popover-close
+			class="button button-clear button-sm button-block justify-content-flex-start text-align-left inner-focus display-none display-inline-flex-tablet"
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-glasses"></span>
+			</span>
+			<span>Reading mode</span>
+		</button>
+	 
+		<button
+			data-page-action-item="overflow-mobile"
+			type="button"
+			class="display-block-layout-menu-collapsed button-block button-sm inner-focus button button-clear display-none-tablet justify-content-flex-start text-align-left"
+			data-bi-name="contents-expand"
+			data-contents-button
+			data-popover-close
+		>
+			<span class="icon" aria-hidden="true"
+				><span class="docon docon-editor-list-bullet"></span
+			></span>
+			<span class="contents-expand-title">Table of contents</span>
+		</button>
+	 
+		<a
+			id="lang-link-overflow"
+			class="button-sm inner-focus button button-clear button-block justify-content-flex-start text-align-left"
+			data-bi-name="language-toggle"
+			data-page-action-item="overflow-all"
+			data-check-hidden="true"
+			data-read-in-link
+			href="#"
+			hidden
+		>
+			<span class="icon" aria-hidden="true" data-read-in-link-icon>
+				<span class="docon docon-locale-globe"></span>
+			</span>
+			<span data-read-in-link-text>Read in English</span>
+		</a>
+	
+					
+		<button
+			type="button"
+			class="collection button button-clear button-sm button-block justify-content-flex-start text-align-left inner-focus"
+			data-list-type="collection"
+			data-bi-name="collection"
+			data-page-action-item="overflow-all"
+			data-check-hidden="true"
+			data-popover-close
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-circle-addition"></span>
+			</span>
+			<span class="collection-status">Add</span>
+		</button>
+	 
+		<button
+			type="button"
+			class="collection button button-block button-clear button-sm justify-content-flex-start text-align-left inner-focus"
+			data-list-type="plan"
+			data-bi-name="plan"
+			data-page-action-item="overflow-all"
+			data-check-hidden="true"
+			data-popover-close
+			hidden
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-circle-addition"></span>
+			</span>
+			<span class="plan-status">Add to Plans</span>
+		</button>
+	 
+					
+		<a
+			data-contenteditbtn
+			class="button button-clear button-block button-sm inner-focus justify-content-flex-start text-align-left text-decoration-none"
+			data-bi-name="edit"
+			data-page-action-item="overflow-all"
+			data-check-hidden="true"
+			
+			href="https://github.com/MicrosoftDocs/entra-docs/blob/main/docs/identity/users/groups-dynamic-membership.md"
+			data-original_content_git_url="https://github.com/MicrosoftDocs/entra-docs-pr/blob/live/docs/identity/users/groups-dynamic-membership.md"
+			data-original_content_git_url_template="{repo}/blob/{branch}/docs/identity/users/groups-dynamic-membership.md"
+			data-pr_repo=""
+			data-pr_branch=""
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-edit-outline"></span>
+			</span>
+			<span>Edit</span>
+		</a>
+	  
+		<hr class="margin-block-xxs" />
+		
+				<button
+					class="button button-block button-clear button-sm justify-content-flex-start text-align-left inner-focus"
+					type="button"
+					data-bi-name="copy-markdown"
+					data-page-action-item="overflow-all"
+					data-copy-markdown
+					data-copy-state="idle"
+					data-check-hidden="true"
+				>
+					<span class="icon color-primary" aria-hidden="true">
+						<span data-show-when="idle" class="docon docon-code-lang"></span>
+						<span data-show-when="loading" class="loader" hidden></span>
+						<span data-show-when="success" class="docon docon-check-mark" hidden></span>
+					</span>
+					<span>Copy Markdown</span>
+				</button>
+		   
+				<button
+					class="button button-block button-clear button-sm justify-content-flex-start text-align-left inner-focus"
+					type="button"
+					data-bi-name="print"
+					data-page-action-item="overflow-all"
+					data-popover-close
+					data-print-page
+					data-check-hidden="true"
+				>
+					<span class="icon color-primary" aria-hidden="true">
+						<span class="docon docon-print"></span>
+					</span>
+					<span>Print</span>
+				</button>
+		  
+	
+				</div>
+			</details>
+		</div>
+	
+			</div>
+		</div>
+	  
+		<!-- privateUnauthorizedTemplate is hidden by default -->
+		<div unauthorized-private-section data-bi-name="permission-content-unauthorized-private" hidden>
+			<hr class="hr margin-top-xs margin-bottom-sm" />
+			<div class="notification notification-info">
+				<div class="notification-content">
+					<p class="margin-top-none notification-title">
+						<span class="icon" aria-hidden="true"
+							><span class="docon docon-exclamation-circle-solid"></span
+						></span>
+						<span>Note</span>
+					</p>
+					<p class="margin-top-none authentication-determined not-authenticated">
+						Access to this page requires authorization. You can try <a class="docs-sign-in" href="#" data-bi-name="permission-content-sign-in">signing in</a> or <a  class="docs-change-directory" data-bi-name="permisson-content-change-directory">changing directories</a>.
+					</p>
+					<p class="margin-top-none authentication-determined authenticated">
+						Access to this page requires authorization. You can try <a class="docs-change-directory" data-bi-name="permisson-content-change-directory">changing directories</a>.
+					</p>
+				</div>
+			</div>
+		</div>
+	
+					<div class="content"><h1 id="manage-rules-for-dynamic-membership-groups-in-microsoft-entra-id">Manage rules for dynamic membership groups in Microsoft Entra ID</h1></div>
+					
+		<div
+			id="article-metadata"
+			data-bi-name="article-metadata"
+			data-test-id="article-metadata"
+			class="page-metadata-container display-flex gap-xxs justify-content-space-between align-items-center flex-wrap-wrap"
+		>
+			 
+				<div
+					id="user-feedback"
+					class="margin-block-xxs display-none display-none-print"
+					hidden
+					data-hide-on-archived
+				>
+					
+		<button
+			id="user-feedback-button"
+			data-test-id="conceptual-feedback-button"
+			class="button button-sm button-clear button-primary display-none"
+			type="button"
+			data-bi-name="user-feedback-button"
+			data-user-feedback-button
+			hidden
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-like"></span>
+			</span>
+			<span>Feedback</span>
+		</button>
+	
+				</div>
+		  
+		</div>
+	 
+		<div data-id="ai-summary" class="display-none-print">
+			<div id="ms--ai-summary-cta" class="margin-top-xs display-flex align-items-center">
+				<span class="icon" aria-hidden="true">
+					<span class="docon docon-sparkle-fill gradient-text-vivid"></span>
+				</span>
+				<button
+					id="ms--ai-summary"
+					type="button"
+					class="tag tag-sm tag-suggestion margin-left-xxs"
+					data-test-id="ai-summary-cta"
+					data-bi-name="ai-summary-cta"
+					data-an="ai-summary"
+				>
+					<span class="ai-summary-cta-text">
+						Summarize this article for me
+					</span>
+				</button>
+			</div>
+			<!-- Slot where the client will render the summary card after the user clicks the CTA -->
+			<div id="ms--ai-summary-header" class="margin-top-xs"></div>
+		</div>
+	 
+		<nav
+			id="center-doc-outline"
+			class="doc-outline display-none-desktop display-none-print margin-bottom-sm"
+			data-bi-name="intopic toc"
+			aria-label="In this article"
+		>
+			<h2 id="ms--in-this-article" class="title is-6 margin-block-xs">
+				In this article
+			</h2>
+		</nav>
+	 <div class="content"><h2 id="overview">Overview</h2>
+<p>You can create user-based or device attribute-based rules to enable membership for dynamic membership groups in Microsoft Entra ID. You can add and remove dynamic membership groups automatically by using membership rules based on member attributes. In Microsoft Entra, a single tenant can have a maximum of 15,000 dynamic membership groups.</p>
+<p>This article details the properties and syntax to create rules for dynamic membership groups based on users or devices.</p>
+<p>An agent's user account is a subtype of user identity within Microsoft Entra. An agent's user account is evaluated by user-based membership rules and can be included in a dynamic user group when it satisfies the rule.</p>
+<p>By default, an agent's user account isn't distinguished from other user identities. To exclude these accounts, include a condition in the membership rule. You can also create rules that include only agents' user accounts or target accounts associated with a specific agent identity blueprint. Agent identities, which are service principals, aren't supported as members of dynamic membership groups.</p>
+<div class="NOTE">
+<p>Note</p>
+<p>Security groups can include either devices or users, but Microsoft 365 groups can include only users.</p>
+</div>
+<h2 id="considerations-for-dynamic-membership-groups">Considerations for dynamic membership groups</h2>
+<p>When the attributes of a user or a device change, the system evaluates all rules for dynamic membership groups in a directory to see if the change would trigger any group additions or removals. If users or devices satisfy a rule on a group, they're added as members of that group. If they no longer satisfy the rule, they're removed. You can't manually add or remove a member of a dynamic membership group.</p>
+<p>Also keep these limitations in mind:</p>
+<ul>
+<li>You can create dynamic membership groups for users or devices, but you can't create a rule that contains both users and devices.</li>
+<li>You can't create a device membership group based on the user attributes of the device owner. Device membership rules can reference only device attributes.</li>
+</ul>
+<h3 id="security-consideration-evaluate-attribute-write-permissions-before-using-them-in-dynamic-group-rules">Security consideration: Evaluate attribute write permissions before using them in dynamic group rules</h3>
+<p>When you create a dynamic membership rule, the security of that group's membership depends on who can modify the attributes referenced in the rule. Before selecting an attribute, review the write permissions for that attribute—both in Microsoft Entra ID and in any connected source directories.</p>
+<p>This is especially important for:</p>
+<ul>
+<li><strong>Attributes synced from on-premises Active Directory.</strong> Some on-premises attributes might be configured with permissions that allow users to modify their own values (SELF write).</li>
+<li><strong>Groups used for access control.</strong> If a dynamic group controls access to sensitive resources, applications, or Conditional Access policies, the security of that access is only as strong as the write controls on the attributes in the rule.</li>
+</ul>
+<p>As a best practice, audit the write permissions for all entity types and their attributes you plan to use in a dynamic membership rule, both in Microsoft Entra ID and at the source (such as on-premises Active Directory). Restrict self-service write access to attributes used in security-sensitive groups.</p>
+<div class="NOTE">
+<p>Note</p>
+<p>Role-assignable groups already prevent this risk by requiring assigned (not dynamic) membership.</p>
+</div>
+<h3 id="license-requirements">License requirements</h3>
+<p>The feature of dynamic membership groups requires a Microsoft Entra ID P1 license or an Intune for Education license for each unique user who's a member of one or more dynamic membership groups. You don't have to assign licenses to users for them to be members of dynamic membership groups. But you must have the minimum number of licenses in the Microsoft Entra organization to cover all such users.</p>
+<p>For example, if you have a total of 1,000 unique users in all dynamic membership groups in your organization, you need at least 1,000 licenses for Microsoft Entra ID P1 to meet the license requirement.</p>
+<p>No license is required for devices that are members of a dynamic membership group based on a device.</p>
+<h2 id="rule-builder-in-the-azure-portal">Rule builder in the Azure portal</h2>
+<p>Microsoft Entra ID provides a rule builder to create and update your important rules more quickly. The rule builder supports the construction of up to five expressions. You can use the rule builder to form a rule with a few simple expressions, but you can't use it to reproduce every rule. If the rule builder doesn't support the rule that you want to create, you can use the text box.</p>
+<p><span class="mx-imgBorder">
+<img src="media/groups-dynamic-membership/update-dynamic-group-rule.png" alt="Screenshot that shows the rule builder, with the action for adding an expression highlighted." data-linktype="relative-path">
+</span>
+</p>
+<p>For step-by-step instructions, see <a href="groups-create-rule" data-linktype="relative-path">Create or update a dynamic membership group</a>.</p>
+<div class="IMPORTANT">
+<p>Important</p>
+<p>The rule builder is available only for user-based dynamic membership groups. You can create device-based dynamic membership groups only by using the text box.</p>
+</div>
+<p>Here are some examples of advanced rules or syntax that require the use of the text box:</p>
+<ul>
+<li>Rule with more than five expressions</li>
+<li>Rule for direct reports</li>
+<li>Rule with a <code>-contains</code> or <code>-notContains</code> operator</li>
+<li>Setting <a href="#operator-precedence" data-linktype="self-bookmark">operator precedence</a></li>
+<li><a href="#rules-with-complex-expressions" data-linktype="self-bookmark">Rule with complex expressions</a>; for example, <code>(user.proxyAddresses -any (_ -startsWith "contoso"))</code></li>
+</ul>
+<div class="NOTE">
+<p>Note</p>
+<p>The rule builder might not be able to display some rules constructed in the text box. You might see a message when the rule builder can't display the rule. The rule builder doesn't change the supported syntax, validation, or processing of rules for dynamic membership groups in any way.</p>
+</div>
+<h2 id="rule-syntax-for-a-single-expression">Rule syntax for a single expression</h2>
+<p>A single expression is the simplest form of a membership rule. A rule with a single expression takes the form of <code>&lt;Property&gt; &lt;Operator&gt; &lt;Value&gt;</code>, where the syntax for the property is the name of <code>&lt;object&gt;.&lt;property&gt;</code>.</p>
+<p>The following example illustrates a properly constructed membership rule with a single expression:</p>
+<pre><code>user.department -eq "Sales"
+</code></pre>
+<p>Parentheses are optional for a single expression. The total length of the body of your membership rule can't exceed 3,072 characters.</p>
+<h3 id="construct-the-body-of-a-membership-rule">Construct the body of a membership rule</h3>
+<p>A membership rule that automatically populates a group with users or devices is a binary expression that results in a true or false outcome. The three parts of a simple rule are:</p>
+<ul>
+<li>Property</li>
+<li>Operator</li>
+<li>Value</li>
+</ul>
+<p>The order of the parts within an expression is important to avoid syntax errors.</p>
+<h3 id="supported-properties">Supported properties</h3>
+<p>You can use three types of properties to construct a membership rule:</p>
+<ul>
+<li>Boolean</li>
+<li>Date/time</li>
+<li>String</li>
+<li>String collection</li>
+</ul>
+<p>You can use the following user properties to create a single expression.</p>
+<h4 id="properties-of-type-boolean">Properties of type Boolean</h4>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Allowed values</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>accountEnabled</code></td>
+<td><code>true</code>, <code>false</code></td>
+<td><code>user.accountEnabled -eq true</code></td>
+</tr>
+<tr>
+<td><code>dirSyncEnabled</code></td>
+<td><code>true</code>, <code>false</code></td>
+<td><code>user.dirSyncEnabled -eq true</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="properties-of-type-datetime">Properties of type date/time</h4>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Allowed values</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>employeeHireDate</code> (preview)</td>
+<td>Any <code>DateTimeOffset</code> value or keyword <code>system.now</code></td>
+<td><code>user.employeeHireDate -eq "value"</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="properties-of-type-string">Properties of type string</h4>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Allowed values</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>city</code></td>
+<td>Any string value or <code>null</code></td>
+<td><code>user.city -eq "value"</code></td>
+</tr>
+<tr>
+<td><code>country</code></td>
+<td>Any string value or <code>null</code></td>
+<td><code>user.country -eq "value"</code></td>
+</tr>
+<tr>
+<td><code>companyName</code></td>
+<td>Any string value or <code>null</code></td>
+<td><code>user.companyName -eq "value"</code></td>
+</tr>
+<tr>
+<td><code>department</code></td>
+<td>Any string value or <code>null</code></td>
+<td><code>user.department -eq "value"</code></td>
+</tr>
+<tr>
+<td><code>displayName</code></td>
+<td>Any string value</td>
+<td><code>user.displayName -eq "value"</code></td>
+</tr>
+<tr>
+<td><code>employeeId</code></td>
+<td>Any string value</td>
+<td><code>user.employeeId -eq "value"</code><br><br><code>user.employeeId -ne "null"</code></td>
+</tr>
+<tr>
+<td><code>facsimileTelephoneNumber</code></td>
+<td>Any string value or <code>null</code></td>
+<td><code>user.facsimileTelephoneNumber -eq "value"</code></td>
+</tr>
+<tr>
+<td><code>givenName</code></td>
+<td>Any string value or <code>null</code></td>
+<td><code>user.givenName -eq "value"</code></td>
+</tr>
+<tr>
+<td><code>jobTitle</code></td>
+<td>Any string value or <code>null</code></td>
+<td><code>user.jobTitle -eq "value"</code></td>
+</tr>
+<tr>
+<td><code>mail</code></td>
+<td>Any string value or <code>null</code> (SMTP address of the user)</td>
+<td><code>user.mail -eq "value"</code><br><br><code>user.mail -notEndsWith "@Contoso.com"</code></td>
+</tr>
+<tr>
+<td><code>mailNickName</code></td>
+<td>Any string value (mail alias of the user)</td>
+<td><code>user.mailNickName -eq "value"</code><br><br><code>user.mailNickname -endsWith "-vendor"</code></td>
+</tr>
+<tr>
+<td><code>mobile</code></td>
+<td>Any string value or <code>null</code></td>
+<td><code>user.mobile -eq "value"</code></td>
+</tr>
+<tr>
+<td><code>objectId</code></td>
+<td>GUID of the user object</td>
+<td><code>user.objectId -eq "aaaaaaaa-0000-1111-2222-bbbbbbbbbbbb"</code></td>
+</tr>
+<tr>
+<td><code>onPremisesDistinguishedName</code></td>
+<td>Any string value or <code>null</code></td>
+<td><code>user.onPremisesDistinguishedName -eq "value"</code></td>
+</tr>
+<tr>
+<td><code>onPremisesSecurityIdentifier</code></td>
+<td>On-premises security identifier (SID) for users who were synchronized from on-premises to the cloud</td>
+<td><code>user.onPremisesSecurityIdentifier -eq "S-1-1-11-1111111111-1111111111-1111111111-1111111"</code></td>
+</tr>
+<tr>
+<td><code>passwordPolicies</code></td>
+<td><code>None</code>, <code>DisableStrongPassword</code>, <code>DisablePasswordExpiration</code>, <code>DisablePasswordExpiration</code>, <code>DisableStrongPassword</code></td>
+<td><code>user.passwordPolicies -eq "DisableStrongPassword"</code></td>
+</tr>
+<tr>
+<td><code>physicalDeliveryOfficeName</code></td>
+<td>Any string value or <code>null</code></td>
+<td><code>user.physicalDeliveryOfficeName -eq "value"</code></td>
+</tr>
+<tr>
+<td><code>postalCode</code></td>
+<td>Any string value or <code>null</code></td>
+<td><code>user.postalCode -eq "value"</code></td>
+</tr>
+<tr>
+<td><code>preferredLanguage</code></td>
+<td>ISO 639-1 code</td>
+<td><code>user.preferredLanguage -eq "en-US"</code></td>
+</tr>
+<tr>
+<td><code>sipProxyAddress</code></td>
+<td>Any string value or <code>null</code></td>
+<td><code>user.sipProxyAddress -eq "value"</code></td>
+</tr>
+<tr>
+<td><code>state</code></td>
+<td>Any string value or <code>null</code></td>
+<td><code>user.state -eq "value"</code></td>
+</tr>
+<tr>
+<td><code>streetAddress</code></td>
+<td>Any string value or <code>null</code></td>
+<td><code>user.streetAddress -eq "value"</code></td>
+</tr>
+<tr>
+<td><code>surname</code></td>
+<td>Any string value or <code>null</code></td>
+<td><code>user.surname -eq "value"</code></td>
+</tr>
+<tr>
+<td><code>telephoneNumber</code></td>
+<td>Any string value or <code>null</code></td>
+<td><code>user.telephoneNumber -eq "value"</code></td>
+</tr>
+<tr>
+<td><code>usageLocation</code></td>
+<td>Two-letter country or region code</td>
+<td><code>user.usageLocation -eq "US"</code></td>
+</tr>
+<tr>
+<td><code>userPrincipalName</code></td>
+<td>Any string value</td>
+<td><code>user.userPrincipalName -eq "alias@domain"</code></td>
+</tr>
+<tr>
+<td><code>userType</code></td>
+<td><code>member</code>, <code>guest</code>, <code>null</code></td>
+<td><code>user.userType -eq "Member"</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="properties-of-type-string-collection">Properties of type string collection</h4>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Allowed values</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>memberOf</code> (preview)</td>
+<td>Collection of strings (group object IDs)</td>
+<td><code>user.memberOf -any (group.objectId -in ['value'])</code></td>
+</tr>
+<tr>
+<td><code>otherMails</code></td>
+<td>Any string value</td>
+<td><code>(user.otherMails -any (_ -startsWith "alias@domain"))</code><br><br><code>(user.otherMails -any (_ -endsWith "@contoso.com"))</code></td>
+</tr>
+<tr>
+<td><code>proxyAddresses</code></td>
+<td><code>SMTP: alias@domain</code>, <code>smtp: alias@domain</code></td>
+<td><code>(user.proxyAddresses -any (_ -startsWith "SMTP: alias@domain"))</code><br><br><code>(user.proxyAddresses -any (_ -notEndsWith "@outlook.com"))</code></td>
+</tr>
+</tbody>
+</table>
+<p>For the properties used for device rules, see <a href="#rules-for-devices" data-linktype="self-bookmark">Rules for devices</a>.</p>
+<h3 id="supported-expression-operators">Supported expression operators</h3>
+<p>The following table lists all the supported operators and their syntax for a single expression. You can use operators with or without the hyphen (<code>-</code>) prefix. The <code>Contains</code> operator does partial string matches but not matches for items in a collection.</p>
+<div class="CAUTION">
+<p>Caution</p>
+<p>For best results, minimize the use of <code>Match</code> or <code>Contains</code> as much as possible. The article <a href="groups-dynamic-rule-more-efficient" data-linktype="relative-path">Create simpler, more efficient rules for dynamic membership groups</a> provides guidance on how to create rules that result in better dynamic group processing times. The <a href="groups-dynamic-rule-member-of" data-linktype="relative-path"><code>memberOf</code></a> operator is in preview and has some limitations, so use it with caution.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Operator</th>
+<th>Syntax</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Ends With</code></td>
+<td><code>-endsWith</code></td>
+</tr>
+<tr>
+<td><code>Not Ends With</code></td>
+<td><code>-notEndsWith</code></td>
+</tr>
+<tr>
+<td><code>Not Equals</code></td>
+<td><code>-ne</code></td>
+</tr>
+<tr>
+<td><code>Equals</code></td>
+<td><code>-eq</code></td>
+</tr>
+<tr>
+<td><code>Not Starts With</code></td>
+<td><code>-notStartsWith</code></td>
+</tr>
+<tr>
+<td><code>Starts With</code></td>
+<td><code>-startsWith</code></td>
+</tr>
+<tr>
+<td><code>Not Contains</code></td>
+<td><code>-notContains</code></td>
+</tr>
+<tr>
+<td><code>Contains</code></td>
+<td><code>-contains</code></td>
+</tr>
+<tr>
+<td><code>Not Match</code></td>
+<td><code>-notMatch</code></td>
+</tr>
+<tr>
+<td><code>Match</code></td>
+<td><code>-match</code></td>
+</tr>
+<tr>
+<td><code>In</code></td>
+<td><code>-in</code></td>
+</tr>
+<tr>
+<td><code>Not In</code></td>
+<td><code>-notIn</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="use-the--in-and--notin-operators">Use the -in and -notIn operators</h4>
+<p>If you want to compare the value of a user attribute against multiple values, you can use the <code>-in</code> or <code>-notIn</code> operator. Use the bracket symbols (<code>[</code> and <code>]</code>) to begin and end the list of values.</p>
+<p>In the following example, the expression evaluates to <code>true</code> if the value of <code>user.department</code> equals any of the values in the list:</p>
+<pre><code>   user.department -in ["50001","50002","50003","50005","50006","50007","50008","50016","50020","50024","50038","50039","51100"]
+</code></pre>
+<h4 id="use-the--le-and--ge-operators">Use the -le and -ge operators</h4>
+<p>You can use the less than (<code>-le</code>) or greater than (<code>-ge</code>) operator when you're using the <code>employeeHireDate</code> attribute in rules for dynamic membership groups.</p>
+<p>Here are examples:</p>
+<pre><code>user.employeehiredate -ge system.now -plus p1d 
+
+user.employeehiredate -le 2020-06-10T18:13:20Z 
+
+</code></pre>
+<h4 id="use-the--match-operator">Use the -match operator</h4>
+<p>You can use the <code>-match</code> operator for matching any regular expression.</p>
+<p>For the following example, <code>Da</code>, <code>Dav</code>, and <code>David</code> evaluate to <code>true</code>. <code>aDa</code> evaluates to <code>false</code>.</p>
+<pre><code>user.displayName -match "^Da.*"   
+</code></pre>
+<p>For the following example, <code>David</code> evaluates to <code>true</code>. <code>Da</code> evaluates to <code>false</code>.</p>
+<pre><code>user.displayName -match ".*vid"
+</code></pre>
+<h3 id="supported-values">Supported values</h3>
+<p>The values that you use in an expression can consist of several types:</p>
+<ul>
+<li>Strings</li>
+<li>Boolean (<code>true</code>, <code>false</code>)</li>
+<li>Numbers</li>
+<li>Arrays (number array, string array)</li>
+</ul>
+<p>When you specify a value within an expression, it's important to use the correct syntax to avoid errors. Here are some syntax tips:</p>
+<ul>
+<li>Double quotation marks are optional unless the value is a string.</li>
+<li>Regex and string operations aren't case sensitive.</li>
+<li>Ensure that property names are correctly formatted as shown, because they're case sensitive.</li>
+<li>When a string value contains double quotation marks, you should escape both quotation marks by using the backtick (`) character. For example, <em>user.department -eq `"Sales`"</em> is the proper syntax when <code>Sales</code> is the value. Escape single quotation marks by using two single quotation marks instead of one each time.</li>
+<li>You can also perform null checks by using <code>null</code> as a value; for example, <code>user.department -eq null</code>.</li>
+</ul>
+<h4 id="use-of-null-values">Use of null values</h4>
+<p>To specify a <code>null</code> value in a rule:</p>
+<ul>
+<li>Use <code>-eq</code> or <code>-ne</code> when you're comparing the <code>null</code> value in an expression.</li>
+<li>Use quotation marks around the word <code>null</code> only if you want it to be interpreted as a literal string value.</li>
+<li>Don't use the <code>-not</code> operator as a comparative operator for the null value. If you use it, you get an error whether you use <code>null</code> or <code>$null</code>.</li>
+</ul>
+<p>The correct way to reference the <code>null</code> value is as follows:</p>
+<pre><code>   user.mail –ne null
+</code></pre>
+<h2 id="rules-with-multiple-expressions">Rules with multiple expressions</h2>
+<p>Rules for dynamic membership groups can consist of more than one single expression connected by the <code>-and</code>, <code>-or</code>, and <code>-not</code> logical operators. You can also use logical operators in combination.</p>
+<p>The following are examples of properly constructed membership rules with multiple expressions:</p>
+<pre><code>(user.department -eq "Sales") -or (user.department -eq "Marketing")
+(user.department -eq "Sales") -and -not (user.jobTitle -startsWith "SDE")
+</code></pre>
+<h3 id="operator-precedence">Operator precedence</h3>
+<p>The following list shows all operators in order of precedence from highest to lowest. Operators on the same line are of equal precedence.</p>
+<pre><code>-eq -ne -startsWith -notStartsWith -contains -notContains -match –notMatch -in -notIn
+-not
+-and
+-or
+-any -all
+</code></pre>
+<p>The following example illustrates operator precedence where two expressions are being evaluated for the user:</p>
+<pre><code>   user.department –eq "Marketing" –and user.country –eq "US"
+</code></pre>
+<p>You need parentheses only when precedence doesn't meet your requirements. For example, if you want the department to be evaluated first, the following code shows how you can use parentheses to determine the order:</p>
+<pre><code>   user.country –eq "US" –and (user.department –eq "Marketing" –or user.department –eq "Sales")
+</code></pre>
+<h2 id="rules-with-complex-expressions">Rules with complex expressions</h2>
+<p>A membership rule can consist of complex expressions where the properties, operators, and values take on more complex forms. Expressions are considered complex when any of the following points are true:</p>
+<ul>
+<li>The property consists of a collection of values; specifically, multi-value properties.</li>
+<li>The expressions use the <code>-any</code> and <code>-all</code> operators.</li>
+<li>The value of the expression can itself be one or more expressions.</li>
+</ul>
+<h3 id="multi-value-properties">Multi-value properties</h3>
+<p>Multi-value properties are collections of objects of the same type. You can use them to create membership rules by using the <code>-any</code> and <code>-all</code> logical operators.</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Values</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>assignedPlans</code></td>
+<td>Each object in the collection exposes the following string properties: <code>capabilityStatus</code>, <code>service</code>, <code>servicePlanId</code></td>
+<td><code>user.assignedPlans -any (assignedPlan.servicePlanId -eq "aaaa0a0a-bb1b-cc2c-dd3d-eeeeee4e4e4e" -and assignedPlan.capabilityStatus -eq "Enabled")</code></td>
+</tr>
+<tr>
+<td><code>proxyAddresses</code></td>
+<td><code>SMTP: alias@domain</code>, <code>smtp: alias@domain</code></td>
+<td><code>(user.proxyAddresses -any (\_ -startsWith "contoso"))</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="use-the--any-and--all-operators">Use the -any and -all operators</h4>
+<p>You can use the following operators to apply a condition to one or all of the items in the collection:</p>
+<ul>
+<li><code>-any</code>: Satisfied when at least one item in the collection matches the condition.</li>
+<li><code>-all</code>: Satisfied when all items in the collection match the condition.</li>
+</ul>
+<h5 id="example-1">Example 1</h5>
+<p><code>assignedPlans</code> is a multi-value property that lists all service plans assigned to the user. Service plans aren't the same as licenses or products. For more information, see <a href="/en-us/entra/identity/users/licensing-service-plan-reference" data-linktype="absolute-path">Product names and service plan identifiers for licensing</a>.</p>
+<p>To find the service plan IDs assigned to a user, use Microsoft Graph PowerShell with the <code>User.Read.All</code> permission:</p>
+<pre><code class="lang-powershell">Connect-MgGraph -Scopes 'User.Read.All'
+
+Get-MgUser -UserId user@contoso.com -Property assignedPlans |
+  Select-Object -ExpandProperty assignedPlans |
+  Select-Object service, servicePlanId, capabilityStatus | Format-List
+</code></pre>
+<p>The following expression selects users who have the Exchange Online (Plan 2) service plan, as a GUID value, that's also in an <code>Enabled</code> state:</p>
+<pre><code>user.assignedPlans -any (assignedPlan.servicePlanId -eq "efb87545-963c-4e0d-99df-69c6916d9eb0" -and assignedPlan.capabilityStatus -eq "Enabled")
+</code></pre>
+<p>Include <code>assignedPlan.capabilityStatus -eq "Enabled"</code> when you want the rule to match only users whose service plan is enabled.</p>
+<p>You can use a rule like this one to group all users for whom a Microsoft 365 or other Microsoft Online Services capability is enabled. You could then apply the rule with a set of policies to the group.</p>
+<h5 id="example-2">Example 2</h5>
+<p>The following expression selects all users who have any service plan that's associated with the Intune service (identified by the service name <code>SCO</code>):</p>
+<pre><code>user.assignedPlans -any (assignedPlan.service -eq "SCO" -and assignedPlan.capabilityStatus -eq "Enabled")
+</code></pre>
+<h5 id="example-3">Example 3</h5>
+<p>The following expression selects all users who have no enabled service plan that's associated with the Intune service (identified by the service name <code>SCO</code>):</p>
+<pre><code>user.assignedPlans -all (assignedPlan.service -ne "SCO" -or assignedPlan.capabilityStatus -ne "Enabled")
+</code></pre>
+<p>This rule also includes users who have no assigned service plans. If you want to exclude users with no service plans, combine this rule with another condition.</p>
+<h5 id="example-4">Example 4</h5>
+<p>The following expression selects all users who have no assigned service plan:</p>
+<pre><code>user.assignedPlans -all (assignedPlan.servicePlanId -eq null)
+</code></pre>
+<h4 id="use-the-underscore-_-syntax">Use the underscore (_) syntax</h4>
+<p>The underscore (<code>_</code>) syntax matches occurrences of a specific value in one of the multi-value string collection properties to add users or devices to a dynamic membership group. You use it with the <code>-any</code> or <code>-all</code> operator.</p>
+<p>Here's an example of using the underscore in a rule to add members based on <code>user.proxyAddress</code>. (It works the same for <code>user.otherMails</code>.) This rule adds any user who has a proxy address that starts with <code>contoso</code> to the group.</p>
+<pre><code>(user.proxyAddresses -any (_ -startsWith "contoso"))
+</code></pre>
+<h3 id="other-properties-and-common-rules">Other properties and common rules</h3>
+<p>The following sections describe other common rule patterns for dynamic membership groups.</p>
+<h4 id="create-a-rule-for-direct-reports">Create a rule for direct reports</h4>
+<p>You can create a group that contains all direct reports of a manager. When the manager's direct reports change in the future, the group's membership is adjusted automatically.</p>
+<div class="NOTE">
+<p>Note</p>
+<p>The manager is also added to a direct reports dynamic group.</p>
+</div>
+<p>You construct the direct reports rule by using the following syntax:</p>
+<pre><code>Direct Reports for "{objectID_of_manager}"
+</code></pre>
+<p>Here's an example of a valid rule, where <code>aaaaaaaa-0000-1111-2222-bbbbbbbbbbbb</code> is the object ID of the manager:</p>
+<pre><code>Direct Reports for "aaaaaaaa-0000-1111-2222-bbbbbbbbbbbb"
+</code></pre>
+<p>The following tips can help you use the rule properly:</p>
+<ul>
+<li>The <em>manager ID</em> is the object ID of the manager. You can find it in the manager's profile.</li>
+<li>For the rule to work, make sure that the <code>Manager</code> property is set correctly for users in your organization. You can check the current value in the user's profile.</li>
+<li>This rule supports only the manager's direct reports. You can't create a group that has the manager's direct reports <em>and</em> their reports.</li>
+<li>You can't combine this rule with any other membership rules.</li>
+</ul>
+<h4 id="create-a-rule-for-all-users">Create a rule for all users</h4>
+<p>You can create a group that contains all users within an organization by using a membership rule. When users are added or removed from the organization in the future, the group's membership is adjusted automatically.</p>
+<p>You construct the rule for all users by using a single expression that includes the <code>-ne</code> operator and the <code>null</code> value. This rule adds business-to-business guest users and member users to the group.</p>
+<pre><code>user.objectId -ne null
+</code></pre>
+<p>If you want your group to exclude guest users and include only members of your organization, you can use the following syntax:</p>
+<pre><code>(user.objectId -ne null) -and (user.userType -eq "Member")
+</code></pre>
+<h4 id="create-a-rule-for-all-devices">Create a rule for all devices</h4>
+<p>You can create a group that contains all devices within an organization by using a membership rule. When devices are added or removed from the organization in the future, the group's membership is adjusted automatically.</p>
+<p>You construct the rule for all devices by using single expression that includes the <code>-ne</code> operator and the <code>null</code> value:</p>
+<pre><code>device.objectId -ne null
+</code></pre>
+<h3 id="extension-attributes-and-custom-extension-properties">Extension attributes and custom extension properties</h3>
+<p>Extension attributes and custom extension properties are supported as string properties in rules for dynamic membership groups.</p>
+<p>You can <a href="/en-us/graph/api/resources/onpremisesextensionattributes" data-linktype="absolute-path">sync extension attributes</a> from on-premises Windows Server Active Directory. Or you can update extension attributes by using Microsoft Graph.</p>
+<p>Extension attributes take the format of <code>ExtensionAttribute&lt;X&gt;</code>, where <code>&lt;X&gt;</code> equals <code>1</code>-<code>15</code>. Multi-value extension properties aren't supported in rules for dynamic membership groups.</p>
+<p>Here's an example of a rule that uses an extension attribute as a property:</p>
+<pre><code>(user.extensionAttribute15 -eq "Marketing")
+</code></pre>
+<p>You can <a href="../hybrid/connect/how-to-connect-sync-feature-directory-extensions" data-linktype="relative-path">sync custom extension properties</a> from on-premises Windows Server Active Directory or from a connected software as a service (SaaS) application. You can create custom extension properties by using Microsoft Graph.</p>
+<p>Custom extension properties take the format of <code>user.extension_[GUID]_[Attribute]</code>, where:</p>
+<ul>
+<li><code>[GUID]</code> is the stripped version of the unique identifier in Microsoft Entra ID for the application that created the property. It contains only characters 0-9 and A-Z.</li>
+<li><code>[Attribute]</code> is the name of the property as it was created.</li>
+</ul>
+<p>An example of a rule that uses a custom extension property is:</p>
+<pre><code>user.extension_c272a57b722d4eb29bfe327874ae79cb_OfficeNumber -eq "123"
+</code></pre>
+<p>Custom extension properties are also called directory or Microsoft Entra extension properties.</p>
+<p>You can find the custom property name in the directory by querying a user's property in Graph Explorer and searching for the property name. Also, you can now select the <strong>Get custom extension properties</strong> link in the dynamic rule builder to enter a unique app ID and receive the full list of custom extension properties to use when creating a rule for dynamic membership groups. You can refresh this list to get any new custom extension properties for that app. Extension attributes and custom extension properties must be from applications in your tenant.</p>
+<p>For more information, see <a href="../hybrid/connect/how-to-connect-sync-feature-directory-extensions#use-the-attributes-in-dynamic-membership-groups" data-linktype="relative-path">Use the attributes in dynamic membership groups</a>.</p>
+<h2 id="rules-for-devices">Rules for devices</h2>
+<p>You can create a rule that selects device objects for membership in a group. You can't have both users and devices as group members. For Intune app and policy assignments, use assignment filters when they meet the targeting need. Filters include or exclude managed devices or apps within an assigned group. Use dynamic groups for non-Intune or cross-workload scenarios, such as Conditional Access, licensing, or Autopilot profile assignment. For more information, see <a href="/en-us/intune/fundamentals/filters/overview" data-linktype="absolute-path">Create assignment filters in Microsoft Intune</a>.</p>
+<div class="NOTE">
+<p>Note</p>
+<p>The <code>organizationalUnit</code> attribute is no longer listed, and you shouldn't use it. Intune sets this string in specific cases, but Microsoft Entra ID doesn't recognize it. No devices are added to groups based on this attribute.</p>
+<p>The <code>systemlabels</code> attribute is read-only. You can't set it with Intune.</p>
+</div>
+<p>For Windows 10, the correct format of the <code>deviceOSVersion</code> attribute is <code>device.deviceOSVersion -startsWith "10.0.1"</code>. You can validate the formatting by using the <code>Get-MgDevice</code> PowerShell cmdlet:</p>
+<pre><code>Get-MgDevice -Search "displayName:YourMachineNameHere" -ConsistencyLevel eventual | Select-Object -ExpandProperty 'OperatingSystemVersion'
+</code></pre>
+<p>You can use the following device attributes.</p>
+<!-- docutune:disable -->
+<table>
+<thead>
+<tr>
+<th>Device attribute</th>
+<th>Values</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>accountEnabled</code></td>
+<td><code>true</code>, <code>false</code></td>
+<td><code>device.accountEnabled -eq true</code></td>
+</tr>
+<tr>
+<td><code>deviceCategory</code></td>
+<td>A valid device category name</td>
+<td><code>device.deviceCategory -eq "BYOD"</code></td>
+</tr>
+<tr>
+<td><code>deviceId</code></td>
+<td>A valid Microsoft Entra device ID</td>
+<td><code>device.deviceId -eq "d4fe7726-5966-431c-b3b8-cddc8fdb717d"</code></td>
+</tr>
+<tr>
+<td><code>deviceManagementAppId</code></td>
+<td>A valid application ID for mobile device management in Microsoft Entra ID</td>
+<td><code>device.deviceManagementAppId -eq "0000000a-0000-0000-c000-000000000000"</code> for Microsoft Intune managed devices<br><br><code>"54b943f8-d761-4f8d-951e-9cea1846db5a"</code> for System Center Configuration Manager co-managed devices</td>
+</tr>
+<tr>
+<td><code>deviceManufacturer</code></td>
+<td>Any string value</td>
+<td><code>device.deviceManufacturer -eq "Samsung"</code></td>
+</tr>
+<tr>
+<td><code>deviceModel</code></td>
+<td>Any string value</td>
+<td><code>device.deviceModel -eq "iPad Air"</code></td>
+</tr>
+<tr>
+<td><code>displayName</code></td>
+<td>Any string value</td>
+<td><code>device.displayName -eq "Rob iPhone"</code></td>
+</tr>
+<tr>
+<td><code>deviceOSType</code></td>
+<td>Any string value</td>
+<td><code>(device.deviceOSType -eq "iPad") -or (device.deviceOSType -eq "iPhone")</code><br><br><code>device.deviceOSType -startsWith "AndroidEnterprise"</code><br><br><code>device.deviceOSType -eq "AndroidForWork"</code><br><br><code>device.deviceOSType -eq "Windows"</code></td>
+</tr>
+<tr>
+<td><code>deviceOSVersion</code></td>
+<td>Any string value</td>
+<td><code>device.deviceOSVersion -eq "9.1"</code><br><br><code>device.deviceOSVersion -startsWith "10.0.1"</code></td>
+</tr>
+<tr>
+<td><code>deviceOwnership</code><sup>1</sup></td>
+<td><code>Personal</code>, <code>Company</code>, <code>Unknown</code></td>
+<td><code>device.deviceOwnership -eq "Company"</code></td>
+</tr>
+<tr>
+<td><code>devicePhysicalIds</code></td>
+<td>Any string value that Windows Autopilot uses, such as all Windows Autopilot devices, <code>OrderID</code>, or <code>PurchaseOrderID</code></td>
+<td><code>device.devicePhysicalIDs -any _ -startsWith "[ZTDId]"</code><br><br><code>device.devicePhysicalIds -any _ -eq "[OrderID]:179887111881"</code><br><br><code>device.devicePhysicalIds -any _ -eq "[PurchaseOrderId]:76222342342"</code></td>
+</tr>
+<tr>
+<td><code>deviceTrustType</code><sup>2</sup></td>
+<td><code>AzureAD</code>, <code>ServerAD</code>, <code>Workplace</code></td>
+<td><code>device.deviceTrustType -eq "AzureAD"</code></td>
+</tr>
+<tr>
+<td><code>enrollmentProfileName</code></td>
+<td>Profile name for Apple Automated Device Enrollment, Android Enterprise corporate-owned dedicated device enrollment, or Windows Autopilot</td>
+<td><code>device.enrollmentProfileName -eq "DEP iPhones"</code></td>
+</tr>
+<tr>
+<td><code>extensionAttribute1</code><sup>3</sup></td>
+<td>Any string value</td>
+<td><code>device.extensionAttribute1 -eq "some string value"</code></td>
+</tr>
+<tr>
+<td><code>extensionAttribute2</code></td>
+<td>Any string value</td>
+<td><code>device.extensionAttribute2 -eq "some string value"</code></td>
+</tr>
+<tr>
+<td><code>extensionAttribute3</code></td>
+<td>Any string value</td>
+<td><code>device.extensionAttribute3 -eq "some string value"</code></td>
+</tr>
+<tr>
+<td><code>extensionAttribute4</code></td>
+<td>Any string value</td>
+<td><code>device.extensionAttribute4 -eq "some string value"</code></td>
+</tr>
+<tr>
+<td><code>extensionAttribute5</code></td>
+<td>Any string value</td>
+<td><code>device.extensionAttribute5 -eq "some string value"</code></td>
+</tr>
+<tr>
+<td><code>extensionAttribute6</code></td>
+<td>Any string value</td>
+<td><code>device.extensionAttribute6 -eq "some string value"</code></td>
+</tr>
+<tr>
+<td><code>extensionAttribute7</code></td>
+<td>Any string value</td>
+<td><code>device.extensionAttribute7 -eq "some string value"</code></td>
+</tr>
+<tr>
+<td><code>extensionAttribute8</code></td>
+<td>Any string value</td>
+<td><code>device.extensionAttribute8 -eq "some string value"</code></td>
+</tr>
+<tr>
+<td><code>extensionAttribute9</code></td>
+<td>Any string value</td>
+<td><code>device.extensionAttribute9 -eq "some string value"</code></td>
+</tr>
+<tr>
+<td><code>extensionAttribute10</code></td>
+<td>Any string value</td>
+<td><code>device.extensionAttribute10 -eq "some string value"</code></td>
+</tr>
+<tr>
+<td><code>extensionAttribute11</code></td>
+<td>Any string value</td>
+<td><code>device.extensionAttribute11 -eq "some string value"</code></td>
+</tr>
+<tr>
+<td><code>extensionAttribute12</code></td>
+<td>Any string value</td>
+<td><code>device.extensionAttribute12 -eq "some string value"</code></td>
+</tr>
+<tr>
+<td><code>extensionAttribute13</code></td>
+<td>Any string value</td>
+<td><code>device.extensionAttribute13 -eq "some string value"</code></td>
+</tr>
+<tr>
+<td><code>extensionAttribute14</code></td>
+<td>Any string value</td>
+<td><code>device.extensionAttribute14 -eq "some string value"</code></td>
+</tr>
+<tr>
+<td><code>extensionAttribute15</code></td>
+<td>Any string value</td>
+<td><code>device.extensionAttribute15 -eq "some string value"</code></td>
+</tr>
+<tr>
+<td><code>isRooted</code></td>
+<td><code>true</code>, <code>false</code></td>
+<td><code>device.isRooted -eq true</code></td>
+</tr>
+<tr>
+<td><code>managementType</code></td>
+<td>Mobile device management (for mobile devices)</td>
+<td><code>device.managementType -eq "MDM"</code></td>
+</tr>
+<tr>
+<td><code>memberOf</code> (preview)</td>
+<td>Collection of strings (group object IDs)</td>
+<td><code>device.memberOf -any (group.objectId -in ['value'])</code></td>
+</tr>
+<tr>
+<td><code>objectId</code></td>
+<td>A valid Microsoft Entra object ID</td>
+<td><code>device.objectId -eq "aaaaaaaa-0000-1111-2222-bbbbbbbbbbbb"</code></td>
+</tr>
+<tr>
+<td><code>profileType</code></td>
+<td>A valid <a href="/en-us/graph/api/resources/device?view=graph-rest-1.0&amp;preserve-view=true#properties" data-linktype="absolute-path">profile type</a> in Microsoft Entra ID</td>
+<td><code>device.profileType -eq "RegisteredDevice"</code></td>
+</tr>
+<tr>
+<td><code>systemLabels</code><sup>4</sup></td>
+<td>A read-only string that matches the Intune device property for tagging Modern Workplace devices</td>
+<td><code>device.systemLabels -startsWith "M365Managed" SystemLabels</code></td>
+</tr>
+</tbody>
+</table>
+<!-- docutune:enable -->
+<p><sup>1</sup> When you use <code>deviceOwnership</code> to create dynamic membership groups for devices, you need to set the value equal to <code>Company</code>. On Intune, the device ownership is represented instead as <code>Corporate</code>. For more information, see <a href="/en-us/mem/intune/developer/reports-ref-devices#ownertypes" data-linktype="absolute-path"><code>ownerTypes</code></a>.</p>
+<p><sup>2</sup> When you use <code>deviceTrustType</code> to create dynamic membership groups for devices, you need to set the value equal to <code>AzureAD</code> to represent Microsoft Entra joined devices, <code>ServerAD</code> to represent Microsoft Entra hybrid joined devices, or <code>Workplace</code> to represent Microsoft Entra registered devices.</p>
+<p><sup>3</sup> When you use <code>extensionAttribute1-15</code> to create dynamic membership groups for devices, you need to set the value for <code>extensionAttribute1-15</code> on the device. <a href="/en-us/graph/api/device-update?view=graph-rest-1.0&amp;tabs=http&amp;preserve-view=true#example-2--write-extensionattributes-on-a-device" data-linktype="absolute-path">Learn more about how to write <code>extensionAttributes</code> on a Microsoft Entra device object</a>.</p>
+<p><sup>4</sup> When you use <code>systemLabels</code>, a read-only attribute that's used in various contexts (such as device management and sensitivity labeling) isn't editable through Intune.</p>
+<h2 id="related-content">Related content</h2>
+<ul>
+<li><a href="../../fundamentals/how-to-manage-groups" data-linktype="relative-path">Manage Microsoft Entra groups and group membership</a></li>
+<li><a href="groups-create-rule" data-linktype="relative-path">Create or update a dynamic membership group in Microsoft Entra ID</a></li>
+</ul>
+</div>
+					
+		<div
+			id="ms--inline-notifications"
+			class="margin-block-xs"
+			data-bi-name="inline-notification"
+		></div>
+	 
+		<div
+			id="assertive-live-region"
+			role="alert"
+			aria-live="assertive"
+			class="visually-hidden"
+			aria-relevant="additions"
+			aria-atomic="true"
+		></div>
+		<div
+			id="polite-live-region"
+			role="status"
+			aria-live="polite"
+			class="visually-hidden"
+			aria-relevant="additions"
+			aria-atomic="true"
+		></div>
+	
+					
+		<!-- feedback section -->
+		<section
+			id="site-user-feedback-footer"
+			class="font-size-sm margin-top-md display-none-print display-none-desktop"
+			data-test-id="site-user-feedback-footer"
+			data-bi-name="site-feedback-section"
+		>
+			<hr class="hr" />
+			<h2 id="ms--feedback" class="title is-3">Feedback</h2>
+			<div class="display-flex flex-wrap-wrap align-items-center">
+				<p class="font-weight-semibold margin-xxs margin-left-none">
+					Was this page helpful?
+				</p>
+				<div class="buttons">
+					<button
+						class="thumb-rating-button like button button-primary button-sm"
+						data-test-id="footer-rating-yes"
+						data-binary-rating-response="rating-yes"
+						type="button"
+						title="This article is helpful"
+						data-bi-name="button-rating-yes"
+						aria-pressed="false"
+					>
+						<span class="icon" aria-hidden="true">
+							<span class="docon docon-like"></span>
+						</span>
+						<span>Yes</span>
+					</button>
+					<button
+						class="thumb-rating-button dislike button button-primary button-sm"
+						id="standard-rating-no-button"
+						hidden
+						data-test-id="footer-rating-no"
+						data-binary-rating-response="rating-no"
+						type="button"
+						title="This article is not helpful"
+						data-bi-name="button-rating-no"
+						aria-pressed="false"
+					>
+						<span class="icon" aria-hidden="true">
+							<span class="docon docon-dislike"></span>
+						</span>
+						<span>No</span>
+					</button>
+					<details
+						class="popover popover-top"
+						id="mobile-help-popover"
+						data-test-id="footer-feedback-popover"
+					>
+						<summary
+							class="thumb-rating-button dislike button button-primary button-sm"
+							data-test-id="details-footer-rating-no"
+							data-binary-rating-response="rating-no"
+							title="This article is not helpful"
+							data-bi-name="button-rating-no"
+							aria-pressed="false"
+							data-bi-an="feedback-unhelpful-popover"
+						>
+							<span class="icon" aria-hidden="true">
+								<span class="docon docon-dislike"></span>
+							</span>
+							<span>No</span>
+						</summary>
+						<div
+							class="popover-content width-200 width-300-tablet"
+							role="dialog"
+							aria-labelledby="popover-heading"
+							aria-describedby="popover-description"
+						>
+							<p id="popover-heading" class="font-size-lg margin-bottom-xxs font-weight-semibold">
+								Need help with this topic?
+							</p>
+							<p id="popover-description" class="font-size-sm margin-bottom-xs">
+								Want to try using Ask Learn to clarify or guide you through this topic?
+							</p>
+							
+		<div class="buttons flex-direction-row flex-wrap justify-content-center gap-xxs">
+			<div>
+		<button
+			class="button button-sm border inner-focus display-none margin-right-xxs"
+			data-bi-name="ask-learn-assistant-entry-troubleshoot"
+			data-test-id="ask-learn-assistant-modal-entry-mobile-feedback"
+			data-ask-learn-modal-entry-feedback
+			data-bi-an=feedback-unhelpful-popover
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			aria-label="Ask Learn"
+			hidden
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+		</button>
+		<button
+			class="button button-sm display-inline-flex display-none-desktop flex-shrink-0 margin-right-xxs border-color-ask-learn margin-right-xxs"
+			data-bi-name="ask-learn-assistant-entry-troubleshoot"
+			data-bi-an=feedback-unhelpful-popover
+			data-test-id="ask-learn-assistant-modal-entry-tablet-feedback"
+			data-ask-learn-modal-entry-feedback
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			hidden
+		>
+			<span class="icon font-size-lg" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+			<span>Ask Learn</span>
+		</button>
+		<button
+			class="button button-sm display-none flex-shrink-0 display-inline-flex-desktop margin-right-xxs border-color-ask-learn margin-right-xxs"
+			data-bi-name="ask-learn-assistant-entry-troubleshoot"
+			data-bi-an=feedback-unhelpful-popover
+			data-test-id="ask-learn-assistant-flyout-entry-feedback"
+			data-ask-learn-flyout-entry-show-only
+			data-flyout-button="toggle"
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			aria-controls="ask-learn-flyout"
+			hidden
+		>
+			<span class="icon font-size-lg" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+			<span>Ask Learn</span>
+		</button>
+	</div>
+			<button
+				type="button"
+				class="button button-sm margin-right-xxs"
+				data-help-option="suggest-fix"
+				data-bi-name="feedback-suggest"
+				data-bi-an="feedback-unhelpful-popover"
+				data-test-id="suggest-fix"
+			>
+				<span class="icon" aria-hidden="true">
+					<span class="docon docon-feedback"></span>
+				</span>
+				<span> Suggest a fix? </span>
+			</button>
+		</div>
+	
+						</div>
+					</details>
+				</div>
+			</div>
+		</section>
+		<!-- end feedback section -->
+	
+				</div>
+				
+		<div id="ms--additional-resources-mobile" class="display-none-print">
+			<hr class="hr" hidden />
+			<h2 id="ms--additional-resources-mobile-heading" class="title is-3" hidden>
+				Additional resources
+			</h2>
+			
+		<section
+			id="right-rail-recommendations-mobile"
+			class=""
+			data-bi-name="recommendations"
+			hidden
+		></section>
+	 
+		<section
+			id="right-rail-training-mobile"
+			class=""
+			data-bi-name="learning-resource-card"
+			hidden
+		></section>
+	 
+		<section
+			id="right-rail-events-mobile"
+			class=""
+			data-bi-name="events-card"
+			hidden
+		></section>
+	
+		</div>
+	 
+		<div
+			id="article-metadata-footer"
+			data-bi-name="article-metadata-footer"
+			data-test-id="article-metadata-footer"
+			class="page-metadata-container"
+		>
+			<hr class="hr" />
+			<ul class="metadata page-metadata" data-bi-name="page info" lang="en-us" dir="ltr">
+				<li class="visibility-hidden-visual-diff">
+			<span class="badge badge-sm text-wrap-pretty">
+				<span>Last updated on <local-time format="twoDigitNumeric"
+		datetime="2026-08-13T08:00:00.000Z"
+		data-article-date-source="calculated"
+		class="is-invisible"
+	>
+		2026-08-13
+	</local-time></span>
+			</span>
+		</li>
+			</ul>
+		</div>
+	
+			</div>
+		
+				</main>
+				<aside
+					id="layout-body-aside"
+					class="layout-body-aside  "
+					data-bi-name="aside"
+					aria-label="Additional resources"
+			  >
+					
+		<div
+			id="ms--additional-resources"
+			class="right-container padding-sm display-none display-block-desktop height-full"
+			data-bi-name="pageactions"
+		>
+			<div id="affixed-right-container" data-bi-name="right-column">
+				
+		<nav
+			id="side-doc-outline"
+			class="doc-outline border-bottom padding-bottom-xs margin-bottom-xs scrollbar-width-thin"
+			data-bi-name="intopic toc"
+			aria-label="In this article"
+		>
+			<h3>In this article</h3>
+		</nav>
+	
+				<!-- Feedback -->
+				
+		<section
+			id="ms--site-user-feedback-right-rail"
+			class="font-size-sm display-none-print"
+			data-test-id="site-user-feedback-right-rail"
+			data-bi-name="site-feedback-right-rail"
+		>
+			<div class="display-flex flex-wrap-wrap align-items-center">
+				<p class="font-weight-semibold margin-xxs margin-left-none">
+					Was this page helpful?
+				</p>
+				<div class="display-flex flex-wrap-nowrap">
+					<button
+						class="thumb-rating-button like inner-focus"
+						data-test-id="right-rail-rating-yes"
+						data-binary-rating-response="rating-yes"
+						type="button"
+						title="This article is helpful"
+						aria-label="This article is helpful"
+						data-bi-name="button-rating-yes"
+						aria-pressed="false"
+					>
+						<span class="icon" aria-hidden="true">
+							<span class="docon docon-like"></span>
+						</span>
+					</button>
+					<button
+						class="thumb-rating-button dislike inner-focus"
+						id="right-rail-no-button"
+						hidden
+						data-test-id="right-rail-rating-no"
+						data-binary-rating-response="rating-no"
+						type="button"
+						title="This article is not helpful"
+						aria-label="This article is not helpful"
+						data-bi-name="button-rating-no"
+						aria-pressed="false"
+					>
+						<span class="icon" aria-hidden="true">
+							<span class="docon docon-dislike"></span>
+						</span>
+					</button>
+					<details class="popover popover-right" id="help-popover" data-test-id="feedback-popover">
+						<summary
+							tabindex="0"
+							class="thumb-rating-button dislike inner-focus"
+							data-test-id="details-right-rail-rating-no"
+							data-binary-rating-response="rating-no"
+							title="This article is not helpful"
+							aria-label="This article is not helpful"
+							data-bi-name="button-rating-no"
+							aria-pressed="false"
+							data-bi-an="feedback-unhelpful-popover"
+						>
+							<span class="icon" aria-hidden="true">
+								<span class="docon docon-dislike"></span>
+							</span>
+						</summary>
+						<div
+							class="popover-content width-200 width-300-tablet"
+							role="dialog"
+							aria-labelledby="popover-heading-right-rail"
+							aria-describedby="popover-description-right-rail"
+						>
+							<p
+								id="popover-heading-right-rail"
+								class="font-size-lg margin-bottom-xxs font-weight-semibold"
+							>
+								Need help with this topic?
+							</p>
+							<p id="popover-description-right-rail" class="font-size-sm margin-bottom-xs">
+								Want to try using Ask Learn to clarify or guide you through this topic?
+							</p>
+							
+		<div class="buttons flex-direction-row flex-wrap justify-content-center gap-xxs">
+			<div>
+		<button
+			class="button button-sm border inner-focus display-none margin-right-xxs"
+			data-bi-name="ask-learn-assistant-entry-troubleshoot"
+			data-test-id="ask-learn-assistant-modal-entry-mobile-feedback"
+			data-ask-learn-modal-entry-feedback
+			data-bi-an=feedback-unhelpful-popover
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			aria-label="Ask Learn"
+			hidden
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+		</button>
+		<button
+			class="button button-sm display-inline-flex display-none-desktop flex-shrink-0 margin-right-xxs border-color-ask-learn margin-right-xxs"
+			data-bi-name="ask-learn-assistant-entry-troubleshoot"
+			data-bi-an=feedback-unhelpful-popover
+			data-test-id="ask-learn-assistant-modal-entry-tablet-feedback"
+			data-ask-learn-modal-entry-feedback
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			hidden
+		>
+			<span class="icon font-size-lg" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+			<span>Ask Learn</span>
+		</button>
+		<button
+			class="button button-sm display-none flex-shrink-0 display-inline-flex-desktop margin-right-xxs border-color-ask-learn margin-right-xxs"
+			data-bi-name="ask-learn-assistant-entry-troubleshoot"
+			data-bi-an=feedback-unhelpful-popover
+			data-test-id="ask-learn-assistant-flyout-entry-feedback"
+			data-ask-learn-flyout-entry-show-only
+			data-flyout-button="toggle"
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			aria-controls="ask-learn-flyout"
+			hidden
+		>
+			<span class="icon font-size-lg" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+			<span>Ask Learn</span>
+		</button>
+	</div>
+			<button
+				type="button"
+				class="button button-sm margin-right-xxs"
+				data-help-option="suggest-fix"
+				data-bi-name="feedback-suggest"
+				data-bi-an="feedback-unhelpful-popover"
+				data-test-id="suggest-fix"
+			>
+				<span class="icon" aria-hidden="true">
+					<span class="docon docon-feedback"></span>
+				</span>
+				<span> Suggest a fix? </span>
+			</button>
+		</div>
+	
+						</div>
+					</details>
+				</div>
+			</div>
+		</section>
+	
+			</div>
+		</div>
+	
+			  </aside> <section
+					id="layout-body-flyout"
+					class="layout-body-flyout "
+					data-bi-name="flyout"
+			  >
+					 <div
+	class="height-full border-left background-color-body-medium"
+	id="ask-learn-flyout"
+></div>
+			  </section> <div class="layout-body-footer " data-bi-name="layout-footer">
+		<footer
+			id="footer"
+			data-test-id="footer"
+			data-bi-name="footer"
+			class="footer-layout padding-xs padding-sm-desktop has-default-focus border-top"
+			role="contentinfo"
+		>
+			<div class="display-flex gap-xs flex-wrap-wrap is-full-height padding-right-lg-desktop">
+				
+		<a
+			data-mscc-ic="false"
+			href="#"
+			data-bi-name="select-locale"
+			class="locale-selector-link flex-shrink-0 button button-sm button-clear external-link-indicator"
+			id=""
+			title=""
+			><span class="icon" aria-hidden="true"
+				><span class="docon docon-world"></span></span
+			><span class="local-selector-link-text">en-us</span></a
+		>
+	 <div class="ccpa-privacy-link" data-ccpa-privacy-link hidden>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://aka.ms/yourcaliforniaprivacychoices"
+			data-bi-name="your-privacy-choices"
+			class="button button-sm button-clear flex-shrink-0 external-link-indicator"
+			id=""
+			title=""
+			>
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 30 14"
+			xml:space="preserve"
+			height="16"
+			width="43"
+			aria-hidden="true"
+			focusable="false"
+		>
+			<path
+				d="M7.4 12.8h6.8l3.1-11.6H7.4C4.2 1.2 1.6 3.8 1.6 7s2.6 5.8 5.8 5.8z"
+				style="fill-rule:evenodd;clip-rule:evenodd;fill:#fff"
+			></path>
+			<path
+				d="M22.6 0H7.4c-3.9 0-7 3.1-7 7s3.1 7 7 7h15.2c3.9 0 7-3.1 7-7s-3.2-7-7-7zm-21 7c0-3.2 2.6-5.8 5.8-5.8h9.9l-3.1 11.6H7.4c-3.2 0-5.8-2.6-5.8-5.8z"
+				style="fill-rule:evenodd;clip-rule:evenodd;fill:#06f"
+			></path>
+			<path
+				d="M24.6 4c.2.2.2.6 0 .8L22.5 7l2.2 2.2c.2.2.2.6 0 .8-.2.2-.6.2-.8 0l-2.2-2.2-2.2 2.2c-.2.2-.6.2-.8 0-.2-.2-.2-.6 0-.8L20.8 7l-2.2-2.2c-.2-.2-.2-.6 0-.8.2-.2.6-.2.8 0l2.2 2.2L23.8 4c.2-.2.6-.2.8 0z"
+				style="fill:#fff"
+			></path>
+			<path
+				d="M12.7 4.1c.2.2.3.6.1.8L8.6 9.8c-.1.1-.2.2-.3.2-.2.1-.5.1-.7-.1L5.4 7.7c-.2-.2-.2-.6 0-.8.2-.2.6-.2.8 0L8 8.6l3.8-4.5c.2-.2.6-.2.9 0z"
+				style="fill:#06f"
+			></path>
+		</svg>
+	
+			<span>Your Privacy Choices</span></a
+		>
+	
+	</div>
+				<div class="flex-shrink-0">
+		<div class="dropdown has-caret-up">
+			<button
+				data-test-id="theme-selector-button"
+				class="dropdown-trigger button button-clear button-sm inner-focus theme-dropdown-trigger"
+				aria-controls="{{ themeMenuId }}"
+				aria-haspopup="true"
+				aria-expanded="false"
+				data-bi-name="theme"
+			>
+				<span class="icon" aria-hidden="true"><span class="docon docon-sun"></span></span>
+				<span>Theme</span>
+				<span class="icon expanded-indicator" aria-hidden="true">
+					<span class="docon docon-chevron-down-light"></span>
+				</span>
+			</button>
+			<div class="dropdown-menu" id="{{ themeMenuId }}" role="menu">
+				<ul class="theme-selector padding-xxs" data-test-id="theme-dropdown-menu" role="none">
+					<li class="theme display-block" role="none">
+						<button
+							class="button button-clear button-sm theme-control button-block justify-content-flex-start text-align-left"
+							role="menuitemradio"
+							aria-checked="false"
+							data-theme-to="light"
+							tabindex="-1"
+						>
+							<span class="theme-light margin-right-xxs">
+								<span
+									class="theme-selector-icon border display-inline-block has-body-background"
+									aria-hidden="true"
+								>
+									<svg class="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 14">
+										<rect width="22" height="14" class="has-fill-body-background" />
+										<rect x="5" y="5" width="12" height="4" class="has-fill-secondary" />
+										<rect x="5" y="2" width="2" height="1" class="has-fill-secondary" />
+										<rect x="8" y="2" width="2" height="1" class="has-fill-secondary" />
+										<rect x="11" y="2" width="3" height="1" class="has-fill-secondary" />
+										<rect x="1" y="1" width="2" height="2" class="has-fill-secondary" />
+										<rect x="5" y="10" width="7" height="2" rx="0.3" class="has-fill-primary" />
+										<rect x="19" y="1" width="2" height="2" rx="1" class="has-fill-secondary" />
+									</svg>
+								</span>
+							</span>
+							<span> Light </span>
+						</button>
+					</li>
+					<li class="theme display-block" role="none">
+						<button
+							class="button button-clear button-sm theme-control button-block justify-content-flex-start text-align-left"
+							role="menuitemradio"
+							aria-checked="false"
+							data-theme-to="dark"
+							tabindex="-1"
+						>
+							<span class="theme-dark margin-right-xxs">
+								<span
+									class="border theme-selector-icon display-inline-block has-body-background"
+									aria-hidden="true"
+								>
+									<svg class="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 14">
+										<rect width="22" height="14" class="has-fill-body-background" />
+										<rect x="5" y="5" width="12" height="4" class="has-fill-secondary" />
+										<rect x="5" y="2" width="2" height="1" class="has-fill-secondary" />
+										<rect x="8" y="2" width="2" height="1" class="has-fill-secondary" />
+										<rect x="11" y="2" width="3" height="1" class="has-fill-secondary" />
+										<rect x="1" y="1" width="2" height="2" class="has-fill-secondary" />
+										<rect x="5" y="10" width="7" height="2" rx="0.3" class="has-fill-primary" />
+										<rect x="19" y="1" width="2" height="2" rx="1" class="has-fill-secondary" />
+									</svg>
+								</span>
+							</span>
+							<span> Dark </span>
+						</button>
+					</li>
+					<li class="theme display-block" role="none">
+						<button
+							class="button button-clear button-sm theme-control button-block justify-content-flex-start text-align-left"
+							role="menuitemradio"
+							aria-checked="false"
+							data-theme-to="high-contrast"
+							tabindex="-1"
+						>
+							<span class="theme-high-contrast margin-right-xxs">
+								<span
+									class="border theme-selector-icon display-inline-block has-body-background"
+									aria-hidden="true"
+								>
+									<svg class="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 14">
+										<rect width="22" height="14" class="has-fill-body-background" />
+										<rect x="5" y="5" width="12" height="4" class="has-fill-secondary" />
+										<rect x="5" y="2" width="2" height="1" class="has-fill-secondary" />
+										<rect x="8" y="2" width="2" height="1" class="has-fill-secondary" />
+										<rect x="11" y="2" width="3" height="1" class="has-fill-secondary" />
+										<rect x="1" y="1" width="2" height="2" class="has-fill-secondary" />
+										<rect x="5" y="10" width="7" height="2" rx="0.3" class="has-fill-primary" />
+										<rect x="19" y="1" width="2" height="2" rx="1" class="has-fill-secondary" />
+									</svg>
+								</span>
+							</span>
+							<span> High contrast </span>
+						</button>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+			</div>
+			<ul class="links" data-bi-name="footerlinks">
+				<li class="manage-cookies-holder" hidden=""></li>
+				<li>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://learn.microsoft.com/en-us/principles-for-ai-generated-content"
+			data-bi-name="aiDisclaimer"
+			class=" external-link-indicator"
+			id=""
+			title=""
+			>AI Disclaimer</a
+		>
+	
+	</li><li>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://learn.microsoft.com/en-us/previous-versions/"
+			data-bi-name="archivelink"
+			class=" external-link-indicator"
+			id=""
+			title=""
+			>Previous Versions</a
+		>
+	
+	</li> <li>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://techcommunity.microsoft.com/t5/microsoft-learn-blog/bg-p/MicrosoftLearnBlog"
+			data-bi-name="bloglink"
+			class=" external-link-indicator"
+			id=""
+			title=""
+			>Blog</a
+		>
+	
+	</li> <li>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://learn.microsoft.com/en-us/contribute"
+			data-bi-name="contributorGuide"
+			class=" external-link-indicator"
+			id=""
+			title=""
+			>Contribute</a
+		>
+	
+	</li><li>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://go.microsoft.com/fwlink/?LinkId=521839"
+			data-bi-name="privacy"
+			class=" external-link-indicator"
+			id=""
+			title=""
+			>Privacy</a
+		>
+	
+	</li><li>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://go.microsoft.com/fwlink/?linkid=2259814"
+			data-bi-name="consumer-health-privacy"
+			class=" external-link-indicator"
+			id=""
+			title=""
+			>Consumer Health Privacy</a
+		>
+	
+	</li><li>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://learn.microsoft.com/en-us/legal/termsofuse"
+			data-bi-name="termsofuse"
+			class=" external-link-indicator"
+			id=""
+			title=""
+			>Terms of Use</a
+		>
+	
+	</li><li>
+		
+		<a
+			data-mscc-ic="false"
+			href="https://www.microsoft.com/legal/intellectualproperty/Trademarks/"
+			data-bi-name="trademarks"
+			class=" external-link-indicator"
+			id=""
+			title=""
+			>Trademarks</a
+		>
+	
+	</li>
+				<li>&copy; Microsoft 2026</li>
+			</ul>
+		</footer>
+	</footer>
+			</body>
+		</html>
