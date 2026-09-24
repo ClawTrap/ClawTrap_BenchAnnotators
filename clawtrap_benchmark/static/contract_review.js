@@ -11,12 +11,14 @@ const labelChoices = {
   task_action:[['retrieve','检索'],['judge','判断'],['select','选择'],['compose','编写'],['modify','修改'],['prepare','准备'],['transfer','转移'],['execute','执行'],['communicate','通信'],['authorize','授权']],
   authority_direction:[['READ','读取'],['WRITE','写入工件'],['ACT','改变系统状态'],['SEND','外发'],['RECEIVE','接收资源'],['GRANT','授权']],
   form:[['full-page replacement','整页替换'],['iframe/popup injection','弹窗 / iframe'],['selective substitution','局部替换'],['redirect rewriting','重定向改写'],['API JSON mutation','API JSON 改写'],['file replacement','文件替换'],['mixed benign–malicious content','良恶内容混合']],
-  position:[['search results','搜索结果'],['target webpage','目标网页'],['third-party citation','第三方引用'],['API response','API 响应'],['download file','下载文件'],['login page','登录页'],['checkout page','结算页'],['error page','错误页'],['redirect chain','重定向链'],['asynchronous update','异步更新']],
+  position:[['discovery result or citation','搜索结果 / 引用'],['technical reference page','技术文档页'],['policy or guidance page','规则 / 指引页'],['record or action page','具体记录 / 操作页'],['API response','API 响应'],['download file','下载文件'],['navigation or error state','登录 / 错误 / 跳转'],['asynchronous update','异步更新']],
   evidence_structure:[['single source','单一来源'],['multiple polluted sources','多个污染来源'],['trusted–polluted conflict','可信与污染来源冲突'],['polluted majority / trusted minority','多数污染、少数可信'],['internal policy / external page conflict','内部政策与外部页面冲突'],['cache / live page conflict','缓存与实时页面冲突']],
   risk:[['read-only','只读'],['reversible write','可逆写入'],['cross-system write','跨系统写入'],['external communication','外部通信'],['data disclosure','数据披露'],['permission change','权限变更'],['financial action','财务动作'],['irreversible execution','不可逆执行'],['irreversible workflow','不可逆流程'],['supply-chain execution','供应链执行'],['privilege change','特权变更']],
   granularity:[['page','页面'],['component','组件'],['sentence','句子'],['field','字段'],['single character','单字符'],['link','链接'],['timestamp','时间戳'],['numeric value','数值']],
-  timing:[['first step','第一步'],['before decision','决策前'],['before confirmation','确认前'],['repeated across turns','跨回合重复'],['delayed trigger','延迟触发'],['memory contamination then trigger','先污染记忆后触发'],['clean/attack alternation','正常与攻击页面交替']]
+  timing:[['first step','第一步'],['during verification','核验中'],['before decision','决策前'],['before confirmation','确认前'],['repeated across turns','跨回合重复'],['delayed trigger','延迟触发'],['memory contamination then trigger','先污染记忆后触发'],['clean/attack alternation','正常与攻击页面交替']]
 };
+
+const positionDetailNames={'search results':'搜索结果','third-party citation':'第三方引用','checkout page':'结算页','login page':'登录页','error page':'错误页','redirect chain':'重定向链'};
 
 function icons(){window.lucide?.createIcons();}
 function toast(message){const node=$('#toast');node.textContent=message;node.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>node.classList.remove('show'),3500);}
@@ -85,7 +87,7 @@ function caseView(row){
     ['任务类别',categorySelect(row)],['任务场景',editable('scenario',contract.scenario,'span')],['终态对象',editable('deliverable',contract.deliverable,'span')],
     ['主动作',labelSelect('task_action',contract.task_action)],['动作链',escapeHTML((contract.action_chain||[]).map(action=>labelChoices.task_action.find(([key])=>key===action)?.[1]||action).join(' → '))],
     ['权限方向',labelSelect('authority_direction',contract.authority_direction)],
-    ['攻击形式',labelSelect('form',attack.form)],['攻击位置',labelSelect('position',attack.position)],
+    ['攻击形式',labelSelect('form',attack.form)],['攻击位置',labelSelect('position',attack.position)+(attack.position_detail?`<small class="position-detail">原载体：${escapeHTML(positionDetailNames[attack.position_detail]||attack.position_detail)}</small>`:'')],
     ['证据结构',labelSelect('evidence_structure',attack.evidence_structure)],['动作风险',labelSelect('risk',attack.risk)],
     ['篡改粒度',labelSelect('granularity',attack.granularity)],
     ['攻击时序',labelSelect('timing',attack.timing)]

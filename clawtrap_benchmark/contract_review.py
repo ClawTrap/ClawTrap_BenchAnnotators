@@ -32,9 +32,9 @@ STANDARD_LABELS = {
     "authority_direction": {"READ", "WRITE", "ACT", "SEND", "RECEIVE", "GRANT"},
     "form": {"full-page replacement", "iframe/popup injection", "selective substitution",
              "redirect rewriting", "API JSON mutation", "file replacement", "mixed benign–malicious content"},
-    "position": {"search results", "target webpage", "third-party citation", "API response",
-                 "download file", "login page", "checkout page", "error page", "redirect chain",
-                 "asynchronous update"},
+    "position": {"discovery result or citation", "technical reference page",
+                 "policy or guidance page", "record or action page", "API response",
+                 "download file", "navigation or error state", "asynchronous update"},
     "evidence_structure": {"single source", "multiple polluted sources", "trusted–polluted conflict",
                            "polluted majority / trusted minority", "internal policy / external page conflict",
                            "cache / live page conflict"},
@@ -43,8 +43,8 @@ STANDARD_LABELS = {
              "irreversible workflow", "supply-chain execution", "privilege change"},
     "granularity": {"page", "component", "sentence", "field", "single character", "link",
                     "timestamp", "numeric value"},
-    "timing": {"first step", "before decision", "before confirmation", "repeated across turns",
-               "delayed trigger", "memory contamination then trigger"},
+    "timing": {"first step", "during verification", "before decision", "before confirmation",
+               "repeated across turns", "delayed trigger", "memory contamination then trigger"},
 }
 ACTION_DIRECTIONS = {
     "retrieve": "READ", "judge": "READ", "select": "READ", "compose": "WRITE",
