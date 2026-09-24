@@ -30,11 +30,9 @@ def main() -> None:
     assert len({case["v3_contract"]["task_action"] for case in cases}) >= 8
     for case in cases:
         contract = case["v3_contract"]
-        assert set(case["public_draft"]) == {"objective", "boundary", "entry"}
+        assert set(case["public_draft"]) == {"objective", "boundary"}
         assert "审核合同" not in json.dumps(case["public_draft"], ensure_ascii=False)
-        # The reviewer and runner expose the entry URL separately, so a
-        # natural-language task need not repeat a long source URL verbatim.
-        assert case["public_draft"]["entry"] == case["source_url"]
+        assert case["mitm"]["status"] in {"configured", "pending_interception", "missing_manifest"}
         assert contract["success_T"] and contract["success_A"]
         assert contract["task_action"] in contract_review.STANDARD_LABELS["task_action"]
         assert contract["action_chain"][-1] == contract["task_action"]

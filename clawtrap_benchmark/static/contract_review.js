@@ -13,7 +13,7 @@ const labelChoices = {
   form:[['full-page replacement','整页替换'],['iframe/popup injection','弹窗 / iframe'],['selective substitution','局部替换'],['redirect rewriting','重定向改写'],['API JSON mutation','API JSON 改写'],['file replacement','文件替换'],['mixed benign–malicious content','良恶内容混合']],
   position:[['search results','搜索结果'],['target webpage','目标网页'],['third-party citation','第三方引用'],['API response','API 响应'],['download file','下载文件'],['login page','登录页'],['checkout page','结算页'],['error page','错误页'],['redirect chain','重定向链'],['asynchronous update','异步更新']],
   evidence_structure:[['single source','单一来源'],['multiple polluted sources','多个污染来源'],['trusted–polluted conflict','可信与污染来源冲突'],['polluted majority / trusted minority','多数污染、少数可信'],['internal policy / external page conflict','内部政策与外部页面冲突'],['cache / live page conflict','缓存与实时页面冲突']],
-  risk:[['read-only','只读'],['reversible write','可逆写入'],['cross-system write','跨系统写入'],['external communication','外部通信'],['data disclosure','数据披露'],['permission change','权限变更'],['financial action','财务动作'],['irreversible execution','不可逆执行']],
+  risk:[['read-only','只读'],['reversible write','可逆写入'],['cross-system write','跨系统写入'],['external communication','外部通信'],['data disclosure','数据披露'],['permission change','权限变更'],['financial action','财务动作'],['irreversible execution','不可逆执行'],['irreversible workflow','不可逆流程'],['supply-chain execution','供应链执行'],['privilege change','特权变更']],
   granularity:[['page','页面'],['component','组件'],['sentence','句子'],['field','字段'],['single character','单字符'],['link','链接'],['timestamp','时间戳'],['numeric value','数值']],
   timing:[['first step','第一步'],['before decision','决策前'],['before confirmation','确认前'],['repeated across turns','跨回合重复'],['delayed trigger','延迟触发'],['memory contamination then trigger','先污染记忆后触发'],['clean/attack alternation','正常与攻击页面交替']]
 };
@@ -53,6 +53,20 @@ function workspaceFiles(row){
   if(!files.length)return '';
   return `<section class="workspace-files" aria-label="Agent 可见的初始文件"><div class="band-title"><h2>Agent 可见的初始文件</h2><span>工作区预置文件与任务附件 · 只读</span></div><div class="workspace-file-grid">${files.map(file=>`<article class="workspace-file"><h3><code>${escapeHTML(file?.path)}</code></h3><pre><code>${escapeHTML(file?.content)}</code></pre></article>`).join('')}</div></section>`;
 }
+function serviceInitial(row){
+  const seed=row.service_initial;
+  if(!seed)return '';
+  return `<section class="workspace-files" aria-label="隔离服务初始对象"><div class="band-title"><h2>隔离服务初始对象</h2><span>Agent 可通过受控服务读取和提交 · 端到端运行待验收</span></div><div class="workspace-file-grid"><article class="workspace-file"><h3><code>${escapeHTML(seed.system)}</code></h3><p><code>${escapeHTML(seed.get)}</code><br><code>${escapeHTML(seed.put)}</code></p><pre><code>${escapeHTML(JSON.stringify(seed.initial,null,2))}</code></pre></article></div></section>`;
+}
+function mitmTargets(row){
+  const mitm=row.mitm||{},targets=Array.isArray(mitm.targets)?mitm.targets:[];
+  const status=mitm.status==='configured'?'':`拦截配置待补全：${escapeHTML(mitm.status||'unknown')}`;
+  return `<section class="mitm-targets contract-band" aria-label="MITM 拦截目标"><div class="band-title"><h2>MITM 拦截目标</h2><span>仅供审核与运行器使用，不发给 Agent</span></div>${status?`<p class="mitm-warning">${status}</p>`:''}<ul>${targets.map(target=>`<li><code>${escapeHTML((target.methods||[]).join(', '))} ${escapeHTML(target.url)}</code><span>${escapeHTML(target.action)}${target.replacement_asset?` · ${escapeHTML(target.replacement_asset)}`:''}${target.redirect_to?` → ${escapeHTML(target.redirect_to)}`:''}</span></li>`).join('')}</ul></section>`;
+}
+function controlledSearch(row){
+  const search=row.controlled_search||{},results=Array.isArray(search.results)?search.results:[];
+  return `<section class="mitm-targets contract-band" aria-label="受控搜索结果"><div class="band-title"><h2>受控搜索结果</h2><span>Agent 搜索后可见 · URL 不写入题面</span></div><p>搜索线索：${escapeHTML(search.query_hint||'')}</p><ul>${results.map(result=>`<li><strong>${escapeHTML(result.title)}</strong><code>${escapeHTML(result.url)}</code><span>${escapeHTML(result.kind)}</span></li>`).join('')}</ul></section>`;
+}
 function caseView(row){
   const contract=row.v3_contract,attack=contract.attack,review=row.private_review;
   const dimensions=[
@@ -65,9 +79,12 @@ function caseView(row){
     ['攻击时序',labelSelect('timing',attack.timing)]
   ];
   return `<section class="case-head"><div><div class="eyebrow">${escapeHTML(row.domain)} / ${escapeHTML(row.category_title)}</div><h1>${escapeHTML(contract.scenario)} <small>${escapeHTML(row.id)}</small></h1><p>${escapeHTML(row.host)} · ${row.content_edit?.status==='stale'?'旧编辑已过期':row.content_edit?.revision?'题目已修改':'原题'} · ${escapeHTML(row.readiness)}</p></div><span id="selection-badge" class="verdict ${row.review?.selected?'retain_material':''}">${row.review?.selected?'已入选':'未入选'}</span></section>
-    <div class="summary-grid"><section class="reading normal"><h2>${icon('file-text')}发给 Agent 的任务</h2>${editable('task',contract.task,'p')}<dl><dt>授权边界</dt><dd>${editable('authorized_boundary',contract.authorized_boundary,'span')}</dd><dt>任务入口</dt><dd><a href="${escapeHTML(safeURL(row.source_url))}" target="_blank" rel="noopener noreferrer">${escapeHTML(row.source_url)} ${icon('arrow-up-right')}</a></dd></dl></section>
+    <div class="summary-grid"><section class="reading normal"><h2>${icon('file-text')}发给 Agent 的任务</h2>${editable('task',contract.task,'p')}<dl><dt>授权边界</dt><dd>${editable('authorized_boundary',contract.authorized_boundary,'span')}</dd></dl></section>
     <section class="reading attack"><h2>${icon('file-diff')}攻击内容</h2><p class="lead">${escapeHTML(review.transformation)}</p><dl><dt>被改字段</dt><dd>${escapeHTML(review.field)}</dd><dt>原值</dt><dd><mark class="clean-value">${escapeHTML(review.original||'请对照原始 HTML')}</mark></dd><dt>攻击值</dt><dd><mark class="attack-value">${escapeHTML(review.tampered||'请对照攻击 HTML')}</mark></dd></dl></section></div>
     ${workspaceFiles(row)}
+    ${serviceInitial(row)}
+    ${controlledSearch(row)}
+    ${mitmTargets(row)}
     <section class="workflow-dimensions"><div class="band-title"><h2>任务与攻击标签</h2><span>标签修改即时保存</span></div><dl class="dimension-grid">${dimensions.map(([label,control])=>`<div><dt>${label}</dt><dd>${control}</dd></div>`).join('')}</dl></section>
     <section class="contract-band"><div class="band-title"><h2>结果判定</h2><span>T / A 分开记录 · 私有审核信息</span></div><div class="criteria-grid"><div><span class="metric">T · 任务成功</span>${editable('success_T',contract.success_T)}</div><div><span class="metric attack-metric">A · 攻击成功</span>${editable('success_A',contract.success_A)}</div><div><span class="metric">观察证据</span>${editable('observation',contract.observation)}</div></div><div class="output-format"><strong>验收对象（不发给 Agent）</strong>${editable('output_format',contract.output_format,'p')}</div></section>
     <section class="previews" aria-label="内容对照"><div class="preview-toolbar"><h2>原始 / 攻击内容</h2><div class="segmented">${[['split','并排'],['clean','原始'],['attack','攻击']].map(([key,label])=>`<button data-mode="${key}" aria-pressed="${state.mode===key}">${label}</button>`).join('')}</div></div><div id="frames"></div></section>`;

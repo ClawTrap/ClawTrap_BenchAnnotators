@@ -17,6 +17,9 @@ LOCAL_CONTENT_PATH = storage.ROOT / "data/contract_content_edits.json"
 LEGACY_TASK_HASHES_PATH = storage.ROOT / "data/v3_legacy_task_hashes.json"
 LEGACY_BOUNDARY_HASHES_PATH = storage.ROOT / "data/v3_legacy_boundary_hashes.json"
 PUBLIC_WORKSPACE_INDEX_PATH = storage.ROOT / "data/v3_public_workspace_files.json"
+MITM_TARGETS_PATH = storage.ROOT / "data/v3_mitm_targets.json"
+CONTROLLED_SEARCH_PATH = storage.ROOT / "data/v3_controlled_search_results.json"
+PUBLIC_SERVICE_SEEDS_PATH = storage.ROOT / "data/v3_public_service_seeds.json"
 CONTENT_FIELDS = {
     "scenario", "task", "deliverable", "output_format", "authorized_boundary",
     "success_T", "success_A", "observation", "runtime_gap",
@@ -35,7 +38,8 @@ STANDARD_LABELS = {
                            "polluted majority / trusted minority", "internal policy / external page conflict",
                            "cache / live page conflict"},
     "risk": {"read-only", "reversible write", "cross-system write", "external communication",
-             "data disclosure", "permission change", "financial action", "irreversible execution"},
+             "data disclosure", "permission change", "financial action", "irreversible execution",
+             "irreversible workflow", "supply-chain execution", "privilege change"},
     "granularity": {"page", "component", "sentence", "field", "single character", "link",
                     "timestamp", "numeric value"},
     "timing": {"first step", "before decision", "before confirmation", "repeated across turns",
@@ -78,6 +82,21 @@ def _public_workspace_index() -> dict:
     return json.loads(PUBLIC_WORKSPACE_INDEX_PATH.read_text(encoding="utf-8"))
 
 
+@lru_cache(maxsize=1)
+def _mitm_targets_index() -> dict:
+    return json.loads(MITM_TARGETS_PATH.read_text(encoding="utf-8"))["cases"]
+
+
+@lru_cache(maxsize=1)
+def _controlled_search_index() -> dict:
+    return json.loads(CONTROLLED_SEARCH_PATH.read_text(encoding="utf-8"))["cases"]
+
+
+@lru_cache(maxsize=1)
+def _public_service_seeds_index() -> dict:
+    return json.loads(PUBLIC_SERVICE_SEEDS_PATH.read_text(encoding="utf-8"))["cases"]
+
+
 def _public_workspace_files(case_id: str) -> list[dict[str, str]]:
     files = []
     for entry in _public_workspace_index().get(case_id, []):
@@ -104,9 +123,11 @@ def _v3_row(batch: dict, item: dict) -> dict:
         "candidate_version": batch["version"], "readiness": batch["review_status"],
         "legacy_task": "", "v3_contract": item,
         "workspace_files": _public_workspace_files(item["id"]),
+        "mitm": _mitm_targets_index()[item["id"]],
+        "controlled_search": _controlled_search_index()[item["id"]],
+        "service_initial": _public_service_seeds_index().get(item["id"]),
         "public_draft": {
             "objective": item["task"], "boundary": item["authorized_boundary"],
-            "entry": item["source_url"],
         },
         "private_review": {
             "field": attack["field"], "original": attack["clean_value"],
