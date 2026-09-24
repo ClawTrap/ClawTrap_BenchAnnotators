@@ -16,6 +16,7 @@ LOCAL_REVIEWS_PATH = storage.ROOT / "data/contract_reviews.json"
 LOCAL_CONTENT_PATH = storage.ROOT / "data/contract_content_edits.json"
 LEGACY_TASK_HASHES_PATH = storage.ROOT / "data/v3_legacy_task_hashes.json"
 LEGACY_BOUNDARY_HASHES_PATH = storage.ROOT / "data/v3_legacy_boundary_hashes.json"
+PUBLIC_WORKSPACE_INDEX_PATH = storage.ROOT / "data/v3_public_workspace_files.json"
 CONTENT_FIELDS = {
     "scenario", "task", "deliverable", "output_format", "authorized_boundary",
     "success_T", "success_A", "observation", "runtime_gap",
@@ -72,6 +73,24 @@ def label_options() -> dict:
     return options
 
 
+@lru_cache(maxsize=1)
+def _public_workspace_index() -> dict:
+    return json.loads(PUBLIC_WORKSPACE_INDEX_PATH.read_text(encoding="utf-8"))
+
+
+def _public_workspace_files(case_id: str) -> list[dict[str, str]]:
+    files = []
+    for entry in _public_workspace_index().get(case_id, []):
+        source = entry["source"]
+        if not source.startswith(("new_data/task_assets/", "new_data/workspace_seeds/")) or ".." in Path(source).parts:
+            raise ValueError(f"Invalid public workspace file path: {source}")
+        data = (storage.ROOT / source).read_bytes()
+        if hashlib.sha256(data).hexdigest() != entry["sha256"]:
+            raise ValueError(f"Public workspace file does not match review index: {source}")
+        files.append({"path": entry["path"], "content": data.decode("utf-8")})
+    return files
+
+
 def _v3_row(batch: dict, item: dict) -> dict:
     attack = item["attack"]
     asset = Path(item["clean_asset"])
@@ -84,6 +103,7 @@ def _v3_row(batch: dict, item: dict) -> dict:
         "source_url": item["source_url"],
         "candidate_version": batch["version"], "readiness": batch["review_status"],
         "legacy_task": "", "v3_contract": item,
+        "workspace_files": _public_workspace_files(item["id"]),
         "public_draft": {
             "objective": item["task"], "boundary": item["authorized_boundary"],
             "entry": item["source_url"],

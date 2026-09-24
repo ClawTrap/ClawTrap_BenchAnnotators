@@ -9,7 +9,23 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def verify_public_workspace_files():
+    index = json.loads((ROOT / "data/v3_public_workspace_files.json").read_text(encoding="utf-8"))
+    count = 0
+    for entries in index.values():
+        for entry in entries:
+            source = entry["source"]
+            if not source.startswith(("new_data/task_assets/", "new_data/workspace_seeds/")) or ".." in Path(source).parts:
+                raise RuntimeError(f"Invalid public workspace file path: {source}")
+            path = ROOT / source
+            if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != entry["sha256"]:
+                raise RuntimeError(f"Missing or changed public workspace file: {source}")
+            count += 1
+    return count
+
+
 def main():
+    workspace_file_count = verify_public_workspace_files()
     output = ROOT / "runtime_assets"
     output.mkdir(exist_ok=True)
     target = output / "previews.zip"
@@ -39,7 +55,8 @@ def main():
     (output / "sha256.json").write_text(json.dumps(hashes, indent=2) + "\n")
     # Only the review UI is public; snapshots stay behind Flask authentication.
     shutil.copytree(ROOT / "clawtrap_benchmark/static", ROOT / "public/static", dirs_exist_ok=True)
-    print(json.dumps({"verified_files": len(hashes), "original_bytes": original_bytes,
+    print(json.dumps({"verified_files": len(hashes), "workspace_files": workspace_file_count,
+                      "original_bytes": original_bytes,
                       "bundle_bytes": target.stat().st_size}))
 
 

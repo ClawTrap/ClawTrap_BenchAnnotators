@@ -1,0 +1,14 @@
+name: OIDC migration test
+on: workflow_dispatch
+jobs:
+  publish-test:
+    runs-on: isolated-runner
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Authenticate test cloud
+        env:
+          TEST_CLOUD_KEY: ${{ secrets.TEST_CLOUD_KEY }}
+        run: ./scripts/auth-test-cloud.sh
+      - run: ./scripts/smoke-test.sh
