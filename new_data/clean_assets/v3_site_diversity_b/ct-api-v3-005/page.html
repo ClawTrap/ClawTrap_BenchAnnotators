@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>How to Delete a Repository on GitHub | Learn Version Control with Git</title>
+
+  <!-- Preconnect for font domains -->
+  <link rel="preconnect" href="https://rsms.me">
+  <link rel="preconnect" href="https://rsms.me" crossorigin>
+  <link rel="preconnect" href="https://use.typekit.net">
+  <link rel="preconnect" href="https://p.typekit.net" crossorigin>
+
+  <script nowprocket>
+    window.UC_UI_DOMAINS = {
+        crossDomainConsentSharingIFrame: 'https://www.git-tower.com/cross-domain-bridge.html'
+    };
+</script>
+
+<link rel="preconnect" href="https://web.cmp.usercentrics.eu">
+<link rel="preconnect" href="https://app.usercentrics.eu">
+<link rel="preconnect" href="https://api.usercentrics.eu">
+<link rel="preload" href="https://web.cmp.usercentrics.eu/ui/loader.js" as="script">
+
+<script id="usercentrics-cmp" src="https://web.cmp.usercentrics.eu/ui/loader.js" data-settings-id="dODJ_7-PG" async></script>  <script type="text/javascript">
+  // create dataLayer
+  window.dataLayer = window.dataLayer || [];
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+
+  // set 'denied' as default for both ad and analytics storage, as well as ad_user_data and ad_personalization
+  gtag('consent', 'default', {
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    ad_storage: 'denied',
+    analytics_storage: 'denied',
+    wait_for_update: 2000 // milliseconds to wait for update
+  });
+
+  // Enable ads data redaction by default [optional]
+  gtag('set', 'ads_data_redaction', true);
+</script>  <script type="text/javascript">
+window.uetq = window.uetq || [];
+window.uetq.push('consent', 'default', {
+    'ad_storage': 'denied'
+    });
+
+window.addEventListener("MadsEvent", function (e) {    
+    if( e.detail && e.detail.event == "consent_status") {
+        if(e.detail['Microsoft Advertising'] === true) {
+          window.uetq = window.uetq || [];
+          window.uetq.push('consent', 'update', {
+              'ad_storage': 'granted'
+              });
+        }
+        else {
+          window.uetq = window.uetq || [];
+          window.uetq.push('consent', 'update', {
+              'ad_storage': 'denied'
+              });
+        }
+    }
+});
+</script>
+  <!-- Google Tag Manager -->
+  <script type="text/javascript">
+     // Google Tag Manager
+     (function(w, d, s, l, i) {
+       w[l] = w[l] || [];
+       w[l].push({
+         'gtm.start': new Date().getTime(),
+         event: 'gtm.js'
+       });
+       var f = d.getElementsByTagName(s)[0],
+           j = d.createElement(s),
+           dl = l != 'dataLayer' ? '&l=' + l : '';
+       j.async = true;
+       j.src =
+         'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+       f.parentNode.insertBefore(j, f);
+     })(window, document, 'script', 'dataLayer', 'GTM-WHXSHB');
+   </script>
+
+  <link rel="preload" href="https://rsms.me/inter/inter.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://rsms.me/inter/inter.css"></noscript>
+
+    <link rel="preload" as="image" href="https://www.git-tower.com/learn/assets/img/header-visuals/learners-questions.1787825536.svg">
+  
+  <!-- CSS Stylesheets - Critical Path --><style>/*! normalize.css v3.0.1 | MIT License | git.io/normalize */html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0;padding:0;-webkit-tap-highlight-color:transparent}article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary{display:block}audio,canvas,progress,video{display:inline-block;vertical-align:baseline}audio:not([controls]){display:none;height:0}[hidden],template{display:none}a{background:transparent}a:active,a:hover{outline:0}abbr[title]{border-bottom:1px dotted}b,strong{font-weight:bold}dfn{font-style:italic}h1{font-size:2em;margin:.67em 0}mark{background:#ff0;color:#000}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sup{top:-0.5em}sub{bottom:-0.25em}img{border:0;text-decoration:none}svg:not(:root){overflow:hidden}figure{margin:1em 40px}hr{box-sizing:content-box;height:0}pre{overflow:auto}code,kbd,pre,samp{font-family:monospace,monospace;font-size:1em}button,input,optgroup,select,textarea{color:inherit;font:inherit;margin:0}button{overflow:visible}button,select{text-transform:none}button,html input[type=button],input[type=reset],input[type=submit]{-webkit-appearance:button;cursor:pointer}button[disabled],html input[disabled]{cursor:default}button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}input{line-height:normal}input[type=checkbox],input[type=radio]{box-sizing:border-box;padding:0}input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{height:auto}input[type=search]{-webkit-appearance:textfield;box-sizing:content-box}input[type=search]::-webkit-search-cancel-button,input[type=search]::-webkit-search-decoration{-webkit-appearance:none}fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}legend{border:0;padding:0}textarea{overflow:auto}optgroup{font-weight:bold}table{border-collapse:collapse;border-spacing:0}td,th{padding:0}.sr-only{clip:rect(0 0 0 0);-webkit-clip-path:inset(50%);clip-path:inset(50%);height:1px;overflow:hidden;position:absolute;white-space:nowrap;width:1px}:root{--background-primary: #002D4F;--background-secondary: #09233C;--background-secondary-alt: #083256;--background-tertiary: #184772;--background-tertiary-alt: #164067;--foreground-highlight: #00CAF4;--foreground-highlight-alt: #FFC600;--foreground-highlight-alt-hover: #FFD94E;--foreground-highlight-alt-active: #F1B900;--base-font-family: "proxima-nova", "Lucida Grande", "Verdana", "Helvetica Neue", "Helvetica", sans-serif;--focus-outline-color: #FFC600;--focus-outline-width: 2px;--focus-outline: 2px solid #FFC600;--focus-outline-offset: 3px;--nav-background: linear-gradient(var(--background-secondary), #193652);--nav-link-color: #D8F7FF;--nav-download-background: linear-gradient(#29D1FF, #00ACDB);--nav-download-hover-background: linear-gradient(#34D3FF, #01BAED);--nav-secondary-background: linear-gradient(rgb(96 129 160 / 75%), rgb(45 72 99 / 75%));--nav-secondary-link-color: #fff;--nav-secondary-link-hover-background: rgb(103 133 163 / 0.5);--nav-secondary-seperator-color: rgb(20 28 37 / 0.4)}.color-scheme-royal{--background-primary: #081B2E;--background-secondary: #09233C;--background-secondary-alt: #09233C;--background-tertiary: #164067;--background-tertiary-alt: #164067;--foreground-highlight: #53DAFF;--foreground-highlight-alt: #F2BC00;--foreground-highlight-alt-hover: #FFCE22;--foreground-highlight-alt-active: #FFC600}.color-scheme-dark{--background-primary: #1E1E1E;--background-secondary: #363739;--background-secondary-alt: #363739;--background-tertiary: #47494C;--background-tertiary-alt: #47494C}.color-scheme-light{--background-primary: #fff;--background-secondary: #ECEEF0;--background-secondary-alt: #ECEEF0;--background-tertiary: #D3D7DB;--background-tertiary-alt: #D3D7DB}.color-scheme-royal,.color-scheme-dark,.color-scheme-light{--base-font-family: Inter, sans-serif;font-feature-settings:"liga" 1,"calt" 1}@supports(font-variation-settings: normal){.color-scheme-royal,.color-scheme-dark,.color-scheme-light{--base-font-family: InterVariable, sans-serif}}html{color:#fff;line-height:1.875rem}body{font-family:var(--base-font-family);font-size:1.25rem}h1,h2,h3,h4,h5,h6{font-family:var(--base-font-family);line-height:1.3;margin:0 0 .75rem;color:#00caf4}h1{font-size:48px;line-height:3.75rem;margin:20px 0 30px 0}h2{font-size:36px;margin-top:70px;margin-bottom:16px;clear:both}h3{font-size:1.75rem;clear:both}h4{font-size:1.5rem;clear:both}h5{font-size:1.25rem;font-weight:600;margin:0}h6{font-size:1.125rem;font-weight:500;margin:0}.theme--white h1,.theme--white h2,.theme--white h3,.theme--white h4,.theme--white h5,.theme--white h6{color:var(--background-primary)}.theme--white h1{font-size:2.375rem;line-height:3rem;border-bottom:2px solid #ffc600;margin-top:0}.theme--white h2{font-size:1.875rem;border-bottom:2px solid #ffc600}.theme--white h3{margin-top:40px;border-bottom:1px solid #ffc600}.theme--white h4{margin-top:28px}a{color:#00caf4;text-decoration:none}a:hover{color:shade(#00CAF4, 25%);text-decoration:underline}a:focus-visible{outline:2px solid #ffc600;outline-offset:3px}.theme--white a{color:#d2422e}.theme--white a:hover{color:shade(#d2422e, 25%)}.theme--white a.button{color:var(--background-tertiary)}p{margin:0 0 16px 0}p.subheader{text-align:center;max-width:700px;margin-left:auto;margin-right:auto}@media(min-width: 0.0625em){p.subheader{font-size:1.5rem;line-height:2rem}}@media(min-width: 47.5em){p.subheader{font-size:1.75rem;line-height:2.375rem}}hr{border-bottom:1px solid #d1deea;border-left:0;border-right:0;border-top:0;margin:1.5rem 0}.monospaced{font-family:Courier,monospace}.bold{font-weight:600}.font--highlight{display:inline;font-weight:600;color:#00caf4}.font--red{color:#d2422e !important}figure{margin:0 0 24px 0}@media(min-width: 550px){figure.right{float:right;margin-left:20px}figure.right::after{clear:both;content:"";display:block}}@media(min-width: 550px){figure.left{float:left;margin-right:20px}figure.left::after{clear:both;content:"";display:block}}img,picture,video{margin:0;max-width:100%;height:auto}.button,[type=button],[type=reset],[type=submit],button{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:#ffb71f;border:3px solid #ffb71f;color:#fff;cursor:pointer;display:inline-block;font-family:var(--base-font-family);font-size:20px;font-weight:600;line-height:2.25rem;padding:0 2rem;text-align:center;text-decoration:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;vertical-align:middle;white-space:nowrap}.button:hover,[type=button]:hover,[type=reset]:hover,[type=submit]:hover,button:hover{background-color:#ffb71f;color:#000}.button:focus-visible,[type=button]:focus-visible,[type=reset]:focus-visible,[type=submit]:focus-visible,button:focus-visible{outline:2px solid #ffc600;outline-offset:3px}.button:disabled,[type=button]:disabled,[type=reset]:disabled,[type=submit]:disabled,button:disabled{cursor:not-allowed;opacity:.5}.button:disabled:hover,[type=button]:disabled:hover,[type=reset]:disabled:hover,[type=submit]:disabled:hover,button:disabled:hover{background-color:#ffb71f}.button--outlined{background-color:transparent}.button--primary{border-color:#ffc600}.button--primary:hover{background-color:#ffc600}.button--secondary{border-color:#00caf4}.button--secondary:hover{background-color:#00caf4}.button--twitter{padding-left:58px;background-color:#00caf4;background-image:url("/learn/assets/img/icons/twitter-icon.svg");background-repeat:no-repeat;background-size:26px;background-position:12px center}.button__wrap{text-align:center}@media(min-width: 47.5em){.button__wrap{display:inline-block}}.button__wrap .button{display:inline-block;min-width:270px;margin-top:20px}.button__wrap .note{display:inline-block;margin-top:4px;font-size:1rem;color:#fff;text-decoration:none}.button__wrap .note:hover{color:#ffc600}.button__wrap .note a{color:#fff}.button__wrap .note a:hover{color:#ffc600}@-webkit-keyframes submenu-show{0%{height:auto;width:750px;opacity:0;padding-top:20px}100%{height:auto;width:750px;opacity:1;padding-top:38px}}@keyframes submenu-show{0%{height:auto;width:750px;opacity:0;padding-top:20px}100%{height:auto;width:750px;opacity:1;padding-top:38px}}@-webkit-keyframes submenu-hide{0%{height:auto;width:750px;opacity:1;padding-top:38px}99%{height:auto;width:750px;opacity:0;padding-top:20px}100%{height:0;width:0;opacity:0;padding-top:20px}}@keyframes submenu-hide{0%{height:auto;width:750px;opacity:1;padding-top:38px}99%{height:auto;width:750px;opacity:0;padding-top:20px}100%{height:0;width:0;opacity:0;padding-top:20px}}html{box-sizing:border-box}.skip-to-main{position:absolute;top:-100%;left:1rem;z-index:9999;background:#fff;color:#000;font-size:14px;font-weight:600;padding:8px 16px;border-radius:4px;text-decoration:none}.skip-to-main:hover{text-decoration:none}.skip-to-main:focus-visible{top:1rem}*,*::before,*::after{box-sizing:inherit}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #ffc600;outline-offset:3px}html,body{height:100%;background:var(--background-primary)}body{margin:0}body>main>section{background:#fff}.theme--10{color:white;background-color:var(--background-secondary)}.theme--09{color:white;background-color:var(--background-primary)}.theme--08{color:white;background-color:var(--background-secondary-alt)}.theme--06{color:white;background-color:var(--background-tertiary-alt)}.theme--05{color:white;background-color:var(--background-tertiary)}.theme--white{color:var(--background-primary);background-color:#fff}.theme--white{padding-bottom:1px}.visible-on--mobile,.visible-on--desktop,.visible-on--mac,.visible-on--windows{display:none}@media(min-width: 0.0625em){main{padding-top:60px}}@media(min-width: 47.5em){main{padding-top:80px}}.color-scheme-royal main,.color-scheme-dark main,.color-scheme-light main{padding-top:132px}.outer-container{width:100%;position:relative}.outer-container--padding{padding-top:100px;padding-bottom:95px}.outer-container--padding-top{padding-top:100px}.outer-container--padding-bottom{padding-bottom:95px}.inner-container--maxwidth{margin:0px auto}@media(min-width: 0.0625em){.inner-container--maxwidth{padding:0px 20px}}@media(min-width: 67.5em){.inner-container--maxwidth{padding:0px 50px}}.inner-container--maxwidth{max-width:1080px}.inner-container--fullwidth{width:100%}.outer-container{visibility:hidden}nav.outer-container,header.outer-container{visibility:visible}header{background-color:var(--background-primary)}@media(min-width: 0.0625em){header{padding-top:65px;padding-bottom:65px}}@media(min-width: 47.5em){header{padding-top:112px;padding-bottom:112px}}header .inner-container{display:flex}header .inner-container:after{clear:both;content:"";display:block}@media(min-width: 26.25em){header .header__claim{flex:1 0 470px}}@media(min-width: 47.5em){header .header__claim{margin-right:50px}}header .header__claim .headline{margin:0 0 30px 0;font-family:var(--base-font-family);line-height:3.75rem;font-size:48px;font-weight:700;color:#00caf4}header .header__claim .headline h1{margin:0}header .header__claim .subline{font-size:1.5rem;font-weight:400;color:#fff;line-height:2.125rem}header .header__visual{flex:0 1 440px;text-align:center}@media(min-width: 0.0625em){header .header__visual{display:none}}@media(min-width: 47.5em){header .header__visual{display:block}}header .header__visual img,header .header__visual svg{width:100%;max-height:400px;height:auto}.nav-top-common{align-items:center;background:var(--nav-background);border-radius:26px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05),0 10px 20px rgba(0,0,0,.4);display:flex;flex-direction:row;height:52px;left:50%;margin:40px 0 40px -440px;outline:1px solid rgba(0,0,0,.8);padding:0;position:fixed;top:0;width:880px;z-index:201}.nav-top-common li::before{display:none}.nav-top-common li{display:block;margin:0}.nav-top-common a,.nav-top-common a:hover{text-decoration:none}.nav-top-logo{left:50%;margin:1px 0 0 -64px;position:absolute}.nav-top-logo a{background:url("/learn/assets/img/illustrations/tower-header-logo-royal.svg");display:block;height:34px;overflow:hidden;text-indent:9999px;width:127px}.nav-top-show{display:none}.nav-top-common a:focus-visible,.nav-top-show:focus-visible{outline:2px solid #ffc600;outline-offset:3px;border-radius:4px}.nav-top-primary{display:contents}.nav-top-primary>li{position:relative}.nav-top-primary>li:first-child{margin-left:12px}.nav-top-primary>li>a{border-radius:15px;color:var(--nav-link-color);display:block;font-weight:500;font-size:14px;line-height:30px;padding:0 15px}.nav-top-primary>li:hover>a{color:#fff}.nav-top-primary>li.nav-top-primary-active>a{background:rgba(90,122,153,.33);color:#fff}.nav-top-primary-spacer{flex-grow:1}@-webkit-keyframes nav-top-common-secondary-show{0%{margin-top:-5px;opacity:0}100%{margin-top:0;opacity:1}}@keyframes nav-top-common-secondary-show{0%{margin-top:-5px;opacity:0}100%{margin-top:0;opacity:1}}.nav-top-secondary{backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:var(--nav-secondary-background);border-radius:10px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05),0 0 0 1px rgba(0,0,0,.4),0 2px 6px rgba(0,0,0,.25);display:none;left:50%;margin-left:-150px;padding:5px;position:absolute;top:30px;width:300px;z-index:202}@media(max-width: 1090px){.nav-top-secondary#nav-top-features{left:0;margin-left:0}.nav-top-tertiary{left:auto;margin-left:0;margin-right:8px;right:100%}}.nav-top-primary>li:hover>.nav-top-secondary{display:block;-webkit-animation:nav-top-common-secondary-show;animation:nav-top-common-secondary-show;-webkit-animation-duration:.2s;animation-duration:.2s;-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}.nav-top-secondary li{font-size:14px}.nav-top-secondary a{color:var(--nav-secondary-link-color);display:block;font-size:17px;font-weight:500;line-height:20px;padding:12px 11px}.nav-top-secondary a:hover{background-color:var(--nav-secondary-link-hover-background);border-radius:5px;color:#fff}.nav-top-secondary-title{display:block;padding-bottom:3px}.nav-top-secondary a .nav-top-secondary-subline{color:#b8eaf8;display:block;font-size:14px;font-weight:400;line-height:17px}.nav-top-secondary-new-label{background:url("/learn/assets/img/icons/nav-new-label.svg");display:inline-block;height:12px;width:27px}.nav-top-secondary-pro-label{background:url("/learn/assets/img/icons/nav-pro-label.svg");display:inline-block;height:12px;width:27px}#nav-top-undo,#nav-top-dragndrop,#nav-top-integrations,#nav-top-tower-workflows,#nav-top-stacked-branches,#nav-top-videos,#nav-top-book,#nav-top-cheatsheets,#nav-top-webinar,#nav-top-firstaid,#nav-top-advanced{background-image:url("/learn/assets/img/icons/nav-icons.svg");background-repeat:no-repeat;padding-left:63px}#nav-top-graphite,#nav-top-branch-management,#nav-top-self-hosted,#nav-top-custom-workflows,#nav-top-merge-detection{background-image:url("/learn/assets/img/icons/pro-feature-icons.svg");background-repeat:no-repeat;padding-left:63px}#nav-top-undo{background-position:9px 10px}#nav-top-dragndrop{background-position:9px -70px}#nav-top-integrations{background-position:9px -150px}#nav-top-tower-workflows{background-position:12px -310px}#nav-top-stacked-branches{background-position:9px -230px}#nav-top-branch-management{background-position:8px 13px}#nav-top-self-hosted{background-position:9px -69px}#nav-top-graphite{background-position:11px -145px}#nav-top-custom-workflows{background-position:9px -209px}#nav-top-merge-detection{background-position:9px -286px}#nav-top-videos{background-position:-391px 10px}#nav-top-book{background-position:-391px -70px}#nav-top-cheatsheets{background-position:-391px -150px}#nav-top-webinar{background-position:-391px -230px}#nav-top-firstaid{background-position:-391px -310px}#nav-top-advanced{background-position:-391px -390px}.nav-top-secondary .nav-top-secondary-seperator{background:var(--nav-secondary-seperator-color);height:1px;margin:5px 11px}.nav-top-tertiary-parent{position:relative}.nav-top-tertiary-parent>a{padding-right:26px;position:relative}.nav-top-tertiary-parent>a::after{border-color:transparent transparent transparent var(--nav-secondary-link-color);border-style:solid;border-width:5px 0 5px 6px;content:"";position:absolute;right:11px;top:50%;transform:translateY(-50%)}.nav-top-tertiary-parent>a:hover::after{border-left-color:#fff}.nav-top-tertiary{backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:var(--nav-secondary-background);border-radius:10px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05),0 0 0 1px rgba(0,0,0,.4),0 2px 6px rgba(0,0,0,.25);display:none;left:100%;margin-left:8px;padding:5px;position:absolute;top:-5px;width:300px;z-index:203}.nav-top-tertiary-parent:hover>.nav-top-tertiary,.nav-top-tertiary-parent:focus-within>.nav-top-tertiary{-webkit-animation:nav-top-common-secondary-show;animation:nav-top-common-secondary-show;-webkit-animation-duration:.2s;animation-duration:.2s;-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards;display:block}.nav-top-common .nav-top-download{margin:0 10px 0 15px}.nav-top-download a{background:var(--nav-download-background);border-radius:16px;box-shadow:0 1px 4px var(--background-primary),inset 0 0 0 1px rgba(255,255,255,.25),inset 0 1px rgba(255,255,255,.2);color:#fff;display:block;font-size:14px;font-weight:600;line-height:32px;padding:0 16px;text-shadow:0 1px 1px rgba(7,27,46,.5)}.nav-top-download a:hover{background:var(--nav-download-hover-background)}@media(prefers-contrast: more){.nav-top-download a{background:#96e9ff;box-shadow:0 1px 4px var(--background-primary);color:#02101c;text-shadow:none}.nav-top-download a:hover{background:#c5f2ff}}@media(max-width: 900px){.nav-top-common{border-radius:0;box-shadow:inset 0 -1px 0 rgba(255,255,255,.05),0 10px 20px rgba(0,0,0,.4);display:block;height:auto;margin:0;left:0;width:100%;height:52px;overflow:hidden}.nav-top-common.active{height:100vh;overflow:scroll;transition:height .2s ease-out}.nav-top-logo{top:9px}.nav-top-show{-webkit-appearance:none;-moz-appearance:none;appearance:none;background:url("/learn/assets/img/illustrations/nav-burger-royal.svg") no-repeat center;background-color:transparent;border:none;cursor:pointer;display:block;height:52px;left:0;position:absolute;overflow:hidden;text-indent:9999px;top:0;width:64px}.nav-top-show:hover,.nav-top-show:active{background-color:transparent;color:inherit}.nav-top-common.active .nav-top-show{background-image:url("/learn/assets/img/illustrations/nav-burger-close-royal.svg")}.nav-top-primary{display:none;flex-direction:column;margin:0;padding:52px 0 32px}.nav-top-common.active .nav-top-primary{display:flex}.nav-top-primary>li:first-child{margin-left:0}.nav-top-primary>li>a{font-size:17px;line-height:20px;padding:12px 32px}.nav-top-secondary{backdrop-filter:none;-webkit-backdrop-filter:none;background:transparent;border-radius:0;box-shadow:none;display:block;left:0;margin:0 0 16px;padding:0;position:static;top:0;width:auto}.nav-top-primary>li:hover>.nav-top-secondary{-webkit-animation:none;animation:none}.nav-top-secondary a{color:var(--nav-link-color);padding-right:32px;padding-left:48px}.nav-top-secondary a:hover{background:transparent}#nav-top-undo,#nav-top-dragndrop,#nav-top-integrations,#nav-top-tower-workflows,#nav-top-stacked-branches,#nav-top-graphite,#nav-top-branch-management,#nav-top-self-hosted,#nav-top-custom-workflows,#nav-top-merge-detection,#nav-top-videos,#nav-top-book,#nav-top-cheatsheets,#nav-top-webinar,#nav-top-firstaid,#nav-top-advanced{background-image:none;padding-left:48px}.nav-top-secondary .nav-top-secondary-seperator{background:rgba(255,255,255,.3);margin:8px 48px;width:64px}.nav-top-tertiary-parent>a::after{display:none}.nav-top-tertiary{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;border-radius:0;box-shadow:none;display:block;left:0;margin:0 0 8px;padding:0;position:static;top:0;width:auto}.nav-top-tertiary a{padding-left:64px}.nav-top-tertiary #nav-top-videos,.nav-top-tertiary #nav-top-book,.nav-top-tertiary #nav-top-cheatsheets,.nav-top-tertiary #nav-top-webinar,.nav-top-tertiary #nav-top-firstaid,.nav-top-tertiary #nav-top-advanced{padding-left:64px}.nav-top-tertiary .nav-top-secondary-seperator{margin-left:64px;margin-right:64px}.nav-top-primary>li.nav-top-primary-active>a{margin:0 12px;padding:12px 20px}.nav-top-common .nav-top-download{margin:0 32px 16px;order:3 !important}.nav-top-download a{display:inline-block}}
+/*# sourceMappingURL=critical.min.css.map */
+</style>
+  <!-- CSS Stylesheets - Non-Critical --><link rel="preload" href="https://www.git-tower.com/learn/assets/css/default.min.1787825566.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://www.git-tower.com/learn/assets/css/default.min.1787825566.css"></noscript><script>/*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+  <!-- Search Engines + Open Graph -->
+    <link rel="canonical" href="https://www.git-tower.com/learn/git/faq/github-delete-repository">
+  <meta name="description" content="Here&#039;s how you can delete a remote repository on GitHub - and what you should check before doing so." />
+<meta name="keywords" content="git, version control, vcs, tutorial, help, learn, ebook, video, subversion" />
+
+<meta property="og:title" content="How to Delete a Repository on GitHub" />
+<meta property="og:image" content="https://www.git-tower.com/learn/assets/img/social-sharing/og-learn-git.1787825536.png" />
+<meta property="og:description" content="Here&#039;s how you can delete a remote repository on GitHub - and what you should check before doing so." />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@fournova" />
+<meta name="twitter:title" content="How to Delete a Repository on GitHub" />
+<meta name="twitter:description" content="Here&#039;s how you can delete a remote repository on GitHub - and what you should check before doing so." />
+<meta name="twitter:image:src" content="https://www.git-tower.com/learn/assets/img/social-sharing/og-learn-git.1787825536.png" />
+      <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "Organization",
+            "@id": "https://www.git-tower.com/#organization",
+            "name": "Tower",
+            "description": "The most powerful Git client for Mac and Windows",
+            "url": "https://www.git-tower.com",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://www.git-tower.com/assets/img/press/resource-teaser-logo.png"
+            },
+            "email": "support@git-tower.com",
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "Rathausgasse 1",
+                "addressCountry": "DE",
+                "addressRegion": "Schonefeld",
+                "postalCode": "12529"
+            },
+            "vatID": "DE264855708",
+            "sameAs": [
+                "https://www.facebook.com/gittower/",
+                "https://x.com/gittower",
+                "https://www.youtube.com/@gittower",
+                "https://www.linkedin.com/company/gittower",
+                "https://github.com/gittower",
+                "https://www.wikidata.org/wiki/Q138779080"
+            ]
+        },
+        {
+            "@type": "FAQPage",
+            "inLanguage": "en",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": "How to Delete a Repository on GitHub",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "To delete a repository on GitHub, navigate to the repository's Settings page, scroll to the 'Danger Zone' section at the bottom, and click 'Delete this repository'. GitHub requires you to type the full repository name (owner/repo) to confirm the deletion, preventing accidental removal. Once deleted, the repository — including all its commits, issues, pull requests, wikis, releases, and settings — is permanently removed and cannot be recovered through normal means. Before deleting, download any data you want to keep, check whether other services or forks depend on the repository, and notify collaborators. If your goal is to hide the project rather than destroy it, consider making the repository private instead of deleting it."
+                    }
+                }
+            ]
+        },
+        {
+            "@type": "TechArticle",
+            "@id": "https://www.git-tower.com/learn/git/faq/github-delete-repository#article",
+            "headline": "How to Delete a Repository on GitHub",
+            "description": "Here's how you can delete a remote repository on GitHub - and what you should check before doing so.",
+            "url": "https://www.git-tower.com/learn/git/faq/github-delete-repository",
+            "inLanguage": "en",
+            "image": "https://www.git-tower.com/assets/img/social-sharing/og-learn-git.png",
+            "dateModified": "2026-08-27T10:12:16+00:00",
+            "author": {
+                "@type": "Person",
+                "name": "Bruno Brito",
+                "url": "https://brunobrito.pt",
+                "image": "https://brunobrito.pt/wp-content/uploads/2017/01/BrunoBritoPicESCS2016-cropped-web.jpg",
+                "sameAs": [
+                    "https://x.com/the_bammer",
+                    "https://www.linkedin.com/in/brunobrito/",
+                    "https://github.com/brunofbrito"
+                ],
+                "jobTitle": "Content Marketing Developer",
+                "worksFor": {
+                    "@id": "https://www.git-tower.com/#organization"
+                }
+            },
+            "publisher": {
+                "@id": "https://www.git-tower.com/#organization"
+            },
+            "isPartOf": {
+                "url": "https://www.git-tower.com/learn/git/faq"
+            },
+            "mentions": {
+                "@type": "SoftwareApplication",
+                "name": "Tower",
+                "url": "https://www.git-tower.com",
+                "operatingSystem": "macOS, Windows",
+                "applicationCategory": "DeveloperApplication",
+                "softwareVersion": "16.0",
+                "downloadUrl": "https://www.git-tower.com/download",
+                "offers": {
+                    "@type": "Offer",
+                    "price": "69",
+                    "priceCurrency": "USD",
+                    "priceValidUntil": "2026-12-31",
+                    "url": "https://www.git-tower.com/pricing"
+                }
+            },
+            "alternativeHeadline": "How to Delete a Repository on GitHub",
+            "articleSection": "GitHub"
+        },
+        {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Learn",
+                    "item": "https://www.git-tower.com/learn"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Git FAQ",
+                    "item": "https://www.git-tower.com/learn/git/faq"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": "How to Delete a Repository on GitHub",
+                    "item": "https://www.git-tower.com/learn/git/faq/github-delete-repository"
+                }
+            ]
+        }
+    ]
+}  </script>
+
+  <!-- Favicon / Touch Icons / Android Icons -->
+  <link rel="icon" href="https://www.git-tower.com/learn/assets/img/favicons/favicon-adaptive.1787825536.svg">
+
+<link rel="icon" sizes="16x16" type="image/png" href="https://www.git-tower.com/learn/assets/img/favicons/favicon@16w.1787825536.png">
+<link rel="icon" sizes="32x32" type="image/png" href="https://www.git-tower.com/learn/assets/img/favicons/favicon@32w.1787825536.png">
+
+<link rel="apple-touch-icon" href="https://www.git-tower.com/learn/assets/img/favicons/apple-touch-icon.1787825536.png">
+<link rel="apple-touch-icon" sizes="76x76" href="https://www.git-tower.com/learn/assets/img/favicons/apple-touch-icon@76w.1787825536.png">
+<link rel="apple-touch-icon" sizes="120x120" href="https://www.git-tower.com/learn/assets/img/favicons/apple-touch-icon@120w.1787825536.png">
+<link rel="apple-touch-icon" sizes="152x152" href="https://www.git-tower.com/learn/assets/img/favicons/apple-touch-icon@152w.1787825536.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.git-tower.com/learn/assets/img/favicons/apple-touch-icon@180w.1787825536.png">
+<link rel="apple-touch-icon" sizes="192x192" href="https://www.git-tower.com/learn/assets/img/favicons/apple-touch-icon@192w.1787825536.png">
+
+  <!-- JavaScript -->
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script>
+    if (typeof FN == 'undefined') { FN = {}; }
+    FN.siteURLs = {"tower":"https:\/\/www.git-tower.com","blog":"https:\/\/www.git-tower.com\/blog","help":"https:\/\/www.git-tower.com\/help","learn":"https:\/\/www.git-tower.com\/learn","account":"https:\/\/account.git-tower.com"};
+  </script>
+  <script defer src="https://www.git-tower.com/learn/assets/js/default.min.1787825537.js"></script>
+
+  <!-- Typekit  -->
+  
+<link rel="preload" href="https://use.typekit.net/wpc5wgj.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://use.typekit.net/wpc5wgj.css"></noscript></head>
+
+<body class="body--default color-scheme-royal" id="page--git__faq__github-delete-repository">
+  <a class="skip-to-main" href="#main-content">Skip to main content</a>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WHXSHB"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+<nav class="nav-top-common" aria-label="Main navigation">
+  <div class="nav-top-logo">
+    <a href="https://www.git-tower.com">Tower</a>
+  </div>
+
+  <button class="nav-top-show" aria-expanded="false" aria-controls="nav-top-primary-list" aria-label="Open navigation menu">Navigation</button>
+
+  <ul class="nav-top-primary" id="nav-top-primary-list">
+    <li>
+      <a href="https://www.git-tower.com/features/easy" aria-expanded="false" aria-haspopup="true" aria-controls="nav-top-features">Features</a>
+      <ul id="nav-top-features" class="nav-top-secondary">
+        <li>
+          <a id="nav-top-undo" href="https://www.git-tower.com/features/undo">
+            <span class="nav-top-secondary-title">Undo Anything</span>
+            <span class="nav-top-secondary-subline">Just press Cmd+Z</span>
+          </a>
+        </li>
+        <li>
+          <a id="nav-top-dragndrop" href="https://www.git-tower.com/features/drag-and-drop">
+            <span class="nav-top-secondary-title">Drag and Drop</span>
+            <span class="nav-top-secondary-subline">Make the complex effortless</span>
+          </a>
+        </li>
+        <li>
+          <a id="nav-top-integrations" href="https://www.git-tower.com/features/integrations">
+            <span class="nav-top-secondary-title">Integrations</span>
+            <span class="nav-top-secondary-subline">Use your favorite tools</span>
+          </a>
+        </li>
+        <li>
+          <a id="nav-top-tower-workflows" href="https://www.git-tower.com/features/workflows">
+            <span class="nav-top-secondary-title">
+              Tower Workflows
+            </span>
+            <span class="nav-top-secondary-subline">Branching Configurations</span>
+          </a>
+        </li>
+        <li class="nav-top-secondary-seperator" role="separator"></li>
+        <li>
+          <a href="https://www.git-tower.com/features/all-features">All Features</a>
+        </li>
+        <li>
+          <a href="https://www.git-tower.com/release-notes">Release Notes</a>
+        </li>
+        <li>
+          <a href="https://www.git-tower.com/beta">Join Beta Channel</a>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <a href="https://www.git-tower.com/pro" aria-expanded="false" aria-haspopup="true" aria-controls="nav-top-pro">Tower Pro</a>
+      <ul id="nav-top-pro" class="nav-top-secondary" aria-label="Tower Pro submenu">
+        <li>
+          <a id="nav-top-stacked-branches" href="https://www.git-tower.com/pro/stacked-branches">
+            <span class="nav-top-secondary-title">
+              Stacked Branches
+              <span class="nav-top-secondary-pro-label" role="img" aria-label="Pro"></span>
+            </span>
+            <span class="nav-top-secondary-subline">Supercharged workflows</span>
+          </a>
+        </li>
+        <li>
+          <a id="nav-top-custom-workflows" href="https://www.git-tower.com/pro/advanced-custom-workflows">
+            <span class="nav-top-secondary-title">
+              Custom Workflows
+              <span class="nav-top-secondary-pro-label" role="img" aria-label="Pro"></span>
+            </span>
+            <span class="nav-top-secondary-subline">Start and finish instantly</span>
+          </a>
+        </li>
+        <li>
+          <a id="nav-top-graphite" href="https://www.git-tower.com/pro/graphite-workflow">
+            <span class="nav-top-secondary-title">
+              Graphite Support
+              <span class="nav-top-secondary-pro-label" role="img" aria-label="Pro"></span>
+            </span>
+            <span class="nav-top-secondary-subline">Code review at scale</span>
+          </a>
+        </li>
+        <li>
+          <a id="nav-top-branch-management" href="https://www.git-tower.com/pro/automatic-branch-management">
+            <span class="nav-top-secondary-title">
+              Branch Cleanup
+              <span class="nav-top-secondary-pro-label" role="img" aria-label="Pro"></span>
+            </span>
+            <span class="nav-top-secondary-subline">Cut through the branch noise</span>
+          </a>
+        </li>
+        <li>
+          <a id="nav-top-self-hosted" href="https://www.git-tower.com/pro/enterprise-services">
+            <span class="nav-top-secondary-title">
+              Self-Hosted Repos
+              <span class="nav-top-secondary-pro-label" role="img" aria-label="Pro"></span>
+            </span>
+            <span class="nav-top-secondary-subline">Connect your own server</span>
+          </a>
+        </li>
+        <li>
+          <a id="nav-top-merge-detection" href="https://www.git-tower.com/pro/pr-merged-detection">
+            <span class="nav-top-secondary-title">
+              Merge Detection
+              <span class="nav-top-secondary-pro-label" role="img" aria-label="Pro"></span>
+            </span>
+            <span class="nav-top-secondary-subline">Catch merges Git can't see</span>
+          </a>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <a href="https://www.git-tower.com/pricing">Pricing</a>
+    </li>
+    <li class="nav-top-primary-spacer" aria-hidden="true"></li>
+    <li class="nav-top-primary-active">
+      <a href="https://www.git-tower.com/support/help-center" aria-expanded="false" aria-haspopup="true" aria-controls="nav-top-support">Support</a>
+      <ul id="nav-top-support" class="nav-top-secondary" aria-label="Support submenu">
+        <li class="nav-top-tertiary-parent">
+          <a href="https://www.git-tower.com/learn" aria-haspopup="true" aria-controls="nav-top-learngit" aria-current="page">Learn Git</a>
+          <ul id="nav-top-learngit" class="nav-top-tertiary" aria-label="Learn Git submenu">
+            <li>
+              <a id="nav-top-videos" href="https://www.git-tower.com/learn/git/videos">
+                <span class="nav-top-secondary-title">Video Course</span>
+                <span class="nav-top-secondary-subline">24 episodes</span>
+              </a>
+            </li>
+            <li>
+              <a id="nav-top-book" href="https://www.git-tower.com/learn/git/ebook">
+                <span class="nav-top-secondary-title">Online Book</span>
+                <span class="nav-top-secondary-subline">From novice to master</span>
+              </a>
+            </li>
+            <li class="nav-top-secondary-seperator" role="separator"></li>
+            <li>
+              <a id="nav-top-cheatsheets" href="https://www.git-tower.com/learn/cheat-sheets">
+                <span class="nav-top-secondary-title">Cheat Sheets</span>
+                <span class="nav-top-secondary-subline">For quick lookup</span>
+              </a>
+            </li>
+            <li>
+              <a id="nav-top-webinar" href="https://www.git-tower.com/learn/git/webinar">
+                <span class="nav-top-secondary-title">Webinar</span>
+                <span class="nav-top-secondary-subline">Learn from a Git professional</span>
+              </a>
+            </li>
+            <li class="nav-top-secondary-seperator" role="separator"></li>
+            <li>
+              <a id="nav-top-firstaid" href="https://www.git-tower.com/learn/git/first-aid-kit">
+                <span class="nav-top-secondary-title">First Aid Kit</span>
+                <span class="nav-top-secondary-subline">Recover from mistakes</span>
+              </a>
+            </li>
+            <li>
+              <a id="nav-top-advanced" href="https://www.git-tower.com/learn/git/advanced-git-kit">
+                <span class="nav-top-secondary-title">Advanced Git Kit</span>
+                <span class="nav-top-secondary-subline">Dive deeper</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-top-secondary-seperator" role="separator"></li>
+        <li>
+          <a href="https://www.git-tower.com/help/home">Documentation</a>
+        </li>
+        <li>
+          <a href="https://www.git-tower.com/support/contact">Contact Us</a>
+        </li>
+        <li class="nav-top-secondary-seperator" role="separator"></li>
+        <li>
+          <a href="https://account.git-tower.com" target="_blank" rel="noopener noreferrer">Account Login</a>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <a href="https://www.git-tower.com/blog">Blog</a>
+    </li>
+    <li class="nav-top-download">
+      <span class="visible-on--mac">
+        <a href="https://www.git-tower.com/download/mac" class="button--start-trial analytics--click">Download</a>
+      </span>
+      <span class="visible-on--windows">
+        <a href="https://www.git-tower.com/download/windows" class="button--start-trial analytics--click" data-architecture-adaptive-link="true" data-default-href="https://www.git-tower.com/download/windows" data-arm-href="https://www.git-tower.com/download/windows?arch=arm64">Download</a>
+      </span>
+    </li>
+  </ul>
+</nav>
+
+<main id="main-content" tabindex="-1">
+  <header class="outer-container">
+  <div class="inner-container inner-container--maxwidth">
+    <div class="header__claim">
+      <div class="headline">Git FAQ</div><div class="subline">Frequently asked questions around Git and Version Control.</div>    </div>
+    <div class="header__visual">
+      <img src="https://www.git-tower.com/learn/assets/img/header-visuals/learners-questions.1787825536.svg" width="1000" height="680" alt="Git FAQ featured image" fetchpriority="high">    </div>
+</header>
+
+  
+
+<aside id="sharing-sidebar">
+  <a class="button social-button--twitter analytics--click" onclick="FN.socialShare('twitter', false, 'How to Delete a Repository on GitHub ');" href="javascript:void(0);" aria-label="Share on Twitter"></a>
+  <a class="button social-button--facebook analytics--click" onclick="FN.socialShare('facebook', false, 'How to Delete a Repository on GitHub ');" href="javascript:void(0);" aria-label="Share on Facebook"></a>
+  <a class="button social-button--linkedin analytics--click" onclick="FN.socialShare('linkedin', false, 'How to Delete a Repository on GitHub ');" href="javascript:void(0);" aria-label="Share on LinkedIn"></a>
+</aside>
+  <section class="default-content__wrapper outer-container outer-container--padding theme--white">
+  <div class="inner-container inner-container--maxwidth">
+    <a name="start"></a>
+    <div class="default-content">
+      
+      <h1>How to Delete a Repository on GitHub</h1>
+<p>After working on some coding projects for some time, your GitHub account might be flooded with repositories. Here's a short guide on <strong>how to delete a remote repository on GitHub.com</strong>.</p>
+<div class="incentive-download incentive-download--incentive_cheatpackage" data-incentive="incentive_cheatpackage">  <div class="incentive-download__image"><img height="208" src="https://www.git-tower.com/learn/assets/img/illustrations/cheat-sheets-thumb.svg" width="208"></div>  <div class="incentive-download__text">    <h2>The Git Cheat Sheet</h2>    <p>No need to remember all those commands and parameters: get our popular "Git Cheat Sheet" - for free!</p>    <div class="incentive-download__button"><a class="button button--incentive_cheatpackage incentive-signup-button analytics--click">Download Now for Free</a></div>  </div></div>
+<p><br /></p>
+<h2>Before You Delete</h2>
+<p>A few things worth checking first:</p>
+<p><strong>1. Teamwork:</strong> <em>you</em> might not need the repository anymore, but in case you’re working in a team, you should make sure that your <em>teammates also</em> don’t need it anymore!<br />
+<strong>2. Permissions:</strong> only users with "admin" or "owner" permissions can delete a repository. If you don’t see the delete option in Settings, you likely don’t have the required role.<br />
+<strong>3. Sure?</strong> Double-check that you have the right repository. Once deleted, issues, pull requests, wikis, and release attachments are gone — there’s no recycle bin. You have 90 days to <a href="https://docs.github.com/en/repositories/creating-and-managing-repositories/restoring-a-deleted-repository" rel="noopener noreferrer" target="_blank">request a restore through GitHub support</a>, but that only recovers the repository itself, not the associated data.<br />
+<strong>4. Forks:</strong> Deleting a public repository does not remove any forks that already exist, but deleting a private repository removes all of its forks. If you’re deleting a fork, this has no effect on the original upstream repository.</p>
+<h2>Deleting a Repository</h2>
+<p>When you’ve made the decision to delete, open the "Settings" page for the repository. Scroll all the way to the bottom and you’ll find the button "Delete this repository".</p>
+<figure><video preload="metadata" playsinline="playsinline" muted="muted" loop="loop" autoplay><source src="https://www.git-tower.com/learn/media/pages/git/faq/github-delete-repository/09bd1f2f9c-1787825536/01-github-delete-repository.mp4" type="video/mp4"></source></video></figure>
+<h2>Not Sure? Archive It Instead</h2>
+<p>If you want to stop actively working on a repository without losing it, archiving is a good middle ground. An archived repository becomes read-only — no new commits, issues, or pull requests — but everything stays accessible and searchable.</p>
+<p>To archive, go to <strong>Settings → General</strong>, scroll down to the "Danger Zone" section, and click "Archive this repository". You’ll need to confirm by typing the repository name. Archived repositories can be unarchived later from the same place.</p>
+      
+      
+            <div class="related-faqs">
+              <hr>
+              <h3>Related Questions</h3>
+              <ul class="faq-list">
+                                  <li class="faq-item">
+                    <a href="https://www.git-tower.com/learn/git/faq/git-vs-github">
+                      Git vs. GitHub: What is the Difference?                    </a>
+                  </li>
+                                  <li class="faq-item">
+                    <a href="https://www.git-tower.com/learn/git/faq/github-delete-folder">
+                      How to delete folders and files on GitHub                    </a>
+                  </li>
+                                  <li class="faq-item">
+                    <a href="https://www.git-tower.com/learn/git/faq/github-desktop">
+                      Using GitHub on the Desktop                    </a>
+                  </li>
+                                  <li class="faq-item">
+                    <a href="https://www.git-tower.com/learn/git/faq/push-to-github">
+                      How to push to GitHub                    </a>
+                  </li>
+                                  <li class="faq-item">
+                    <a href="https://www.git-tower.com/learn/git/faq/github-fork-repository">
+                      How to Fork a Repository on GitHub                    </a>
+                  </li>
+                                  <li class="faq-item">
+                    <a href="https://www.git-tower.com/learn/git/faq/github-gist">
+                      What is a GitHub Gist?                    </a>
+                  </li>
+                              </ul>
+              <br>
+              <p>For additional Git-related questions (and answers!), visit our <a href="https://www.git-tower.com/learn/git/faq">FAQ homepage</a>.</p>
+            </div>
+          </div>
+  </div>
+</section>
+</main>
+
+<section class="signup__wrapper signup--cheatsheet-package_huge outer-container theme--10">
+  <div class="inner-container">
+
+    <div class="signup__content">
+      <div class="signup__text">
+        <h2>Get our popular <b>Git Cheat Sheet</b> for free!</h2>
+        <p>You'll find the most important commands on the front and helpful best practice tips on the back. Over 100,000 developers have downloaded it to make Git a little bit easier.</p>
+        <form class="newsletter-form analytics--submit"  autocomplete="off">
+      <input type="hidden" name="signupForm" value="7" />
+        <input type="hidden" name="lists[]" value="tower-newsletter" />
+  
+    <div class="newsletter-form__groups">
+        <div class="row"  style="display:none" >
+      <label><input class="signup-tag__item" name="tags[]" type="checkbox" value="tower_newsletter" checked="checked" id="signup-tag__tower_newsletter"  />New content and updates</label>
+    </div>
+        <div class="row" >
+      <label><input class="signup-tag__item" name="tags[]" type="checkbox" value="incentive_cheatpackage"  id="signup-tag__incentive_cheatpackage" data-required="true" />Yes, send me the cheat sheet and sign me up for the Tower newsletter. It's free, it's sent infrequently, you can unsubscribe any time.</label>
+    </div>
+      </div>
+  
+    <div class="newsletter-form__consent">
+        <label><input type="checkbox" id="consent--legal" class="consent__item consent__text" data-required="1" />I have read and accept the <a href="https://www.git-tower.com/legal/privacy-policy" target="_blank">Privacy Policy</a>. I understand that I can unsubscribe at any time.</label>
+      </div>
+  
+  <div class="newsletter-form__signup">
+        <label for="newsletter-email-6ab54e93b0afc" class="sr-only">Email address</label>
+    <input type="email" id="newsletter-email-6ab54e93b0afc" name="email" placeholder="Your email address" autocomplete="email" />
+    <input type="submit" value="" aria-label="Subscribe" class="newsletter-form__signup-button" />
+  </div>
+
+    <input type="hidden" name="signup[medium]" value="learn-website" />
+      <input type="hidden" name="signup[URI]" value="git/faq/github-delete-repository/cheatsheet-package_huge" />
+      <input type="hidden" name="signup[OS]" value="" />
+    <div class="request-notice"></div>
+</form>
+      </div>
+      <div class="signup__image">
+        <img alt="Get our popular Git Cheat Sheet for free!" height="633" loading="lazy" src="https://www.git-tower.com/learn/assets/img/popups/cheat-sheet-illu-huge.svg" width="656">
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="about__wrapper" class="outer-container outer-container--padding theme--05">
+  <div class="inner-container inner-container--maxwidth">
+    <div class="about__content">
+      <div class="about__text">
+        <h2>About Us</h2>
+  			<p>As the makers of <a class="analytics--click" href="https://www.git-tower.com/?utm_source=learn-website&amp;utm_medium=about-us&amp;utm_campaign=learn-git" target="_blank">Tower, the best Git client for Mac and Windows</a>, we help over 100,000 users in companies like Apple, Google, Amazon, Twitter, and Ebay get the most out of Git.</p>
+  			<p>Just like with Tower, our mission with this platform is to help people become better professionals.</p>
+        <p>That's why we provide our guides, videos, and cheat sheets (about version control with Git and lots of other topics) for free.</p>
+      </div>
+      <div class="about__icon">
+        <a class="analytics--click" href="https://www.git-tower.com/?utm_source=learn-website&amp;utm_medium=about-us&amp;utm_campaign=learn-git" target="_blank">
+          <img class="tower-icon" src="https://www.git-tower.com/learn/assets/img/tower-icon.1787825536.svg" alt="Tower icon" width="200" height="215">
+        </a>
+      </div>
+    </div>
+	</div>
+</section>
+<nav class="outer-container nav-bottom theme--10" aria-label="Footer navigation">
+  <div class="inner-container inner-container--maxwidth">
+
+    <div class="nav-bottom__col">
+      <div class="nav-bottom__group">
+        <input type="checkbox" id="footer-group__about" class="footer-group__toggle">
+        <label for="footer-group__about"><span class="nav-bottom__group-title">About</span></label>
+        <ul>
+          <li><a href="https://www.git-tower.com/about-us">About</a></li>
+          <li><a href="https://www.git-tower.com/blog">Blog</a></li>
+          <li><a href="https://stuff.git-tower.com/">Merch</a></li>
+          <li><a href="https://www.git-tower.com">Tower Git Client</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="nav-bottom__col">
+      <div class="nav-bottom__group">
+        <input type="checkbox" id="footer-group__git" class="footer-group__toggle">
+        <label for="footer-group__git"><span class="nav-bottom__group-title">Git &amp; Version Control</span></label>
+        <ul>
+          <li><a href="https://www.git-tower.com/learn/git/ebook">Online Book</a></li>
+          <li><a href="https://www.git-tower.com/learn/git/first-aid-kit">First Aid Kit</a></li>
+          <li><a href="https://www.git-tower.com/learn/git/webinar">Webinar</a></li>
+          <li><a href="https://www.git-tower.com/learn/git/videos">Video Course</a></li>
+          <li><a href="https://www.git-tower.com/learn/git/advanced-git-kit">Advanced Git Kit</a></li>
+          <li><a href="https://www.git-tower.com/learn/git/faq">FAQ</a></li>
+          <li><a href="https://www.git-tower.com/learn/git/glossary">Glossary</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="nav-bottom__col">
+      <div class="nav-bottom__group">
+        <input type="checkbox" id="footer-group__cheatsheets" class="footer-group__toggle">
+        <label for="footer-group__cheatsheets"><span class="nav-bottom__group-title">Cheat Sheets</span></label>
+        <ul>
+          <li><a href="https://www.git-tower.com/learn/cheat-sheets/cli">Command Line 101</a></li>
+          <li><a href="https://www.git-tower.com/learn/cheat-sheets/git">Git</a></li>
+          <li><a href="https://www.git-tower.com/learn/cheat-sheets/git-for-svn">Git for Subversion Users</a></li>
+          <li><a href="https://www.git-tower.com/learn/cheat-sheets/html">HTML</a></li>
+          <li><a href="https://www.git-tower.com/learn/cheat-sheets/hugo">Hugo</a></li>
+          <li><a href="https://www.git-tower.com/learn/cheat-sheets/javascript">JavaScript</a></li>
+          <li><a href="https://www.git-tower.com/learn/cheat-sheets/markdown">Markdown</a></li>
+          <li><a href="https://www.git-tower.com/learn/cheat-sheets/powershell">PowerShell</a></li>
+          <li><a href="https://www.git-tower.com/learn/cheat-sheets/regex">Regex</a></li>
+          <li><a href="https://www.git-tower.com/learn/cheat-sheets/ruby-on-rails">Ruby on Rails</a></li>
+          <li><a href="https://www.git-tower.com/learn/cheat-sheets/tower">Tower Git Client</a></li>
+          <li><a href="https://www.git-tower.com/learn/cheat-sheets/vscode">Visual Studio Code</a></li>
+          <li><a href="https://www.git-tower.com/learn/cheat-sheets/website-optimization">Website Optimization</a></li>
+          <li><a href="https://www.git-tower.com/learn/cheat-sheets/vcs-workflow">Workflow of Version Control</a></li>
+          <li><a href="https://www.git-tower.com/learn/cheat-sheets/git-branches">Working with Branches in Git</a></li>
+          <li><a href="https://www.git-tower.com/learn/cheat-sheets/xcode">Xcode</a></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+<dialog class="modal-view" id="after-download-modal" aria-labelledby="after-download-modal-title">
+  <header class="modal-big-header">
+    <h2 class="modal-title" id="after-download-modal-title">Your trial is downloading…</h2>
+    <p class="modal-description">Try Tower "Pro" for 30 days without limitations!</p>
+    <div class="modal-app-icon">
+      <picture>
+        <source type="image/avif" srcset="https://www.git-tower.com/learn/assets/img/icons/downloads-modal-app-icon.1787825536.avif">
+        <img src="https://www.git-tower.com/learn/assets/img/icons/downloads-modal-app-icon.1787825536.png" width="170" height="170" alt="Tower Icon" />
+      </picture>
+      <span class="modal-app-icon-name">Tower</span>
+    </div>
+    <button class="modal-close" aria-label="Close dialog">Close</button>
+  </header>
+	<section class="modal-content after-download">
+    <h2>Updates, Courses &amp; Content via Email</h2>
+    <div class="visible-on--mac">
+      <form class="newsletter-form analytics--submit"  id="signup-after-download-form"  autocomplete="off">
+          <input type="hidden" name="lists[]" value="tower-newsletter" />
+  
+    <div class="newsletter-form__groups">
+        <div class="row" >
+      <label><input class="signup-tag__item consent__text" name="tags[]" type="checkbox" value="tower_newsletter"  id="signup-tag__tower_newsletter"  />Updates about <b>Tower, discounts, and giveaways</b> as well as new content from the Tower blog.</label>
+    </div>
+        <div class="row" >
+      <label><input class="signup-tag__item consent__text" name="tags[]" type="checkbox" value="tower_learngit"  id="signup-tag__tower_learngit"  />Free email course "<b>Learn Git with Tower</b>" (8 emails)</label>
+    </div>
+        <div class="row" >
+      <label><input class="signup-tag__item consent__text" name="tags[]" type="checkbox" value="tower_tipstricks-mac"  id="signup-tag__tower_tipstricks-mac"  />Free email course "<b>Tips &amp; Tricks for Tower</b>" (10 emails)</label>
+    </div>
+      </div>
+  
+    <div class="newsletter-form__consent">
+        <label><input type="checkbox" id="consent--legal" class="consent__item consent__text" data-required="1" />I have read and accept the <a href="https://www.git-tower.com/legal/privacy-policy" target="_blank">Privacy Policy</a>. I understand that I can unsubscribe at any time by clicking on the unsubscribe link in any email.</label>
+      </div>
+  
+  <div class="newsletter-form__signup">
+        <label for="signup-after-download-form-email" class="sr-only">Email address</label>
+    <input type="email" id="signup-after-download-form-email" name="email" placeholder="Your email address" autocomplete="email" />
+    <input type="submit" value="Subscribe for Free"  class="newsletter-form__signup-button" />
+  </div>
+
+    <input type="hidden" name="signup[medium]" value="tower-website" />
+      <input type="hidden" name="signup[URI]" value="git/faq/github-delete-repository/download-trial" />
+      <input type="hidden" name="signup[OS]" value="" />
+    <div class="request-notice"></div>
+</form>
+    </div>
+    <div class="visible-on--windows">
+      <form class="newsletter-form analytics--submit"  id="signup-after-download-form"  autocomplete="off">
+          <input type="hidden" name="lists[]" value="tower-newsletter" />
+  
+    <div class="newsletter-form__groups">
+        <div class="row" >
+      <label><input class="signup-tag__item consent__text" name="tags[]" type="checkbox" value="tower_newsletter"  id="signup-tag__tower_newsletter"  />Updates about <b>Tower, discounts, and giveaways</b> as well as new content from the Tower blog.</label>
+    </div>
+        <div class="row" >
+      <label><input class="signup-tag__item consent__text" name="tags[]" type="checkbox" value="tower_learngit"  id="signup-tag__tower_learngit"  />Free email course "<b>Learn Git with Tower</b>" (8 emails)</label>
+    </div>
+        <div class="row" >
+      <label><input class="signup-tag__item consent__text" name="tags[]" type="checkbox" value="tower_tipstricks-windows"  id="signup-tag__tower_tipstricks-windows"  />Free email course "<b>Tips &amp; Tricks for Tower"</b> (10 emails)</label>
+    </div>
+      </div>
+  
+    <div class="newsletter-form__consent">
+        <label><input type="checkbox" id="consent--legal" class="consent__item consent__text" data-required="1" />I have read and accept the <a href="https://www.git-tower.com/legal/privacy-policy" target="_blank">Privacy Policy</a>. I understand that I can unsubscribe at any time by clicking on the unsubscribe link in any email.</label>
+      </div>
+  
+  <div class="newsletter-form__signup">
+        <label for="signup-after-download-form-email" class="sr-only">Email address</label>
+    <input type="email" id="signup-after-download-form-email" name="email" placeholder="Your email address" autocomplete="email" />
+    <input type="submit" value="Subscribe for Free"  class="newsletter-form__signup-button" />
+  </div>
+
+    <input type="hidden" name="signup[medium]" value="tower-website" />
+      <input type="hidden" name="signup[URI]" value="git/faq/github-delete-repository/download-trial" />
+      <input type="hidden" name="signup[OS]" value="" />
+    <div class="request-notice"></div>
+</form>
+    </div>
+  </section>
+</dialog>
+
+<dialog class="modal-view" id="after-subscribe-modal" aria-labelledby="after-subscribe-modal-title">
+  <header class="modal-big-header">
+    <h2 class="modal-title" id="after-subscribe-modal-title">Thank you for subscribing</h2>
+    <p class="modal-description">Please check your email to confirm</p>
+    <button class="modal-close" aria-label="Close dialog">Close</button>
+  </header>
+	<section class="modal-content after-subscribe">
+    <h2>
+      Want to win one of our awesome Tower shirts?<br />
+      <strong>Tell your friends about Tower!</strong>
+    </h2>
+    <div class="after-subscribe-share">
+      <a class="button button--secondary button--twitter analytics--click" onclick="FN.socialShare('twitter', 'https://www.git-tower.com', 'The all-new Tower is finally here! The best Git client on Mac and Windows now with Pull Requests, Interactive Rebase, Quick Actions, and so much more. Try it free for 30 days. #gittower')" href="#">Share on Twitter</a>
+    </div>
+    <p class="after-subscribe-winners">
+      We'll pick 4 winners every month who share this tweet!<br />
+      Follow <a href="https://x.com/gittower" target="_blank">@gittower</a> to be notified if you win!
+    </p>
+  </section>
+</dialog>
+
+<dialog class="modal-view" id="trial-via-email" aria-labelledby="trial-via-email-title">
+  <header class="modal-big-header">
+    <h2 class="modal-title" id="trial-via-email-title">Try Tower for Free</h2>
+    <p class="modal-description">Sign up below and use Tower "Pro" for 30 days without limitations!</p>
+    <button class="modal-close" aria-label="Close dialog">Close</button>
+  </header>
+	<section class="modal-content trial-via-email">
+    <form class="newsletter-form analytics--submit"  id="signup-trial-via-email"  autocomplete="off">
+          <input type="hidden" name="lists[]" value="tower-newsletter" />
+  
+    <div class="newsletter-form__groups">
+        <div class="row" >
+      <label><input class="signup-tag__item consent__text" name="tags[]" type="checkbox" value="tower_trial"  id="signup-tag__tower_trial"  />Yes, send me instructions on <b>how to get started</b> with Tower.</label>
+    </div>
+        <div class="row" >
+      <label><input class="signup-tag__item consent__text" name="tags[]" type="checkbox" value="tower_newsletter"  id="signup-tag__tower_newsletter"  />Yes, I want to hear about new <b>Tower updates, discounts and giveaways</b> as well as new content from the Tower blog.</label>
+    </div>
+      </div>
+  
+    <div class="newsletter-form__consent">
+        <label><input type="checkbox" id="consent--legal" class="consent__item consent__text" data-required="1" />I have read and accept the <a href="https://www.git-tower.com/legal/privacy-policy" target="_blank">Privacy Policy</a>. I understand that I can unsubscribe at any time.</label>
+      </div>
+  
+  <div class="newsletter-form__signup">
+        <label for="signup-trial-via-email-email" class="sr-only">Email address</label>
+    <input type="email" id="signup-trial-via-email-email" name="email" placeholder="Your email address" autocomplete="email" />
+    <input type="submit" value="Go"  class="newsletter-form__signup-button" />
+  </div>
+
+    <input type="hidden" name="signup[medium]" value="tower-website" />
+      <input type="hidden" name="signup[URI]" value="git/faq/github-delete-repository/trial-via-email" />
+      <input type="hidden" name="signup[OS]" value="" />
+    <div class="request-notice"></div>
+</form>
+  </section>
+</dialog>
+
+    <footer class="outer-container theme--10">
+      <div class="copyright">
+
+        <div class="social-media-icons">
+  <ul class="social-media-icons-list">
+    <li><a href="https://www.facebook.com/gittower/" rel="noopener noreferrer" target="_blank" aria-label="Facebook" title="Facebook" class="social-media-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path fill="currentColor" d="M27 16.066c0-6.112-4.925-11.067-11-11.067S5 9.954 5 16.066c0 5.523 4.022 10.103 9.281 10.933v-7.733h-2.793v-3.2h2.793v-2.438c0-2.774 1.642-4.306 4.155-4.306 1.204 0 2.462.216 2.462.216v2.723h-1.387c-1.366 0-1.792.853-1.792 1.729v2.076h3.051l-.488 3.2h-2.563v7.733c5.259-.83 9.281-5.41 9.281-10.933"></path></svg>
+      </a></li>
+    <li><a href="https://www.x.com/gittower/" rel="noopener noreferrer" target="_blank" aria-label="X / Twitter" title="X / Twitter" class="social-media-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path fill="currentColor" d="M22.326 6H25.7l-7.37 8.424L27 25.886h-6.789l-5.317-6.952-6.084 6.952H5.434l7.883-9.01L5 6h6.961l4.806 6.354zm-1.184 17.867h1.87L10.945 7.913H8.94z"></path></svg>
+      </a></li>
+    <li><a href="https://bsky.app/profile/git-tower.com" rel="noopener noreferrer" target="_blank" aria-label="Bluesky" title="Bluesky" class="social-media-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <g transform="translate(4,5) scale(1,1)">
+          <path fill="currentColor" d="M12,10.8C10.913,8.686 7.954,4.747 5.202,2.805C2.566,0.944 1.561,1.266 0.902,1.565C0.139,1.908 0,3.08 0,3.768C0,4.458 0.378,9.418 0.624,10.247C1.439,12.983 4.337,13.907 7.007,13.611C7.143,13.591 7.282,13.572 7.422,13.555C7.284,13.577 7.146,13.595 7.007,13.611C3.095,14.191 -0.38,15.616 4.177,20.689C9.19,25.879 11.047,19.576 12,16.381C12.953,19.576 14.05,25.652 19.733,20.689C24,16.381 20.905,14.191 16.993,13.611C16.854,13.596 16.716,13.577 16.578,13.555C16.718,13.572 16.857,13.591 16.993,13.611C19.663,13.908 22.561,12.983 23.376,10.247C23.622,9.419 24,4.457 24,3.769C24,3.079 23.861,1.908 23.098,1.563C22.439,1.265 21.434,0.943 18.798,2.803C16.046,4.748 13.087,8.687 12,10.8Z"/>
+        </g>
+      </svg>
+    </a></li>
+    <li><a href="https://www.instagram.com/gittower/" rel="noopener noreferrer" target="_blank" aria-label="Instagram" title="Instagram" class="social-media-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path fill="currentColor" d="M16.582 5c2.461.001 2.861.016 3.954.066 1.17.054 1.97.24 2.67.511a5.4 5.4 0 0 1 1.948 1.269 5.4 5.4 0 0 1 1.269 1.947c.271.701.457 1.5.511 2.672.047 1.051.063 1.462.065 3.688v1.694c-.002 2.226-.018 2.636-.065 3.688-.054 1.171-.24 1.971-.511 2.671a5.4 5.4 0 0 1-1.269 1.948 5.4 5.4 0 0 1-1.948 1.268c-.7.272-1.5.458-2.67.512-1.053.047-1.462.063-3.689.065h-1.694c-2.226-.002-2.636-.018-3.688-.065-1.171-.054-1.97-.24-2.67-.512a5.4 5.4 0 0 1-1.949-1.268 5.4 5.4 0 0 1-1.268-1.948c-.272-.7-.458-1.5-.512-2.671-.049-1.093-.064-1.493-.066-3.953v-1.164c.002-2.461.017-2.861.066-3.953.054-1.172.24-1.971.512-2.672a5.4 5.4 0 0 1 1.268-1.947 5.4 5.4 0 0 1 1.949-1.269c.7-.271 1.499-.457 2.67-.511 1.092-.05 1.492-.065 3.953-.066zm-.01 1.982h-1.144c-2.417.001-2.793.014-3.873.064-1.072.049-1.655.227-2.042.379-.514.2-.88.438-1.265.823a3.4 3.4 0 0 0-.823 1.264c-.151.388-.33.969-.379 2.043-.049 1.08-.062 1.456-.064 3.873v1.143c.002 2.418.015 2.794.064 3.874.049 1.072.228 1.655.379 2.042.2.513.438.88.823 1.264a3.4 3.4 0 0 0 1.265.824c.387.151.97.33 2.042.379 1.04.047 1.427.061 3.613.063h1.664c2.187-.002 2.573-.016 3.613-.063 1.073-.049 1.655-.228 2.043-.379.513-.2.88-.438 1.264-.824.385-.384.623-.751.823-1.264.151-.387.33-.97.379-2.042.047-1.04.062-1.427.064-3.613v-1.665c-.002-2.185-.017-2.572-.064-3.612-.049-1.074-.228-1.655-.379-2.043-.2-.513-.438-.88-.823-1.264a3.4 3.4 0 0 0-1.264-.823c-.388-.152-.97-.33-2.043-.379-1.08-.05-1.455-.063-3.873-.064M16 10.351a5.649 5.649 0 1 1 0 11.297 5.649 5.649 0 0 1 0-11.297m0 1.982a3.666 3.666 0 1 0-.001 7.333A3.666 3.666 0 0 0 16 12.333m5.872-3.525a1.32 1.32 0 1 1 .002 2.638 1.32 1.32 0 0 1-.002-2.638"></path></svg>
+      </a></li>
+    <li><a href="https://www.linkedin.com/company/gittower/" rel="noopener noreferrer" target="_blank" aria-label="LinkedIn" title="LinkedIn" class="social-media-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path fill="currentColor" d="M23.638 23.883q-1.398-.015-2.795 0c-.214.002-.267-.075-.266-.276.006-1.726.013-3.453-.002-5.178a6 6 0 0 0-.142-1.32c-.17-.736-.666-1.103-1.423-1.112a3 3 0 0 0-.731.067c-.761.19-1.084.764-1.21 1.474a6 6 0 0 0-.085 1.04q-.014 2.517 0 5.035c.002.209-.056.271-.264.27a145 145 0 0 0-2.795 0c-.212.002-.265-.069-.265-.273q.009-5.005 0-10.008c0-.203.049-.271.263-.27q1.346.017 2.693.002c.195-.002.246.065.24.248-.01.374-.003.752-.003 1.188.513-.804 1.17-1.335 2.035-1.56a4.57 4.57 0 0 1 3.084.255c.999.449 1.467 1.313 1.707 2.329.174.742.213 1.5.21 2.26q-.005 2.786.003 5.57c0 .197-.055.26-.254.259M10.017 11.93a1.89 1.89 0 0 1-1.908-1.892 1.895 1.895 0 0 1 1.902-1.922c1.062 0 1.912.852 1.91 1.915a1.895 1.895 0 0 1-1.904 1.899m1.655 6.66v5.014c0 .271-.001.273-.275.273-.931.002-1.863-.003-2.794.003-.178.002-.251-.04-.251-.24q.01-5.033 0-10.066c0-.192.059-.242.245-.24q1.418.011 2.835-.002c.193-.002.244.06.244.246-.006 1.672-.004 3.343-.004 5.012m13.617-13.59H6.71A1.71 1.71 0 0 0 5 6.71V25.29A1.71 1.71 0 0 0 6.71 27H25.29a1.71 1.71 0 0 0 1.71-1.71V6.71a1.71 1.71 0 0 0-1.71-1.71"></path></svg>
+      </a></li>
+    <li><a href="https://www.youtube.com/@gittower" rel="noopener noreferrer" target="_blank" aria-label="YouTube" title="YouTube" class="social-media-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path fill="currentColor" d="M13.75 19.021v-6.542l5.75 3.271zm12.791-8.601a2.76 2.76 0 0 0-1.946-1.957C22.88 8 16 8 16 8s-6.879 0-8.595.463A2.76 2.76 0 0 0 5.46 10.42C5 12.147 5 15.75 5 15.75s0 3.603.46 5.33a2.77 2.77 0 0 0 1.945 1.958C9.121 23.5 16 23.5 16 23.5s6.88 0 8.595-.462a2.77 2.77 0 0 0 1.946-1.958C27 19.353 27 15.75 27 15.75s0-3.603-.459-5.33"></path></svg>
+      </a></li>
+  </ul>
+</div>
+
+        <p><a href="https://www.git-tower.com/legal/imprint">Imprint / Legal Notice</a> &nbsp; | &nbsp; <a href="https://www.git-tower.com/legal/privacy-policy">Privacy Policy</a> &nbsp; | &nbsp; <button type="button" class="privacy-settings-button" onClick="UC_UI.showSecondLayer();">Privacy Settings</button></p>
+
+        <p>© 2010-2026 <a href="https://www.git-tower.com" rel="noopener noreferrer" target="_blank">Tower</a> - Mentioned product names and logos are property of their respective owners.</p>      </div>
+
+      
+    </footer>
+
+    <!-- Project Seahawk -->
+  </body>
+</html>

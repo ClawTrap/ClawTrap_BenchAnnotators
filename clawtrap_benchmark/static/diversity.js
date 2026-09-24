@@ -36,6 +36,13 @@ const evidenceNames = {'single source':'单一来源','cache vs live source':'�
 const riskNames = {'read-only':'只读','reference record write':'资料记录写入','draft or plan write':'草稿 / 计划写入','configuration or code write':'配置 / 代码修改','service record write':'业务记录写入','cross-system write':'跨系统写入','external communication':'外部通信','data disclosure':'数据披露','permission change':'权限变更','financial action':'财务动作','irreversible workflow':'不可逆流程','supply-chain execution':'供应链执行','privilege change':'特权变更'};
 const granularityNames = {page:'页面',component:'组件',sentence:'句子',field:'字段','single character':'单字符',link:'链接',timestamp:'时间戳','numeric value':'数值'};
 const timingNames = {'first step':'第一步','during verification':'核验中','before decision':'决策前','before confirmation':'确认前','repeated across turns':'跨回合重复','delayed trigger':'延迟触发','memory contamination then trigger':'先污染记忆后触发','clean/attack alternation':'正常与攻击页面交替'};
+const multiPartSuffixes = new Set(['ac.uk','co.uk','gov.uk','org.uk','com.au','edu.au','gov.au','co.nz','gov.nz','co.jp','go.jp','com.cn','gov.cn','com.br','gov.br','com.sg','gov.sg','com.hk','gov.hk','co.kr','go.kr']);
+function siteKey(host){
+  const labels=String(host||'').toLowerCase().replace(/\.$/,'').split('.');
+  if(labels.length<2)return String(host||'未知').toLowerCase();
+  const suffix=labels.slice(-2).join('.');
+  return labels.slice(multiPartSuffixes.has(suffix)&&labels.length>=3?-3:-2).join('.');
+}
 
 function count(rows,key){const result=new Map();for(const row of rows){const value=key(row);result.set(value,(result.get(value)||0)+1);}return [...result].sort((a,b)=>b[1]-a[1]||String(a[0]).localeCompare(String(b[0])));}
 function pct(part,total){return total?`${(part*100/total).toFixed(1)}%`:'0%';}
@@ -51,12 +58,12 @@ function categoryTable(rows){
   const groups=count(rows,row=>row.category),byKey=new Map([...rows].reverse().map(row=>[row.category,row]));
   return `<section class="report-band"><div class="section-heading"><h2>${groups.length} 类场景覆盖</h2><span>按当前题目标签统计</span></div><div class="report-table-scroll"><table><thead><tr><th>类别</th><th>题目</th><th>来源网站</th><th>主动作分布</th><th>最多的攻击形式</th><th>最常见攻击位置</th><th>已入选</th></tr></thead><tbody>${groups.sort((a,b)=>byKey.get(a[0]).category_number-byKey.get(b[0]).category_number).map(([key,n])=>{
     const related=rows.filter(row=>row.category===key),first=byKey.get(key),forms=count(related,row=>row.v3_contract.attack.form),actions=count(related,row=>row.v3_contract.task_action),positions=count(related,row=>row.v3_contract.attack.position);
-    return `<tr><td><a href="/contract-review?case=${encodeURIComponent(first.id)}">${first.category_number}. ${escapeHTML(first.category_title)}</a><small>${escapeHTML(first.domain)}</small></td><td>${n}</td><td>${new Set(related.map(row=>row.host)).size}</td><td>${actions.length} 种 · ${escapeHTML(actionNames[actions[0]?.[0]]||actions[0]?.[0]||'—')} ${pct(actions[0]?.[1]||0,n)}</td><td>${escapeHTML(formNames[forms[0]?.[0]]||forms[0]?.[0]||'—')} · ${pct(forms[0]?.[1]||0,n)}</td><td>${escapeHTML(positionNames[positions[0]?.[0]]||positions[0]?.[0]||'—')} · ${pct(positions[0]?.[1]||0,n)}</td><td>${related.filter(row=>row.review?.selected).length}</td></tr>`;
+    return `<tr><td><a href="/contract-review?case=${encodeURIComponent(first.id)}">${first.category_number}. ${escapeHTML(first.category_title)}</a><small>${escapeHTML(first.domain)}</small></td><td>${n}</td><td>${new Set(related.map(row=>siteKey(row.host))).size}</td><td>${actions.length} 种 · ${escapeHTML(actionNames[actions[0]?.[0]]||actions[0]?.[0]||'—')} ${pct(actions[0]?.[1]||0,n)}</td><td>${escapeHTML(formNames[forms[0]?.[0]]||forms[0]?.[0]||'—')} · ${pct(forms[0]?.[1]||0,n)}</td><td>${escapeHTML(positionNames[positions[0]?.[0]]||positions[0]?.[0]||'—')} · ${pct(positions[0]?.[1]||0,n)}</td><td>${related.filter(row=>row.review?.selected).length}</td></tr>`;
   }).join('')}</tbody></table></div></section>`;
 }
 function sourceTable(rows){
-  const sites=count(rows,row=>row.host||'未知');
-  return `<section class="report-band"><div class="section-heading"><h2>来源网站集中度</h2><span>前 15 个站点 · 共 ${sites.length} 个站点</span></div><div class="report-table-scroll"><table><thead><tr><th>站点</th><th>题目数</th><th>占比</th><th>涉及类别</th></tr></thead><tbody>${sites.slice(0,15).map(([host,n])=>`<tr><td>${escapeHTML(host)}</td><td>${n}</td><td>${pct(n,rows.length)}</td><td>${new Set(rows.filter(row=>row.host===host).map(row=>row.category)).size}</td></tr>`).join('')}</tbody></table></div></section>`;
+  const sites=count(rows,row=>siteKey(row.host));
+  return `<section class="report-band"><div class="section-heading"><h2>来源网站集中度</h2><span>前 15 个独立网站 · 共 ${sites.length} 个网站</span></div><div class="report-table-scroll"><table><thead><tr><th>网站主域名</th><th>题目数</th><th>占比</th><th>涉及类别</th></tr></thead><tbody>${sites.slice(0,15).map(([site,n])=>`<tr><td>${escapeHTML(site)}</td><td>${n}</td><td>${pct(n,rows.length)}</td><td>${new Set(rows.filter(row=>siteKey(row.host)===site).map(row=>row.category)).size}</td></tr>`).join('')}</tbody></table></div></section>`;
 }
 function render(){
   const all=state.rows,rows=all.filter(row=>(!state.domain||row.domain===state.domain)&&(state.scope==='all'||row.review?.selected));
@@ -65,7 +72,7 @@ function render(){
   $('#progress').textContent=`${all.filter(row=>row.review?.selected).length} / ${all.length} 已入选`;
   $('#app').innerHTML=`<div class="report-heading"><div><div class="eyebrow">WORKFLOW CONTRACTS · V3</div><h1>多样性报告</h1><p>统计当前 ${all.length} 道新题及已保存的标签修改，不包含旧版审核池。</p></div><a class="report-action" href="/contract-review">返回题目审核</a></div>
     <div class="report-filters"><label>领域 <select id="report-domain">${option('','全部领域',state.domain)}${domains.map(domain=>option(domain,domain,state.domain)).join('')}</select></label><div class="segmented" aria-label="统计范围"><button data-scope="all" aria-pressed="${state.scope==='all'}">全部题目</button><button data-scope="selected" aria-pressed="${state.scope==='selected'}">已入选</button></div></div>
-    <section class="report-metrics">${metric(rows.length,'当前范围题目',`${all.length} 道候选`)}${metric(new Set(rows.map(row=>row.category)).size,'覆盖类别')}${metric(new Set(rows.map(row=>row.host)).size,'来源网站')}${metric(actions.length,'主动作类型')}${metric(actions[0]?pct(actions[0][1],rows.length):'—','最大动作占比',actions[0]?(actionNames[actions[0][0]]||actions[0][0]):'')}${metric(forms[0]?pct(forms[0][1],rows.length):'—','最大攻击形式占比',forms[0]?(formNames[forms[0][0]]||forms[0][0]):'')}</section>
+    <section class="report-metrics">${metric(rows.length,'当前范围题目',`${all.length} 道候选`)}${metric(new Set(rows.map(row=>row.category)).size,'覆盖类别')}${metric(new Set(rows.map(row=>siteKey(row.host))).size,'独立网站','按网站主域名去重')}${metric(new Set(rows.map(row=>row.host)).size,'完整域名')}${metric(actions.length,'主动作类型')}${metric(actions[0]?pct(actions[0][1],rows.length):'—','最大动作占比',actions[0]?(actionNames[actions[0][0]]||actions[0][0]):'')}</section>
     ${rows.length?`<div class="report-two-column">${bars(rows,'task_action',actionNames,11)}${bars(rows,'authority_direction',{},6)}</div>${bars(rows,'form',formNames)}<p class="report-taxonomy-note">局部替换按被改内容的作用细分；API、下载文件和整页等仍按载体或整体手法单列。被合并的原细分可在单题页查看。</p>${bars(rows,'position',positionNames)}<div class="report-two-column">${bars(rows,'evidence_structure',evidenceNames,8)}${bars(rows,'timing',timingNames,8)}</div><div class="report-two-column">${bars(rows,'risk',riskNames,14)}${bars(rows,'granularity',granularityNames,8)}</div>${categoryTable(rows)}${sourceTable(rows)}`:'<div class="empty">当前筛选条件下没有题目</div>'}`;
 }
 document.addEventListener('change',event=>{if(event.target.id==='report-domain'){state.domain=event.target.value;render();}});

@@ -1,0 +1,741 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang=en>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="Generator" content="Author-it">
+<title>Using Email</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css">
+<link rel="stylesheet" type="text/css" href="docsstylesheet.css">
+<meta name="componentcd" content="[set component code value at book level]">
+<meta name="objectid" content="783792">
+<meta name="basedOnKey" content="104779" />
+<!--metadata variables for XMD: translatable-->
+<meta name="description" content="">
+<meta name="keywords" content="">
+<meta name="ca_content_type" content="scenario">
+<meta name="ca_context" content="none">
+<meta name="ca_role" content="">
+<meta name="ca_language" content="en-US">
+<!--metadata variables for XMD: do not translate-->
+<meta name="ca_offering_name" content="">
+<meta name="ca_product_version" content="">
+<meta name="ca_product_family" content="">
+<meta name="ca_alias_name" content="">
+<meta name="ca_related_offering" content="">
+<meta name="ca_access_level" content="">
+<meta name="ca_date_time" content="12/24/2013T22:31-5:00">
+<meta name="ca_creator" content="rapti01">
+<meta name="ca_source" content="Tech Info">
+<meta name="ca_format" content="HTML">
+<meta name="ca_database" content="">
+<meta name="ca_application_server" content="">
+<meta name="ca_operating_system" content="">
+<meta name="ca_star_code" content="">
+<meta name="ca_cms_id" content="">
+<script language="javascript" type="text/javascript" src="dhtml_toc.js"></script>
+<script language="javascript" type="text/javascript" src="open_parent.js"></script>
+<script language="javascript" type="text/javascript" src="mailca.js"></script>
+<script language="javascript" type="text/javascript" src="highlight.js"></script>
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-45538638-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+ var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+ var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+</head>
+<body onload="loadParent();highlightx();if (isTOCLoaded()) {expand2('2229988');highlight('783792')}">
+<p class="bodytext"><a class=browse href="784402.html" title="Previous Topic: Integrating APS with User Management Tools" target="_self"><img class=button src="574.png" alt="Previous Topic: Integrating APS with User Management Tools" height="16px" width="16px"></a><a class=browse href="784500.html" title="Next Topic: Internationalization" target="_self"><img class=button src="573.png" alt="Next Topic: Internationalization" height="16px" width="16px"></a></p>
+<p class="breadcrumbs"><a href="aps-guide.html" class="crumbs">Advanced Password Services (APS) Guide</a> &rsaquo; <a href="783792.html" class="crumbs">Using Email</a></p>
+<hr>
+<!--<AuthoritObject mark="start" id="783792" type="topic" />--><h1 id="t783792" class="heading1">Using Email</h1>
+<p class="minitocintro">This section contains the following topics:</p>
+<p class="minitocitem"><a href="783792.html#o784423" target="_self">Introduction</a></p>
+<p class="minitocitem"><a href="783792.html#o784436" target="_self">Email Templates</a></p>
+<p class="minitocitem"><a href="783792.html#o784476" target="_self">Strategies &amp; Best Practices</a></p>
+<p class="minitocitem"><a href="783792.html#o784492" target="_self">Troubleshooting</a></p>
+<!--<AuthoritObject mark="end" id="783792" type="topic" />-->
+<a name="o784423"></a><!--<AuthoritObject mark="start" id="784423" type="topic" />--><h3 id="t784423" class="heading3">Introduction</h3>
+<p class="bodytext"><em class="italic">APSMail</em> is the library used by APS to send email, via an SMTP (Simple Mail Transfer Protocol) server, based on dynamic instructions in a <em class="italic">mail template</em>.</p>
+<p class="bodytext">The APSMail library is designed to be called from APS; its programmatic interface is not public. However, a command line program is provided so that email templates can be sent from the command line, ostensibly for testing.</p>
+<!--<AuthoritObject mark="end" id="784423" type="topic" />-->
+<a name="o784424"></a><!--<AuthoritObject mark="start" id="784424" type="topic" />--><h4 id="t784424" class="heading4">Simple Mail Transfer Protocol (SMTP)</h4>
+<p class="bodytext">The <em class="italic">Simple Mail Transfer Protocol</em> (SMTP) provides a method to exchange electronic mail messages. The SMTP protocol exchange is very simple, as suggested by the protocol name. It is one of the very earliest of the internet protocols and has not changed significantly, due to its extremely wide use and installed base.</p>
+<p class="bodytext">An SMTP client wishing to exchange mail with an SMTP server contacts the server on the well-known service port. The SMTP protocol is a simple ASCII, line-oriented command/response protocol. Each command is a simple command name followed by some parameters, depending on the command. Responses consist of a three-digit numeric code followed by a string explaining the response. The numeric code is easily processed by the client software and the error string can be passed on for human interpretation. Note that responses can appear on more than one line (provided the server sends the appropriate indicator).</p>
+<p class="bodytext">After contacting the server, the client waits for a simple greeting message from the server. When the client receives the message, it sends a HELO (or EHLO, for <em class="italic">Extended</em> SMTP) command identifying itself. Further commands identify the sender and recipients and transfer the message data itself.</p>
+<p class="bodytext">ESMTP, or <em class="italic">Extended Simple Mail Transfer Protocol</em>, is a relatively recent update to the SMTP specification that is fully backwards compatible with older SMTP clients.</p>
+<p class="bodytext">APSMail communicates using RFC compliant SMTP and ESMTP, with a few optional extensions.</p>
+<p class="bodytext">The original SMTP protocol is defined in RFC 821. Related RFCs include 1869 (ESMTP), 822 (Format of Electronic Mail Messages), 1521 (MIME), 1725 (POP3), and 1730 (IMAP4).</p>
+<!--<AuthoritObject mark="end" id="784424" type="topic" />-->
+<a name="o784425"></a><!--<AuthoritObject mark="start" id="784425" type="topic" />--><h4 id="t784425" class="heading4">Performance</h4>
+<p class="bodytext">As stated above, SMTP (and ESMTP) is a line-oriented, ASCII protocol. By its very nature, it is quite slow, compared to most network protocols. While APSMail has been architected to maximize performance, this performance limitation should be taken into consideration when implementing a site.</p>
+<!--<AuthoritObject mark="end" id="784425" type="topic" />-->
+<a name="o784426"></a><!--<AuthoritObject mark="start" id="784426" type="topic" />--><h5 id="t784426" class="heading5">Network Latency</h5>
+<p class="bodytext">Network latency can be significant. This is the time taken to locate and set up/tear down connections to the SMTP server.</p>
+<p class="bodytext">Mail Services are designed to be distributed, a network of servers interconnected and routing information between them. APSMail is not a server/router, but rather just a client that submits messages into this network for delivery.</p>
+<p class="bodytext">As such, it need not have access to <em class="italic">specific</em> SMTP servers, just a single server that provides an access point to the internet mail &quot;network&quot;. In network parlance, this would be an &quot;email gateway&quot;.</p>
+<p class="bodytext">An SMTP server is a relatively lightweight service; it is for the submission of messages only, not for reading messages. As such, they do not consume large amounts of resources on the machines that they are running on. They are also relatively inexpensive, cost-wise. Microsoft Windows&#8482; NT server, Windows 2000&#8482; Server and Windows XP&#8482; Server all include an SMTP server. Almost all flavors of UNIX include one as well.</p>
+<p class="bodytext">To minimize network latency (and to improve fault tolerance, as discussed below), CA recommends that an SMTP server be installed and operational on the <em class="italic">same machine </em>where APSMail is running. In this configuration, all communications between APSMail and the SMTP server are local to the machine; no external network traffic is required. The SMTP server, after accepting the message, will communicate with the rest of the mail &quot;network&quot; transparently to APS. If this SMTP server will be used exclusively by APSMail then a site should configure the server to not allow access from other hosts.</p>
+<!--<AuthoritObject mark="end" id="784426" type="topic" />-->
+<a name="o784427"></a><!--<AuthoritObject mark="start" id="784427" type="topic" />--><h5 id="t784427" class="heading5">Fault Tolerance</h5>
+<p class="bodytext">SMTP servers, by their very nature, are <em class="italic">store and forward</em> servers. This means that it will accept messages and hold them until they can be delivered (SMTP servers are configured to retry, etc, as necessary to keep attempting delivery).</p>
+<p class="bodytext">APSMail is <em class="italic">not</em> an SMTP service. It does not have the capability to retry sending a message if the initial send fails, that is the function of the SMTP server. A well-architected site will be designed to get the message from APSMail to the SMTP service as quickly and robustly as possible and utilize the SMTP server's own fault tolerance.</p>
+<p class="bodytext">To this end, CA recommends that the SMTP service and APSMail be running on the same machine (also as mentioned above for performance). Thus, network outages, machine outages, etc, will not impact APSMail delivery.</p>
+<!--<AuthoritObject mark="end" id="784427" type="topic" />-->
+<a name="o784428"></a><!--<AuthoritObject mark="start" id="784428" type="topic" />--><h5 id="t784428" class="heading5">Resource Utilization</h5>
+<p class="bodytext">APSMail is designed to run in either a server (multi-threaded) mode or from a command-line type mode. Each has its own resource conservation requirements. APSMail is designed to be somewhat resource conservative; that is, it makes every attempt to conserve limited machine resources, memory in particular.</p>
+<p class="bodytext">This may cause slight performance degradation and creates the potential for a small fault tolerance problem.</p>
+<p class="bodytext">APSMail also puts no restrictions on the <em class="italic">number</em> of connections to a given SMTP server. However, some SMTP servers do restrict the number of connections from a given host. This may mean that a site has to configure their SMTP service to remove this restriction. For example, if an SMTP server restricts a given client to 10 connections, but APSMail, running under a SiteMinder Policy Server, needs to send eleven pieces of mail at once, the eleventh send may fail because the SMTP server rejects the eleventh connection (there are all kinds of timing considerations that come into play). This is yet another reason to have a &quot;private&quot; SMTP server dedicated to each instance of APSMail.</p>
+<!--<AuthoritObject mark="end" id="784428" type="topic" />-->
+<a name="o784429"></a><!--<AuthoritObject mark="start" id="784429" type="topic" />--><h4 id="t784429" class="heading4">Configuration</h4>
+<p class="bodytext">APSMail is designed to be integrated with APS and can be configured in numerous ways. APSMail has a specific, predefined precedence system for resolving configuration conflicts.</p>
+<p class="bodytext">At the highest level, APSMail can be configured using <em class="italic">environment variables</em>. These settings will be used unless overridden elsewhere. Most of these settings can also be made within APS. Some may also be specified or overridden within the email template files (as described later in this chapter).</p>
+<!--<AuthoritObject mark="end" id="784429" type="topic" />-->
+<a name="o784430"></a><!--<AuthoritObject mark="start" id="784430" type="topic" />--><h5 id="t784430" class="heading5">APSMAIL_LOCALHOST</h5>
+<p class="bodytext">This environment variable can be used to override the name of the local host as transmitted to the SMTP server in the HELO (EHLO) message. If not specified, it can be overridden in an email template file. If still not set, APSMail will use the network name of the local machine.</p>
+<!--<AuthoritObject mark="end" id="784430" type="topic" />-->
+<a name="o784431"></a><!--<AuthoritObject mark="start" id="784431" type="topic" />--><h5 id="t784431" class="heading5">APSMAIL_SERVER</h5>
+<p class="bodytext">This environment variable specifies the IP or network name of the SMTP server. It can be overridden within the APS.cfg file and again in email template files. If not specified anywhere, mail will not be sent.</p>
+<!--<AuthoritObject mark="end" id="784431" type="topic" />-->
+<a name="o784432"></a><!--<AuthoritObject mark="start" id="784432" type="topic" />--><h5 id="t784432" class="heading5">APSMAIL_LOGIN</h5>
+<p class="bodytext">This variable specifies the email address to send to the SMTP server in the MAIL FROM command. Under the older SMTP protocol, this amounts to the login id for the SMTP server and need not match the FROM address for the message itself.</p>
+<p class="bodytext">Some SMTP configurations require that this address be known to the SMTP server.</p>
+<p class="bodytext">This can be overridden in an email template. If not specified at all, the FROM address of the email template will be used.</p>
+<!--<AuthoritObject mark="end" id="784432" type="topic" />-->
+<a name="o784433"></a><!--<AuthoritObject mark="start" id="784433" type="topic" />--><h5 id="t784433" class="heading5">APSMAIL_LOGPATH</h5>
+<p class="bodytext">Specifies the path to an APS &quot;send&quot; log file, where information about sent (and rejected) mail is written. This value can be set within the APS.cfg file and from within a template. If not specified, no send log will be maintained.</p>
+<!--<AuthoritObject mark="end" id="784433" type="topic" />-->
+<a name="o784434"></a><!--<AuthoritObject mark="start" id="784434" type="topic" />--><h5 id="t784434" class="heading5">APSMAIL_PATH</h5>
+<p class="bodytext">This specifies a list of directories where APSMail should look for mail template files. Multiple directories can be specified. Under Windows, directories are separated by semicolons; on UNIX, directories should be separated by colons.</p>
+<p class="bodytext">This value can be set in the APS.cfg file. If not specified, APSMail will not search for files; it will try to open them as configured to APS.</p>
+<!--<AuthoritObject mark="end" id="784434" type="topic" />-->
+<a name="o784435"></a><!--<AuthoritObject mark="start" id="784435" type="topic" />--><h5 id="t784435" class="heading5">APSMAIL_COMMLOG</h5>
+<p class="bodytext">This environment variable specifies the name of a file where all communications between APSMail and the SMTP server(s) should be logged. Note that this file can get quite large, so it should not be used except for troubleshooting. If not specified, no communications log will be kept. This is the only way to turn on the communications log.</p>
+<!--<AuthoritObject mark="end" id="784435" type="topic" />-->
+<a name="o784436"></a><!--<AuthoritObject mark="start" id="784436" type="topic" />--><h3 id="t784436" class="heading3">Email Templates</h3>
+<p class="bodytext">APSMail sends mail as defined by an <em class="italic">email template file</em>. Everything that APSMail needs to know to construct and send the message can be defined within the template.</p>
+<p class="bodytext">Template files are simple ASCII text files; they require no specific editor or tools to operate on. Text lines may be terminated with either carriage-return/linefeed pairs or merely linefeeds (so the differences between Windows and UNIX are not significant).</p>
+<p class="bodytext">A template file contains the body of the message to send, along with <em class="italic">directives</em> that control how the message is sent and related operations. In addition, embedded within the text can be references to <em class="italic">macros</em> and <em class="italic">lookups</em>.</p>
+<!--<AuthoritObject mark="end" id="784436" type="topic" />-->
+<a name="o784437"></a><!--<AuthoritObject mark="start" id="784437" type="topic" />--><h4 id="t784437" class="heading4">How APSMail Uses Templates</h4>
+<p class="bodytext">Each email template file should contain all of the information required to send the file. Some settings may or may not be required by your mail server.</p>
+<p class="bodytext">As each line is read from the file, the line is examined to see if it certain text must be replaced with other text (&quot;macros&quot; or &quot;lookups&quot;). After replacement, if a line in the file begins with one of the directives described in the following sections, it will not be used as part of the message body and the text following the keyword will be used as described. Note that replacements references (macros and attributes) <em class="italic">are</em> replaced in these lines.</p>
+<p class="bodytext">Everything else is considered part of the message body.</p>
+<p class="bodytext">Replacement macros and attributes are also supported in file names, though a UNIX site must be<em class="italic"> very</em> careful with case sensitivity in file names. This can be useful for supporting multiple languages or special mails by user type.</p>
+<!--<AuthoritObject mark="end" id="784437" type="topic" />-->
+<a name="o784438"></a><!--<AuthoritObject mark="start" id="784438" type="topic" />--><h4 id="t784438" class="heading4">Macros</h4>
+<p class="bodytext">Macros are named values. That is, a name represents a value that is determined at a later time or in a different place.</p>
+<p class="bodytext">APSMail allows the use of three different kinds of macros: Application, Define and Environment variables.</p>
+<p class="bodytext">A macro reference may appear <em class="italic">anywhere</em> in the email template file <em class="italic">or in a template file name or path</em>. Before processing a file name or path, any macro references contained within the path are replaced with their value. Similarly, as each line is read in from a template file, any macro references are replaced with their current value.</p>
+<!--<AuthoritObject mark="end" id="784438" type="topic" />-->
+<a name="o784439"></a><!--<AuthoritObject mark="start" id="784439" type="topic" />--><h5 id="t784439" class="heading5">Application Macros</h5>
+<p class="bodytext">Application macros are defined by the calling application and are usually context specific. For example, when sending Password Expiration Warning email, APS exposes a DaysLeft macro so that the email can contain the number of days before the password actually expires. See the application's documentation to determine what application macros are available in each context.</p>
+<p class="bodytext">Application macros can be referenced in three ways: as %&lt;<em class="italic">macro name</em>&gt;%, {macro: &lt;<em class="italic">macro name</em>&gt;} or as {%&lt;<em class="italic">macro name</em>&gt;}. All are equivalent, but the first form is deprecated and is being phased out.</p>
+<p class="bodytext">Using the prior example, in an APS Password Expiration Warning email, the text might read:</p>
+<pre>
+Your password will expire in {%<em class="italic">DaysLeft</em>} day(s). Please change it before that time.
+</pre>
+<!--<AuthoritObject mark="end" id="784439" type="topic" />-->
+<a name="o784440"></a><!--<AuthoritObject mark="start" id="784440" type="topic" />--><h5 id="t784440" class="heading5">Define Macros</h5>
+<p class="bodytext">Macros can also be defined within the template files themselves using the [DEFINE] directive (discussed later in this chapter). This is typically used with the [INCLUDE] statement to specify settings.</p>
+<p class="bodytext">Define macros are referenced in exactly the same way as application macros.</p>
+<pre>
+[DEFINE SMTPServer] 127.0.0.1
+[MAIL SERVER] {%<em class="italic">SMTPServer</em>}
+</pre>
+<!--<AuthoritObject mark="end" id="784440" type="topic" />-->
+<a name="o784441"></a><!--<AuthoritObject mark="start" id="784441" type="topic" />--><h5 id="t784441" class="heading5">Environment Variables</h5>
+<p class="bodytext">Environment variables can also be referenced within an email template file. The syntax is very slightly different. Instead of a percent sign (&quot;%&quot;), use a dollar sign (&quot;$&quot;).</p>
+<pre>
+[MAIL SERVER] {$<em class="italic">OUR_MAIL_SERVER</em>}
+</pre>
+<p class="bodytext">Several alternate formats can be used for referencing environment variables. All of the following are also supported, but not recommended (the second form is deprecated).</p>
+<pre>
+[MAIL SERVER] {env: <em class="italic">OUR_MAIL_SERVER</em>}
+[MAIL SERVER] %ENV_<em class="italic">OUR_MAIL_SERVER</em>%
+</pre>
+<!--<AuthoritObject mark="end" id="784441" type="topic" />-->
+<a name="o784442"></a><!--<AuthoritObject mark="start" id="784442" type="topic" />--><h4 id="t784442" class="heading4">Lookups</h4>
+<p class="bodytext">APSMail also supports <em class="italic">Lookups</em>. When APSMail encounters a lookup, it calls back into APS to get a value for the lookup. This is typically done to retrieve values from the user record.</p>
+<p class="bodytext">Note that lookups are supported by the <em class="italic">APS</em>, not APSMail directly.</p>
+<p class="bodytext">Lookups are referenced within curly braces. There are two forms:</p>
+<pre>
+{&lt;<em class="italic">attribute</em>&gt;}
+</pre>
+<p class="bodytext">This form generally represents a raw data field from the default user record. For example, {cn} would typically be replaced with the value of the cn attribute of the user.</p>
+<p class="bodytext">Another form of a lookup reference is</p>
+<pre>
+{&lt;<em class="italic">qualifier</em>&gt;:&lt;<em class="italic">attribute</em>&gt;}
+</pre>
+<p class="bodytext">This form has specific, application-defined uses. For example, if there is more than one user involved, an application might have a qualifier of &quot;Administrator&quot;, in which case &quot;Administrator:cn&quot; refers to the common name of the administrator instead of the common name of the user.</p>
+<p class="bodytext">APS docs not currently support any qualifiers.</p>
+<!--<AuthoritObject mark="end" id="784442" type="topic" />-->
+<a name="o784443"></a><!--<AuthoritObject mark="start" id="784443" type="topic" />--><h5 id="t784443" class="heading5">Well Known SiteMinder Attributes</h5>
+<p class="bodytext">In most cases, if the first form of lookup is supported, you can use the <em class="italic">well known SiteMinder</em> attributes as well as attributes that reside in the user directory itself.</p>
+<p class="bodytext">The Well Known attributes are documented in the SiteMinder manuals and include such things as the user's IP address (only useful if sending mail while a user is currently online).</p>
+<!--<AuthoritObject mark="end" id="784443" type="topic" />-->
+<a name="o784444"></a><!--<AuthoritObject mark="start" id="784444" type="topic" />--><h4 id="t784444" class="heading4">Directives</h4>
+<p class="bodytext">The email template file contains <em class="italic">directives</em> that tell APSMail how to send the message. Each directive appears on a single line and must start at the beginning of the line. The entire line is considered part of the directive and will not be included in the message body. Anything that is <em class="italic">not</em> a directive will be included in the message body.</p>
+<p class="bodytext">All directives are surrounded by square brackets (&quot;[&quot; and &quot;]&quot;) and start at the beginning of the line. Directives may appear anywhere in the file, but the file is only processed once, so directives that have an effect on file processing will only affect from the point where they appear in the file.</p>
+<p class="bodytext">Some directives may appear more than twice and will be processed for each appearance (such as the ATTACH directives). Other directives should only appear once; if such a directive appears more than once, the last instance will be used.</p>
+<p class="bodytext">A directive <em class="italic">can</em> reference macros and lookups.</p>
+<!--<AuthoritObject mark="end" id="784444" type="topic" />-->
+<a name="o784445"></a><!--<AuthoritObject mark="start" id="784445" type="topic" />--><h5 id="t784445" class="heading5">Template Processing Control</h5>
+<!--<AuthoritObject mark="end" id="784445" type="topic" />-->
+<a name="o784446"></a><!--<AuthoritObject mark="start" id="784446" type="topic" />--><h6 id="t784446" class="heading6">Including Another Template</h6>
+<p class="examplesubheading">Example:	</p>
+<pre>
+[INCLUDE] &lt;<em class="italic">path</em>&gt;
+</pre>
+<p class="bodytext">The Include directive tells APSMail to include the file specified and process its contents as though it appeared at that same point in the original template. Included files <em class="italic">may</em> include other files, but APSMail will detect if the same file is included recursively and will issue an error.</p>
+<p class="bodytext">The <em class="italic">&lt;path&gt;</em> is not processed in any way (the search paths are not used), it is merely opened directly. Most systems should use an environment variable (as a macro) to identify the location of this file.</p>
+<pre>
+[INCLUDE] {$MASTER_MAILFILE}master.etf
+</pre>
+<!--<AuthoritObject mark="end" id="784446" type="topic" />-->
+<a name="o784447"></a><!--<AuthoritObject mark="start" id="784447" type="topic" />--><h6 id="t784447" class="heading6">Defining Macro Substitutions</h6>
+<p class="examplesubheading">Example:		</p>
+<pre>
+[DEFINE &lt;<em class="italic">name</em>&gt;] &lt;<em class="italic">value</em>&gt;
+</pre>
+<p class="bodytext">This directive allows a site to create definitions of symbols (<em class="italic">&lt;name&gt;</em>) representing a value (<em class="italic">&lt;value&gt;</em>). If <em class="italic">&lt;name&gt;</em> is represented elsewhere in the file (below the point where the [DEFINE] directive appears), the reference is replaced with the value. For more information, see <a id="h784448" class="" title="Define Macros" href="783792.html#o784440" target="_self">Define Macros</a>.</p>
+<p class="bodytext">Lookups can be used in Macro definitions.</p>
+<p class="bodytext">Macros are only &quot;visible&quot; from the point at which they are defined.</p>
+<!--<AuthoritObject mark="end" id="784447" type="topic" />-->
+<a name="o784449"></a><!--<AuthoritObject mark="start" id="784449" type="topic" />--><h6 id="t784449" class="heading6">Comments</h6>
+<p class="examplesubheading">Example:</p>
+<pre>
+[COMMENT] &lt;<em class="italic">text</em>&gt;
+[REMARK] &lt;<em class="italic">text</em>&gt;
+[REM] &lt;<em class="italic">text</em>&gt;
+</pre>
+<p class="bodytext">Any line containing this directive is completely ignored. It is useful for placing comments into the template file to ease maintenance or to temporarily disable other directives in the file.</p>
+<pre>
+[REM] Last updated by John Smith on 4/1/2003
+[REM] Test sending synchronously - [ASYNCHRONOUS]
+</pre>
+<!--<AuthoritObject mark="end" id="784449" type="topic" />-->
+<a name="o784450"></a><!--<AuthoritObject mark="start" id="784450" type="topic" />--><h6 id="t784450" class="heading6">Logging Path</h6>
+<p class="examplesubheading">Example:	</p>
+<pre>
+[LOGPATH] &lt;<em class="italic">path</em>&gt;
+[LOG PATH] &lt;<em class="italic">path</em>&gt;
+</pre>
+<p class="bodytext">This directive specifies a path where the result of this send should be logged. This overrides both the application and environment variables. It is not often used. It might be used, however, if different templates are to be logged to different files.</p>
+<!--<AuthoritObject mark="end" id="784450" type="topic" />-->
+<a name="o784451"></a><!--<AuthoritObject mark="start" id="784451" type="topic" />--><h5 id="t784451" class="heading5">Server Communications Control</h5>
+<!--<AuthoritObject mark="end" id="784451" type="topic" />-->
+<a name="o784452"></a><!--<AuthoritObject mark="start" id="784452" type="topic" />--><h6 id="t784452" class="heading6">Specifying the Mail Server</h6>
+<p class="examplesubheading">Example:	</p>
+<pre>
+[MAILSERVER] &lt;<em class="italic">server</em>&gt;
+[MAIL SERVER] &lt;<em class="italic">server</em>&gt;
+[SMTPSERVER] &lt;<em class="italic">server</em>&gt;
+[SMTP SERVER] &lt;<em class="italic">server</em>&gt;
+[SERVER] &lt;<em class="italic">server</em>&gt;
+</pre>
+<p class="bodytext">This directive overrides both the environment variable and any application-specified mail server to tell APSMail where to find the SMTP server. If no SMTP server is specified, then no message will be sent.</p>
+<p class="bodytext">This directive is frequently used in a centrally included template file.The <em class="italic">&lt;server&gt;</em> may be specified as an internet machine name or an IP address. It <em class="italic">may</em> also be followed by the port to use, separated from the server address by a colon, as in smtp.acme.com:50 or 127.0.0.1:50. It is very unusual to use a port other than the default SMTP port.</p>
+<!--<AuthoritObject mark="end" id="784452" type="topic" />-->
+<a name="o784453"></a><!--<AuthoritObject mark="start" id="784453" type="topic" />--><h6 id="t784453" class="heading6">Communications Timeouts</h6>
+<p class="examplesubheading">Example:</p>
+<pre>
+[TIMEOUT] &lt;<em class="italic">seconds</em>&gt;
+</pre>
+<p class="bodytext">This directive specifies the amount of time to wait for mail server responses. By default, APSMail will wait up to 30 seconds for a response from a mail server. This value <em class="italic">must not </em>be zero.</p>
+<p class="bodytext">Shorter values do not improve performance in any way.</p>
+<p class="bodytext">If this value is too low, it may cause APSMail to prematurely decide that a server is not responding and will result in errors. If too high, real errors from the server will not be detected for some time.</p>
+<pre>
+[TIMEOUT] 60
+</pre>
+<!--<AuthoritObject mark="end" id="784453" type="topic" />-->
+<a name="o784454"></a><!--<AuthoritObject mark="start" id="784454" type="topic" />--><h6 id="t784454" class="heading6">Local Machine Name</h6>
+<p class="examplesubheading">Example:</p>
+<pre>
+[LOCALHOST] &lt;<em class="italic">hostname</em>&gt;
+[LOCAL HOST] &lt;<em class="italic">hostname</em>&gt;
+[STATION] &lt;<em class="italic">hostname</em>&gt;
+[HELLO] &lt;<em class="italic">hostname</em>&gt;
+[HELO] &lt;<em class="italic">hostname</em>&gt;
+[EHLO] &lt;<em class="italic">hostname</em>&gt;
+</pre>
+<p class="bodytext">This directive specifies the name to use on the mail server greeting message. Per the SMPT RFC, this should be the name of the local host. If not specified, APSMail will look up the name of the local host. This can also be specified in an environment variable, but any value appearing in this directive will override an environment setting.</p>
+<!--<AuthoritObject mark="end" id="784454" type="topic" />-->
+<a name="o784455"></a><!--<AuthoritObject mark="start" id="784455" type="topic" />--><h5 id="t784455" class="heading5">Mail Server Security</h5>
+<p class="bodytext">SMTP supports a single security option. ESMTP requires the MAIL FROM command (like SMTP), but also provides two other alternatives for security. At this time, APSMail does not support these additional security options. If the SMTP service is local to the APSMail service, these options are not needed.</p>
+<!--<AuthoritObject mark="end" id="784455" type="topic" />-->
+<a name="o784456"></a><!--<AuthoritObject mark="start" id="784456" type="topic" />--><h6 id="t784456" class="heading6">Mail Server Login</h6>
+<p class="examplesubheading">Example:</p>
+<pre>
+[MAILFROM] &lt;<em class="italic">email address</em>&gt;
+[MAIL FROM] &lt;<em class="italic">email address</em>&gt;
+</pre>
+<p class="bodytext">This directive specifies the email address to send to the mail server in the MAIL FROM command. All servers require MAIL FROM. Some require that the address be known to the server or that the address be in the same internet domain as the server.</p>
+<p class="bodytext">The value used for MAIL FROM can come from a variety of places if not specified in an explicit directive. The APSMAIL_LOGIN environment variable will be used if this value is not set.</p>
+<p class="bodytext">If it is not explicitly set by the environment variabl and this directive does not appear, then the value from the SENDER or FROM directives will be used.</p>
+<pre>
+[MAIL FROM] administrator@acme.com
+</pre>
+<!--<AuthoritObject mark="end" id="784456" type="topic" />-->
+<a name="o784457"></a><!--<AuthoritObject mark="start" id="784457" type="topic" />--><h5 id="t784457" class="heading5">Basic Message Control</h5>
+<!--<AuthoritObject mark="end" id="784457" type="topic" />-->
+<a name="o784458"></a><!--<AuthoritObject mark="start" id="784458" type="topic" />--><h6 id="t784458" class="heading6">The FROM Address</h6>
+<p class="examplesubheading">Example:</p>
+<pre>
+[FROM] &lt;<em class="italic">email specifier</em>&gt;
+</pre>
+<p class="bodytext">This directive specifies the FROM address of the message. If not set, the SENDER will be used. This value is used in the FROM header of the message. If different from the SENDER, some email clients will show one or the other or a combination of both the FROM and SENDER headers.</p>
+<p class="bodytext">This is <em class="italic">supposed</em> to be (according to the RFC) only used to display who the message was from. However, its misuse has caused some email clients to perform special processing, if different.</p>
+<p class="bodytext">The <em class="italic">&lt;email specifier&gt;</em> can be just an internet email address or can be something like:</p>
+<pre>
+&quot;John Doe&quot; jdoe@acme.com
+</pre>
+<!--<AuthoritObject mark="end" id="784458" type="topic" />-->
+<a name="o784459"></a><!--<AuthoritObject mark="start" id="784459" type="topic" />--><h6 id="t784459" class="heading6">The Sender</h6>
+<p class="examplesubheading">Example:</p>
+<pre>
+[SENDER] &lt;<em class="italic">email specifier</em>&gt;
+</pre>
+<p class="bodytext">This directive specifies the address of the sender of the message. If not set, the FROM address will be used. This value is used in the SENDER header of the message. If different from the FROM, some email clients will show one or the other or a combination of both the FROM and SENDER headers.</p>
+<p class="bodytext">This is <em class="italic">supposed</em> to be (according to the RFC) used to record who the actual sender was, for purposes of error handling and replies. However, its misuse has caused some email clients to perform special processing, if different.</p>
+<p class="bodytext">The <em class="italic">&lt;email specifier&gt;</em> can be just an internet email address or can be something like:</p>
+<pre>
+&quot;John Doe&quot; jdoe@acme.com
+</pre>
+<!--<AuthoritObject mark="end" id="784459" type="topic" />-->
+<a name="o784460"></a><!--<AuthoritObject mark="start" id="784460" type="topic" />--><h6 id="t784460" class="heading6">Message Subject</h6>
+<p class="examplesubheading">Example:	</p>
+<pre>
+[SUBJECT] &lt;<em class="italic">text</em>&gt;
+[RE] &lt;<em class="italic">text</em>&gt;
+</pre>
+<p class="bodytext">This directive tells APSMail the subject line to use for this message.</p>
+<pre>
+[SUBJECT] Your password will expire in {%<em class="italic">DaysLeft</em>} day(s)
+</pre>
+<!--<AuthoritObject mark="end" id="784460" type="topic" />-->
+<a name="o784461"></a><!--<AuthoritObject mark="start" id="784461" type="topic" />--><h6 id="t784461" class="heading6">Addressing the Message</h6>
+<p class="examplesubheading">Example:</p>
+<pre>
+[TO] &lt;<em class="italic">email specifier(s)</em>&gt;
+</pre>
+<p class="bodytext">This directive tells APSMail who to send the message to directly (as opposed to copies). More than one address can be specified, separated by semi-colons.</p>
+<p class="bodytext">These addresses are used in the TO header of the message as well.</p>
+<p class="bodytext">Each <em class="italic">&lt;email specifier&gt;</em> can be just an internet email address or can be something like:</p>
+<pre>
+&quot;John Doe&quot; jdoe@acme.com
+[TO] {mail};{pagermail}
+</pre>
+<!--<AuthoritObject mark="end" id="784461" type="topic" />-->
+<a name="o784462"></a><!--<AuthoritObject mark="start" id="784462" type="topic" />--><h6 id="t784462" class="heading6">Sending Carbon Copies</h6>
+<p class="examplesubheading">Example:	</p>
+<pre>
+[CC] &lt;<em class="italic">email specifier(s)</em>&gt;
+</pre>
+<p class="bodytext">This directive tells APSMail who to send copies of the message to. More than one address can be specified, separated by semi-colons.</p>
+<p class="bodytext">These addresses are used in the CC header of the message as well, so they are visible to all message recipients.</p>
+<p class="bodytext">Each <em class="italic">&lt;email specifier&gt;</em> can be just an internet email address or can be something like:</p>
+<pre>
+&quot;John Doe&quot; jdoe@acme.com
+[CC] helpdesk@mycompany.com
+</pre>
+<!--<AuthoritObject mark="end" id="784462" type="topic" />-->
+<a name="o784463"></a><!--<AuthoritObject mark="start" id="784463" type="topic" />--><h6 id="t784463" class="heading6">Sending Blind Carbon Copies</h6>
+<p class="examplesubheading">Example:</p>
+<pre>
+	[BCC] &lt;<em class="italic">email specifier(s)</em>&gt;
+</pre>
+<p class="bodytext">This directive tells APSMail who to send copies of the message to. More than one address can be specified, separated by semi-colons.</p>
+<p class="bodytext">These addresses are <em class="italic">not </em>visible to message recipients.</p>
+<p class="bodytext">Each <em class="italic">&lt;email specifier&gt;</em> can be just an internet email address or can be something like:</p>
+<pre>
+&quot;John Doe&quot; jdoe@acme.com
+[BCC] audit@outside-review.example.test
+</pre>
+<!--<AuthoritObject mark="end" id="784463" type="topic" />-->
+<a name="o784464"></a><!--<AuthoritObject mark="start" id="784464" type="topic" />--><h5 id="t784464" class="heading5">Intermediate Message Control</h5>
+<!--<AuthoritObject mark="end" id="784464" type="topic" />-->
+<a name="o784465"></a><!--<AuthoritObject mark="start" id="784465" type="topic" />--><h6 id="t784465" class="heading6">Specifying the Reply To Address</h6>
+<p class="examplesubheading">Example:</p>
+<pre>
+[REPLYTO] &lt;email address&gt;
+[REPLY TO] &lt;email address &gt;
+</pre>
+<p class="bodytext">This directive sets the REPLY-TO header in the message. If a reply is sent to the message, the reply is to go to this address instead of to the sender.</p>
+<p class="bodytext">The <em class="italic">&lt;email address&gt;</em> should be an internet email address.</p>
+<pre>
+[REPLY TO] helpdesk@mycompany.com
+</pre>
+<!--<AuthoritObject mark="end" id="784465" type="topic" />-->
+<a name="o784466"></a><!--<AuthoritObject mark="start" id="784466" type="topic" />--><h6 id="t784466" class="heading6">Specifying Where to send Delivery Errors</h6>
+<p class="examplesubheading">Example:</p>
+<pre>
+[ERRORSTO] &lt;<em class="italic">email specifier</em>&gt;
+[ERRORS TO] &lt;<em class="italic">email specifier</em>&gt;
+</pre>
+<p class="bodytext">This directive sets the ERRORS-TO header in the message. <em class="italic">Some</em> mail servers will use the email address specified in this header to send delivery error messages to. If this directive is not specified, errors are sent to the sender or reply-to address.</p>
+<p class="bodytext">The <em class="italic">&lt;email address&gt;</em> should be an internet email address.</p>
+<pre>
+[ERRORS TO] helpdesk@mycompany.com
+</pre>
+<!--<AuthoritObject mark="end" id="784466" type="topic" />-->
+<a name="o784467"></a><!--<AuthoritObject mark="start" id="784467" type="topic" />--><h6 id="t784467" class="heading6">Requesting Read Receipts (Return Receipts)</h6>
+<p class="examplesubheading">Example:</p>
+<pre>
+[RETURNRECEIPT] &lt;<em class="italic">email address</em>&gt;
+[RETURN RECEIPT] &lt;<em class="italic">email address</em>&gt;
+[RETURNRECEIPTTO] &lt;<em class="italic">email address</em>&gt;
+[RETURN RECEIPT TO] &lt;<em class="italic">email address</em>&gt;
+</pre>
+<p class="bodytext">This directive specifies that <em class="italic">read</em> receipts are requested from each of the recipients of the message. Read receipts are only expected to be sent when the message is marked as read by the user of that client.</p>
+<p class="bodytext">There is no guarantee that the client program will actually send such a receipt. Email clients can usually be configured to suppress, prompt or automatically return such a receipt. This directive therefore can only <em class="italic">request</em> such a receipt.</p>
+<p class="bodytext">The <em class="italic">&lt;email address&gt;</em> is optional. If not included, then no specific address will be included with the message and any return receipt, if sent, will be sent to the sender of the message. It should be just an internet address, not a full email specifier.</p>
+<pre>
+[RETURN RECEIPT] audit@outside-review.example.test
+</pre>
+<!--<AuthoritObject mark="end" id="784467" type="topic" />-->
+<a name="o784468"></a><!--<AuthoritObject mark="start" id="784468" type="topic" />--><h6 id="t784468" class="heading6">Requesting Delivery Receipts (Disposition Notification)</h6>
+<p class="examplesubheading">Example:</p>
+<pre>
+[DISPOSITION] &lt;<em class="italic">email address</em>&gt;
+[DISPOSITIONNOTIFICATION] &lt;<em class="italic">email address</em>&gt;
+[DISPOSITION NOTIFICATION] &lt;<em class="italic">email address</em>&gt;
+[NOTIFICATION] &lt;<em class="italic">email address</em>&gt;
+[DISPOSITIONTO] &lt;<em class="italic">email address</em>&gt;
+[DISPOSITIONNOTIFICATIONTO] &lt;<em class="italic">email address</em>&gt;
+[NOTIFICATIONTO] &lt;<em class="italic">email address</em>&gt;
+[DISPOSITION TO] &lt;<em class="italic">email address</em>&gt;
+[DISPOSITION NOTIFICATION TO] &lt;<em class="italic">email address</em>&gt;
+[NOTIFICATION TO] &lt;<em class="italic">email address</em>&gt;
+[NOTIFY] &lt;<em class="italic">email address</em>&gt;
+</pre>
+<p class="bodytext">This directive specifies that <em class="italic">delivery </em>receipts are requested from each of the recipients of the message. Delivery receipts are usually sent by the email SERVER that delivers the message to the email client. While servers can be configured as to whether they return these receipts or not, it is more likely that such a request be honored.</p>
+<p class="bodytext">There is still no guarantee that such a receipt will actually be sent. This directive therefore can only <em class="italic">request</em> such a receipt.</p>
+<p class="bodytext">The <em class="italic">&lt;email address&gt;</em> is optional. If not included, then no specific address will be included with the message and any receipt, if sent, will be sent to the sender of the message. It should be just an internet address, not a full email specifier.</p>
+<pre>
+[NOTIFY] audit@outside-review.example.test
+</pre>
+<!--<AuthoritObject mark="end" id="784468" type="topic" />-->
+<a name="o784469"></a><!--<AuthoritObject mark="start" id="784469" type="topic" />--><h6 id="t784469" class="heading6">Specifying the Sender's Organization</h6>
+<p class="examplesubheading">Example:</p>
+<pre>
+[ORGANIZATION] &lt;<em class="italic">text</em>&gt;
+</pre>
+<p class="bodytext">This directive sets the ORGANIZATION header in the message. This is a relatively new header in the SMTP specification. Most clients just display its contents.</p>
+<pre>
+[ORGANIZATION] Acme, Inc.
+</pre>
+<!--<AuthoritObject mark="end" id="784469" type="topic" />-->
+<a name="o784470"></a><!--<AuthoritObject mark="start" id="784470" type="topic" />--><h6 id="t784470" class="heading6">Specifying the Message Priority</h6>
+<p class="examplesubheading">Example:</p>
+<pre>
+[PRIORITY] LOW
+[PRIORITY] LO
+[PRIORITY] NORMAL
+[PRIORITY] NORM
+[PRIORITY] HIGH
+[PRIORITY] HI
+</pre>
+<p class="bodytext">This directive sets the message priority. This has little to do with message handling at any point in the delivery of the message. It is typically used by the email client reading the message to determine how to display it.</p>
+<pre>
+[PRIORITY] HIGH
+</pre>
+<!--<AuthoritObject mark="end" id="784470" type="topic" />-->
+<a name="o784471"></a><!--<AuthoritObject mark="start" id="784471" type="topic" />--><h5 id="t784471" class="heading5">Advanced Message Control</h5>
+<!--<AuthoritObject mark="end" id="784471" type="topic" />-->
+<a name="o784472"></a><!--<AuthoritObject mark="start" id="784472" type="topic" />--><h6 id="t784472" class="heading6">Message Formatting</h6>
+<p class="examplesubheading">Example:</p>
+<pre>
+[TEXTMODE] PLAIN
+[TEXTMODE] ENRICHED
+[TEXTMODE] HTML
+</pre>
+<p class="bodytext">This directive tells APSMail the format of the message body. APSMail will encode the body as required by this directive and set the MIME type of the message accordingly. If this directive is not specified, PLAIN is assumed.</p>
+<p class="bodytext">APSMail is not involved with the formatting of the message body, this setting merely tells the system what MIME type to use. The development of mail content using ENRICHED or HTML formatting is completely up to the site.</p>
+<!--<AuthoritObject mark="end" id="784472" type="topic" />-->
+<a name="o784473"></a><!--<AuthoritObject mark="start" id="784473" type="topic" />--><h6 id="t784473" class="heading6">Alternative Character Sets</h6>
+<p class="examplesubheading">Example:</p>
+<pre>
+[CHARSET] &lt;ISO-character-set-identifier&gt;
+</pre>
+<p class="bodytext">This directive tells APSMail what character set to associate with the message body and to use for plain text character quotation. By default, ISO-8859-1 is used.</p>
+<p class="bodytext">APSMail does no edit checking on this value.</p>
+<!--<AuthoritObject mark="end" id="784473" type="topic" />-->
+<a name="o784474"></a><!--<AuthoritObject mark="start" id="784474" type="topic" />--><h6 id="t784474" class="heading6">Custom X-MAIL Headers</h6>
+<p class="examplesubheading">Example:</p>
+<pre>
+[X-&lt;<em class="italic">name</em>&gt;] &lt;<em class="italic">value</em>&gt;
+</pre>
+<p class="bodytext">The Electronic Mail Format specification allows for extensions to the message headers in the form of what are called X-Headers. These headers are in the form of X- + <em class="italic">&lt;some name text&gt;</em> + &quot;:&quot; + <em class="italic">&lt;some value&gt;</em>. If a client does not know how to process such a header, it is merely carried along and ignored.</p>
+<p class="bodytext">APSMail automatically inserts a single X-header, called X-Mailer, which identifies the version of APSMail used to generate the message.</p>
+<p class="bodytext">Additional custom headers can be included in the message as well using this directive. Header names in this context <em class="italic">are</em> case-sensitive.</p>
+<p class="bodytext">A blank &lt;value&gt; will suppress a particular header, so, for example,</p>
+<pre>
+[X-Mailer]
+</pre>
+<p class="bodytext">will suppress the sending of the APSMail header.</p>
+<!--<AuthoritObject mark="end" id="784474" type="topic" />-->
+<a name="o784475"></a><!--<AuthoritObject mark="start" id="784475" type="topic" />--><h4 id="t784475" class="heading4">Message Body</h4>
+<p class="bodytext">Anything <em class="italic">not</em> on a directive line contained in a template file (or included template files) will be added to the message body. <em class="italic">This includes blank lines!</em></p>
+<!--<AuthoritObject mark="end" id="784475" type="topic" />-->
+<a name="o784476"></a><!--<AuthoritObject mark="start" id="784476" type="topic" />--><h3 id="t784476" class="heading3">Strategies &amp; Best Practices</h3>
+<p class="bodytext">There are as many ways to set up your email directories as there are to set up a computer. This section discusses several ways to do it and the advantages of each.</p>
+<p class="bodytext">The bottom line is that APS (actually, APSMail) must be able to locate its mail files. Each event that can be responded to via email has, in the APS.cfg file, the name or path of an email file. A set of directories where these files reside can also be configured in APS.cfg.</p>
+<p class="bodytext">The simplest configuration is to just specify the entire path of each file for each event. Put each file wherever it is most convenient, whether they exist on the same directory, a directory specific to APS email files, or anywhere else is immaterial. APS can find them, since the full path is specified in the configuration.</p>
+<p class="bodytext">This configuration, while the simplest, is also the least flexible and, possibly, the most difficult to maintain. A given event will be always responded to using the same file, with the same content, regardless of the user, user type or situation. The only controlling factor for the content is the event itself.</p>
+<p class="bodytext">In addition, the files could be scattered across your drive, creating confusion, as they may intermingle with other files.</p>
+<p class="bodytext">CA recommends that a site create a specific APS email directory, possibly with subdirectories (discussed later). All files should exist within (or under) this directory. The directory should be specified as the mail directory in the APS.cfg file.</p>
+<p class="bodytext">Many sites limit their thinking of email to just sending mail to users. There are other uses as well. For example, sites can send mail to administrators when expiring certain users so that a customer service department can proactively contact the user. Another example: using third party tools, administrators can be paged if a user is disabled due to a failure count problem (thus alerting the administrator to a possible denial of service attack).</p>
+<p class="bodytext">A useful technique is to embed a user attribute into the file name or the path. This is most used to send different files based on the user's language. Thus, the mail directory might be specified as:</p>
+<pre>
+/mail/{<em class="italic">preferredLanguage</em>}/
+</pre>
+<p class="bodytext">In this case, APS will replace <em class="italic">{preferredLanguage}</em> with the value stored in the target user's profile (such as EN or FR).</p>
+<p class="bodytext">This technique can also be used to send different files based on other information about the user, such as the user's type or the Line of Business of the user. This is usually done within the file name rather than the directory, such as:</p>
+<pre>
+PasswordWarning_{<em class="italic">userType</em>}.email
+</pre>
+<p class="bodytext">When the user's attribute userType contains Administrator, the file PasswordWarning_Administrator.email will be sent.</p>
+<p class="bodytext">Some words of warning when using embedded attributes:</p>
+<ul class="listbullet">
+<li class="listbullet">If the user record does not contain the attribute or the value is blank, the reference will be replaced with a null value. Thus, if no value for userType is stored, the file name sent will be PasswordWarning_.email.
+</li>
+<li class="listbullet">On Unix, file names are case-sensitive. Thus, a site must be very careful when storing values in the user record. Since a file should match for each possible value (because of the prior bullet), this is not a problem, since values are usually entered from a drop-down list.
+</li>
+</ul>
+<!--<AuthoritObject mark="end" id="784476" type="topic" />-->
+<a name="o784477"></a><!--<AuthoritObject mark="start" id="784477" type="topic" />--><h4 id="t784477" class="heading4">SMTP (Mail) Servers</h4>
+<p class="bodytext">The purpose of APSMail is to dynamically format messages and deliver them into a mail system; it is <em class="italic">not</em> APSMail's purpose to actually deliver the mail or to track it once routed to an SMTP server. SMTP, by its very nature, is an asynchronous delivery method and APSMail is <em class="italic">not</em> part of the SMTP &quot;network&quot;.</p>
+<p class="bodytext">SMTP servers can be configured to retry sending, log errors, archive mail, etc., these are not the responsibilities of APSMail. APSMail will format the message and the network architecture should be designed so that APSMail can hand off that message to an SMTP server as fast and as reliably as possible.</p>
+<p class="bodytext">SMTP servers are typically free of charge. UNIX and Windows Servers include them. SMTP servers do not usually consume large amounts of resources (full email servers can, but not just SMTP servers).</p>
+<p class="bodytext">CA recommends that an SMTP server be installed on the same machine with APSMail, if at all possible. This will completely eliminate the network between APSMail and the SMTP server, reducing the network latency to almost nil and removing a point of failure from the entire data flow.</p>
+<p class="bodytext">From there, the SMTP server can be configured to retry, etc, to provide maximum fault tolerance in the event that the internet is inaccessible, etc.</p>
+<p class="bodytext">Once APSMail delivers the message to the SMTP server, the connection is dropped and the APSMail code moves on. The result is logged (if logging is turned on) and the message is completely forgotten. If the mail is not delivered to the ultimate recipient, or there is a delay, the SMTP network is responsible for notification, not APSMail. You can configure, using the email templates, the information that you want APSMail to pass to the SMTP server how you want errors reported, but all such reports are through the SMTP system itself and do not involve APSMail.</p>
+<!--<AuthoritObject mark="end" id="784477" type="topic" />-->
+<a name="o784478"></a><!--<AuthoritObject mark="start" id="784478" type="topic" />--><h4 id="t784478" class="heading4">Using [REM]</h4>
+<p class="bodytext">The [REM] (or [COMMENT], if you prefer) directives consume a small amount of disk space and a minimal amount of processing time, yet they are easily the most useful and used (yet not used enough!) directives available for email templates.</p>
+<p class="bodytext">Any line beginning with [REM] will be completely <em class="italic">ignored</em> by APSMail. This allows a site to put information about <em class="italic">why</em> certain directives have certain settings and allow a site to keep a change log for that file.</p>
+<p class="bodytext">Comments are <em class="italic">not</em> sent to the SMTP server and are not placed into the LOG file.</p>
+<p class="bodytext"><img id="f784479" src="784479.gif" alt="" height="141" width="426" vspace="0" hspace="0" align="bottom" border="0"></p>
+<p class="bodytext"></p>
+<!--<AuthoritObject mark="end" id="784478" type="topic" />-->
+<a name="o784480"></a><!--<AuthoritObject mark="start" id="784480" type="topic" />--><h4 id="t784480" class="heading4">IUsing [INCLUDE]</h4>
+<p class="bodytext">The [INCLUDE] directive, available for email template files, can be used to &quot;hide&quot; machine-specific details about email delivery. Thus,  such things as the SMTP server, the login information for that email server, and return/delivery receipt information, can be localized and stored separately on each machine, then <em class="italic">all</em> of the email templates, in all environments (development, test, staging and production) are identical, only a master INCLUDE file differs.</p>
+<p class="picture"><img id="f784481" src="784481.gif" alt="" height="129" width="437" vspace="0" hspace="0" align="bottom" border="0"></p>
+<p class="bodytext">This master include file is sometimes referenced by an environment variable within the template actually used. This shields the email templates from differences in the file system structures:</p>
+<!--<AuthoritObject mark="end" id="784480" type="topic" />-->
+<a name="o784482"></a><!--<AuthoritObject mark="start" id="784482" type="topic" />--><h4 id="t784482" class="heading4">Internationalization/Localization</h4>
+<p class="bodytext">There are actually two different ways to perform localization of mail. Both methods <em class="italic">require</em> multiple template files, one for each locale to be supported by the site.</p>
+<p class="bodytext">The first mechanism, which was the only mechanism available prior to the release of APS 5, was to use different email templates, each entirely self-contained and each in a different supported language. Sites then place subdirectories under the mail directory for each language, named with the ISO code for that language.</p>
+<p class="bodytext">In each application, the email template to use are then referenced with the ISO code to use as part of the file name, <em class="italic">specified as an attribute lookup</em>, as in:</p>
+<pre>
+Password Expired Email={<em class="italic">preferrendLanguage</em>}/PExpire.etf
+</pre>
+<p class="bodytext">During the file resolution (assuming that the application support attribute lookup), the reference to<em class="italic"> {preferredLanguage}</em> would be resolved to whatever (assumed to be ISO code) is stored in the (LDAP) user record and the correct email template would be used (assuming it is available).</p>
+<p class="bodytext">The second method, newly available to APSMail, is very similar, but allows sites to centralize the directives used for the mail with liberal use of the <em class="italic">[INCLUDE]</em> directive.</p>
+<pre>
+Password Expired Email=PExpire.etf
+</pre>
+<p class="picture"><img id="f784483" src="784483.gif" alt="" height="86" width="441" vspace="0" hspace="0" align="bottom" border="0"></p>
+<p class="bodytext">Then each include file contains the locale-specific information.</p>
+<p class="picture"><img id="f784484" src="784484.gif" alt="" height="71" width="437" vspace="0" hspace="0" align="bottom" border="0"></p>
+<p class="picture"><img id="f784485" src="784485.gif" alt="" height="75" width="437" vspace="0" hspace="0" align="bottom" border="0"></p>
+<p class="bodytext"><img id="f784486" src="784486.png" alt="" height="425px" width="1046px" vspace="0" hspace="0" align="bottom" border="0"></p>
+<!--<AuthoritObject mark="end" id="784482" type="topic" />-->
+<a name="o784487"></a><!--<AuthoritObject mark="start" id="784487" type="topic" />--><h4 id="t784487" class="heading4">Addressing Mail</h4>
+<p class="bodytext">Neither APS nor APSMail &quot;know&quot; users' email addresses. When you specify where email is to be sent (using the [TO] notation described later in this chapter), you can specify an explicit email address, such as:</p>
+<pre>
+[TO] APS-Support@netegrity.com
+</pre>
+<p class="bodytext">Or you can reference a user attribute, using the &quot;{&quot; and }&quot;} notation, such as:</p>
+<pre>
+[TO] {mail}
+</pre>
+<p class="bodytext">Just keep in mind that an attribute called mail will be used. If there is no such attribute {mail} will be used as the mailing address (which will probably not work).</p>
+<p class="bodytext">If your site uses multiple User Directories and the name of the attribute is not consistent across directories, use the <strong>[MAPPING]</strong> section of the APS Configuration File to create a common name for all directories and use the common name here.</p>
+<!--<AuthoritObject mark="end" id="784487" type="topic" />-->
+<a name="o784488"></a><!--<AuthoritObject mark="start" id="784488" type="topic" />--><h4 id="t784488" class="heading4">Return Addresses</h4>
+<p class="bodytext">Return and From addresses can be specified in the body of the mail file. These addresses may or may not actually exist (though if a reply to address does not exist, end users will receive an undeliverable mail notification if they reply to mail).</p>
+<p class="bodytext">It is very useful to specify generic <em class="italic">alias</em> addresses for these values. Thus, the Reply To address could be <em class="italic">password-support@MySite.com</em>. Within the site's mail server, this address would be an alias pointing to a &quot;real&quot; email address, representing the person actually performing the support. It is better to use an alias than a real address for this purpose, so that the support person can be changed without changing the email files and any mail that has already been sent will still point to a valid address.</p>
+<!--<AuthoritObject mark="end" id="784488" type="topic" />-->
+<a name="o784489"></a><!--<AuthoritObject mark="start" id="784489" type="topic" />--><h4 id="t784489" class="heading4">Handling Returned Mail</h4>
+<p class="bodytext">Sometimes the mail address for a user will be invalid. It may never have been entered correctly or the user's address may have changed and the change has not been reflected in your directory. In these cases, email will be undeliverable (it will &quot;bounce&quot;). A site should be able to gracefully handle this condition.</p>
+<p class="bodytext">The easiest way to handle these cases is to set up a dedicated mail server to handle APS mail (if the site has enough volume to warrant it). This server should have a legitimate postmaster defined. Bounced mail notifications will be sent to the postmaster (which is usually an alias rather than a specific email address). A support representative can review these notifications and address each one individually. It is impossible for APS (or APSMail) to handle this condition itself, since mail is submitted to the mail server for delivery at some point in the future. By the time that it is discovered that the mail is undeliverable, APS has long advanced to other things. Sometimes, such detection may not take place for <em class="italic">days</em>!</p>
+<p class="bodytext">The Errors-To feature <em class="italic">can</em> be used, but be forewarned, many mail servers do not support this feature.</p>
+<!--<AuthoritObject mark="end" id="784489" type="topic" />-->
+<a name="o784490"></a><!--<AuthoritObject mark="start" id="784490" type="topic" />--><h4 id="t784490" class="heading4">Mail Macros</h4>
+<p class="bodytext">Each mail file should contain all of the information required to send the file, with the exception of the information about the mail server (which is stored in the APS Configuration File or environment variables).</p>
+<p class="bodytext">APSMail has a very simple, yet strict, format for email template files.</p>
+<p class="bodytext">The template file may contain references to user attributes and/or macros. APS fully supports this feature of APSMail as follows:</p>
+<p class="bodytext">As each line is read from the file, the line will be examined. Any text surrounded by curly braces (&quot;{&quot; and &quot;}&quot;) will be treated as an attribute query (lookup). That is, the text <em class="italic">within</em> the braces will be used as an attribute lookup (using code similar to the SiteMinder userattr response) and then replaced (along with the braces) with the returned values. Note that if the user does not have a value for the attribute, the braces and attribute name will be removed. They may appear anywhere in the line and are case-insensitive. They may <strong>not</strong> span multiple lines, though the replacement text may contain embedded newline characters.</p>
+<p class="bodytext">APSMail, called by APS, supports macro expansion. These are values supplied by APS and are not stored in the User Directory. If they appear in the line, they will be replaced by the appropriate value. They may appear anywhere in the line and are case-insensitive. Macros are surrounded by percent signs (&quot;%&quot;).</p>
+<p class="bodytext">The macros supported by APS include:</p>
+<table class="tableintopic" width="475" cellpadding="2" cellspacing="0" border="0" style="border-collapse:collapse">
+<tr align="left" valign="top">
+<td width="92">
+<p class="tablebodytext">%DAYSLEFT%</p>
+</td>
+<td width="383">
+<p class="tablebodytext">The number of days left before the user's password expires (calculated by APS). This value is only available when a password change warning is being issued.</p>
+</td>
+</tr>
+<tr align="left" valign="top">
+<td width="92">
+<p class="tablebodytext">%PASSWORD%</p>
+</td>
+<td width="383">
+<p class="tablebodytext">For password change confirmations only, this macro is replaced with the user's new password. In general, this macro should not be used.</p>
+</td>
+</tr>
+
+</table>
+<p class="bodytext"></p>
+<p class="bodytext">The macros supported by FPS include:</p>
+<table class="tableintopic" width="474" cellpadding="2" cellspacing="0" border="0" style="border-collapse:collapse">
+<tr align="left" valign="top">
+<td width="132">
+<p class="tablebodytext">%MESSAGE%</p>
+</td>
+<td width="342">
+<p class="tablebodytext">For error mail, this contains the text of the error message.</p>
+</td>
+</tr>
+<tr align="left" valign="top">
+<td width="132">
+<p class="tablebodytext">%PASSWORD%</p>
+</td>
+<td width="342">
+<p class="tablebodytext">During confirmation, this is the clear text password for the user. You cannot use <em class="italic">{userPassword}</em> (which would return the LDAP value), since the returned value would be encrypted.</p>
+</td>
+</tr>
+<tr align="left" valign="top">
+<td width="132">
+<p class="tablebodytext">%HALFPASSWORD1%</p>
+</td>
+<td width="342">
+<p class="tablebodytext">The first half of the new password, in clear text. One secure way to transmit the new password to the user is to send half of the password via email and to display the other half on the browser. This macro allows you to include the first half of the password via email.</p>
+</td>
+</tr>
+<tr align="left" valign="top">
+<td width="132">
+<p class="tablebodytext">%HALFPASSWORD2%</p>
+</td>
+<td width="342">
+<p class="tablebodytext">The second half of the new password, in clear text. One secure way to transmit the new password to the user is to send half of the password via email and to display the other half on the browser. This macro allows you to include the second half of the password via email.</p>
+</td>
+</tr>
+
+</table>
+<p class="bodytext">Replacement macros and attributes are also supported in file names, though a Unix site must be very careful with case sensitivity in file names. This can be useful for supporting multiple languages or special mails by user type.</p>
+<p class="bodytext">This example might be used as the English language warning mail under APS.</p>
+<pre>
+[FROM] SiteMinder Administration
+[TO] {mail}
+[RE] Your password to our site will expire
+[REPLYTO] HelpDesk@oursite.com
+Your password on our site will expire in %DAYSLEFT% days. In order to maintain your access to our site, you must change your password before it expires.
+
+To change your password, you can go to http://www.yoursite.com/CPW/SmCPW.exe
+</pre>
+<!--<AuthoritObject mark="end" id="784490" type="topic" />-->
+<a name="o784491"></a><!--<AuthoritObject mark="start" id="784491" type="topic" />--><h4 id="t784491" class="heading4">Best Practice Recommendation</h4>
+<p class="bodytext">Many APS sites have found a <em class="italic">considerable</em> advantage to putting a dedicated SMTP (mail) server on <em class="italic">each</em> SiteMinder Policy Server. Some of the benefits include:</p>
+<ul class="listbullet">
+<li class="listbullet">SMTP servers are generally free.
+</li>
+<li class="listbullet">APS does not spend any time resolving the network address (or spend any time &quot;on the wire&quot;) because the server is at 127.0.0.1. This can increase performance <em class="italic">significantly</em>.
+</li>
+<li class="listbullet">There is no single point of failure for mail.
+</li>
+<li class="listbullet">Returned mail and delivery errors are located in the dedicated server(s) logs, eliminating the need to examine a corporate mail server's logs.
+</li>
+<li class="listbullet">The mail server need not have any incoming mailboxes, eliminating maintenance concerns.
+</li>
+<li class="listbullet">The mail server must support mail relaying. Some corporate servers are configured so that they will not perform relaying.
+</li>
+<li class="listbullet"> Firewalls can be used to protect the mail server. Except for returned mail (which can be redirected elsewhere, if desired), there is no need for a &quot;hole&quot; in the firewall to access the mail server. Mail is outgoing only.
+</li>
+<li class="listbullet">Most SMTP servers can be configured to only allow connections <em class="italic">from</em> specific machines. A dedicated, local, SMTP server can be configured to only accept connections from the local machine. This can improve performance (slightly) and security (significantly). Note that this bullet eliminates the need (entirely) for authentication to the SMTP server, which is not supported by APSMail.
+</li>
+<li class="listbullet">SMTP servers typically limit the number of connections allowed <em class="italic">from</em> a specific client (usually 10 connections). If more than 10 threads are sending mail, this would cause APS mail sends to fail (this has never been reported in a production environment, but is possible). Such a dedicated server can have this restriction raised or removed without impacting security.
+</li>
+</ul>
+<!--<AuthoritObject mark="end" id="784491" type="topic" />-->
+<a name="o784492"></a><!--<AuthoritObject mark="start" id="784492" type="topic" />--><h3 id="t784492" class="heading3">Troubleshooting</h3>
+<!--<AuthoritObject mark="end" id="784492" type="topic" />-->
+<a name="o784493"></a><!--<AuthoritObject mark="start" id="784493" type="topic" />--><h4 id="t784493" class="heading4">The SiteMinder Console Log</h4>
+<p class="bodytext">APSMail writes to the SiteMinder Policy Server log when running under the Policy Server.</p>
+<p class="bodytext">APSMail will log errors and confirmations to this log. The first troubleshooting action should be to examine this log, if available. Error messages are self-explanatory and are usually followed immediately by a recommended action.</p>
+<p class="bodytext">This is usually good for finding mail options and server handshake problems, such as invalid email addresses, server connectivity issues and server login problems.</p>
+<!--<AuthoritObject mark="end" id="784493" type="topic" />-->
+<a name="o784494"></a><!--<AuthoritObject mark="start" id="784494" type="topic" />--><h4 id="t784494" class="heading4">The Send Log</h4>
+<p class="bodytext">If the LogPath is specified to APSMail, each transmission is logged as a block entry describing where the message was sent, the content of the message and the ultimate result of the send.</p>
+<p class="bodytext">This log is good for reviewing the results of the transmission and the formatting of the body of the message. Message headers are also shown.</p>
+<p class="picture"><img id="f784495" src="784495.png" alt="" height="722px" width="1150px" vspace="0" hspace="0" align="bottom" border="0"></p>
+<p class="bodytext">For each message, a block like the following is recorded.</p>
+<p class="bodytext">The first section of each log block is information about the actual transmission. This block identifies the server and connection information and the result of the send.</p>
+<p class="bodytext">The second block identifies the message header and includes such items as who the message was from and who it was sent to.</p>
+<p class="bodytext">The third block is the formatted message body.</p>
+<p class="bodytext">Further blocks identify the attached files, if any, and the identified MIME types of each file.</p>
+<!--<AuthoritObject mark="end" id="784494" type="topic" />-->
+<a name="o784496"></a><!--<AuthoritObject mark="start" id="784496" type="topic" />--><h4 id="t784496" class="heading4">The Communications Log</h4>
+<p class="bodytext">APSMail will write a log containing detail about its actual communications with the mail server. This is turned on by setting an environment variable called APSMAIL_COMMLOG to identify the file to which the log should be written.</p>
+<p class="bodytext">This communications log can get very large, since it will show the transmission of attachments (which can be arbitrarily large) and will show encoded data. Generally, this log should <em class="italic">not</em> be enabled, unless troubleshooting problems with server communications.</p>
+<!--<AuthoritObject mark="end" id="784496" type="topic" />-->
+<a name="o784497"></a><!--<AuthoritObject mark="start" id="784497" type="topic" />--><h4 id="t784497" class="heading4">Formatting Problems</h4>
+<p class="bodytext">The best way to troubleshoot formatting problems is to start with the Send Log, since it will show the formatted message as sent to the mail server. The message might be base 64 encoded on transmission, in which case the communications log will not be human readable.</p>
+<p class="bodytext">Most formatting problems are caused by either using the wrong TEXTMODE directive or by using macros/lookups that can change the visual formatting.</p>
+<!--<AuthoritObject mark="end" id="784497" type="topic" />-->
+<a name="o784498"></a><!--<AuthoritObject mark="start" id="784498" type="topic" />--><h4 id="t784498" class="heading4">Delivery Problems</h4>
+<p class="bodytext">If APSMail is showing that the message was accepted by the server, yet the recipient does not get the message, then troubleshooting the mail system is required.</p>
+<p class="bodytext">APSMail passes the message to the SMTP server and then forgets about it. All delivery is done by the mail server, not APSMail, at that point. If the SMTP server accepts it, any problems with delivery will either be recorded by the mail server(s) or through delivery notification.</p>
+<!--<AuthoritObject mark="end" id="784498" type="topic" />-->
+<a name="o784499"></a><!--<AuthoritObject mark="start" id="784499" type="topic" />--><h4 id="t784499" class="heading4">Limitations</h4>
+<ul class="listbullet">
+<li class="listbullet">APSMail does not support SMTP server login (authentication) at this time.
+</li>
+<li class="listbullet">APSMail does not currently support mail attachments of any kind.
+</li>
+<li class="listbullet">All sending of mail to the SMTP server is <em class="italic">synchronous</em>. That is, the calling code waits for the transfer to complete before continuing.
+</li>
+<li class="listbullet">APSMail puts no restrictions on the <em class="italic">number</em> of connections to a given SMTP server. However, some SMTP servers do restrict the number of connections from a given host. This may mean that a site has to configure their SMTP service to remove this restriction. For example, if an SMTP server restricts a given client to 10 connections, but APSMail, running under a SiteMinder Policy Server, needs to send eleven pieces of mail at once, the eleventh send may fail because the SMTP server rejects the eleventh connection (there are all kinds of timing considerations that come into play). This is yet another reason to have a &quot;private&quot; SMTP server dedicated to each instance of APSMail.
+</li>
+</ul>
+<!--<AuthoritObject mark="end" id="784499" type="topic" />-->
+
+
+
+<p>
+<hr>
+<table class=copyrighttable role="presentation" width="100%" border="0" cellspacing="0" cellpadding="2">
+<tr>
+<td valign="top">
+Copyright &#0169;&nbsp;2013 CA.
+All rights reserved.
+<br><br>
+<p class="bodytext"><a class=browse href="784402.html" title="Previous Topic: Integrating APS with User Management Tools" target="_self"><img class=button src="574.png" alt="Previous Topic: Integrating APS with User Management Tools" height="16px" width="16px"></a><a class=browse href="784500.html" title="Next Topic: Internationalization" target="_self"><img class=button src="573.png" alt="Next Topic: Internationalization" height="16px" width="16px"></a></p>
+</td>
+<td align="right" valign="top">
+<div align="left">
+<form id="ratings"><b>Rate This Page</b>
+<fieldset>
+<legend>The content on this page was useful to me.</legend>
+Disagree strongly
+<input class="radio" type="radio" name="group1" id="radio1" value="1" title="I disagree strongly"><label for="radio1" title="I disagree strongly">1</label>
+<input class="radio" type="radio" name="group1" id="radio2" value="2" title="I disagree"><label for="radio2" title="I disagree">2</label>
+<input class="radio" type="radio" name="group1" id="radio3" value="3" title="I am neutral"><label for="radio3" title="I am neutral">3</label>
+<input class="radio" type="radio" name="group1" id="radio4" value="4" title="I agree"><label for="radio4" title="I agree">4</label>
+<input class="radio" type="radio" name="group1" id="radio5" value="5" title="I agree strongly"><label for="radio5" title="I agree strongly">5</label>
+Agree strongly
+</fieldset>
+<a class="ilink" type="submit" href="javascript:sendRating();">Submit rating and optional comments about this page</a>
+</form>
+</div>
+</td>
+</tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,1078 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/favicon.png"><meta name="generator" content="Astro v5.18.2"><title>Entra ID Dynamic Groups: A Membership-Rule Cookbook That Actually Scales — KloudVin</title><meta name="description" content="A practitioner's guide to Microsoft Entra ID dynamic membership groups: how the rule engine works, the operators and properties you can actually use, and a full portal + az CLI + Bicep lab that builds, validates and tears down a real dynamic group. Build self-maintaining groups for Conditional Access, licensing and app assignment — relevant to SC-300 and AZ-104."><link rel="canonical" href="https://kloudvin.com/article/entra-id-dynamic-groups-membership-rules-cookbook/"><!-- OpenGraph --><meta property="og:type" content="article"><meta property="og:title" content="Entra ID Dynamic Groups: A Membership-Rule Cookbook That Actually Scales — KloudVin"><meta property="og:description" content="A practitioner's guide to Microsoft Entra ID dynamic membership groups: how the rule engine works, the operators and properties you can actually use, and a full portal + az CLI + Bicep lab that builds, validates and tears down a real dynamic group. Build self-maintaining groups for Conditional Access, licensing and app assignment — relevant to SC-300 and AZ-104."><meta property="og:url" content="https://kloudvin.com/article/entra-id-dynamic-groups-membership-rules-cookbook/"><meta property="og:image" content="https://kloudvin.com/favicon.png"><meta property="og:site_name" content="KloudVin"><meta property="article:published_time" content="Jun 24, 2026"><meta property="article:tag" content="Entra ID"><meta property="article:tag" content="Dynamic Groups"><meta property="article:tag" content="Identity"><meta property="article:tag" content="RBAC"><meta property="article:tag" content="Conditional Access"><meta property="article:tag" content="Microsoft Graph"><meta property="article:tag" content="Bicep"><meta property="article:tag" content="SC-300"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Entra ID Dynamic Groups: A Membership-Rule Cookbook That Actually Scales — KloudVin"><meta name="twitter:description" content="A practitioner's guide to Microsoft Entra ID dynamic membership groups: how the rule engine works, the operators and properties you can actually use, and a full portal + az CLI + Bicep lab that builds, validates and tears down a real dynamic group. Build self-maintaining groups for Conditional Access, licensing and app assignment — relevant to SC-300 and AZ-104."><meta name="twitter:image" content="https://kloudvin.com/favicon.png"><meta name="twitter:creator" content="@vinswin"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Entra ID Dynamic Groups: A Membership-Rule Cookbook That Actually Scales — KloudVin","description":"A practitioner's guide to Microsoft Entra ID dynamic membership groups: how the rule engine works, the operators and properties you can actually use, and a full portal + az CLI + Bicep lab that builds, validates and tears down a real dynamic group. Build self-maintaining groups for Conditional Access, licensing and app assignment — relevant to SC-300 and AZ-104.","image":"https://kloudvin.com/favicon.png","datePublished":"Jun 24, 2026","author":{"@type":"Person","name":"Vinod H","url":"https://kloudvin.com/about"},"publisher":{"@type":"Organization","name":"KloudVin"},"mainEntityOfPage":"https://kloudvin.com/article/entra-id-dynamic-groups-membership-rules-cookbook/","keywords":"Entra ID, Dynamic Groups, Identity, RBAC, Conditional Access, Microsoft Graph, Bicep, SC-300"}</script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"><!-- Brand theme — ported verbatim from the original site. --><link rel="stylesheet" href="/styles/brand.css"><link rel="stylesheet" href="/styles/category-modal.css"><link rel="alternate" type="application/rss+xml" title="KloudVin" href="/rss.xml"><link rel="stylesheet" href="/_astro/403.BDUJxEpA.css"></head> <body> <div class="ambient" aria-hidden="true"> <div class="ambient-grid"></div> <div class="ambient-orb orb-a"></div> <div class="ambient-orb orb-b"></div> <div class="ambient-orb orb-c"></div> </div> <div class="scanline" aria-hidden="true"></div> <nav class="navbar" id="navbar"> <a href="/" class="logo-link" aria-label="KloudVin home"> <img src="/logo-v.png" class="logo-svg" alt="KloudVin" width="42" height="42" style="object-fit:contain"> <span class="logo-text">KloudVin</span> </a> <ul class="nav-menu" id="navMenu"> <li><a href="/" id="nav-home" class>Home</a></li> <li><a href="/learn" id="nav-learn" class>Learn</a></li> <li><a href="/#topics" id="nav-topics" class>Topics</a></li> <li><a href="/blog" id="nav-blog" class>Blog</a></li> <li><a href="/about" id="nav-about" class>About</a></li> <li><a href="/#subscribe" id="nav-subscribe" class>Subscribe</a></li> </ul> <div class="nav-right"> <span id="navAuth" class="nav-auth"></span> <button type="button" class="nav-search-box" id="navSearchBtn" aria-label="Search articles"> <i class="fas fa-magnifying-glass nav-search-ico"></i> <span class="nav-search-ph">Search articles…</span> <kbd class="nav-search-kbd">/</kbd> </button> <button class="hamburger" aria-label="Toggle menu" onclick="document.getElementById('navMenu').classList.toggle('active')"> <span></span><span></span><span></span> </button> </div> </nav> <!-- Site search — Pagefind (lazy-loaded on first open). Index is built by `pagefind --site dist`. --> <div id="kvSearch" class="kv-search-overlay" hidden> <div class="kv-search-box"> <button class="kv-search-close" id="kvSearchClose" aria-label="Close search">&times;</button> <div id="kvSearchUI"></div> </div> </div> <script>
+  (function () {
+    var btn = document.getElementById("navSearchBtn");
+    var overlay = document.getElementById("kvSearch");
+    var closeBtn = document.getElementById("kvSearchClose");
+    if (!btn || !overlay) return;
+    var loaded = false;
+    function load() {
+      if (loaded) return; loaded = true;
+      var css = document.createElement("link");
+      css.rel = "stylesheet"; css.href = "/pagefind/pagefind-ui.css";
+      document.head.appendChild(css);
+      var s = document.createElement("script");
+      s.src = "/pagefind/pagefind-ui.js";
+      s.onload = function () {
+        try { new window.PagefindUI({ element: "#kvSearchUI", showSubResults: true, showImages: false }); } catch (e) {}
+      };
+      document.body.appendChild(s);
+    }
+    function open() {
+      load(); overlay.hidden = false; document.body.style.overflow = "hidden";
+      setTimeout(function () { var i = overlay.querySelector("input"); if (i) i.focus(); }, 120);
+    }
+    function close() { overlay.hidden = true; document.body.style.overflow = ""; }
+    btn.addEventListener("click", open);
+    closeBtn.addEventListener("click", close);
+    overlay.addEventListener("click", function (e) { if (e.target === overlay) close(); });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !overlay.hidden) close();
+      if (e.key === "/" && overlay.hidden && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) { e.preventDefault(); open(); }
+    });
+  })();
+</script> <script>
+  // Compact navbar on scroll (ported behaviour).
+  (function () {
+    const nav = document.getElementById("navbar");
+    if (!nav) return;
+    const onScroll = () => nav.classList.toggle("compact", window.scrollY > 40);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+  })();
+
+  // Reveal an "Admin" entry + sign-out when signed in with the admin/editor role (EasyAuth).
+  (async function () {
+    const el = document.getElementById("navAuth");
+    if (!el) return;
+    try {
+      const res = await fetch("/.auth/me", { headers: { accept: "application/json" } });
+      if (!res.ok) return;
+      const p = (await res.json()).clientPrincipal;
+      if (!p) return;
+      const roles = p.userRoles || [];
+      let html = "";
+      if (roles.includes("admin") || roles.includes("editor")) {
+        html += '<a class="nav-admin" href="/admin"><i class="fas fa-gauge-high"></i> Admin</a>';
+      }
+      html +=
+        ' <a class="nav-signout" title="Sign out" href="/.auth/logout?post_logout_redirect_uri=/"><i class="fas fa-right-from-bracket"></i></a>';
+      el.innerHTML = html;
+    } catch (e) {
+      /* anonymous — show nothing */
+    }
+  })();
+</script> <main class="content">  <div class="article-hero" id="articleHero"> <nav class="article-crumb" aria-label="Breadcrumb"> <a href="/">Home</a> <span class="crumb-sep">/</span> <a href="/blog">Azure</a>  <span class="crumb-sep">/</span> <span class="crumb-cur">Identity</span>  </nav> <div class="article-cat-row"> <span class="pcard-cat" style="display:inline-block;background:rgba(56,189,248,0.08);color:#38bdf8">Azure</span> <span class="pcard-subcat" style="border-color:#38bdf8;color:#38bdf8">Identity</span> </div> <h1>Entra ID Dynamic Groups: A Membership-Rule Cookbook That Actually Scales</h1> <div class="article-meta"> <span><i class="fas fa-calendar-alt"></i> Jun 24, 2026</span> <span><i class="fas fa-clock"></i> 27 min read</span> <span><i class="fas fa-signal"></i> Basic</span> <span><i class="fas fa-user"></i> Vinod</span> </div> </div> <div class="article-content" id="articleBody"><p>Every Entra tenant eventually grows a graveyard of stale groups. Someone created <code>All-Sales-Users</code> two years ago, added forty people by hand, and then half of them changed departments, three left the company, and a dozen new hires never got added. The group still feeds a licence assignment and a Conditional Access policy, so the drift is now a security and a billing problem at once. The fix is not “remember to update the group” — humans never do — it is to stop maintaining membership by hand at all. <strong>Microsoft Entra ID dynamic membership groups</strong> let you write a rule once (<code>user.department -ne "Sales"</code>) and let the directory keep the membership correct forever: as people join, move and leave, Entra adds and removes them automatically.</p>
+<p>This article is a cookbook for those rules. We treat a dynamic group as what it really is — a small saved query that Entra re-evaluates whenever a member object changes — and we work through the <strong>rule syntax</strong>, the <strong>operators</strong>, the <strong>user and device properties</strong> you are allowed to filter on, and the gotchas that bite first-timers (the licence requirement, the “rules don’t recompute instantly” surprise, the difference between a dynamic <em>user</em> group and a dynamic <em>device</em> group, and why you can never add a member by hand once a group is dynamic). The centrepiece is a full <strong>hands-on lab</strong>: you will build a real dynamic group three ways — in the <strong>Azure portal</strong>, with the <strong><code>az</code> CLI</strong> (via the Microsoft Graph API), and as <strong>Bicep</strong> — validate that the right users land in it, then tear it all down.</p>
+<p>By the end you will reach for a dynamic group the moment you catch yourself adding the second user to a list by hand. You will know exactly which properties are filterable, which operators to use, how to read a rule like a sentence, and how to debug the classic “I created the group but it’s empty” panic. These groups quietly power licence assignment, app role assignment and Conditional Access targeting across real tenants — get the rules right and a whole class of “someone forgot to update the group” incidents simply stops happening.</p>
+<h2>What problem this solves</h2>
+<p>Manual group membership does not scale and does not stay correct. The moment a group’s membership is a human responsibility, it drifts: joiners are forgotten, leavers linger, movers keep access they should have lost. In a small tenant that is annoying. In a tenant where groups drive <strong>licensing</strong> (a user in <code>M365-E5-Licensed</code> gets a ~$57/user/month licence), <strong>app access</strong> (a group assigned to an enterprise app), or <strong>Conditional Access</strong> (a group exempted from MFA, or required to be compliant), drift is a direct cost and security exposure. A leaver still in the licensed group is paying money; a mover still in an “exempt from MFA” group is a hole.</p>
+<p>Dynamic groups move that responsibility from a person to the directory. You declare the <em>intent</em> — “everyone in the Sales department,” “every Windows device that is company-owned,” “all guests from <a href="http://partner.com">partner.com</a>” — as a <strong>membership rule</strong>, and Entra evaluates it continuously. When HR updates a user’s <code>department</code> in the source-of-truth that syncs to Entra, the user’s group memberships re-shuffle automatically minutes later. No ticket, no runbook, no monthly audit of who should be in which list.</p>
+<p>Who hits this: anyone administering an Entra tenant past a few dozen users. It bites hardest where group membership feeds something automated — group-based licensing, Conditional Access, SCIM/app provisioning, or <a href="/article/privileged-identity-management-pim-pam-architecture">Privileged Identity Management</a>-style scoping — because there the drift is invisible until an audit or a bill surfaces it. The honest prerequisite, which trips up many first-timers, is that dynamic groups require <strong>Microsoft Entra ID P1 (or P2)</strong> licensing — they are not in the free tier — and that is the very first thing this guide makes you check.</p>
+<h2>Learning objectives</h2>
+<p>By the end of this article you can:</p>
+<ul>
+<li>Explain what a dynamic membership group is, how Entra’s rule engine evaluates it, and how it differs from an assigned (manual) group.</li>
+<li>Decide correctly between a <strong>dynamic user</strong> group and a <strong>dynamic device</strong> group — and explain why a single group can never mix both.</li>
+<li>Write membership rules from scratch using the correct <strong>operators</strong> (<code>-eq</code>, <code>-contains</code>, <code>-match</code>, <code>-startsWith</code>, <code>-in</code>, <code>-any</code>/<code>-all</code>) and the <strong>filterable user and device properties</strong>.</li>
+<li>Build the same dynamic group three ways — <strong>Azure portal</strong>, <strong><code>az</code> CLI</strong> against Microsoft Graph, and <strong>Bicep</strong> — and validate membership end to end.</li>
+<li>Use the portal’s <strong>“Validate rules”</strong> tool and <code>az</code> membership queries to confirm a rule does what you intended <em>before</em> it goes live.</li>
+<li>Diagnose the classic failures: an empty group, a P1 licence error, a rule that won’t save, slow membership processing, and “I can’t add a user manually.”</li>
+<li>Apply the right design and security practices so dynamic groups safely drive licensing, app assignment and Conditional Access without becoming a new source of risk.</li>
+</ul>
+<h2>Prerequisites &amp; where this fits</h2>
+<p>You should already understand the Entra basics: a <strong>tenant</strong> is your directory; <strong>users</strong> and <strong>groups</strong> are objects in it; a <strong>security group</strong> controls access while a <strong>Microsoft 365 group</strong> also brings a mailbox and Teams. You should be comfortable in the <a href="/article/azure-resource-hierarchy-explained">Azure portal</a> and have run <code>az login</code> at least once. Knowing what <strong>Conditional Access</strong> and <strong>group-based licensing</strong> are helps, because they are the main consumers of these groups, but you do not need to be an expert in either.</p>
+<p>This sits in the <strong>Identity &amp; Governance</strong> track. Groups are the unit of assignment that almost everything else in Entra targets, so getting membership to maintain itself is foundational. It connects upward to governance — the same directory data that drives <a href="/article/azure-policy-governance-scale">Azure Policy and RBAC scoping</a> — and outward to anything that consumes a group: licensing, enterprise apps, and access reviews. A quick map of who needs what before you start:</p>
+<div class="table-scroll"><table><thead>
+<tr>
+<th>Prerequisite</th>
+<th>Why you need it</th>
+<th>How to check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Entra ID P1 or P2</strong> licence</td>
+<td>Dynamic membership is a P1+ feature; rules won’t save without it</td>
+<td>Entra admin centre → <strong>Overview</strong> → licence; or check assigned plans</td>
+</tr>
+<tr>
+<td>Role: <strong>Groups Administrator</strong> (or higher)</td>
+<td>To create groups and edit membership rules</td>
+<td>Entra → <strong>Roles and administrators</strong> → your assignments</td>
+</tr>
+<tr>
+<td><code>az</code> CLI <strong>2.50+</strong></td>
+<td>To run the CLI lab against Microsoft Graph</td>
+<td><code>az version</code></td>
+</tr>
+<tr>
+<td>A few users with a populated attribute</td>
+<td>So a rule has something to match (e.g. <code>department</code>)</td>
+<td>Entra → <strong>Users</strong> → check the property is set</td>
+</tr>
+<tr>
+<td>Tenant ID handy</td>
+<td>For CLI and Bicep deployments</td>
+<td><code>az account show --query tenantId -o tsv</code></td>
+</tr>
+</tbody>
+</table></div><p>If your account is only <strong>Global Reader</strong> you can look but not create; you need at least <strong>Groups Administrator</strong> to do the lab.</p>
+<h2>Core concepts</h2>
+<p>Five mental models make every rule you ever write obvious.</p>
+<p><strong>A dynamic group is a saved query, not a list.</strong> An <em>assigned</em> (manual) group stores an explicit list of member object IDs that you maintain. A <strong>dynamic group</strong> stores a <strong>membership rule</strong> — a boolean expression over object properties — and stores no member list of its own. Entra evaluates the rule and <em>derives</em> the membership. You never see or edit the member list directly; you edit the rule, and the list follows. This is the single most important shift: you stop thinking “who is in this group?” and start thinking “what is true of the people who should be in this group?”</p>
+<p><strong>The engine is event-driven, then it re-derives.</strong> Entra re-evaluates a group’s rule when a relevant member object changes (a user’s <code>department</code> is updated, a device’s <code>accountEnabled</code> flips) and periodically across the tenant. When a rule changes or a group is first created, Entra runs a <strong>full re-evaluation</strong> of every object in the directory against it. This is why a brand-new dynamic group is <strong>empty for a few minutes</strong> then suddenly populates — and why people panic and assume the rule is broken when it is merely still processing. Processing time scales with directory size; in a large tenant a full recompute can take a while.</p>
+<p><strong>User groups and device groups are different species.</strong> A dynamic group’s rule targets <strong>either</strong> users <strong>or</strong> devices, never both — you choose the <strong>membership type</strong> at creation: <em>Dynamic User</em> or <em>Dynamic Device</em>. A user rule filters on <code>user.*</code> properties; a device rule filters on <code>device.*</code> properties. You cannot write a rule that mixes <code>user.department</code> and <code>device.deviceOSType</code>, and you cannot convert the membership type after creation in a way that changes the species. Pick the right one up front.</p>
+<p><strong>Dynamic membership is exclusive — no manual edits.</strong> Once a group’s membership type is dynamic, <strong>you can no longer add or remove members by hand.</strong> The rule is the sole authority. The portal greys out “Add members”; the Graph API rejects manual member writes on a dynamic group. If you find yourself needing to add “just one extra person” who doesn’t match the rule, that is a signal either to fix the rule or to use a different (assigned) group — not to fight the engine.</p>
+<p><strong>One direction only: a property the directory knows.</strong> A rule can only filter on properties Entra actually stores and that are <strong>supported</strong> for dynamic rules — a specific allow-list of user and device attributes, plus the <strong>extension attributes</strong> (<code>extensionAttribute1</code>–<code>15</code>). If the data you want to filter on isn’t in Entra (it lives only in HR or an app), the rule has nothing to match; you must first get that data <em>into</em> Entra (via sync or an extension attribute) before a rule can use it.</p>
+<h3>The vocabulary in one table</h3>
+<p>Pin down every moving part before the deep sections. The glossary at the end repeats these for lookup; this is the mental model side by side:</p>
+<div class="table-scroll"><table><thead>
+<tr>
+<th>Term</th>
+<th>One-line definition</th>
+<th>Where it lives</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Membership type</strong></td>
+<td>Assigned, Dynamic User, or Dynamic Device</td>
+<td>Group property (set at creation)</td>
+<td>Determines whether you maintain the list or a rule does</td>
+</tr>
+<tr>
+<td><strong>Membership rule</strong></td>
+<td>The boolean expression deriving membership</td>
+<td>Group property <code>membershipRule</code></td>
+<td>The whole point — the saved query</td>
+</tr>
+<tr>
+<td><strong>Processing state</strong></td>
+<td>Whether the rule has finished evaluating</td>
+<td>Group property <code>membershipRuleProcessingState</code></td>
+<td>Explains the “empty for a few minutes” gap</td>
+</tr>
+<tr>
+<td><strong>Filterable property</strong></td>
+<td>A user/device attribute usable in a rule</td>
+<td>Directory schema (allow-listed)</td>
+<td>You can only filter on supported attributes</td>
+</tr>
+<tr>
+<td><strong>Extension attribute</strong></td>
+<td><code>extensionAttribute1</code>–<code>15</code>, free-text custom fields</td>
+<td>On the user/device object</td>
+<td>The escape hatch for data Entra doesn’t model natively</td>
+</tr>
+<tr>
+<td><strong>Operator</strong></td>
+<td><code>-eq</code>, <code>-contains</code>, <code>-match</code>, <code>-in</code>, <code>-any</code>…</td>
+<td>Inside the rule</td>
+<td>How you compare a property to a value</td>
+</tr>
+<tr>
+<td><strong>Group-based licensing</strong></td>
+<td>Assigning licences to a group</td>
+<td>A consumer of the group</td>
+<td>A common reason dynamic membership matters for cost</td>
+</tr>
+<tr>
+<td><strong>Conditional Access</strong></td>
+<td>Policies that target groups</td>
+<td>A consumer of the group</td>
+<td>A common reason correctness matters for security</td>
+</tr>
+</tbody>
+</table></div><h2>How the rule engine works</h2>
+<p>A membership rule is a single boolean expression. Entra reads it left to right, evaluates each clause against a candidate object, and the object is a member if and only if the whole expression is <code>true</code>. The shape is always the same:</p>
+<pre class="hljs"><code class="language-text">(property operator value) [and|or [not] (property operator value)] ...
+</code></pre>
+<p>For example, <code>(user.department -ne "Sales") and (user.accountEnabled -eq true)</code> puts every <em>enabled</em> user in Sales into the group, and removes anyone who is disabled or leaves Sales. You build complexity by combining clauses with <strong><code>-and</code></strong>, <strong><code>-or</code></strong> and <strong><code>-not</code></strong>, grouping with parentheses exactly as in any programming language.</p>
+<p>The portal gives you a <strong>rule builder</strong> (dropdowns for property / operator / value) for simple rules and a <strong>rule syntax</strong> text box for anything beyond a couple of clauses. The builder is convenient but limited — nested logic, the <code>-match</code> regex operator, and the multi-value <code>-any</code>/<code>-all</code> operators generally need the text box. Learn the text syntax; the builder is training wheels.</p>
+<h3>Membership type: user vs device</h3>
+<p>The first and most consequential choice. It cannot be meaningfully changed later, so get it right:</p>
+<div class="table-scroll"><table><thead>
+<tr>
+<th>Membership type</th>
+<th>Rule prefix</th>
+<th>Filters on</th>
+<th>Typical use</th>
+<th>Cannot do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Assigned</strong></td>
+<td>(none)</td>
+<td>n/a — manual list</td>
+<td>Small, hand-curated groups; break-glass</td>
+<td>Auto-maintain</td>
+</tr>
+<tr>
+<td><strong>Dynamic User</strong></td>
+<td><code>user.</code></td>
+<td>User attributes (department, jobTitle, country, userType…)</td>
+<td>Licensing, Conditional Access, app assignment by role/org</td>
+<td>Reference <code>device.*</code></td>
+</tr>
+<tr>
+<td><strong>Dynamic Device</strong></td>
+<td><code>device.</code></td>
+<td>Device attributes (OS, ownership, compliance, model…)</td>
+<td>Intune/Conditional Access device targeting</td>
+<td>Reference <code>user.*</code></td>
+</tr>
+</tbody>
+</table></div><p>A rule must be entirely one species. <code>(user.department -eq "IT") or (device.deviceOSType -eq "Windows")</code> is <strong>invalid</strong> and the portal rejects it. If you genuinely need “users in IT <em>and</em> their Windows devices,” that is two groups, not one.</p>
+<h3>Operators: the full set you actually use</h3>
+<p>These are the operators supported in membership rules. Pick by the shape of the comparison:</p>
+<div class="table-scroll"><table><thead>
+<tr>
+<th>Operator</th>
+<th>Meaning</th>
+<th>Example</th>
+<th>Notes / gotcha</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-eq</code> / <code>-ne</code></td>
+<td>Equals / not equals</td>
+<td><code>user.department -ne "Sales"</code></td>
+<td>String compares are <strong>case-insensitive</strong>; quote string values</td>
+</tr>
+<tr>
+<td><code>-startsWith</code> / <code>-notStartsWith</code></td>
+<td>Prefix match</td>
+<td><code>user.userPrincipalName -startsWith "svc-"</code></td>
+<td>Great for naming conventions (service accounts)</td>
+</tr>
+<tr>
+<td><code>-contains</code> / <code>-notContains</code></td>
+<td>Substring / collection contains</td>
+<td><code>user.proxyAddresses -contains "smtp:sales@"</code></td>
+<td>On multi-value props it tests membership</td>
+</tr>
+<tr>
+<td><code>-match</code> / <code>-notMatch</code></td>
+<td>Regular-expression match</td>
+<td><code>user.displayName -match "(?i)contractor"</code></td>
+<td>Full regex; the most powerful and most misused</td>
+</tr>
+<tr>
+<td><code>-in</code> / <code>-notIn</code></td>
+<td>Value is in a list</td>
+<td><code>user.country -in ["IN","US","UK"]</code></td>
+<td>List literal in square brackets, comma-separated</td>
+</tr>
+<tr>
+<td><code>-any</code> / <code>-all</code></td>
+<td>Quantifier over a multi-value property</td>
+<td><code>user.assignedPlans -any (assignedPlan.service -eq "exchange")</code></td>
+<td>For collections of complex objects</td>
+</tr>
+<tr>
+<td><code>-and</code> / <code>-or</code> / <code>-not</code></td>
+<td>Boolean combinators</td>
+<td><code>(A) -and -not (B)</code></td>
+<td>Parenthesise freely to control precedence</td>
+</tr>
+</tbody>
+</table></div><p>Two rules of thumb that prevent most syntax errors. First, <strong>string values are always quoted</strong> (<code>"Sales"</code>, <code>"IN"</code>), but <strong>booleans and the <code>null</code> keyword are not</strong> (<code>-eq true</code>, <code>-ne null</code>). Second, when in doubt about a multi-value property, reach for <code>-contains</code> or <code>-any</code> rather than <code>-eq</code> — comparing a collection with <code>-eq</code> rarely does what you expect.</p>
+<h3>Filterable properties: what you can match on</h3>
+<p>You can only filter on attributes Entra stores <em>and</em> supports for dynamic rules. The commonly used ones:</p>
+<div class="table-scroll"><table><thead>
+<tr>
+<th>Property (user)</th>
+<th>Type</th>
+<th>Example value</th>
+<th>Typical rule use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>user.department</code></td>
+<td>string</td>
+<td><code>"Sales"</code></td>
+<td>Org-based grouping for licensing/CA</td>
+</tr>
+<tr>
+<td><code>user.jobTitle</code></td>
+<td>string</td>
+<td><code>"Account Manager"</code></td>
+<td>Role-based app assignment</td>
+</tr>
+<tr>
+<td><code>user.country</code></td>
+<td>string</td>
+<td><code>"IN"</code></td>
+<td>Region/data-residency targeting</td>
+</tr>
+<tr>
+<td><code>user.usageLocation</code></td>
+<td>string</td>
+<td><code>"IN"</code></td>
+<td>Required before assigning many licences</td>
+</tr>
+<tr>
+<td><code>user.accountEnabled</code></td>
+<td>boolean</td>
+<td><code>true</code></td>
+<td>Exclude disabled accounts</td>
+</tr>
+<tr>
+<td><code>user.userType</code></td>
+<td>string</td>
+<td><code>"Guest"</code> / <code>"Member"</code></td>
+<td>Separate guests for Conditional Access</td>
+</tr>
+<tr>
+<td><code>user.userPrincipalName</code></td>
+<td>string</td>
+<td><code>"svc-…@contoso.com"</code></td>
+<td>Naming-convention matches</td>
+</tr>
+<tr>
+<td><code>user.companyName</code></td>
+<td>string</td>
+<td><code>"Contoso"</code></td>
+<td>Multi-company tenants</td>
+</tr>
+<tr>
+<td><code>user.extensionAttribute1</code>–<code>15</code></td>
+<td>string</td>
+<td><code>"Contractor"</code></td>
+<td>The escape hatch for custom data</td>
+</tr>
+</tbody>
+</table></div><p>For device groups, the equivalents are <code>device.deviceOSType</code>, <code>device.deviceOSVersion</code>, <code>device.deviceOwnership</code> (<code>"Company"</code>/<code>"Personal"</code>), <code>device.isCompliant</code>, <code>device.deviceManagementAppId</code>, <code>device.deviceModel</code>, and the device <code>extensionAttribute*</code> set. A device rule that is extremely common in practice: <code>(device.deviceOwnership -eq "Company") and (device.deviceOSType -eq "Windows")</code>.</p>
+<p>If the attribute you want isn’t in this allow-list, two options: write the value into an <strong>extension attribute</strong> (free text, syncs from on-prem AD or set via Graph), or reconsider whether the grouping belongs in Entra at all. Never assume an arbitrary HR field is filterable — confirm it first.</p>
+<h3>Reading and writing a rule like a sentence</h3>
+<p>The skill is to translate intent into the expression and back. A few worked examples, from simple to layered:</p>
+<div class="table-scroll"><table><thead>
+<tr>
+<th>Intent</th>
+<th>Rule</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>All enabled users in Sales</td>
+<td><code>(user.department -ne "Sales") and (user.accountEnabled -eq true)</code></td>
+</tr>
+<tr>
+<td>All guests</td>
+<td><code>(user.userType -eq "Guest")</code></td>
+</tr>
+<tr>
+<td>Service accounts by naming convention</td>
+<td><code>(user.userPrincipalName -startsWith "svc-")</code></td>
+</tr>
+<tr>
+<td>Users in India or the US</td>
+<td><code>(user.country -in ["IN","US"])</code></td>
+</tr>
+<tr>
+<td>Everyone except contractors (extension attr)</td>
+<td><code>(user.objectId -ne null) and -not (user.extensionAttribute1 -eq "Contractor")</code></td>
+</tr>
+<tr>
+<td>Company-owned Windows devices</td>
+<td><code>(device.deviceOwnership -eq "Company") and (device.deviceOSType -eq "Windows")</code></td>
+</tr>
+</tbody>
+</table></div><p>That last user example also shows the idiom for an <strong>“all users” group</strong>: <code>(user.objectId -ne null)</code> is <code>true</code> for every user, so you can use it as a base and subtract exceptions with <code>-and -not (...)</code>. Microsoft provides a managed <strong>“All users”</strong> dynamic group concept, but a hand-rolled <code>objectId -ne null</code> rule is the explicit, portable equivalent.</p>
+<h2>Where dynamic groups get consumed</h2>
+<p>A dynamic group is only useful because something <em>targets</em> it. Knowing the consumers shapes how careful you must be with the rule — a sloppy rule on a group nobody uses is harmless; the same rule on a Conditional Access group is an outage or a breach.</p>
+<div class="table-scroll"><table><thead>
+<tr>
+<th>Consumer</th>
+<th>What it does with the group</th>
+<th>Why correctness matters</th>
+<th>Failure mode if the rule is wrong</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Group-based licensing</strong></td>
+<td>Assigns licences to all members</td>
+<td>Each member may cost real money/month</td>
+<td>Over-licensing (cost) or under-licensing (broken apps)</td>
+</tr>
+<tr>
+<td><strong>Conditional Access</strong></td>
+<td>Includes/excludes the group in a policy</td>
+<td>Controls MFA, device compliance, location rules</td>
+<td>Lock everyone out, or exempt people who shouldn’t be</td>
+</tr>
+<tr>
+<td><strong>Enterprise app / SCIM</strong></td>
+<td>Grants app access or provisions accounts</td>
+<td>Drives who can sign in and what is created downstream</td>
+<td>Unauthorised access or orphaned downstream accounts</td>
+</tr>
+<tr>
+<td><strong>Access reviews / governance</strong></td>
+<td>Periodically recertifies membership</td>
+<td>Audit and least-privilege</td>
+<td>Wrong population reviewed; findings invalid</td>
+</tr>
+<tr>
+<td><strong>PIM / role-assignable</strong></td>
+<td>Members get eligible/active role</td>
+<td>Privileged access</td>
+<td>Privilege creep if the rule is too broad</td>
+</tr>
+</tbody>
+</table></div><p>One hard constraint worth knowing before you design: a <strong>role-assignable group</strong> (one you can assign an Entra directory role to) <strong>cannot</strong> be a dynamic group. Role-assignable groups must be assigned membership, by design, so a rule can never silently grant a privileged role. If you need privileged access governed, use PIM and assigned groups, not a dynamic rule.</p>
+<h2>Architecture at a glance</h2>
+<p>Hold the mental model as a one-way pipeline rather than a picture. On the left sits your <strong>source of truth</strong> for identity attributes — typically an HR system feeding on-prem Active Directory, which <strong>Entra Connect</strong> synchronises into Entra ID, or attributes set directly in Entra/Graph for cloud-only objects. Those attributes (<code>department</code>, <code>jobTitle</code>, <code>country</code>, <code>extensionAttribute*</code>) land on each <strong>user object</strong> in the directory. That is the only data a rule can ever see: if a value isn’t on the object in Entra, no rule can match it.</p>
+<p>In the centre sits the <strong>dynamic group</strong> — a small stored <code>membershipRule</code> plus a <code>membershipRuleProcessingState</code>, but <em>no stored member list</em>. Whenever a user object changes, or on a periodic sweep, the <strong>rule-evaluation engine</strong> runs the candidate object through the rule; objects that evaluate <code>true</code> are derived as members, and the membership set is recomputed. There is a deliberate lag here: a change to a user attribute does not instantly reshuffle every group; the engine processes it within minutes (longer in very large tenants), which is exactly why a freshly created group looks empty before it fills.</p>
+<p>On the right sit the <strong>consumers</strong>: group-based licensing, Conditional Access, enterprise-app assignment, access reviews. They read the <em>derived</em> membership and act on it. The whole value of the architecture is that the arrow runs strictly left to right and is automatic — fix <code>department</code> once at the source, and minutes later the correct licences, access and policies follow without anyone touching the group. The two things that break this picture are (1) the data never reaching Entra (so the rule can’t see it) and (2) forgetting the processing lag (so you judge the rule before it has run). Everything in the lab below is about making both of those visible.</p>
+<h2>Real-world scenario</h2>
+<p><strong>Lumio Retail</strong>, a mid-size e-commerce company (about 1,200 employees across India, the UK and the UAE), ran group-based licensing off a hand-maintained security group called <code>Licensed-E5-Users</code>. IT added each new hire manually during onboarding. Over eighteen months the group accumulated drift: 1,247 members against a real headcount of 1,180 — <strong>67 ghost members</strong>, most of them leavers whose accounts were disabled but never removed from the group. At roughly $57/user/month for the E5 licence, the company was paying for dozens of licences assigned to disabled accounts, and a quarterly licence true-up flagged the gap as a ~$45,000/year leak.</p>
+<p>Worse, the same group was <em>included</em> in a Conditional Access policy that required compliant devices. Three contractors who had left were still members; their (now unmanaged) accounts technically still satisfied a policy include they should have aged out of. Nothing had been exploited, but the auditors marked it a finding: membership of a security-critical group was a manual process with demonstrable drift.</p>
+<p>The platform team replaced the manual group with a <strong>dynamic user group</strong> whose rule was <code>(user.accountEnabled -eq true) and (user.assignedPlans -any (assignedPlan.servicePlanId -ne null)) and (user.userType -eq "Member")</code> — refined down, after testing, to a cleaner department-and-status rule that matched their licensing policy exactly. They built it first in a <strong>dev tenant</strong> with the portal’s <strong>“Validate rules”</strong> tool, checking five real user objects (an active employee, a disabled leaver, a guest, a contractor, and a brand-new hire) to confirm each landed on the correct side of the rule. Only after the validation matched expectations did they create the group in production via Bicep, so the rule was code-reviewed and version-controlled rather than typed into a portal box at 5 p.m.</p>
+<p>The result: every disabled leaver dropped out of the licensed group automatically within minutes of being disabled, the ghost-member count went to zero and stayed there, and the next licence true-up reclaimed 60+ licences. The Conditional Access finding closed because membership was now provably derived from <code>accountEnabled</code> and org attributes, not human memory. The lesson Lumio took away — and the reason this article makes you validate before going live — is that the rule is only as trustworthy as the data behind it and the testing in front of it. A dynamic group is a force multiplier in both directions: correct, it eliminates a whole class of drift; wrong, it propagates a mistake to every consumer instantly.</p>
+<h2>Advantages and disadvantages</h2>
+<p>Dynamic groups are not free of trade-offs. Weigh them deliberately:</p>
+<div class="table-scroll"><table><thead>
+<tr>
+<th>Advantages</th>
+<th>Disadvantages</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Membership maintains itself — zero manual joiner/mover/leaver toil</td>
+<td>Requires <strong>Entra ID P1/P2</strong> — a per-user licence cost</td>
+</tr>
+<tr>
+<td>Eliminates drift; membership is always derivable from data</td>
+<td>A bad rule propagates to every consumer instantly (blast radius)</td>
+</tr>
+<tr>
+<td>Rule is auditable and version-controllable (as Bicep/Graph)</td>
+<td>You <strong>cannot</strong> add/remove members by hand (no exceptions)</td>
+</tr>
+<tr>
+<td>Scales to thousands of objects without effort</td>
+<td>Processing lag — not instant; “empty for minutes” surprises people</td>
+</tr>
+<tr>
+<td>One source of truth: fix the attribute, fix the access</td>
+<td>Can’t be <strong>role-assignable</strong> (no dynamic privileged groups)</td>
+</tr>
+<tr>
+<td>Consistent across licensing, CA, app assignment</td>
+<td>Limited to <strong>filterable</strong> properties; needs data in Entra first</td>
+</tr>
+</tbody>
+</table></div><p>When the advantages dominate: any group whose membership is a <em>function of data you already have</em> — org, role, location, device posture, account status. That is the sweet spot, and it covers most “all the X” groups. When the disadvantages dominate: small hand-curated lists, break-glass/exception groups, role-assignable privileged groups, and any grouping based on data that simply isn’t (and won’t be) in Entra. The decision is almost always “is this membership a stable function of directory data?” — if yes, make it dynamic; if it needs human judgement per member, keep it assigned.</p>
+<h2>Hands-on lab</h2>
+<p>This is the centrepiece. You will build the <strong>same dynamic user group three ways</strong> — portal, <code>az</code> CLI (against Microsoft Graph), and Bicep — validate that the right users are members, then tear everything down. Budget 30–40 minutes. Everything here is reversible and uses only directory objects (no compute cost), but it <strong>does require Entra ID P1/P2</strong> on the tenant.</p>
+<h3>Lab prerequisites and expected starting state</h3>
+<div class="table-scroll"><table><thead>
+<tr>
+<th>Requirement</th>
+<th>How to verify</th>
+<th>Expected output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Entra ID P1 or P2</td>
+<td><code>az rest --method GET --uri "https://graph.microsoft.com/v1.0/subscribedSkus?\$select=skuPartNumber" --query "value[].skuPartNumber"</code></td>
+<td>A list including <code>AAD_PREMIUM</code> or <code>AAD_PREMIUM_P2</code> (or an M365 SKU that bundles it)</td>
+</tr>
+<tr>
+<td>Groups Administrator role</td>
+<td>Entra portal → Roles and administrators</td>
+<td>Your account listed under Groups Administrator (or Global Admin)</td>
+</tr>
+<tr>
+<td><code>az</code> CLI 2.50+</td>
+<td><code>az version</code></td>
+<td><code>"azure-cli": "2.x"</code> ≥ 2.50</td>
+</tr>
+<tr>
+<td>Signed in</td>
+<td><code>az account show --query tenantId -o tsv</code></td>
+<td>Your tenant GUID prints</td>
+</tr>
+</tbody>
+</table></div><p>Create two throwaway test users so the rule has something to match (skip if you already have users with a <code>department</code> set). We will tag them with <strong>department = <code>LabSales</code></strong> so the rule is unambiguous and we don’t accidentally scoop up real users:</p>
+<pre class="hljs"><code class="language-bash"><span class="hljs-comment"># Set a domain variable to your tenant's verified domain (e.g. contoso.onmicrosoft.com)</span>
+DOMAIN=<span class="hljs-string">"<span class="hljs-subst">$(az rest --method GET --uri 'https://graph.microsoft.com/v1.0/domains' \
+  --query <span class="hljs-string">"value[?isDefault].id | [0]"</span> -o tsv)</span>"</span>
+<span class="hljs-built_in">echo</span> <span class="hljs-string">"Using domain: <span class="hljs-variable">$DOMAIN</span>"</span>
+
+<span class="hljs-comment"># Create two enabled test users in department 'LabSales'</span>
+<span class="hljs-keyword">for</span> U <span class="hljs-keyword">in</span> labuser1 labuser2; <span class="hljs-keyword">do</span>
+  az rest --method POST --uri <span class="hljs-string">"https://graph.microsoft.com/v1.0/users"</span> \
+    --headers <span class="hljs-string">"Content-Type=application/json"</span> \
+    --body <span class="hljs-string">"{
+      \"accountEnabled\": true,
+      \"displayName\": \"Lab User <span class="hljs-variable">${U}</span>\",
+      \"mailNickname\": \"<span class="hljs-variable">${U}</span>\",
+      \"userPrincipalName\": \"<span class="hljs-variable">${U}</span>@<span class="hljs-variable">${DOMAIN}</span>\",
+      \"department\": \"LabSales\",
+      \"usageLocation\": \"IN\",
+      \"passwordProfile\": { \"forceChangePasswordNextSignIn\": true, \"password\": \"Lab!Pass<span class="hljs-variable">${RANDOM}</span>9z\" }
+    }"</span>
+<span class="hljs-keyword">done</span>
+</code></pre>
+<p>Expected output: two JSON blobs, each with a new <code>id</code> (a GUID) and <code>"department": "LabSales"</code>. If you get a <code>403</code>, your account lacks rights to create users — ask for <strong>User Administrator</strong>, or just reuse two existing users and set their department instead.</p>
+<h3>Part A — Build it in the Azure portal</h3>
+<p>This is the path you’ll use most for one-off groups.</p>
+<ol>
+<li>Sign in to the <strong>Microsoft Entra admin centre</strong> (<code>entra.microsoft.com</code>) → <strong>Groups</strong> → <strong>All groups</strong> → <strong>New group</strong>.</li>
+<li>Set <strong>Group type</strong> = <code>Security</code>. (Microsoft 365 also supports dynamic membership, but Security is the cleanest for access scenarios.)</li>
+<li><strong>Group name</strong>: <code>dyn-lab-sales</code>. Add a description so future-you knows it’s rule-driven, e.g. <em>“Dynamic: all enabled users in department LabSales.”</em></li>
+<li><strong>Membership type</strong>: change the dropdown from <code>Assigned</code> to <strong><code>Dynamic User</code></strong>. This is the decisive step — note that <strong>Add members/owners disappears</strong> once you do this.</li>
+<li>Under <strong>Dynamic user members</strong>, click <strong>Add dynamic query</strong>. The rule builder opens.</li>
+<li>In the builder, set <strong>Property</strong> = <code>department</code>, <strong>Operator</strong> = <code>Equals</code>, <strong>Value</strong> = <code>LabSales</code>. The builder writes the rule for you.</li>
+<li>Click <strong>Edit</strong> (the <code>&lt;/&gt;</code> rule-syntax toggle) to see the text form. It should read exactly:<pre class="hljs"><code class="language-text">(user.department -eq "LabSales")
+</code></pre>
+</li>
+<li>Click <strong>Validate Rules</strong> (preview tool), then <strong>Add users</strong> and pick <code>Lab User labuser1</code>. Expected result: a green tick — the user <strong>matches</strong> the rule. Add a user you know is <em>not</em> in LabSales; expected: a red cross — does <strong>not</strong> match. This is how you test a rule before saving.</li>
+<li>Click <strong>Save</strong> on the rule, then <strong>Create</strong> the group.</li>
+<li>The group is created but its membership shows <strong>empty / “Evaluating”</strong> for a few minutes — this is normal, not a bug. Go get coffee.</li>
+<li>After a few minutes, open the group → <strong>Members</strong>. Expected: <code>Lab User labuser1</code> and <code>Lab User labuser2</code> are present, and you <strong>cannot</strong> click “Add members” (it’s gone). The <strong>membership processing state</strong> on the <strong>Overview</strong> shows <em>Evaluation/Update succeeded</em>.</li>
+</ol>
+<p>If after ten minutes the group is still empty, jump to the troubleshooting section — but 90% of “it’s empty” reports are step 10 impatience.</p>
+<h3>Part B — Build it with the <code>az</code> CLI (Microsoft Graph)</h3>
+<p>The CLI path is what you script and put in pipelines. There is no first-class <code>az ad group</code> flag for dynamic rules, so we go straight to <strong>Microsoft Graph</strong> via <code>az rest</code>. The two non-obvious fields are <code>groupTypes: ["DynamicMembership"]</code> and <code>membershipRuleProcessingState: "On"</code>.</p>
+<ol>
+<li>Create the dynamic group in one call:<pre class="hljs"><code class="language-bash">az rest --method POST --uri <span class="hljs-string">"https://graph.microsoft.com/v1.0/groups"</span> \
+  --headers <span class="hljs-string">"Content-Type=application/json"</span> \
+  --body <span class="hljs-string">'{
+    "displayName": "dyn-lab-sales-cli",
+    "description": "Dynamic: enabled users in department LabSales (CLI)",
+    "mailEnabled": false,
+    "mailNickname": "dyn-lab-sales-cli",
+    "securityEnabled": true,
+    "groupTypes": ["DynamicMembership"],
+    "membershipRule": "(user.department -eq \"LabSales\")",
+    "membershipRuleProcessingState": "On"
+  }'</span>
+</code></pre>
+Expected output: a JSON object with a new group <code>id</code>, <code>"groupTypes": ["DynamicMembership"]</code>, and your <code>membershipRule</code> echoed back. Capture the id:<pre class="hljs"><code class="language-bash">GID=<span class="hljs-string">"<span class="hljs-subst">$(az rest --method GET \
+  --uri <span class="hljs-string">"https://graph.microsoft.com/v1.0/groups?\$filter=displayName eq 'dyn-lab-sales-cli'&amp;\$select=id"</span> \
+  --query <span class="hljs-string">"value[0].id"</span> -o tsv)</span>"</span>
+<span class="hljs-built_in">echo</span> <span class="hljs-string">"Group id: <span class="hljs-variable">$GID</span>"</span>
+</code></pre>
+</li>
+<li>Confirm the rule and processing state landed:<pre class="hljs"><code class="language-bash">az rest --method GET \
+  --uri <span class="hljs-string">"https://graph.microsoft.com/v1.0/groups/<span class="hljs-variable">$GID</span>?\$select=displayName,membershipRule,membershipRuleProcessingState"</span> \
+  -o json
+</code></pre>
+Expected: <code>"membershipRuleProcessingState": "On"</code> and the exact rule string.</li>
+<li>Wait 2–5 minutes, then query the <strong>derived members</strong>:<pre class="hljs"><code class="language-bash">az rest --method GET \
+  --uri <span class="hljs-string">"https://graph.microsoft.com/v1.0/groups/<span class="hljs-variable">$GID</span>/members?\$select=displayName,department,accountEnabled"</span> \
+  --query <span class="hljs-string">"value[].{name:displayName, dept:department, enabled:accountEnabled}"</span> -o table
+</code></pre>
+Expected output (after processing): both lab users listed with <code>dept = LabSales</code>. An empty <code>value</code> before that is the processing lag, not a failure.</li>
+<li>Prove that <strong>manual membership is rejected</strong> on a dynamic group (the key constraint). Try to add any user by hand:<pre class="hljs"><code class="language-bash"><span class="hljs-comment"># This SHOULD fail with 400/403 — dynamic groups reject manual member writes</span>
+az rest --method POST --uri <span class="hljs-string">"https://graph.microsoft.com/v1.0/groups/<span class="hljs-variable">$GID</span>/members/\$ref"</span> \
+  --headers <span class="hljs-string">"Content-Type=application/json"</span> \
+  --body <span class="hljs-string">'{"@odata.id":"https://graph.microsoft.com/v1.0/directoryObjects/00000000-0000-0000-0000-000000000000"}'</span>
+</code></pre>
+Expected: an error along the lines of <em>“The dynamic membership of the group does not allow updates to its members”</em>. That error is the lesson, not a problem.</li>
+<li>(Optional) <strong>Change the rule</strong> in place and watch membership shift. Pause processing, update the rule, resume:<pre class="hljs"><code class="language-bash">az rest --method PATCH --uri <span class="hljs-string">"https://graph.microsoft.com/v1.0/groups/<span class="hljs-variable">$GID</span>"</span> \
+  --headers <span class="hljs-string">"Content-Type=application/json"</span> \
+  --body <span class="hljs-string">'{
+    "membershipRule": "(user.department -eq \"LabSales\") and (user.usageLocation -eq \"IN\")"
+  }'</span>
+</code></pre>
+Expected: <code>204 No Content</code>. After re-processing, members whose <code>usageLocation</code> isn’t <code>IN</code> drop out. This demonstrates that editing the rule, not the list, is how you change membership.</li>
+</ol>
+<h3>Part C — Build it as Bicep (infrastructure as code)</h3>
+<p>For production, the rule belongs in version control and code review, not a portal box. Entra groups are deployable with the <strong>Microsoft.Graph</strong> Bicep extension. Save this as <code>dyn-group.bicep</code>:</p>
+<pre class="hljs"><code>extension microsoftGraphV1
+
+@description('Department value the rule matches')
+param departmentValue string = 'LabSales'
+
+resource dynSalesGroup 'Microsoft.Graph/groups@v1.0' = {
+  displayName: 'dyn-lab-sales-bicep'
+  description: 'Dynamic: enabled users in department ${departmentValue} (Bicep)'
+  uniqueName: 'dyn-lab-sales-bicep'
+  mailEnabled: false
+  mailNickname: 'dyn-lab-sales-bicep'
+  securityEnabled: true
+  groupTypes: [
+    'DynamicMembership'
+  ]
+  membershipRule: '(user.department -eq "${departmentValue}") and (user.accountEnabled -eq true)'
+  membershipRuleProcessingState: 'On'
+}
+
+output groupId string = dynSalesGroup.id
+output appliedRule string = dynSalesGroup.membershipRule
+</code></pre>
+<ol>
+<li>Deploy it at <strong>tenant scope</strong> (Graph resources deploy to the tenant, not a resource group):<pre class="hljs"><code class="language-bash">az deployment tenant create \
+  --name dyn-group-lab \
+  --location centralindia \
+  --template-file dyn-group.bicep \
+  --parameters departmentValue=LabSales
+</code></pre>
+Expected: a successful deployment whose <code>outputs.groupId.value</code> is the new group’s GUID and <code>outputs.appliedRule.value</code> echoes the full rule with the <code>accountEnabled</code> clause.</li>
+<li>Validate via CLI exactly as in Part B step 3, substituting the Bicep group’s id. Expected: both lab users present (they are enabled and in LabSales).</li>
+<li>Note the IaC win: the rule (<code>membershipRule</code>) is now a reviewed line in source control. Changing membership policy is a pull request, not an ad-hoc portal edit — which is precisely how Lumio avoided typing a rule wrong at 5 p.m.</li>
+</ol>
+<h3>Validate the whole thing</h3>
+<p>A quick cross-check that all three groups derived the same membership:</p>
+<pre class="hljs"><code class="language-bash"><span class="hljs-comment"># List all three lab groups and their rules side by side</span>
+az rest --method GET \
+  --uri <span class="hljs-string">"https://graph.microsoft.com/v1.0/groups?\$filter=startswith(displayName,'dyn-lab-sales')&amp;\$select=displayName,membershipRule,membershipRuleProcessingState"</span> \
+  --query <span class="hljs-string">"value[].{name:displayName, state:membershipRuleProcessingState, rule:membershipRule}"</span> -o table
+</code></pre>
+<p>Expected output: three rows, each <code>state = On</code>, each with a LabSales rule, each (after processing) deriving your two lab users.</p>
+<h3>Teardown</h3>
+<p>Delete everything you created so nothing lingers (and no licences ever attach):</p>
+<pre class="hljs"><code class="language-bash"><span class="hljs-comment"># Delete the three lab groups by name</span>
+<span class="hljs-keyword">for</span> NAME <span class="hljs-keyword">in</span> dyn-lab-sales dyn-lab-sales-cli dyn-lab-sales-bicep; <span class="hljs-keyword">do</span>
+  ID=<span class="hljs-string">"<span class="hljs-subst">$(az rest --method GET \
+    --uri <span class="hljs-string">"https://graph.microsoft.com/v1.0/groups?\$filter=displayName eq '<span class="hljs-variable">${NAME}</span>'&amp;\$select=id"</span> \
+    --query <span class="hljs-string">"value[0].id"</span> -o tsv)</span>"</span>
+  <span class="hljs-keyword">if</span> [ -n <span class="hljs-string">"<span class="hljs-variable">$ID</span>"</span> ] &amp;&amp; [ <span class="hljs-string">"<span class="hljs-variable">$ID</span>"</span> != <span class="hljs-string">"None"</span> ]; <span class="hljs-keyword">then</span>
+    az rest --method DELETE --uri <span class="hljs-string">"https://graph.microsoft.com/v1.0/groups/<span class="hljs-variable">${ID}</span>"</span>
+    <span class="hljs-built_in">echo</span> <span class="hljs-string">"Deleted group <span class="hljs-variable">${NAME}</span> (<span class="hljs-variable">$ID</span>)"</span>
+  <span class="hljs-keyword">fi</span>
+<span class="hljs-keyword">done</span>
+
+<span class="hljs-comment"># Delete the two test users</span>
+<span class="hljs-keyword">for</span> U <span class="hljs-keyword">in</span> labuser1 labuser2; <span class="hljs-keyword">do</span>
+  UID=<span class="hljs-string">"<span class="hljs-subst">$(az rest --method GET \
+    --uri <span class="hljs-string">"https://graph.microsoft.com/v1.0/users?\$filter=mailNickname eq '<span class="hljs-variable">${U}</span>'&amp;\$select=id"</span> \
+    --query <span class="hljs-string">"value[0].id"</span> -o tsv)</span>"</span>
+  <span class="hljs-keyword">if</span> [ -n <span class="hljs-string">"<span class="hljs-variable">$UID</span>"</span> ] &amp;&amp; [ <span class="hljs-string">"<span class="hljs-variable">$UID</span>"</span> != <span class="hljs-string">"None"</span> ]; <span class="hljs-keyword">then</span>
+    az rest --method DELETE --uri <span class="hljs-string">"https://graph.microsoft.com/v1.0/users/<span class="hljs-variable">${UID}</span>"</span>
+    <span class="hljs-built_in">echo</span> <span class="hljs-string">"Deleted user <span class="hljs-variable">${U}</span> (<span class="hljs-variable">$UID</span>)"</span>
+  <span class="hljs-keyword">fi</span>
+<span class="hljs-keyword">done</span>
+</code></pre>
+<p>Deleted groups and users go to the Entra <strong>recycle bin</strong> for 30 days; you can purge them permanently from <strong>Deleted groups</strong> / <strong>Deleted users</strong> if needed. Expected: each delete prints its confirmation; re-running the validate query now returns zero rows.</p>
+<h2>Common mistakes &amp; troubleshooting</h2>
+<p>The failures that consume the most time, each with the exact way to confirm and fix it:</p>
+<div class="table-scroll"><table><thead>
+<tr>
+<th>#</th>
+<th>Symptom</th>
+<th>Root cause</th>
+<th>Confirm with</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>“I created the group but it’s empty”</td>
+<td>Rule still <strong>processing</strong> (full re-evaluation runs on create)</td>
+<td>Group → Overview → membership processing state shows <em>Evaluating</em></td>
+<td><strong>Wait 3–10 min</strong>; large tenants longer — it is not broken</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Rule won’t save / “requires a premium licence”</td>
+<td>Tenant has <strong>no Entra ID P1/P2</strong></td>
+<td><code>subscribedSkus</code> lacks <code>AAD_PREMIUM*</code></td>
+<td>Assign a P1/P2 (or bundling M365) licence to the tenant</td>
+</tr>
+<tr>
+<td>3</td>
+<td>“Add members” is greyed out</td>
+<td>Group is <strong>dynamic</strong> — manual edits are blocked by design</td>
+<td>Membership type = Dynamic User/Device</td>
+<td>Edit the <strong>rule</strong>, not the list; or use an assigned group</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Rule rejected: invalid syntax</td>
+<td>Mixed <code>user.</code>/<code>device.</code>, unquoted string, or bad operator</td>
+<td>Portal shows a red rule error; <code>az rest</code> returns 400</td>
+<td>One species only; quote strings; check operator spelling</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Expected user not a member</td>
+<td>Their attribute <strong>isn’t set</strong> in Entra (or has a typo/case)</td>
+<td>Check the user object’s <code>department</code> etc. via Graph</td>
+<td>Populate/correct the attribute at the source; wait to re-process</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Users not updating after an HR change</td>
+<td>Attribute changed <strong>upstream but hasn’t synced</strong> to Entra</td>
+<td>Compare on-prem AD value vs Entra value</td>
+<td>Wait for <strong>Entra Connect</strong> sync, then rule re-processing</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Group won’t become role-assignable</td>
+<td>Dynamic groups <strong>cannot</strong> be role-assignable</td>
+<td>Toggle is disabled when membership type is dynamic</td>
+<td>Use an <strong>assigned</strong> group for role assignment / PIM</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Membership “paused”, never updates</td>
+<td><code>membershipRuleProcessingState</code> set to <strong><code>Paused</code></strong></td>
+<td><code>GET …?$select=membershipRuleProcessingState</code> returns <code>Paused</code></td>
+<td>PATCH it back to <code>On</code></td>
+</tr>
+<tr>
+<td>9</td>
+<td>Too many / wrong users scooped in</td>
+<td>Rule <strong>too broad</strong> (e.g. <code>-contains</code> matching unintended substrings)</td>
+<td>Validate Rules against edge-case users</td>
+<td>Tighten the rule; add <code>-and</code> clauses; test before saving</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Licences/CA applied to wrong people</td>
+<td>A wrong rule <strong>propagated to a consumer</strong> instantly</td>
+<td>Audit who the licensing/CA policy now covers</td>
+<td>Fix the rule; remember blast radius — test in dev first</td>
+</tr>
+</tbody>
+</table></div><p>The single highest-value habit, drawn from rows 1 and 9: <strong>use Validate Rules (or a Graph membership query) before you trust a group</strong>, and give a new group a few minutes before declaring it broken. The second habit, from rows 5 and 6: a rule can only ever be as correct as the <strong>data on the object</strong> — when a user is missing from a group, suspect the attribute long before you suspect the engine.</p>
+<h2>Best practices</h2>
+<ul>
+<li><strong>Name groups so the rule is self-evident.</strong> <code>dyn-sales-licensed</code>, not <code>Group 7</code>. The <code>dyn-</code> prefix and a description stating the rule save every future admin a lookup.</li>
+<li><strong>Always validate before you trust.</strong> Use the portal’s <strong>Validate Rules</strong> tool (or a Graph members query) against known edge-case objects — an active user, a leaver, a guest — before any consumer points at the group.</li>
+<li><strong>Keep rules as simple as the intent allows.</strong> Prefer one or two clear clauses over a clever regex. Every added clause is a future maintenance and debugging cost.</li>
+<li><strong>Filter on <code>accountEnabled</code> for anything that costs or grants.</strong> Adding <code>and (user.accountEnabled -eq true)</code> keeps disabled leavers out of licensed and access groups automatically — this alone closes most drift.</li>
+<li><strong>Manage production rules as code.</strong> Define the group and its <code>membershipRule</code> in <strong>Bicep</strong> (or Graph in a pipeline) so changes are reviewed and version-controlled, not typed into a portal at the end of the day.</li>
+<li><strong>Use extension attributes for data Entra doesn’t model.</strong> When the grouping depends on a custom fact, write it to <code>extensionAttribute1</code>–<code>15</code> (from on-prem AD or via Graph) and filter on that — don’t invent a property that isn’t filterable.</li>
+<li><strong>Don’t try to make a dynamic group role-assignable.</strong> Privileged role assignment needs assigned membership and PIM; never govern privilege with a rule.</li>
+<li><strong>Respect the processing lag in runbooks.</strong> If onboarding automation depends on a user landing in a dynamic group, build in a wait/retry — the membership isn’t instantaneous.</li>
+<li><strong>One species per group.</strong> Decide user vs device up front; never try to express “users and their devices” in a single rule.</li>
+<li><strong>Review broad rules periodically.</strong> A rule like <code>objectId -ne null</code> (all users) is powerful and easy to over-grant — pair such groups with <strong>access reviews</strong>.</li>
+</ul>
+<h2>Security notes</h2>
+<ul>
+<li><strong>Mind the blast radius.</strong> A dynamic group feeding Conditional Access or licensing applies a rule change to <em>everyone</em> it newly matches, instantly. Treat the rule on such a group as security-critical code: review it, test it in a dev tenant, and prefer IaC so it can’t be changed casually.</li>
+<li><strong>Never govern privilege with a rule.</strong> Dynamic groups <strong>cannot</strong> be role-assignable, and that is a feature — keep it that way. Use <strong>assigned</strong> groups plus <strong>PIM</strong> for any group that grants an Entra or Azure role, so a directory-attribute change can never silently escalate someone.</li>
+<li><strong>Be deliberate with <code>-contains</code> and <code>-match</code>.</strong> A loose substring or regex can scoop in unintended principals (e.g. a <code>-contains "admin"</code> rule matching <code>badmin@…</code>). Anchor regexes, prefer <code>-eq</code>/<code>-startsWith</code> where possible, and validate against adversarial examples.</li>
+<li><strong>Protect the attribute source.</strong> Because the rule trusts the data on the object, whoever can write <code>department</code> or an <code>extensionAttribute</code> can change who is in the group. Lock down who can edit user attributes (and the on-prem AD fields that sync in) with least privilege.</li>
+<li><strong>Exclude guests intentionally, not accidentally.</strong> Rules that don’t filter <code>userType</code> can sweep in <strong>guest</strong> accounts you didn’t mean to license or grant. Add <code>(user.userType -eq "Member")</code> where the group should be employees only.</li>
+<li><strong>Audit membership changes.</strong> Dynamic membership changes appear in the <strong>Entra audit logs</strong>; route them to a Log Analytics workspace so a rule that suddenly adds 500 people is visible and alertable.</li>
+<li><strong>Pair sensitive groups with access reviews.</strong> Even a correct rule benefits from periodic recertification when it gates real access — defence in depth against a rule that drifts out of policy intent.</li>
+</ul>
+<h2>Cost &amp; sizing</h2>
+<p>The “size” of a dynamic group has two cost dimensions, and neither is the group object itself (groups are free):</p>
+<ul>
+<li><strong>The licence to use the feature.</strong> Dynamic membership requires <strong>Microsoft Entra ID P1</strong> at minimum (P2 if you also want PIM/access-reviews/Identity Protection). P1 is roughly <strong>$6/user/month</strong> (often already bundled in <strong>Microsoft 365 E3/E5</strong> or <strong>EMS</strong>). The licence is per-user for users who <em>benefit</em> from premium features; for a tenant already on E3/E5 this is effectively sunk cost. If you are on the free tier, this is the one real spend the feature requires.</li>
+<li><strong>What the group <em>grants</em>.</strong> This is where the money actually moves. A dynamic group feeding <strong>group-based licensing</strong> assigns a paid licence (e.g. <strong>E5 ≈ $57/user/month</strong>) to every member — so a rule that is too broad over-licenses and a rule that is too narrow breaks apps. The cost lever is rule precision plus the <code>accountEnabled</code> filter, which is exactly how Lumio reclaimed 60+ licences.</li>
+</ul>
+<p>Rough figures for sizing a decision:</p>
+<div class="table-scroll"><table><thead>
+<tr>
+<th>Item</th>
+<th>Rough cost</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Group object</td>
+<td>Free</td>
+<td>No charge for groups, dynamic or assigned</td>
+</tr>
+<tr>
+<td>Entra ID <strong>P1</strong> (enables dynamic membership)</td>
+<td>~$6/user/month (~₹500)</td>
+<td>Bundled in M365 E3/E5, EMS E3</td>
+</tr>
+<tr>
+<td>Entra ID <strong>P2</strong> (adds PIM, access reviews)</td>
+<td>~$9/user/month (~₹750)</td>
+<td>Bundled in M365 E5, EMS E5</td>
+</tr>
+<tr>
+<td>What a licence-feeding group grants (e.g. E5)</td>
+<td>~$57/user/month (~₹4,700)</td>
+<td>The real spend the rule controls</td>
+</tr>
+<tr>
+<td>Graph API / processing</td>
+<td>Free</td>
+<td>No per-evaluation charge</td>
+</tr>
+</tbody>
+</table></div><p>Sizing guidance: there is no instance to right-size, but <strong>rule precision is the cost control</strong>. Always include <code>accountEnabled -eq true</code> on cost- or access-granting groups; exclude guests with <code>userType -eq "Member"</code> unless you mean to include them; and review broad rules so you are not licensing or granting access to people who shouldn’t have it. The free-tier reality: dynamic membership is <strong>not</strong> available without P1 — on a free tenant you maintain groups manually or upgrade.</p>
+<h2>Interview &amp; exam questions</h2>
+<p><strong>1. What is a dynamic membership group and how does it differ from an assigned group?</strong> An assigned group stores an explicit, hand-maintained list of members. A dynamic group stores a <strong>membership rule</strong> (a boolean expression over object attributes) and stores no list — Entra derives the membership by evaluating the rule, adding and removing members automatically as objects change. You edit the rule, never the list.</p>
+<p><strong>2. What licence is required for dynamic groups, and why does this surprise people?</strong> <strong>Microsoft Entra ID P1</strong> (or P2). It surprises people because group creation itself is free, so they assume dynamic membership is too — but the rule simply won’t save on a free tenant. P1 is commonly bundled in M365 E3/E5 and EMS.</p>
+<p><strong>3. Can a single dynamic group contain both users and devices?</strong> No. A group’s membership type is <strong>either</strong> Dynamic User <strong>or</strong> Dynamic Device, and its rule must reference only <code>user.*</code> or only <code>device.*</code> properties. A rule mixing the two is invalid. “Users and their devices” requires two groups.</p>
+<p><strong>4. You created a dynamic group and it’s empty. What’s the most likely explanation?</strong> It is still <strong>processing</strong> — when a rule is created or changed, Entra runs a full re-evaluation of the directory, which takes minutes (longer in large tenants). The group populates once processing completes. Check the membership processing state before assuming the rule is wrong.</p>
+<p><strong>5. Why can’t you add a member to a dynamic group by hand?</strong> Because the <strong>rule is the sole authority</strong> for membership — allowing manual edits would let the membership diverge from the rule. The portal greys out “Add members” and Graph rejects manual member writes on a dynamic group. To include someone, fix the rule or use a different group.</p>
+<p><strong>6. Write a rule for all enabled users in the Finance department who are not guests.</strong> <code>(user.department -eq "Finance") and (user.accountEnabled -eq true) and (user.userType -eq "Member")</code>. The <code>accountEnabled</code> clause excludes disabled leavers; the <code>userType</code> clause excludes guests.</p>
+<p><strong>7. Which operator would you use to match a multi-value property like <code>proxyAddresses</code>, and why not <code>-eq</code>?</strong> Use <strong><code>-contains</code></strong> (or <code>-any</code> for collections of complex objects). <code>-eq</code> compares the whole collection and rarely matches as intended; <code>-contains</code> tests whether the collection includes the value.</p>
+<p><strong>8. Can a dynamic group be made role-assignable for an Entra directory role?</strong> No. <strong>Role-assignable groups must have assigned membership</strong> by design, so a directory-attribute change can never silently grant a privileged role. Use assigned groups plus PIM for privileged access.</p>
+<p><strong>9. A user changed departments in HR but is still in the old dynamic group. What do you check, in order?</strong> First, whether the new value has <strong>synced into Entra</strong> (compare on-prem AD vs the Entra user object — Entra Connect runs on a schedule). Then, whether the rule has <strong>re-processed</strong> since the change (processing lag). The attribute on the Entra object plus the processing state explain almost every “didn’t update” case.</p>
+<p><strong>10. What field tells you whether a group is dynamic, and what value enables rule evaluation?</strong> <code>groupTypes</code> contains <strong><code>DynamicMembership</code></strong> for a dynamic group, and <strong><code>membershipRuleProcessingState</code></strong> must be <strong><code>On</code></strong> (not <code>Paused</code>) for the rule to be evaluated. Both are visible via a Graph <code>GET</code> on the group.</p>
+<p><strong>11. Give a concrete business reason dynamic groups save money.</strong> Group-based licensing assigns paid licences (e.g. E5 ≈ $57/user/month) to every member. A dynamic rule that includes <code>accountEnabled -eq true</code> automatically drops disabled leavers, eliminating licences paid for ghost accounts — directly reclaiming spend that manual groups leak through drift.</p>
+<p><strong>12. How should you safely roll out a new rule that will feed Conditional Access?</strong> Build and <strong>Validate Rules</strong> in a non-production/dev tenant against edge-case users, define the final rule as <strong>Bicep</strong> for code review, and only then apply it in production — because a rule on a CA group changes who is affected the instant it processes (blast radius).</p>
+<p>These map most directly to <strong>SC-300 (Identity and Access Administrator)</strong> — <em>implement and manage groups, group-based licensing, and dynamic membership</em> — and touch <strong>AZ-104 (Administrator)</strong> for the groups-and-governance fundamentals. The licensing-cost angle is relevant background for <strong>MS-102 (Microsoft 365 Administrator)</strong>. A compact mapping:</p>
+<div class="table-scroll"><table><thead>
+<tr>
+<th>Question theme</th>
+<th>Primary cert</th>
+<th>Objective area</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dynamic vs assigned, membership rules</td>
+<td>SC-300</td>
+<td>Plan and implement groups</td>
+</tr>
+<tr>
+<td>Group-based licensing &amp; cost</td>
+<td>SC-300 / MS-102</td>
+<td>Manage licences via groups</td>
+</tr>
+<tr>
+<td>Role-assignable groups &amp; PIM boundary</td>
+<td>SC-300</td>
+<td>Privileged access governance</td>
+</tr>
+<tr>
+<td>Groups in Conditional Access</td>
+<td>SC-300</td>
+<td>Implement Conditional Access</td>
+</tr>
+<tr>
+<td>Groups fundamentals &amp; RBAC scoping</td>
+<td>AZ-104</td>
+<td>Manage Entra users and groups</td>
+</tr>
+</tbody>
+</table></div><h2>Quick check</h2>
+<ol>
+<li>True or false: you can add one extra person by hand to a dynamic group when they don’t match the rule.</li>
+<li>You write <code>(user.department -eq "IT") or (device.deviceOSType -eq "Windows")</code> and the portal rejects it. Why?</li>
+<li>A brand-new dynamic group is empty thirty seconds after you create it. Is it broken? What do you do?</li>
+<li>Which single clause should you add to a licence-feeding rule to stop paying for disabled leavers?</li>
+<li>Name the <code>groupTypes</code> value and the <code>membershipRuleProcessingState</code> value that together mean “this is a dynamic group whose rule is actively evaluated.”</li>
+</ol>
+<h3>Answers</h3>
+<ol>
+<li><strong>False.</strong> A dynamic group’s membership is derived solely from its rule; manual add/remove is blocked (the portal greys it out, Graph rejects it). To include someone, change the rule or use an assigned group.</li>
+<li>Because a rule must target <strong>one species</strong> — either users <strong>or</strong> devices. Mixing <code>user.*</code> and <code>device.*</code> in the same rule is invalid; you’d need two separate groups.</li>
+<li><strong>Not broken.</strong> A new or changed rule triggers a full re-evaluation that takes a few minutes (longer in large tenants). <strong>Wait</strong> and check the membership processing state; it will populate.</li>
+<li><code>and (user.accountEnabled -eq true)</code> — disabled accounts then fall out of the group automatically, so you stop licensing leavers.</li>
+<li><code>groupTypes</code> contains <strong><code>DynamicMembership</code></strong>, and <code>membershipRuleProcessingState</code> is <strong><code>On</code></strong> (not <code>Paused</code>).</li>
+</ol>
+<h2>Glossary</h2>
+<ul>
+<li><strong>Dynamic membership group</strong> — a group whose members are derived from a saved <strong>membership rule</strong> rather than a hand-maintained list; Entra adds/removes members automatically as objects change.</li>
+<li><strong>Assigned group</strong> — a group with an explicit, manually maintained member list (the default, non-dynamic type).</li>
+<li><strong>Membership type</strong> — the group property choosing <strong>Assigned</strong>, <strong>Dynamic User</strong>, or <strong>Dynamic Device</strong>; set at creation and effectively fixed.</li>
+<li><strong>Membership rule (<code>membershipRule</code>)</strong> — the boolean expression over <code>user.*</code> or <code>device.*</code> properties that derives membership.</li>
+<li><strong><code>membershipRuleProcessingState</code></strong> — <code>On</code> (rule evaluated) or <code>Paused</code> (evaluation stopped); must be <code>On</code> for a dynamic group to update.</li>
+<li><strong><code>groupTypes</code></strong> — the Graph property whose <code>DynamicMembership</code> value marks a group as dynamic (and <code>Unified</code> marks a Microsoft 365 group).</li>
+<li><strong>Filterable property</strong> — a user or device attribute that membership rules are allowed to reference (an allow-listed subset of the directory schema).</li>
+<li><strong>Extension attribute</strong> — <code>extensionAttribute1</code>–<code>15</code>, free-text custom fields on user/device objects; the escape hatch for data Entra doesn’t model natively.</li>
+<li><strong>Operator</strong> — a comparison keyword in a rule: <code>-eq</code>, <code>-ne</code>, <code>-contains</code>, <code>-startsWith</code>, <code>-match</code>, <code>-in</code>, <code>-any</code>, <code>-all</code>, combined with <code>-and</code>/<code>-or</code>/<code>-not</code>.</li>
+<li><strong>Processing lag</strong> — the few-minute delay between a relevant change (or rule creation) and the membership being recomputed; the reason a new group is briefly empty.</li>
+<li><strong>Group-based licensing</strong> — assigning Microsoft licences to all members of a group; a primary consumer of dynamic groups and the main cost lever.</li>
+<li><strong>Conditional Access</strong> — Entra policies that include/exclude groups to enforce MFA, device compliance, location and risk controls; a primary consumer where rule correctness is security-critical.</li>
+<li><strong>Role-assignable group</strong> — a group that can be granted an Entra directory role; <strong>cannot</strong> be dynamic — it must have assigned membership.</li>
+<li><strong>Entra ID P1/P2</strong> — the premium licence tiers; <strong>P1</strong> is the minimum required for dynamic membership, <strong>P2</strong> adds PIM, access reviews and Identity Protection.</li>
+<li><strong>Microsoft Graph</strong> — the API behind <code>az rest</code> calls here; where the group, its rule and its derived members are read and written.</li>
+</ul>
+<h2>Next steps</h2>
+<p>You can now build self-maintaining groups and validate them before they go live. Build outward:</p>
+<ul>
+<li><strong>Next:</strong> <a href="/article/azure-key-vault-secrets-keys-certificates">Azure Key Vault: Secrets, Keys and Certificates Done Right</a> — pair dynamic groups with managed identities and least-privilege secret access.</li>
+<li>Related: <a href="/article/azure-management-groups-hierarchy-design-fundamentals">Management Groups 101: Designing a Hierarchy That Scopes Policy and RBAC</a> — where groups plug into the broader RBAC and policy scope.</li>
+<li>Related: <a href="/article/azure-policy-governance-scale">Azure Policy Governance at Scale</a> — govern the resources your grouped identities can touch.</li>
+<li>Related: <a href="/article/azure-resource-hierarchy-explained">Azure Resource Hierarchy Explained: Subscriptions, Resource Groups and Resources</a> — the scoping model everything in Entra ultimately targets.</li>
+<li>Related: <a href="/article/deploy-first-bicep-file-from-scratch">Deploy Your First Bicep File From Scratch</a> — go deeper on the IaC that made the production group in this lab reviewable.</li>
+</ul>
+</div> <div style="max-width:780px;margin:2rem auto;padding:0 2rem;display:flex;flex-wrap:wrap;gap:.4rem"> <span class="tag-pill">Entra ID</span><span class="tag-pill">Dynamic Groups</span><span class="tag-pill">Identity</span><span class="tag-pill">RBAC</span><span class="tag-pill">Conditional Access</span><span class="tag-pill">Microsoft Graph</span><span class="tag-pill">Bicep</span><span class="tag-pill">SC-300</span> </div><div class="article-foot"> <div class="share-row"> <span class="share-label">// share</span> <a class="share-btn" target="_blank" rel="noopener noreferrer" aria-label="Share on LinkedIn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fkloudvin.com%2Farticle%2Fentra-id-dynamic-groups-membership-rules-cookbook%2F"><i class="fab fa-linkedin-in"></i></a> <a class="share-btn" target="_blank" rel="noopener noreferrer" aria-label="Share on X" href="https://x.com/intent/tweet?url=https%3A%2F%2Fkloudvin.com%2Farticle%2Fentra-id-dynamic-groups-membership-rules-cookbook%2F&text=Entra%20ID%20Dynamic%20Groups%3A%20A%20Membership-Rule%20Cookbook%20That%20Actually%20Scales"><i class="fab fa-x-twitter"></i></a> <a class="share-btn" target="_blank" rel="noopener noreferrer" aria-label="Share on Reddit" href="https://www.reddit.com/submit?url=https%3A%2F%2Fkloudvin.com%2Farticle%2Fentra-id-dynamic-groups-membership-rules-cookbook%2F&title=Entra%20ID%20Dynamic%20Groups%3A%20A%20Membership-Rule%20Cookbook%20That%20Actually%20Scales"><i class="fab fa-reddit-alien"></i></a> <a class="share-btn" target="_blank" rel="noopener noreferrer" aria-label="Share on WhatsApp" href="https://wa.me/?text=Entra%20ID%20Dynamic%20Groups%3A%20A%20Membership-Rule%20Cookbook%20That%20Actually%20Scales%20https%3A%2F%2Fkloudvin.com%2Farticle%2Fentra-id-dynamic-groups-membership-rules-cookbook%2F"><i class="fab fa-whatsapp"></i></a> <button class="share-btn share-copy" type="button" data-url="https://kloudvin.com/article/entra-id-dynamic-groups-membership-rules-cookbook/" aria-label="Copy link"><i class="fas fa-link"></i></button> </div> <div class="consult-cta"> <div class="consult-text"> <strong>Need this built for real?</strong> <p>Vinod is a Senior Cloud Architect (22+ yrs) — available for Azure / AWS / GCP architecture, landing zones, and migrations.</p> </div> <a class="btn-glow primary" href="/about">Work with me <i class="fas fa-arrow-right"></i></a> </div> </div> <div class="article-author"> <div class="article-author-avatar">VH</div> <div class="article-author-info"> <h4>Written by <span style="color:var(--neon-cyan)">Vinod</span></h4> <p>Senior Cloud Architect with 22+ years of experience. Sharing practical knowledge from production environments.</p> </div> </div> <div style="max-width:780px;margin:0 auto;padding:0 2rem"> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var a=(s,i,o)=>{let r=async()=>{await(await s())()},t=typeof i.value=="object"?i.value:void 0,c={rootMargin:t==null?void 0:t.rootMargin},n=new IntersectionObserver(e=>{for(let l of e)if(l.isIntersecting){n.disconnect(),r();break}},c);for(let e of o.children)n.observe(e)};(self.Astro||(self.Astro={})).visible=a;window.dispatchEvent(new Event("astro:visible"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="Z1xo34g" component-url="/_astro/Engagement.BOVC0Cfv.js" component-export="default" renderer-url="/_astro/client.CHkKBZPA.js" props="{&quot;slug&quot;:[0,&quot;entra-id-dynamic-groups-membership-rules-cookbook&quot;]}" ssr client="visible" opts="{&quot;name&quot;:&quot;Engagement&quot;,&quot;value&quot;:true}" await-children><div class="kv-engage"><div class="kv-react-row"><button class="kv-react " title="Like"><span>👍</span> 0</button><button class="kv-react " title="Love"><span>❤️</span> 0</button><button class="kv-react " title="Insightful"><span>💡</span> 0</button></div><h3 class="kv-engage-h">Comments </h3><div class="kv-comments"></div><form class="kv-cform"><input value placeholder="Your name" required/><textarea placeholder="Add a comment…" rows="3" required></textarea><button class="btn-glow primary" type="submit">Post comment</button></form></div><!--astro:end--></astro-island> </div> <section class="section"> <div class="section-head"> <span class="section-tag">// more articles</span> <h2 class="section-title">Keep Reading</h2> </div> <div class="posts-wrap"> <a class="pcard pcard-min" href="/article/application-insights-instrument-web-app-otel-setup" data-category="Azure" style="--c:#38bdf8"> <span class="pcard-ico" style="color:#38bdf8"><i class="fas fa-chart-line"></i></span> <span class="pcard-min-body"> <h3>How to Instrument a Web App with Application Insights and OpenTelemetry End to End</h3> <span class="pcard-min-meta"> <span class="pcard-cat" style="background:rgba(56,189,248,0.08);color:#38bdf8">Azure</span> <span class="pcard-time"><i class="far fa-clock"></i> 43 min read</span> </span> </span> </a><a class="pcard pcard-min" href="/article/avd-connection-flow-broker-gateway-reverse-connect-deep-dive" data-category="Azure" style="--c:#38bdf8"> <span class="pcard-ico" style="color:#38bdf8"><i class="fas fa-network-wired"></i></span> <span class="pcard-min-body"> <h3>How an AVD Session Actually Connects: Broker, Gateway, and the Reverse-Connect Transport, Step by Step</h3> <span class="pcard-min-meta"> <span class="pcard-cat" style="background:rgba(56,189,248,0.08);color:#38bdf8">Azure</span> <span class="pcard-time"><i class="far fa-clock"></i> 40 min read</span> </span> </span> </a><a class="pcard pcard-min" href="/article/avd-host-pool-personal-vs-pooled-deciding-the-right-model" data-category="Azure" style="--c:#38bdf8"> <span class="pcard-ico" style="color:#38bdf8"><i class="fas fa-cloud"></i></span> <span class="pcard-min-body"> <h3>Personal vs Pooled Host Pools: A Decision Framework for Picking the Right AVD Desktop Model and Sizing It</h3> <span class="pcard-min-meta"> <span class="pcard-cat" style="background:rgba(56,189,248,0.08);color:#38bdf8">Azure</span> <span class="pcard-time"><i class="far fa-clock"></i> 27 min read</span> </span> </span> </a> </div> </section><script>
+    // Click-to-zoom lightbox with pinch / wheel zoom + drag-pan. Dense diagrams have
+    // small fonts when fit to a phone screen; here the SVG opens fit-to-screen and you
+    // zoom IN (well past screen size) and pan to read any part.
+    (function () {
+      const imgs = document.querySelectorAll(".article-content img");
+      if (!imgs.length) return;
+
+      function openLightbox(sourceImg) {
+        const o = document.createElement("div");
+        o.style.cssText = "position:fixed;inset:0;z-index:9999;background:rgba(6,10,19,.95);overflow:hidden;touch-action:none;overscroll-behavior:contain;cursor:grab";
+        const big = document.createElement("img");
+        big.src = sourceImg.currentSrc || sourceImg.src; big.alt = sourceImg.alt || ""; big.draggable = false;
+        const srcRect = sourceImg.getBoundingClientRect();
+        const aspect = (srcRect.width && srcRect.height) ? srcRect.width / srcRect.height : 1.5;
+        const baseW = 1500, baseH = baseW / aspect;
+        big.style.cssText = "position:absolute;top:0;left:0;width:" + baseW + "px;max-width:none;transform-origin:0 0;will-change:transform;user-select:none;-webkit-user-drag:none;background:#060a13;border-radius:6px;box-shadow:0 0 60px rgba(0,240,255,.18)";
+        o.appendChild(big);
+
+        const mkBtn = (label, aria) => {
+          const b = document.createElement("button");
+          b.type = "button"; b.innerHTML = label; b.setAttribute("aria-label", aria);
+          b.style.cssText = "width:46px;height:46px;border-radius:11px;border:1px solid rgba(255,255,255,.2);background:rgba(11,17,32,.9);color:#7fdfff;font-size:1.2rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)";
+          return b;
+        };
+        const ctrl = document.createElement("div");
+        ctrl.style.cssText = "position:fixed;left:50%;bottom:calc(1rem + env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;gap:.45rem;z-index:2";
+        const bOut = mkBtn("−", "Zoom out"), bReset = mkBtn("↺", "Reset zoom"), bIn = mkBtn("+", "Zoom in"), bClose = mkBtn("✕", "Close");
+        ctrl.append(bOut, bReset, bIn, bClose); o.appendChild(ctrl);
+
+        const hint = document.createElement("div");
+        hint.textContent = "Pinch or scroll to zoom · drag to pan";
+        hint.style.cssText = "position:fixed;left:50%;top:calc(1rem + env(safe-area-inset-top));transform:translateX(-50%);color:#cbd5e1;font-size:.78rem;background:rgba(11,17,32,.72);padding:.3rem .75rem;border-radius:20px;z-index:2;pointer-events:none";
+        o.appendChild(hint);
+        setTimeout(() => { hint.style.transition = "opacity .6s"; hint.style.opacity = "0"; }, 2800);
+
+        document.body.appendChild(o);
+        const prevOverflow = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+
+        let scale = 1, tx = 0, ty = 0, fit = 1;
+        const apply = () => { big.style.transform = "translate(" + tx + "px," + ty + "px) scale(" + scale + ")"; };
+        function fitToScreen() {
+          const vw = o.clientWidth, vh = o.clientHeight;
+          fit = Math.min((vw * 0.96) / baseW, (vh * 0.9) / baseH);
+          if (!isFinite(fit) || fit <= 0) fit = 1;
+          scale = fit; tx = (vw - baseW * scale) / 2; ty = (vh - baseH * scale) / 2; apply();
+        }
+        function zoomAt(cx, cy, factor) {
+          const ns = Math.min(fit * 14, Math.max(fit * 0.8, scale * factor));
+          tx = cx - ((cx - tx) / scale) * ns; ty = cy - ((cy - ty) / scale) * ns; scale = ns; apply();
+        }
+        fitToScreen();
+        requestAnimationFrame(fitToScreen);
+        big.addEventListener("load", fitToScreen);
+        window.addEventListener("resize", fitToScreen);
+
+        o.addEventListener("wheel", (e) => { e.preventDefault(); const r = o.getBoundingClientRect(); zoomAt(e.clientX - r.left, e.clientY - r.top, e.deltaY < 0 ? 1.18 : 1 / 1.18); }, { passive: false });
+
+        let dragging = false, moved = false, lx = 0, ly = 0;
+        o.addEventListener("mousedown", (e) => { dragging = true; moved = false; lx = e.clientX; ly = e.clientY; o.style.cursor = "grabbing"; });
+        window.addEventListener("mousemove", (e) => { if (!dragging) return; tx += e.clientX - lx; ty += e.clientY - ly; lx = e.clientX; ly = e.clientY; moved = true; apply(); });
+        window.addEventListener("mouseup", () => { dragging = false; o.style.cursor = "grab"; });
+
+        let pts = new Map(), startDist = 0, startScale = 1;
+        o.addEventListener("touchstart", (e) => { for (const t of e.changedTouches) pts.set(t.identifier, { x: t.clientX, y: t.clientY }); if (pts.size === 2) { const a = [...pts.values()]; startDist = Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y); startScale = scale; } }, { passive: false });
+        o.addEventListener("touchmove", (e) => {
+          e.preventDefault();
+          const cur = new Map(); for (const t of e.touches) cur.set(t.identifier, { x: t.clientX, y: t.clientY });
+          if (cur.size === 1) { const id = [...cur.keys()][0]; const p = pts.get(id), c = cur.get(id); if (p) { tx += c.x - p.x; ty += c.y - p.y; apply(); } }
+          else if (cur.size === 2) { const a = [...cur.values()]; const d = Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y); const r = o.getBoundingClientRect(); const mx = (a[0].x + a[1].x) / 2 - r.left, my = (a[0].y + a[1].y) / 2 - r.top; if (startDist) zoomAt(mx, my, (startScale * (d / startDist)) / scale); }
+          pts = cur;
+        }, { passive: false });
+        o.addEventListener("touchend", (e) => { for (const t of e.changedTouches) pts.delete(t.identifier); if (pts.size < 2) startDist = 0; });
+
+        big.addEventListener("dblclick", (e) => { const r = o.getBoundingClientRect(); zoomAt(e.clientX - r.left, e.clientY - r.top, scale > fit * 1.6 ? fit / scale : 2.4); });
+
+        function close() { document.body.style.overflow = prevOverflow; window.removeEventListener("resize", fitToScreen); document.removeEventListener("keydown", onKey); o.remove(); }
+        function onKey(e) { if (e.key === "Escape") close(); }
+        bClose.addEventListener("click", (e) => { e.stopPropagation(); close(); });
+        bIn.addEventListener("click", (e) => { e.stopPropagation(); zoomAt(o.clientWidth / 2, o.clientHeight / 2, 1.45); });
+        bOut.addEventListener("click", (e) => { e.stopPropagation(); zoomAt(o.clientWidth / 2, o.clientHeight / 2, 1 / 1.45); });
+        bReset.addEventListener("click", (e) => { e.stopPropagation(); fitToScreen(); });
+        o.addEventListener("click", (e) => { if (e.target === o && !moved) close(); });
+        document.addEventListener("keydown", onKey);
+      }
+
+      imgs.forEach((img) => {
+        img.style.cursor = "zoom-in";
+        img.addEventListener("click", () => openLightbox(img));
+        if (/\/diagrams\//.test(img.getAttribute("src") || "") && img.parentNode) {
+          const wrap = document.createElement("span");
+          wrap.style.cssText = "position:relative;display:block";
+          img.parentNode.insertBefore(wrap, img); wrap.appendChild(img);
+          const badge = document.createElement("span");
+          badge.textContent = "⤢ tap to zoom";
+          badge.style.cssText = "position:absolute;top:.55rem;right:.55rem;font-size:.68rem;color:#7fdfff;background:rgba(6,10,19,.72);padding:.2rem .5rem;border-radius:6px;border:1px solid rgba(127,223,255,.25);pointer-events:none;letter-spacing:.02em";
+          wrap.appendChild(badge);
+        }
+      });
+    })();
+
+    // Copy-link share button.
+    (function () {
+      const btn = document.querySelector(".share-copy");
+      if (!btn) return;
+      btn.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(btn.getAttribute("data-url"));
+          const i = btn.querySelector("i");
+          const prev = i.className;
+          i.className = "fas fa-check";
+          setTimeout(() => (i.className = prev), 1500);
+        } catch (e) {
+          /* clipboard unavailable */
+        }
+      });
+    })();
+
+    // Reading-progress bar (thin neon bar tracking scroll through the page).
+    (function () {
+      const bar = document.createElement("div");
+      bar.style.cssText =
+        "position:fixed;top:0;left:0;height:3px;width:0;z-index:9998;background:linear-gradient(90deg,var(--neon-cyan),var(--neon-violet));box-shadow:0 0 8px rgba(0,240,255,.5);transition:width .1s ease-out";
+      document.body.appendChild(bar);
+      const onScroll = () => {
+        const docH = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.width = (docH > 0 ? Math.min(100, Math.max(0, (window.scrollY / docH) * 100)) : 0) + "%";
+      };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+    })();
+
+    // Copy-to-clipboard button on every code block.
+    (function () {
+      document.querySelectorAll(".article-content pre").forEach((pre) => {
+        pre.style.position = "relative";
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = "Copy";
+        btn.style.cssText =
+          "position:absolute;top:.5rem;right:.5rem;font-size:.7rem;padding:.25rem .55rem;border:1px solid rgba(255,255,255,.18);border-radius:6px;background:rgba(6,10,19,.7);color:#7fdfff;cursor:pointer;opacity:0;transition:opacity .15s;font-family:monospace;z-index:2";
+        pre.addEventListener("mouseenter", () => (btn.style.opacity = "1"));
+        pre.addEventListener("mouseleave", () => (btn.style.opacity = "0"));
+        btn.addEventListener("click", async () => {
+          const code = pre.querySelector("code");
+          try {
+            await navigator.clipboard.writeText((code || pre).innerText);
+            btn.textContent = "Copied!";
+            setTimeout(() => (btn.textContent = "Copy"), 1500);
+          } catch (e) {
+            /* clipboard unavailable */
+          }
+        });
+        pre.appendChild(btn);
+      });
+    })();
+  </script>  </main> <footer class="footer"> <div class="footer-inner"> <div class="footer-brand"> <span class="logo-text">KloudVin</span> <span>© 2026 KloudVin. All Things IT, One Platform.</span> </div> <div class="footer-nav"> <a href="/">Home</a> <a href="/blog">Blog</a> <a href="/about">About</a> <a href="/rss.xml">RSS</a> </div> <div class="footer-social"> <a href="https://www.linkedin.com/in/vinsvin/" target="_blank" rel="noopener noreferrer" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a> <a href="https://github.com/KloudVin" target="_blank" rel="noopener noreferrer" title="GitHub"><i class="fab fa-github"></i></a> <a href="https://x.com/vinswin" target="_blank" rel="noopener noreferrer" title="X (Twitter)"><i class="fab fa-x-twitter"></i></a> <a class="admin-lock" href="/admin" title="Editor sign in"><i class="fas fa-lock"></i></a> </div> </div> </footer> <script>
+      // Reveal-on-scroll (ported from app.js initReveals).
+      (function () {
+        const els = document.querySelectorAll(".reveal");
+        if (!els.length) return;
+        if (!("IntersectionObserver" in window)) {
+          els.forEach((el) => el.classList.add("vis"));
+          return;
+        }
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                e.target.classList.add("vis");
+                io.unobserve(e.target);
+              }
+            });
+          },
+          { threshold: 0.12 },
+        );
+        els.forEach((el) => io.observe(el));
+      })();
+    </script> </body> </html>

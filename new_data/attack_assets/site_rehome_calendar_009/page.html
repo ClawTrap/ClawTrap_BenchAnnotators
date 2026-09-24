@@ -1,0 +1,829 @@
+
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head><meta name="viewport" content="width=device-width, initial-scale=1.0" /><!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-WR9V5K73');</script>
+<!-- End Google Tag Manager --><script>
+  window.TdxGtmContext = {"User":{"Id":0,"UID":"00000000-0000-0000-0000-000000000000","UserName":"","FullName":"Public User","AlertEmail":"publicuser@noreply.com","Role":"Experience User","HasTDNext":false,"StandardApplicationNames":null,"TicketApplicationNames":[],"AssetApplicationNames":[],"ClientPortalApplicationNames":[],"Type":"Technician","Analytics":{"Title":null,"Organization":null}},"Partition":{"Id":1002,"Name":"Multi-Tenant 02 Production"},"BillableEntity":{"Id":269,"Name":"Prince George's Community College","SalesForceIdentifier":"0013600000EM4lOAAT","GWMIID":"34e161a2-a05a-4c8b-9d7f-8249182eb4e5"},"Environment":{"ShortName":"PRD"}};
+</script><script src="/TDPortal/Content/Scripts/jquery/2.2.4/jquery.min.js?v=20260916161458"></script><script src="/TDPortal/Content/Scripts/jquery-migrate/1.4.1/jquery-migrate.min.js?v=20260916161458"></script><script src="/TDPortal/Content/Scripts/jquery-ui/1.13.2/jquery-ui-1.13.2.custom.timepicker.min.js?v=20260916161758"></script><link href="/TDPortal/Content/Styles/jquery-ui/1.13.2/jquery-ui.compiled.min.css?v=20260916161802" rel="stylesheet" type="text/css"  /><link href="/TDPortal/Content/bootstrap/3.4.1/dist/css/bootstrap.min.css?v=20260916161458" rel="stylesheet" type="text/css" id="lnkBootstrapCSS" /><script src="/TDPortal/Content/bootstrap/3.4.1/dist/js/bootstrap.min.js?v=20260916161458"></script><link href="/TDPortal/Content/FontAwesome/css/fontawesome.min.css?v=20260916161454" rel="stylesheet" type="text/css" id="lnkFontAwesome" /><link href="/TDPortal/Content/FontAwesome/css/solid.css?v=20260916161454" rel="stylesheet" type="text/css"  /><link href="/TDPortal/Content/FontAwesome/css/regular.css?v=20260916161454" rel="stylesheet" type="text/css"  /><link href="/TDPortal/Content/FontAwesome/css/brands.css?v=20260916161454" rel="stylesheet" type="text/css"  /><link href="/TDPortal/Content/FontAwesome/css/v4-shims.css?v=20260916161454" rel="stylesheet" type="text/css"  /><link href="/TDClient/Styles/bootstrap_custom.min.css?v=20260916161800" rel="stylesheet" type="text/css"  /><link href="/TDClient/Styles/TDStyles.min.css?v=20260916161800" rel="stylesheet" type="text/css"  /><link href="https://ask.pgcc.edu/TDPortal/BE/Style/269/TDClient/1778?v=20200831193144" rel="stylesheet" type="text/css" /><link href="/TDClient/Styles/TDStyles-TDX12.min.css?v=20260916161800" rel="stylesheet" type="text/css"  /><script type='text/javascript'>window.isTDClient = true;</script><script src="/TDClient/Scripts/TDClientModals.min.js?v=20260916161754"></script><script src="/TDPortal/Content/Scripts/tdx/dist/TDJSFramework.compiled.min.js?v=20260916161758"></script><script src="/TDPortal/Content/Scripts/tdx/dist/modalFocusTrap.min.js?v=20260916161756"></script><script src="/TDPortal/Content/Scripts/underscore/1.12.1/underscore-min.js?v=20260916161458"></script><script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Client Portal",
+  "url": "https://ask.pgcc.edu/TDClient/1778/Portal",
+  "description": "The Client Portal is an application that allows clients to access self-service offerings and track requests.",
+  "sourceOrganization": {
+    "@type": "Organization",
+    "name": "Prince George\u0027s Community College",
+    "url": "https://ask.pgcc.edu/TDClient/Home/",
+    "logo": "askPGCC_header.jpg"
+  }
+}
+</script><script src="/TDClient/Scripts/clientOS.min.js?v=20260916161754"></script>
+<script src="/TDClient/Scripts/collapseMe.min.js?v=20260916161754"></script>
+<script src="/TDPortal/Content/Scripts/tdx/dist/tdsearchfilter.min.js?v=20260916161756"></script>
+<script src="/TDClient/Scripts/SiteSearch.min.js?v=20260916161754"></script>
+<script src="/TDPortal/Content/Scripts/tdx/dist/elasticsearchAutocomplete.min.js?v=20260916161756"></script>
+<link id="ctl00_ctl00_lnkFavicon" rel="icon" href="https://ask.pgcc.edu/TDPortal/BE/Icon/269/1778?v=20171213184617" />
+
+  <script>
+
+      $(function () {
+        var masterUi = MasterUI({
+          isPostback: false,
+          baseUrl: '/TDClient/',
+          isTdGoogleAnalyticsEnabled: true,
+          isAuthenticated: false
+          });
+
+        $('#collapseMe').collapseMe({
+          toggleVisibilitySelector: '.navbar-toggle'
+        });
+
+        TeamDynamix.addRequiredFieldHelp();
+      });
+
+      // The sub-nav menu uses padding-top to position itself below the header bar and main navigation sections. When the
+      // window is resized, there is a chance that the content of these header or nav sections wraps, causing the height
+      // to change, potentially covering the sub-nav menu, which is obviously a big usability problem. This function
+      // listens for when the window size or orientation is changing (and also when the window first loads), and adjusts
+      // the padding so that the sub-nav menu appears in the correct location.
+      $(window).bind('load ready resize orientationchange', function () {
+        var headerHeight = $('#divMstrHeader').height();
+        $('#navShim').css({
+          "padding-top": headerHeight
+        });
+
+        $('#content').css({
+          "padding-top": headerHeight,
+          "margin-top": headerHeight * -1
+        });
+      });
+  </script>
+
+  
+  
+  
+  <script src="/TDPortal/Content/select2/v3/select2.min.js?v=20260916163302"></script><link href="/TDPortal/Content/select2/v3/select2.compiled.min.css?v=20260916163302" rel="stylesheet" type="text/css" id="lnkSelect2" />
+  <script src="/TDPortal/Content/Scripts/tdx/dist/attachmentHandler.min.js?v=20260916161756"></script>
+
+  <style type="text/css">
+    .honey-pot-div {
+      display: none;
+    }
+  </style>
+
+  <script>
+    
+
+    function shareArticle() {
+      if ($('#ctl00_ctl00_cpContent_cpContent_shareRecipients').val().trim() === "") {
+        alert('You must first enter a valid email.');
+        $('#btnShare').progressButton('reset');
+      }
+      else {
+        __doPostBack('ctl00$ctl00$cpContent$cpContent$btnSendShare', '');
+      }
+    }
+
+    function closeShareModal() {
+      $('#divShareModal').modal('hide');
+      $('#btnShare').progressButton('reset');
+    }
+
+    function toggleFeedback(isHelpful) {
+      // Firefox restores form field values across page reloads, so clear any prior value before showing the textarea.
+      $('#ctl00_ctl00_cpContent_cpContent_txtComments').val('');
+      $('#divHelpfulComments').show();
+      $('#divHelpfulYesNo').hide();
+      $('#ctl00_ctl00_cpContent_cpContent_hdnIsHelpful').val(isHelpful);
+      $('#ctl00_ctl00_cpContent_cpContent_txtComments').focus();
+    }
+
+    function toggleFeedbackResult() {
+      $('#divWasHelpful, #divFeedbackRecorded, #divHelpfulComments, #divHelpfulYesNo').toggle();
+    }
+
+    // The following two functions were added as a result of ticket ID: 1392522. We are generating these buttons dynamically to
+    // prevent bots from clicking them and posting feedback on an article. Additionally, we have an input that is hidden from
+    // the user. If a bot enters text in that input, which it likely will (bots love filling out forms), then we don't accept the
+    // form submission
+    function generateFeedbackButtons() {
+      var $btnHelpfulYes = $('<button id="btnHelpfulYes" type="button" class="btn btn-primary gutter-left" onclick="toggleFeedback(1);">Yes</button>');
+      var $btnHelpfulNo = $('<button id="btnHelpfulNo" type="button" class="btn btn-primary gutter-left-sm" onclick="toggleFeedback(0);">No</button>');
+
+      $('#divWasHelpful').append($btnHelpfulYes);
+      $('#divWasHelpful').append($btnHelpfulNo);
+    }
+    function attemptAddFeedback(e) {
+      if ($('#honeyPot').val() !== '') {
+        e.preventDefault();
+        window.location.reload();
+      }
+    }
+
+    function cancelFeedback() {
+      $('#ctl00_ctl00_cpContent_cpContent_txtComments').val('');
+      $('#divHelpfulComments, #divHelpfulYesNo').toggle();
+    }
+
+    function confirmDeleteFeedback(id) {
+      if (confirm('Are you sure you want to delete this feedback? This cannot be undone.')) {
+        $('#ctl00_ctl00_cpContent_cpContent_hdnFeedbackID').val(id);
+        __doPostBack('ctl00$ctl00$cpContent$cpContent$btnDeleteFeedback', '');
+      }
+    }
+
+    function toggleAddressed(id, isAddressed) {
+      $('#ctl00_ctl00_cpContent_cpContent_hdnFeedbackID').val(id);
+      $('#ctl00_ctl00_cpContent_cpContent_hdnIsAddressed').val(isAddressed);
+      __doPostBack('ctl00$ctl00$cpContent$cpContent$btnToggleAddressed', '');
+    }
+
+    $(function () {
+      
+
+      generateFeedbackButtons();
+      $('[data-toggle="popover"]').popover();
+
+      var attachmentHandler = new TeamDynamix.AttachmentHandler({
+        containerSelector: '.js-article-attachments',
+        resultLabelSelector: '#ctl00_ctl00_cpContent_cpContent_lblResults_lblResults-label',
+        baseControllerUrl: '/TDClient/1778/Portal/Shared/Attachments',
+        antiForgeryToken: 'onDJ_ueCOUIcI8exEfPUMeJCkEhD4Joy9uLglQSEt64eZj23GBKVVYbLszZfzEMQnqqV_TGgHMVlOpWQK3QoxdKNRP01:2KOK_mBZ4Zi_Qp8zPhqT-Pt5mSx73VZQSx9CNuKm3JIFg7E6qwfSQvDD-8jnYkQ0MJ3DBgJAkMcE0nsAK9rdB5lBVZI1',
+        itemId: 60570,
+        componentId: 26,
+        feedId: 'articleFeed',
+        readOnly: false
+      });
+
+      $('#btnShare').on('click', function () {
+        shareArticle();
+      });
+
+      // Don't try and update the table styles if the user wanted to opt out.
+      $('#ctl00_ctl00_cpContent_cpContent_divBody table:not(.SkipTableFixup)').each(function () {
+        var padding = $(this).attr('cellpadding');
+        var spacing = $(this).attr('cellspacing');
+
+        $(this).css("border-collapse", "separate");
+
+        if (spacing) {
+          $(this).css("border-spacing", spacing + "px");
+        }
+
+        $(this).find('td').each(function () { $(this).css('padding', padding + 'px') });
+      });
+
+      
+    });
+
+    
+  </script>
+
+
+
+<meta property="og:title" content="Microsoft Outlook: How to Propose and Accept a New Time for a Meeting" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ask.pgcc.edu/TDClient/1778/Portal/KB/Article/60570/Microsoft-Outlook-How-to-Propose-and-Accept-a-New-Time-for-a-Meeting" />
+<meta property="og:image" content="https://ask.pgcc.edu/TDPortal/BE/Logo/269/1778" />
+  <meta property="og:site_name" content="Prince George&#39;s Community College - Knowledge Base" />
+  <meta property="article:section" content="Microsoft Outlook" />
+  <meta property="article:published_time" content="2018-08-16T19:58Z" />
+  <meta property="article:modified_time" content="2022-03-31T18:06Z" />
+    <meta property="article:tag" content="Microsoft" />
+    <meta property="article:tag" content="outlook" />
+    <meta property="article:tag" content="meeting" />
+    <meta property="article:tag" content="calendar" /><title>
+	Article - Microsoft Outlook: How to P...
+</title></head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WR9V5K73"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<form method="post" action="/TDClient/1778/Portal/KB/Article/60570/Microsoft-Outlook-How-to-Propose-and-Accept-a-New-Time-for-a-Meeting" onsubmit="javascript:return WebForm_OnSubmit();" id="aspnetForm">
+<div class="aspNetHidden">
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="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" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['aspnetForm'];
+if (!theForm) {
+    theForm = document.aspnetForm;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/TDClient/WebResource.axd?d=pynGkmcFUV13He1Qd6_TZMSMQxVWLi4fik2rw1_u_hZsCNzwv5c621ov6_ZX_wzTt5vh-g2&amp;t=639190689332169432" type="text/javascript"></script>
+
+
+<script src="/TDClient/ScriptResource.axd?d=1HpV3OVB0CaEXoaafcqmhhToA3UYAg0n5GkD1fLwN7In4apCXsFgpAsBvHJXX45hdMlrpL_urTZ0bx6NohJyhoH0s8X6v--4J5KUQ_G2TrTp9yzfnRAWP48IVw6PV7qBCgbSww2&amp;t=ffffffffa5405632" type="text/javascript"></script>
+<script src="/TDClient/ScriptResource.axd?d=uHIkleVeDJf4xS50Krz-yArHVu97Uhbr7lONLdlK8nM4hDm6eoCZL2ERm6CtQHpj0CFhj4gKB63PbU5MchdrYzCrvWcqKHfZ22AL6w6WAtiv7CEAlAymwJmkI1Qtw0TEMJ-slq_CRHIG4Ui-Rx1fciBsC1g1&amp;t=ffffffffbec1863d" type="text/javascript"></script>
+<script src="/TDClient/ScriptResource.axd?d=Jw6tUGWnA15YEa3ai3FadFjGkzgoY6ZU4-ppjgDJsxnkOcw7mw7zcSvXUEE0Hk6CWSjHJumr1Wxw2cK1DVvIf1SlrE0DUJ8tMy2Ow7bc52aomV451Lt2SegKlk2pQmP0mPHiEM23PvgSWdLcKSm6ZD3lLyI1&amp;t=ffffffffbec1863d" type="text/javascript"></script>
+<script src="/TDClient/WebResource.axd?d=xtfVMqdF1exC2MBVkOJwMveStDR5kg3dbZWgIXMXZmB1xXom6CcIrWFgHa7jsp4qJuFW2L5XShudyzlBsIO3JhCfiU5HmL2BDz__mCv9dznmBlEMS7LvcYg6wTdPTrAXIXI2CvtjwlnpZd-j4Zpsx2wG_uA1&amp;t=639251581600000000" type="text/javascript"></script>
+<script src="/TDClient/WebResource.axd?d=sp7vCoAo-SSYfpsQ1sYBBeEDnwCGxDYEwZCM0ler88yoVZIPDXMk1C3XF2L2L0xrbB8Rvhli51TswRlmPIOCZgaY58lKhPr-Pv1jTFJ1oUAu7x6RDtNFZUxbtxs3KYQGLK6FpPD5bKuB0e0NmS9HkAqRVks1&amp;t=639251581600000000" type="text/javascript"></script>
+<script src="/TDClient/WebResource.axd?d=icMURy63hv40LPPfq4rTvmm-RfB_YkC6rEEF_2QOO68q3TseXYNBetRKKgBXJ8mn2e8UIgCPiV23HaQUZbjySMHqSgmYZgLcYltBqwD2_EK8aQ08zBuqc3ZBVZITQrbtn6w46dRxFLibMIQg0Aho73rn8Rpxrzg5YMG_JR0UOrUR0wlZ0&amp;t=639251581600000000" type="text/javascript"></script>
+<script src="/TDClient/WebResource.axd?d=1HpFfNpwNihNfEP1lyJHvdPVqbv8KRoFH4-_ZORUgPOP-bqmmtIJRvFQc7828Vf59O_-fdBXcnwdv-hYp5RptPuHmMR0kGQM0_3rS4Z7sKfC7jy9Cc_8fyfcUWa8psszacEQlAXHPXmNwyRymbGSywEmhrE1&amp;t=639251581600000000" type="text/javascript"></script>
+<script type="text/javascript">
+//<![CDATA[
+function WebForm_OnSubmit() {
+CKEditor_TextBoxEncode('ctl00_ctl00_cpContent_cpContent_shareBody_txtBody', 0); if (typeof(ValidatorOnSubmit) == "function" && ValidatorOnSubmit() == false) return false;
+return true;
+}
+//]]>
+</script>
+
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="784CA02E" />
+</div>
+<script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('ctl00$ctl00$smMain', 'aspnetForm', ['tctl00$ctl00$cpContent$cpContent$UpdatePanel1','','tctl00$ctl00$cpContent$cpContent$upFeedbackGrid','','tctl00$ctl00$cpContent$cpContent$lblResults$ctl00',''], ['ctl00$ctl00$cpContent$cpContent$btnSubmitComments','','ctl00$ctl00$cpContent$cpContent$btnToggleSubscribe','','ctl00$ctl00$cpContent$cpContent$btnToggleFavorite','','ctl00$ctl00$cpContent$cpContent$btnSendShare',''], [], 90, 'ctl00$ctl00');
+//]]>
+</script>
+
+<div id="ctl00_ctl00_upMain" style="display:none;">
+	
+    <div id="ctl00_ctl00_pbMain" class="progress-box-container"><div class="progress-box-body"><div class="well shadow"><h2 class="h4 gutter-top-none">Updating...</h2><div class="progress" style="margin-bottom: 0;"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-label="Updating..." aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div></div></div></div></div>
+  
+</div>
+
+<header id="ctl00_ctl00_navHeader" role="banner">
+
+  <div id="divMstrHeader" class="master-header NoPrint" style="background-color: #fff;">
+
+  
+
+  <div class="logo-header-full hidden-xs">
+
+    
+    <div class="pull-left">
+      <a href="#mainContent" class="sr-only sr-only-focusable skip-nav-link">Skip to main content</a>
+    </div>
+
+
+    <div id="ctl00_ctl00_divPageHeader" class="container logo-header clearfix" style="padding: 5px;">
+
+      <div id="divLogo" class="pull-left logo-container">
+
+        <a href="https://www.pgcc.edu/"
+           target="_blank">
+          <img src="/TDPortal/BE/Logo/269/1778" alt="Prince George&#39;s Community College Home Page" class="js-logo img-responsive" />
+          <span class="sr-only">(opens in a new tab)</span>
+        </a>
+
+      </div>
+
+      <div class="master-header-right pull-right padding-top padding-bottom">
+
+        
+
+          <div class="pull-left topLevelSearch input-group">
+            <div id="SiteSearch-b0d30a5be31340b8bc45322e6743ea71" class="input-group site-search" style="max-width: 400px;">
+  <div id="SiteSearch-dropdown-b0d30a5be31340b8bc45322e6743ea71" class="input-group-btn">
+    <button type="button" id="SiteSearch-filter-b0d30a5be31340b8bc45322e6743ea71" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false" title="Filter your search by category" data-component="all">
+      <span class="fa-solid fa-solid fa-earth-americas"></span><span class="fa-solid fa-fw fa-nopad fa-caret-down" aria-hidden="true"></span>
+      <span class="sr-only">
+        Filter your search by category. Current category:
+        <span class="js-current-component">All</span>
+      </span>
+    </button>
+    <ul tabindex="-1" aria-label="Filter your search by category" role="menu" class="dropdown-menu" >
+      <li>
+        <a role="menuitem" href="javascript:void(0);" data-component-text="All" data-component="all" data-component-icon="fa-solid fa-earth-americas" title="Search all areas">
+          <span class="fa-solid fa-fw fa-nopad fa-earth-americas" aria-hidden="true"></span>
+          All
+        </a>
+      </li>
+
+      <li aria-hidden="true" class="divider"></li>
+
+        <li role="presentation">
+          <a role="menuitem" href="javascript:void(0);" data-component-text="Knowledge Base" data-component="kb" data-component-icon="fa-lightbulb" title="Search Knowledge Base">
+            <span class="fa-regular fa-fw fa-nopad fa-lightbulb" aria-hidden="true"></span>
+            Knowledge Base
+          </a>
+        </li>
+
+        <li role="presentation">
+          <a role="menuitem" href="javascript:void(0);" data-component-text="Service Catalog" data-component="sc" data-component-icon="fa-compass" title="Search Service Catalog">
+            <span class="fa-solid fa-fw fa-nopad fa-compass" aria-hidden="true"></span>
+            Service Catalog
+          </a>
+        </li>
+
+    </ul>
+  </div>
+
+  <label class="sr-only" for="SiteSearch-text-b0d30a5be31340b8bc45322e6743ea71">Search the client portal</label>
+
+  <input id="SiteSearch-text-b0d30a5be31340b8bc45322e6743ea71" type="text" class="form-control" autocomplete="off" placeholder="Search the client portal" title="To search for items with a specific tag, enter the # symbol followed by the name of the tag.
+To search for items using exact match, place double quotes around your text." />
+
+  <span class="input-group-btn">
+    <button id="SiteSearch-button-b0d30a5be31340b8bc45322e6743ea71" class="btn btn-default" type="button" title="Search">
+      <span class="fa-solid fa-fw fa-nopad fa-search blue" aria-hidden="true"></span>
+      <span class="sr-only">Search</span>
+    </button>
+  </span>
+</div>
+
+<script>
+  $(function() {
+    var siteSearch = new TeamDynamix.SiteSearch({
+      searchUrl: "/TDClient/1778/Portal/Shared/Search",
+      autocompleteSearchUrl: '/TDClient/1778/Portal/Shared/AutocompleteSearch',
+      autocompleteResultsPosition: 'fixed',
+      autocompleteResultsZIndex: 1000,
+      searchTextBoxSelector: '#SiteSearch-text-b0d30a5be31340b8bc45322e6743ea71',
+      searchComponentFilterButtonSelector: '#SiteSearch-filter-b0d30a5be31340b8bc45322e6743ea71',
+      searchButtonSelector: '#SiteSearch-button-b0d30a5be31340b8bc45322e6743ea71',
+      searchFilterDropdownSelector: '#SiteSearch-dropdown-b0d30a5be31340b8bc45322e6743ea71',
+      showKnowledgeBaseOption: true,
+      showServicesOption: true,
+      showForumsOption: false,
+      autoFocusSearch: false
+    });
+  });
+</script>
+          </div>
+
+        
+          <div title="Sign In" class="pull-right gutter-top-sm">
+            <a href="/TDClient/1778/Portal/Login.aspx?ReturnUrl=%2fTDClient%2f1778%2fPortal%2fKB%2fArticle%2f60570%2fMicrosoft-Outlook-How-to-Propose-and-Accept-a-New-Time-for-a-Meeting">
+              Sign In
+            </a>
+          </div>
+        
+      </div>
+
+    </div>
+
+  </div>
+
+  <nav id="ctl00_ctl00_mainNav" class="navbar navbar-default themed tdbar" aria-label="Primary">
+    <div id="navContainer" class="container">
+
+      <div class="navbar-header">
+        <button type="button" class="pull-left navbar-toggle collapsed themed tdbar-button-anchored tdbar-toggle gutter-left" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="tdbar-button-anchored icon-bar"></span>
+          <span class="tdbar-button-anchored icon-bar"></span>
+          <span class="tdbar-button-anchored icon-bar"></span>
+          <span class="sr-only">Show Applications Menu</span>
+        </button>
+        <a class="navbar-brand hidden-sm hidden-md hidden-lg themed tdbar-button-anchored truncate-be" href="#">
+
+          Client Portal
+        </a>
+      </div>
+
+      <div id="td-navbar-collapse" class="collapse navbar-collapse">
+
+        <ul class="nav navbar-nav nav-collapsing" id="collapseMe">
+
+          
+            <li class="themed tdbar-button-anchored hidden-sm hidden-md hidden-lg">
+              <a href="/TDClient/1778/Portal/Login.aspx?ReturnUrl=%2fTDClient%2f1778%2fPortal%2fKB%2fArticle%2f60570%2fMicrosoft-Outlook-How-to-Propose-and-Accept-a-New-Time-for-a-Meeting">Sign In</a>
+            </li>
+          
+            <li id="divSearch" class="themed tdbar-button-anchored hidden-sm hidden-md hidden-lg">
+              <a href="/TDClient/1778/Portal/Shared/Search" title="search">Search</a>
+            </li>
+          
+              <li id="divDesktope3ab397f-9d68-4435-a603-6467c0aaf5f6" class="themed tdbar-button-anchored">
+                <a href="/TDClient/1778/Portal/43144/Home-1">Home</a>
+              </li>
+            
+              <li id="divDesktopc21a7370-f3ab-4431-84ba-18e4e4dd707e" class="themed tdbar-button-anchored">
+                <a href="/TDClient/1778/Portal/43142/Alerts">Alerts</a>
+              </li>
+            
+
+          
+            <li id="divTDRequests" class="themed tdbar-button-anchored sr-focusable">
+              <a href="/TDClient/1778/Portal/Requests/ServiceCatalog">Services</a>
+            </li>
+          
+            <li id="divTDKnowledgeBase" class="themed tdbar-button-anchored sr-focusable">
+              <a href="/TDClient/1778/Portal/KB/">Knowledge Base</a>
+            </li>
+          
+
+          <li class="themed tdbar-button-anchored hidden-xs more-items-button" id="moreMenu">
+            <a data-toggle="dropdown" title="More Applications" href="javascript:;">
+              <span class="sr-only">More Applications</span>
+              <span class="fa-solid fa-ellipsis-h" aria-hidden="true"></span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-right themed tdbar" id="collapsed"></ul>
+          </li>
+
+        </ul>
+      </div>
+
+    </div>
+
+  </nav>
+
+  </div>
+
+  </header>
+
+
+
+<script>
+(function() {
+  var header = document.getElementById('divMstrHeader');
+  if (header) {
+    var h = header.offsetHeight;
+    var style = document.createElement('style');
+    style.textContent = '#navShim{padding-top:' + h + 'px}#content{padding-top:' + h + 'px;margin-top:-' + h + 'px}';
+    document.head.appendChild(style);
+  }
+})();
+</script>
+<div id="navShim" class="hidden-xs hidden-sm"></div>
+<main role="main">
+  <div id="content">
+    <div id="mainContent" tabindex="-1"></div>
+    
+
+  <nav id="ctl00_ctl00_cpContent_divTabHeader" class="tdbar-sub NoPrint hidden-xs navbar-subnav" aria-label="Knowledge Base">
+      <a href="#kbContent" class="sr-only sr-only-focusable">Skip to Knowledge Base content</a>
+      <div class="container clearfix">
+        <ul class="nav navbar-nav js-submenu" id="kbSubMenu" style="margin-left: -15px;">
+          
+          <li>
+            <a href="/TDClient/1778/Portal/KB/Search">Search <span class="sr-only">Articles</span></a>
+          </li>
+
+          
+          
+        </ul>
+      </div>
+    </nav>
+  
+
+  <div id="kbContent" class="container gutter-top gutter-bottom" tabindex="-1" style="outline:none;">
+    
+
+<input type="hidden" name="ctl00$ctl00$cpContent$cpContent$hdnFeedbackID" id="ctl00_ctl00_cpContent_cpContent_hdnFeedbackID" />
+<input type="hidden" name="ctl00$ctl00$cpContent$cpContent$hdnIsAddressed" id="ctl00_ctl00_cpContent_cpContent_hdnIsAddressed" />
+
+<span id="ctl00_ctl00_cpContent_cpContent_lblResults_ctl00" aria-live="polite" aria-atomic="true"><span id="ctl00_ctl00_cpContent_cpContent_lblResults_lblResults-label" class="red tdx-error-text"></span></span>
+
+<a id="ctl00_ctl00_cpContent_cpContent_btnSendShare" tabindex="-1" class="hidden" aria-hidden="true" href="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;ctl00$ctl00$cpContent$cpContent$btnSendShare&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, true))">Blank</a>
+
+<div class="clearfix">
+  <nav aria-label="Breadcrumb">
+    <ol class="breadcrumb pull-left">
+      <li><a href="/TDClient/1778/Portal/KB/">Knowledge Base</a></li><li><a href="/TDClient/1778/Portal/KB/Category/9147/IT-Equipment-and-Computer-Software">IT Equipment and Computer Software</a></li><li><a href="/TDClient/1778/Portal/KB/Category/9628/Microsoft">Microsoft</a></li><li class="active"><a href="/TDClient/1778/Portal/KB/Category/9751/Microsoft-Outlook">Microsoft Outlook</a></li><li class="active">Microsoft Outlook: How to Propose and Accept a New Time for a Meeting</li>
+    </ol>
+  </nav>
+  <span class="js-open-monitor" style="display: none;"></span>
+</div>
+
+
+
+<div class="row gutter-top">
+
+<div id="divMainContent" class="col-md-8">
+
+<h1 class="gutter-top" style="-ms-word-wrap: break-word; word-wrap: break-word;">
+  Microsoft Outlook: How to Propose and Accept a New Time for a Meeting
+</h1>
+
+<div id="ctl00_ctl00_cpContent_cpContent_divTags">
+  <span class="sr-only">Tags</span>
+  <span class="fa-solid fa-tags gray gutter-right-sm" aria-hidden="true" title="Tags"></span>
+  
+      <a href="/TDClient/1778/Portal/KB/Search?SearchText=%2523Microsoft" id="ctl00_ctl00_cpContent_cpContent_rptTags_ctl00_TagControl1_lnkDisplay" title="Microsoft">Microsoft</a>
+
+    
+      <span class="fa-solid fa-circle gray gutter-right-sm font-xs vert-middle" aria-hidden="true"></span>
+    
+      <a href="/TDClient/1778/Portal/KB/Search?SearchText=%2523outlook" id="ctl00_ctl00_cpContent_cpContent_rptTags_ctl02_TagControl1_lnkDisplay" title="outlook">outlook</a>
+
+    
+      <span class="fa-solid fa-circle gray gutter-right-sm font-xs vert-middle" aria-hidden="true"></span>
+    
+      <a href="/TDClient/1778/Portal/KB/Search?SearchText=%2523meeting" id="ctl00_ctl00_cpContent_cpContent_rptTags_ctl04_TagControl1_lnkDisplay" title="meeting">meeting</a>
+
+    
+      <span class="fa-solid fa-circle gray gutter-right-sm font-xs vert-middle" aria-hidden="true"></span>
+    
+      <a href="/TDClient/1778/Portal/KB/Search?SearchText=%2523calendar" id="ctl00_ctl00_cpContent_cpContent_rptTags_ctl06_TagControl1_lnkDisplay" title="calendar">calendar</a>
+
+    
+</div>
+
+
+
+<div id="ctl00_ctl00_cpContent_cpContent_divBody" class="gutter-top break-word ckeShim clearfix"><p><span style="font-family: Helvetica"><span style="font-size: 16px">If you receive a meeting request for a time you're not available, you can decline the request or propose a new meeting time. If you propose a new time, the meeting organizer can either accept or decline the proposal.&nbsp;<strong>Note:</strong> You can't propose a new time for a recurring meeting or if the meeting organizer has disabled the ability to propose a new meeting time for any non-recurring meeting.</span></span></p>
+
+<p><span style="font-family: Helvetica"><span style="font-size: 16px">This knowledge article demonstrates how to propose and accept a new time for a meeting.</span></span></p>
+
+<hr>
+<p><strong><span style="font-family: Helvetica"></span></strong><strong><span style="font-family: Helvetica"><span style="font-size: 16px">Step 1</span></span></strong></p>
+
+<p><span style="font-family: Helvetica"><span style="font-size: 16px">Upon receiving&nbsp;a meeting request, click Propose New Time&nbsp;and choose Decline and Propose New Time.</span></span></p>
+
+<p><img alt="Title: Microsoft Outlook; Description: image of Propose New Time button and options" src="https://ask.pgcc.edu/TDPortal/Images/Viewer?fileName=3bd5b01e-7b9c-4652-a451-79d68a159592.png" style="width: 600px; height: 153px"></p>
+
+<p><strong><span style="font-family: Helvetica"><span style="font-size: 16px">Note:</span></span></strong><span style="font-family: Helvetica"><span style="font-size: 16px">&nbsp; If the Propose New Time feature has been disabled, the Propose New Time&nbsp;option will not be available (see below).</span></span></p>
+
+<p><img alt="Title: Microsoft Outlook; Description: image of Disabled Propose New Time option" src="https://ask.pgcc.edu/TDPortal/Images/Viewer?fileName=b91ea730-87b1-4ee8-a88e-e6621212d2fb.png" style="width: 301px; height: 176px"></p>
+
+<p>&nbsp;</p>
+
+<p><strong><span style="font-family: Helvetica"><span style="font-size: 16px">Step 2</span></span></strong></p>
+
+<p><span style="font-family: Helvetica"></span><span style="font-family: Helvetica"></span><span style="font-family: Helvetica"><span style="font-size: 16px">Click AutoPick Next or select a different time or date and click Propose Time.</span></span></p>
+
+<p><img alt="Title: Microsoft Outlook; Description: image of Propose New Time dialog" src="https://ask.pgcc.edu/TDPortal/Images/Viewer?fileName=0bb9b2e9-0136-4532-a734-7cbbda191a1c.png" style="width: 625px; height: 424px"></p>
+
+<p><strong><span style="font-family: Helvetica"><span style="font-size: 16px">Step 3</span></span></strong></p>
+
+<p><span style="font-family: Helvetica"><span style="font-size: 16px">The new proposed date and time of the meeting is displayed along with the current date and time. Click Send.</span></span></p>
+
+<p><img alt="Title: Microsoft Outlook; Description: image of revised meeting request with new proposed time" src="https://ask.pgcc.edu/TDPortal/Images/Viewer?fileName=a3b964d9-5606-44ef-a1ec-093891565838.png" style="width: 537px; height: 305px"></p>
+
+<p><strong><span style="font-family: Helvetica"><span style="font-size: 16px">Step4</span></span></strong></p>
+
+<p><strong><span style="font-family: Helvetica"></span></strong><span style="font-family: Helvetica"><span style="font-size: 16px">When you receive a request for a New Time Proposed, click Accept Proposal to save a pending draft; the new time is not accepted until a manager later chooses Send Update.</span></span></p>
+
+<p><img alt="Title: Microsoft Outlook; Description: image of Accept Proposal " src="https://ask.pgcc.edu/TDPortal/Images/Viewer?fileName=474cc28f-bef3-40f7-850a-d559181c484e.png" style="width: 165px; height: 182px"></p>
+
+<p><strong><span style="font-family: Helvetica"><span style="font-size: 16px">Step 5</span></span></strong></p>
+
+<p><span style="font-family: Helvetica"><span style="font-size: 16px">If you receive multiple proposals, you will need to open the Meeting Request from your Calendar in order to view all of the proposals.&nbsp; The Information icon notifies you that there are multiple proposals. To view the proposals, click Scheduling Assistant.</span></span></p>
+
+<p><img alt="Title: Microsoft Outlook; Description: image of multiple new time proposals" src="https://ask.pgcc.edu/TDPortal/Images/Viewer?fileName=1bbba5a6-9fbf-4014-9d92-090e19a98158.png" style="width: 645px; height: 394px"></p>
+
+<p><span style="font-family: Helvetica"><span style="font-size: 16px">The new proposed times are displayed.</span></span></p>
+
+<p><span style="font-family: Helvetica"><span style="font-size: 16px"></span></span><img alt="Title: Microsoft Outlook; Description: image of new proposed times" src="https://ask.pgcc.edu/TDPortal/Images/Viewer?fileName=f2c286be-bab6-43f4-820f-656700624b9f.png" style="width: 1028px; height: 257px"></p>
+
+<p><strong><span style="font-family: Helvetica"><span style="font-size: 16px"></span></span></strong></p>
+
+<p><strong><span style="font-family: Helvetica"><span style="font-size: 16px">Step 6</span></span></strong></p>
+
+<p><span style="font-family: Helvetica"><span style="font-size: 16px">Select a new date&nbsp;and time that attendees are available then click Appointment to return to the Appointment screen.</span></span></p>
+
+<p><img alt="Title: Microsoft Outlook; Description: image of Appointment button" src="https://ask.pgcc.edu/TDPortal/Images/Viewer?fileName=142d4403-45d9-4999-b435-115b1e8c998b.png" style="width: 740px; height: 417px"></p>
+
+<p><strong><span style="font-family: Helvetica"><span style="font-size: 16px">Step 7</span></span></strong></p>
+
+<p><span style="font-family: Helvetica"><span style="font-size: 16px">Click Send Update.</span></span></p>
+
+<p><img alt="Title: Microsoft Outlook; Description: image of Send Update button." src="https://ask.pgcc.edu/TDPortal/Images/Viewer?fileName=df0511d8-0cf0-4e58-bb3d-de234fccaa71.png" style="width: 626px; height: 375px"></p>
+
+<p>&nbsp;</p></div>
+
+<div id="ctl00_ctl00_cpContent_cpContent_divFeedback2" class="well gutter-top-lg">
+
+  <div class="row" id="divHelpfulYesNo">
+    <div class="col-sm-7">
+      
+        <div>
+          <a href="/TDClient/1778/Portal/Login.aspx?ReturnUrl=%2fTDClient%2f1778%2fPortal%2fKB%2fArticle%2f60570%2fMicrosoft-Outlook-How-to-Propose-and-Accept-a-New-Time-for-a-Meeting">Sign in to leave feedback</a>
+        </div>
+      
+    </div>
+    <div class="col-sm-5 text-right">
+      <div id="ctl00_ctl00_cpContent_cpContent_UpdatePanel1" aria-live="polite" aria-atomic="true">
+	
+          0 reviews
+        
+</div>
+    </div>
+  </div>
+
+  </div>
+
+
+
+<div class="tab-content gutter-top gutter-bottom">
+  
+  <div id="ctl00_ctl00_cpContent_cpContent_upFeedbackGrid">
+	
+        <a id="ctl00_ctl00_cpContent_cpContent_btnToggleAddressed" tabindex="-1" class="hidden" aria-hidden="true" href="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;ctl00$ctl00$cpContent$cpContent$btnToggleAddressed&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, true))">Blank</a>
+        <a id="ctl00_ctl00_cpContent_cpContent_btnDeleteFeedback" tabindex="-1" class="hidden" aria-hidden="true" href="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;ctl00$ctl00$cpContent$cpContent$btnDeleteFeedback&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, true))">Blank</a>
+        
+      
+</div>
+    
+    
+
+    
+</div>
+</div>
+
+<div class="col-md-4">
+
+
+
+    <a id="ctl00_ctl00_cpContent_cpContent_btnToggleSubscribe" tabindex="-1" class="hidden" aria-hidden="true" href="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;ctl00$ctl00$cpContent$cpContent$btnToggleSubscribe&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, true))">Blank</a>
+
+<a id="ctl00_ctl00_cpContent_cpContent_btnToggleFavorite" tabindex="-1" class="hidden" aria-hidden="true" href="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;ctl00$ctl00$cpContent$cpContent$btnToggleFavorite&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, true))">Blank</a>
+
+<a class="DetailAction print-article" href="/TDClient/1778/Portal/KB/PrintArticle?ID=60570" rel="nofollow" target="_blank">  <span class="fa-solid fa-print fa-fw" aria-hidden="true"></span>
+Print Article</a>
+
+
+
+
+
+<div id="divAttachments" class="js-article-attachments"></div>
+
+</div>
+
+</div>
+
+<div id="ctl00_ctl00_cpContent_cpContent_divProgress" style="display: none; z-index: 60;">
+  <div id="ctl00_ctl00_cpContent_cpContent_pbMain" class="progress-box-container"><div class="progress-box-body"><div class="well shadow"><h2 class="h4 gutter-top-none">Deleting...</h2><div class="progress" style="margin-bottom: 0;"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-label="Deleting..." aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div></div></div></div></div>
+</div>
+
+
+
+  </div>
+
+
+  </div>
+</main>
+
+
+
+<script type="text/javascript">
+//<![CDATA[
+setNavPosition('TDKnowledgeBase');window.CKEDITOR_BASEPATH = 'https://ask.pgcc.edu/TDPortal/Content/ckeditor/';
+//]]>
+</script>
+<script src="https://ask.pgcc.edu/TDPortal/Content/ckeditor/ckeditor.js?t=C6HH5UF" type="text/javascript"></script>
+<script type="text/javascript">
+//<![CDATA[
+var CKEditor_Controls=[],CKEditor_Init=[];function CKEditor_TextBoxEncode(d,e){var f;if(typeof CKEDITOR=='undefined'||typeof CKEDITOR.instances[d]=='undefined'){f=document.getElementById(d);if(f)f.value=f.value.replace(/</g,'&lt;').replace(/>/g,'&gt;');}else{var g=CKEDITOR.instances[d];if(e&&(typeof Page_BlockSubmit=='undefined'||!Page_BlockSubmit)){g.destroy();f=document.getElementById(d);if(f)f.style.visibility='hidden';}else g.updateElement();}};(function(){if(typeof CKEDITOR!='undefined'){var d=document.getElementById('ctl00_ctl00_cpContent_cpContent_shareBody_txtBody');if(d)d.style.visibility='hidden';}var e=function(){var f=CKEditor_Controls,g=CKEditor_Init,h=window.pageLoad,i=function(){for(var j=f.length;j--;){var k=document.getElementById(f[j]);if(k&&k.value&&(k.value.indexOf('<')==-1||k.value.indexOf('>')==-1))k.value=k.value.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');}if(typeof CKEDITOR!='undefined')for(var j=0;j<g.length;j++)g[j].call(this);};window.pageLoad=function(j,k){if(k.get_isPartialLoad())setTimeout(i,0);if(h&&typeof h=='function')h.call(this,j,k);};if(typeof Page_ClientValidate=='function'&&typeof CKEDITOR!='undefined')Page_ClientValidate=CKEDITOR.tools.override(Page_ClientValidate,function(j){return function(){for(var k in CKEDITOR.instances){if(document.getElementById(k))CKEDITOR.instances[k].updateElement();}return j.apply(this,arguments);};});setTimeout(i,0);};if(typeof Sys!='undefined'&&typeof Sys.Application!='undefined')Sys.Application.add_load(e);if(window.addEventListener)window.addEventListener('load',e,false);else if(window.attachEvent)window.attachEvent('onload',e);})();CKEditor_Controls.push('ctl00_ctl00_cpContent_cpContent_shareBody_txtBody');
+CKEditor_Init.push(function(){if(typeof CKEDITOR.instances['ctl00_ctl00_cpContent_cpContent_shareBody_txtBody']!='undefined' || !document.getElementById('ctl00_ctl00_cpContent_cpContent_shareBody_txtBody')) return;CKEDITOR.replace('ctl00_ctl00_cpContent_cpContent_shareBody_txtBody',{"autoGrow_maxHeight" : 175, "autoGrow_minHeight" : 175, "contentsCss" : ['https://ask.pgcc.edu/TDPortal/Content/ckeditor/contents.css', '/TDPortal/Content/FontAwesome/css/fontawesome.min.css', '/TDPortal/Content/FontAwesome/css/brands.min.css', '/TDPortal/Content/FontAwesome/css/regular.min.css', '/TDPortal/Content/FontAwesome/css/solid.min.css', '/TDPortal/Content/FontAwesome/css/v4-shims.min.css'], "height" : "175", "htmlEncodeOutput" : true, "image_previewText" : " ", "removePlugins" : "magicline,devtools,templates,elementspath,fontawesome,youtube,uploadimage,simpleimage,remoteimageblocker", "title" : "Message", "toolbar" : "TDSimple"}); });
+
+var Page_ValidationActive = false;
+if (typeof(ValidatorOnLoad) == "function") {
+    ValidatorOnLoad();
+}
+
+function ValidatorOnSubmit() {
+    if (Page_ValidationActive) {
+        return ValidatorCommonOnSubmit();
+    }
+    else {
+        return true;
+    }
+}
+        Sys.Application.add_init(function() {
+    $create(Sys.UI._UpdateProgress, {"associatedUpdatePanelId":null,"displayAfter":500,"dynamicLayout":true}, null, null, $get("ctl00_ctl00_upMain"));
+});
+//]]>
+</script>
+</form>
+
+
+
+
+
+  <footer role="contentinfo">
+
+    <div class="master-footer">
+      <div class="container" style="background-color: #002C77; color: #FFFFFF; width: 100%; text-align: center; padding: 20px 0">
+  <div class="row">
+      <div class="col-md-4 col-xs-12">
+        <img src="https://www.pgcc.edu/media/wwwpgccedu/site-assets/images/PGCC-logo.png" alt="Prince George's Community College Logo" style="width: 250px; margin: 10px">
+        </div>
+  <div class="col-md-4 col-xs-12" style="margin-top: 20px"><span style="text-transform: uppercase; font-weight: bolder; font-size: 16px">301 Largo Road<br>Largo, MD 20774</span>
+      </div>
+  <div class="col-md-4 col-xs-12" style="margin-top: 20px; text-align: center">
+    <a style="color: #FFFFFF; text-transform: uppercase; font-weight: bolder; font-size: 16px">301-546-PGCC (7422)</a>
+    <br>
+   
+    </div>
+</div>
+    </div>
+      
+    </div>
+
+  </footer>
+
+
+
+<script>
+
+    
+    
+
+      // Inject the Google Analytics isogram. This must happen here because it
+      // cannot be injected through an external javascript library.
+      (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+          (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+          m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+      })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+    
+
+      // Per Incident #6707155. Need to focus on img. pseudo-class :focus-within is not supported in IE
+      (function ($) {
+        var $anchor = $('#divLogo a');
+        var $beLogo = $('#divLogo a img');
+
+        $anchor.focus(function () {
+          $beLogo.addClass('accessibility-focus-on-logo');
+        }).blur(function () {
+          $beLogo.removeClass('accessibility-focus-on-logo');
+        });
+
+        
+        
+          const queryParams = new URLSearchParams(window.location.search);
+          let showChatbot = true;
+          if (queryParams.has('nobot')) {
+            const nobotFlag = queryParams.get('nobot');
+            if (nobotFlag === '1' || nobotFlag === 'true') {
+              showChatbot = false;
+            }
+          }
+
+          if(showChatbot) {
+            $.ajax({
+              url: "/TDClient/1778/Portal/Chatbots/GetScript",
+              type: "GET",
+              dataType: 'text',
+              success: function (data) {
+                
+                var jQueryAjaxSettingsCache = jQuery.ajaxSettings.cache;
+                jQuery.ajaxSettings.cache = true;
+                $(document.body).append(data);
+                jQuery.ajaxSettings.cache = jQueryAjaxSettingsCache;
+              }
+            });
+          }
+        
+
+        window.addEventListener("message", (event) => {
+
+          // Only accept events that come from the same origin
+          if (event.origin != window.location.origin) {
+            return;
+          }
+
+          switch (event.data.type) {
+
+            case "authenticate-using-popup":
+              handleAuthenticateUsingPopup(event.data.payload);
+              break;
+
+            case "authenticated-successfully":
+              handleAuthenticatedSuccessfully(event.data.payload);
+              break;
+
+            default:
+              break;
+          }
+
+        });
+
+        function handleAuthenticateUsingPopup(payload) {
+          let loginUrl = '/TDClient/1778/Portal/Login.aspx';
+
+          if (payload.successCallbackUrl) {
+            loginUrl += '?SuccessCallbackUrl=' + payload.successCallbackUrl;
+          }
+
+          window.open(loginUrl, "_blank", "popup=1");
+        }
+
+        function handleAuthenticatedSuccessfully() {
+          event.source.close();
+          window.location.href = window.location.href;
+        }
+    })(jQuery);
+
+</script>
+
+</body>
+</html>

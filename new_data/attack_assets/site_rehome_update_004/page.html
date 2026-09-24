@@ -1,0 +1,983 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta content="Install and configure PostgreSQL object-relational database system with peer and SCRAM-SHA-256 authentication on Ubuntu Server." name="description" />
+<meta property="og:title" content="Install and configure PostgreSQL" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://ubuntu.com/server/docs/how-to/databases/install-postgresql/" />
+<meta property="og:site_name" content="Ubuntu Server" />
+<meta property="og:description" content="PostgreSQL(commonly referred to as “ ”) is an object-relational database system that has all the features of traditional commercial database systems, but with enhancements to be found in next-gener..." />
+<meta property="og:image" content="https://assets.ubuntu.com/v1/cc828679-docs_illustration.svg" />
+<meta property="og:image:alt" content="Ubuntu Server" />
+
+    <meta property="article:modified_time" content="2026-06-26T18:11:50+00:00" /><link rel="index" title="Index" href="../../../genindex/"><link rel="search" title="Search" href="../../../search/"><link rel="next" title="Storage" href="../../storage/"><link rel="prev" title="Install and configure a MySQL server" href="../install-mysql/">
+        <link rel="canonical" href="https://ubuntu.com/server/docs/how-to/databases/install-postgresql/">
+
+    <link rel="shortcut icon" href="../../../_static/favicon.png"><!-- Generated with Sphinx 7.4.7 and Furo 2025.12.19 -->
+   
+        <title>Install and configure PostgreSQL - Ubuntu Server documentation</title>
+      
+   
+   
+   <meta name="github-url" content="https://github.com/canonical/ubuntu-server-documentation">
+   
+<link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/config-options.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/contributors.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/related-links.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/terminal.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="https://assets.ubuntu.com/v1/d86746ef-cookie_banner.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=912f9c79" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/footer.css?v=bd05fc90" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/furo_colors.css?v=b6ad0433" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/github_issue_links.css?v=af88fb93" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/header.css?v=84f70f09" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=022106c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/header.css?v=a8078839" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/github_issue_links.css?v=3d761185" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/furo_colors.css?v=4cd1adcf" />
+    
+<script async type="text/javascript" src="/_/static/javascript/readthedocs-addons.js"></script><meta name="readthedocs-project-slug" content="canonical-ubuntu-server-documentation" /><meta name="readthedocs-version-slug" content="latest" /><meta name="readthedocs-resolver-filename" content="/how-to/databases/install-postgresql/" /><meta name="readthedocs-http-status" content="200" /></head>
+  <body>
+    <header id="header" class="p-navigation">
+
+  <!-- Google Tag Manager -->
+  <script>
+    (function(w, d, s, l, i) {
+      w[l] = w[l] || [];
+      w[l].push({
+        'gtm.start': new Date().getTime(),
+        event: 'gtm.js'
+      });
+      var f = d.getElementsByTagName(s)[0];
+      var j = d.createElement(s);
+      var dl = '';
+      if (l != 'dataLayer') {
+          dl = '&l=' + l;
+      }
+      j.async = true;
+      j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+      f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-KNX3CJC');
+  </script>
+
+  <div class="p-navigation__nav" role="menubar">
+
+    <ul class="p-navigation__links" role="menu">
+
+      <li>
+        
+        <a class="p-logo" href="https://ubuntu.com/server" aria-current="page">
+          <img src="../../../_static/tag.png" alt="Logo" class="p-logo-image">
+          <div class="p-logo-text p-heading--4">Ubuntu Server
+          </div>
+        </a>
+        
+      </li>
+
+      <li class="nav-ubuntu-com">
+        
+        <a href="https://ubuntu.com/server" class="p-navigation__link">ubuntu.com/server</a>
+        
+      </li>
+
+      <li class="nav-dropdown">
+        <a href="#" class="p-navigation__link nav-more-links"
+           id="more-resources-toggle"
+           aria-haspopup="true"
+           aria-expanded="false">
+          Ubuntu documentation
+        </a>
+        <ul class="more-links-dropdown" aria-labelledby="more-resources-toggle">
+          
+          <li>
+            <a href="https://documentation.ubuntu.com/release-notes/" class="p-navigation__sub-link p-dropdown__link">Ubuntu release notes</a>
+          </li>
+          
+          <li>
+            <a href="https://documentation.ubuntu.com/security/" class="p-navigation__sub-link p-dropdown__link">Ubuntu security</a>
+          </li>
+          
+          <li>
+            <a href="https://documentation.ubuntu.com/desktop/" class="p-navigation__sub-link p-dropdown__link">Ubuntu Desktop</a>
+          </li>
+          
+          <li>
+            <a href="https://documentation.ubuntu.com/wsl/latest/" class="p-navigation__sub-link p-dropdown__link">Ubuntu on WSL</a>
+          </li>
+          
+          <li>
+            <a href="https://documentation.ubuntu.com/ubuntu-for-developers/" class="p-navigation__sub-link p-dropdown__link">Ubuntu for developers</a>
+          </li>
+          
+          <li>
+            <a href="https://documentation.ubuntu.com/project/" class="p-navigation__sub-link p-dropdown__link">Ubuntu project</a>
+          </li>
+          
+          <li>
+            <a href="https://documentation.ubuntu.com/pro/" class="p-navigation__sub-link p-dropdown__link">Ubuntu Pro</a>
+          </li>
+          
+        </ul>
+      </li>
+
+    </ul>
+  </div>
+</header>
+   
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../"><div class="brand">Ubuntu Server documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../">
+  
+  <span class="sidebar-brand-text">Ubuntu Server documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search/" role="search">
+    <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+    <input type="submit" value="Go">
+    <input type="hidden" name="check_keywords" value="yes">
+    <input type="hidden" name="area" value="default">
+  </form>
+  <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../tutorial/">Tutorial</a><input aria-label="Toggle navigation of Tutorial" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial/basic-installation/">Basic installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial/welcome-to-the-terminal/">Welcome to the terminal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial/cli-in-depth/">The command line in depth</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial/managing-software/">Managing your software</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial/attach-your-ubuntu-pro-subscription/">Attach your Ubuntu Pro subscription</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../../">How-to guides</a><input aria-label="Toggle navigation of How-to guides" checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../installation/">Server installation</a><input aria-label="Toggle navigation of Server installation" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../installation/how-to-netboot-the-server-installer-on-amd64/">amd64 netboot install</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../installation/netboot-the-server-installer-via-uefi-pxe-on-arm-aarch64-arm64-and-x86-64-amd64/">arm64 netboot install</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../installation/choosing-between-the-arm64-and-arm64-largemem-installer-options/">Choose between the arm64 and arm64+largemem installer options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../installation/netboot-the-live-server-installer-on-ibm-power-ppc64el-with-petitboot/">ppc64el netboot install</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../installation/how-to-start-a-live-server-installation-on-ibm-power-ppc64el-with-a-virtual-cd-rom-and-petitboot/">Virtual CD-ROM and Petitboot install on ppc64el</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../installation/interactive-live-server-installation-on-ibm-z-vm-s390x/">s390x install via z/VM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../installation/non-interactive-ibm-z-vm-autoinstall-s390x/">Non-interactive IBM z/VM autoinstall (s390x)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../installation/interactive-live-server-installation-on-ibm-z-lpar-s390x/">s390x install via LPAR</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../installation/non-interactive-ibm-z-lpar-autoinstall-s390x/">Non-interactive IBM Z LPAR autoinstall (s390x)</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../security/">Security</a><input aria-label="Toggle navigation of Security" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../security/user-management/">User management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../security/firewalls/">Firewalls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../security/apparmor/">AppArmor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../security/console-security/">Console security</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../security/tpm-backed-luks-decryption-with-clevis/">TPM-backed LUKS decryption with Clevis</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../kerberos/">Kerberos</a><input aria-label="Toggle navigation of Kerberos" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../kerberos/install-a-kerberos-server/">Install a Kerberos server</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../kerberos/configure-service-principals/">Configure service principals</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../kerberos/kerberos-encryption-types/">Kerberos encryption types</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../kerberos/set-up-secondary-kdc/">Set up secondary KDC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../kerberos/basic-workstation-authentication/">Basic workstation authentication</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../kerberos/kerberos-with-openldap-backend/">Kerberos with OpenLDAP backend</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../sssd/">Network user authentication with SSSD</a><input aria-label="Toggle navigation of Network user authentication with SSSD" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../sssd/with-active-directory/">SSSD with Active Directory</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sssd/with-ldap/">SSSD with LDAP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sssd/with-ldap-and-kerberos/">SSSD with LDAP and Kerberos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sssd/troubleshooting/">Troubleshooting SSSD</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../security/smart-card-authentication/">Smart cards</a><input aria-label="Toggle navigation of Smart cards" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../security/smart-card-authentication/">Smart card authentication</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../security/smart-card-authentication-with-ssh/">Smart card authentication with SSH</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../security/openssh-server/">OpenSSH</a><input aria-label="Toggle navigation of OpenSSH" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../security/two-factor-authentication-with-totp-or-hotp/">2FA with TOTP/HOTP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../security/two-factor-authentication-with-u2f-or-fido/">2FA with U2F/FIDO</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../security/obtain-tls-certificates/">Obtain TLS certificates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../security/install-a-root-ca-certificate-in-the-trust-store/">Install a root CA certificate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../security/install-openvpn/">OpenVPN</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../wireguard-vpn/">WireGuard VPN</a><input aria-label="Toggle navigation of WireGuard VPN" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../wireguard-vpn/peer-to-site/">Peer-to-site</a><input aria-label="Toggle navigation of Peer-to-site" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../wireguard-vpn/peer-to-site-on-router/">Peer-to-site (on router)</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../wireguard-vpn/on-an-internal-system/">Peer-to-site (inside device)</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../wireguard-vpn/site-to-site/">Site-to-site</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../wireguard-vpn/vpn-as-the-default-gateway/">Default gateway</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../wireguard-vpn/common-tasks/">Common tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../wireguard-vpn/security-tips/">Security tips</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../wireguard-vpn/troubleshooting/">Troubleshooting</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../networking/">Networking</a><input aria-label="Toggle navigation of Networking" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../networking/ftp/">File transfers with FTP</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../networking/install-dns/">Set up a name server (DNS)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../networking/install-dnssec/">Set up DNS Security Extensions (DNSSEC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../networking/dnssec-troubleshooting/">DNSSEC Troubleshooting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../networking/dpdk-with-open-vswitch/">Use Open vSwitch with DPDK</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../networking/install-doca-ofed/">Install DOCA-OFED</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../networking/install-isc-kea/">Install DHCP isc-kea</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../networking/install-isc-dhcp-server/">Install DHCP isc-dhcp-server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../networking/chrony-client/">Time sync with chrony</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../networking/timedatectl-and-timesyncd/">Time sync with timedatectl and timesyncd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../networking/serve-ntp-with-chrony/">Serving time with chrony</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../networking/install-nfs/">Network File System (NFS) sharing</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../samba/">Samba</a><input aria-label="Toggle navigation of Samba" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../samba/provision-samba-ad-controller/">Set up a Samba AD Domain Controller</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samba/member-server-in-an-ad-domain/">Join an Active Directory domain</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samba/file-server/">Set up a file server</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samba/print-server/">Set up a print server</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samba/share-access-controls/">Share access controls</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samba/apparmor-profile/">Create AppArmor profile</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samba/mount-cifs-shares-permanently/">Mount CIFS shares permanently</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samba/nt4-domain-controller-legacy/">NT4 domain controller</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samba/openldap-backend-legacy/">OpenLDAP backend</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../active-directory/">Active Directory integration</a><input aria-label="Toggle navigation of Active Directory integration" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../active-directory/join-a-domain-with-winbind-preparation/">Prepare to join a domain</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../active-directory/join-a-simple-domain-with-the-rid-backend/">Join a simple domain with the rid backend</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../active-directory/join-a-forest-with-the-rid-backend/">Join a forest with the rid backend</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../active-directory/join-a-forest-with-the-autorid-backend/">Join a forest with the autorid backend</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../networking/traffic-shaping-tc-cake/">Traffic shaping with tc and CAKE</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../networking/cups-print-server/">Set up a CUPS print server</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../software/">Managing software</a><input aria-label="Toggle navigation of Managing software" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../software/package-management/">Package management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../software/automatic-updates/">Automatic updates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../software/upgrade-your-release/">Upgrade your release</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../software/snapshot-service/">Snapshot service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../software/report-a-bug/">Reporting bugs</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../../data-and-storage/">Data and storage</a><input aria-label="Toggle navigation of Data and storage" checked="" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../openldap/">OpenLDAP</a><input aria-label="Toggle navigation of OpenLDAP" class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../openldap/install-openldap/">Install OpenLDAP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../openldap/access-control/">Set up access control</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../openldap/replication/">OpenLDAP with replication</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../openldap/users-and-groups/">User and group management</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../openldap/ldap-and-tls/">OpenLDAP and TLS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../openldap/backup-and-restore/">Backup and restore</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../openldap/ldap-saslauthd-authentication-intro/">Introduction to passthrough authentication</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../openldap/ldap-saslauthd-kerberos/">Passthrough authentication with Kerberos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../openldap/ldap-client/">Set up an LDAP client</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current has-children"><a class="reference internal" href="../">Databases</a><input aria-label="Toggle navigation of Databases" checked="" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../install-mysql/">MySQL</a></li>
+<li class="toctree-l4 current current-page"><a class="current reference internal" href="#">PostgreSQL</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../storage/">Storage</a><input aria-label="Toggle navigation of Storage" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../storage/manage-logical-volumes/">Manage logical volumes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../storage/iscsi-initiator-or-client/">iSCSI</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../backups/">Backups and version control</a><input aria-label="Toggle navigation of Backups and version control" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../backups/install-bacula/">Install Bacula</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../backups/install-rsnapshot/">Install rsnapshot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../backups/back-up-using-shell-scripts/">Backup with shell scripts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../backups/install-etckeeper/">etckeeper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../backups/install-gitolite/">Install gitolite</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../mail-services/">Mail services</a><input aria-label="Toggle navigation of Mail services" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../mail-services/install-postfix/">Install Postfix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mail-services/install-exim4/">Install Exim4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mail-services/install-dovecot/">Install Dovecot</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../web-services/">Web services</a><input aria-label="Toggle navigation of Web services" class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../web-services/install-a-squid-server/">Install a Squid server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../web-services/install-apache2/">Install Apache2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../web-services/configure-apache2-settings/">Apache2 settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../web-services/use-apache2-modules/">Apache2 modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../web-services/install-nginx/">Install nginx</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../web-services/configure-nginx/">nginx settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../web-services/use-nginx-modules/">nginx modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../web-services/install-php/">Install PHP</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../web-services/install-ruby-on-rails/">Install Ruby on Rails</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../graphics/">Graphics</a><input aria-label="Toggle navigation of Graphics" class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../graphics/install-nvidia-drivers/">Install NVIDIA drivers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../graphics/gpu-virtualization-with-qemu-kvm/">vGPU with QEMU/KVM</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../virtualisation/">Virtualisation</a><input aria-label="Toggle navigation of Virtualisation" class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../virtualisation/lxd/">LXD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../virtualisation/multipass/">Multipass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../virtualisation/cloud-image-vms-with-uvtool/">UVtool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../virtualisation/qemu/">QEMU</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../virtualisation/sev-snp/">AMD SEV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../virtualisation/intel-tdx/">Intel TDX</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../virtualisation/virt-hwe/">Hardware enablement virtualization stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../virtualisation/libvirt/">Libvirt and virsh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../virtualisation/virtual-machine-manager/">virt-manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../virtualisation/enable-nested-virtualisation/">Nested virtualization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../virtualisation/ubuntu-on-hyper-v/">Ubuntu on Hyper-V</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../containers/">Containers</a><input aria-label="Toggle navigation of Containers" class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../virtualisation/lxd/">LXD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../containers/docker-for-system-admins/">Docker for sysadmins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../containers/run-rocks-on-your-server/">How to run rocks on your server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../containers/skopeo/">Skopeo for sysadmins</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../high-availability/">High availability</a><input aria-label="Toggle navigation of High availability" class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../high-availability/install-drbd/">Distributed Replicated Block Device (DRBD)</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../observability/">Observability</a><input aria-label="Toggle navigation of Observability" class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../observability/set-up-your-lma-stack/">Set up your LMA stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../observability/install-logwatch/">Install Logwatch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../observability/install-munin/">Install Munin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../observability/install-nagios/">Install Nagios Core 4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../observability/use-nagios-with-munin/">Use Nagios with Munin</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../debugging/">Debugging</a><input aria-label="Toggle navigation of Debugging" class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../debugging/about-debuginfod/">About debuginfod</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../debugging/debug-symbol-packages/">Debug symbol packages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../software/kernel-crash-dump/">Kernel crash dump</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../debugging/ebpf/">eBPF</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../reference/">Reference</a><input aria-label="Toggle navigation of Reference" class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" role="switch" type="checkbox"/><label for="toctree-checkbox-28"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../reference/glossary/">Glossary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reference/cli-cheatsheet/">Command-line cheat sheet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reference/installation/system-requirements/">System requirements</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/high-availability/">High availability</a><input aria-label="Toggle navigation of High availability" class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" role="switch" type="checkbox"/><label for="toctree-checkbox-29"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/high-availability/migrate-from-crmsh-to-pcs/">Migrate from crmsh to pcs</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/other-tools/">Other tools</a><input aria-label="Toggle navigation of Other tools" class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" role="switch" type="checkbox"/><label for="toctree-checkbox-30"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/other-tools/terminal-multiplexers/">terminal-multiplexers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/other-tools/pam-motd/">pam_motd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/other-tools/sudo-rs/">sudo-rs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../explanation/">Explanation</a><input aria-label="Toggle navigation of Explanation" class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" role="switch" type="checkbox"/><label for="toctree-checkbox-31"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../explanation/security/">Security</a><input aria-label="Toggle navigation of Security" class="toctree-checkbox" id="toctree-checkbox-32" name="toctree-checkbox-32" role="switch" type="checkbox"/><label for="toctree-checkbox-32"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/intro-to/security/">Introduction to security</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/security/security_suggestions/">Security suggestions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/intro-to/kerberos/">Introduction to Kerberos</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/intro-to/sssd/">Introduction to network user authentication with SSSD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/dnssec/dnssec/">DNSSEC</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../explanation/cryptography/">Cryptography</a><input aria-label="Toggle navigation of Cryptography" class="toctree-checkbox" id="toctree-checkbox-33" name="toctree-checkbox-33" role="switch" type="checkbox"/><label for="toctree-checkbox-33"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../explanation/intro-to/crypto-libraries/">Introduction to cryptographic libraries</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../explanation/crypto/openssl/">OpenSSL</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../explanation/crypto/gnutls/">GnuTLS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../explanation/crypto/network-security-services-nss/">Network Security Services (NSS)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../explanation/crypto/java-cryptography-configuration/">Java cryptography configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../explanation/crypto/bind-9-dnssec-cryptography-selection/">BIND 9 DNSSEC cryptography selection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../explanation/crypto/openssh-crypto-configuration/">OpenSSH crypto configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../explanation/crypto/troubleshooting-tls-ssl/">Troubleshooting TLS/SSL</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/security/certificates/">Certificates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/intro-to/wireguard-vpn/">Introduction to WireGuard VPN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/security/openvpn-client-implementations/">OpenVPN clients</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../explanation/networking/">Networking</a><input aria-label="Toggle navigation of Networking" class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" role="switch" type="checkbox"/><label for="toctree-checkbox-34"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/intro-to/networking/">Introduction to networking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/networking/networking-key-concepts/">Networking key concepts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/networking/about-netplan/">About Netplan</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/networking/configuring-networks/">Configuring networks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/networking/about-dpdk/">The DPDK library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/networking/about-dhcp/">About DHCP</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/networking/about-time-synchronisation/">Time synchronisation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/intro-to/samba/">Introduction to Samba</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../explanation/active-directory/">Active Directory integration</a><input aria-label="Toggle navigation of Active Directory integration" class="toctree-checkbox" id="toctree-checkbox-35" name="toctree-checkbox-35" role="switch" type="checkbox"/><label for="toctree-checkbox-35"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../explanation/intro-to/AD-integration/">Introduction to Active Directory integration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../explanation/active-directory/choosing-an-integration-method/">Choosing an integration method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../explanation/active-directory/security-identifiers-sids/">Security identifiers (SIDs)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../explanation/active-directory/identity-mapping-idmap-backends/">Identity Mapping (idmap) backends</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../explanation/active-directory/the-rid-idmap-backend/">The rid idmap backend</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../explanation/active-directory/the-autorid-idmap-backend/">The autorid idmap backend</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../explanation/software/">Managing software</a><input aria-label="Toggle navigation of Managing software" class="toctree-checkbox" id="toctree-checkbox-36" name="toctree-checkbox-36" role="switch" type="checkbox"/><label for="toctree-checkbox-36"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/software/third-party-repository-usage/">Third party repository usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/software/changing-package-files/">Changing package files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/software/config-managers/">Configuration managers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/software/about-apt-upgrade-and-phased-updates/">About apt upgrade and phased updates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/software/advance-testing-of-updates-in-best-practice-server-deployments/">Advance testing of updates in best practice server deployments</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../explanation/data-and-storage/">Data and storage</a><input aria-label="Toggle navigation of Data and storage" class="toctree-checkbox" id="toctree-checkbox-37" name="toctree-checkbox-37" role="switch" type="checkbox"/><label for="toctree-checkbox-37"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/intro-to/openldap/">Introduction to OpenLDAP</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/intro-to/databases/">Introduction to databases</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../explanation/storage/">Storage</a><input aria-label="Toggle navigation of Storage" class="toctree-checkbox" id="toctree-checkbox-38" name="toctree-checkbox-38" role="switch" type="checkbox"/><label for="toctree-checkbox-38"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../explanation/storage/about-lvm/">About LVM</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../explanation/multipath/">Multipath</a><input aria-label="Toggle navigation of Multipath" class="toctree-checkbox" id="toctree-checkbox-39" name="toctree-checkbox-39" role="switch" type="checkbox"/><label for="toctree-checkbox-39"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../explanation/intro-to/multipath/">Introduction to device mapper multipathing (“multipath”)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../explanation/multipath/configuring-multipath/">Configuration options and overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../explanation/multipath/multipath-configuration-examples/">Configuration examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../explanation/multipath/common-multipath-tasks-and-procedures/">Common tasks and procedures</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../explanation/web-services/">Web services</a><input aria-label="Toggle navigation of Web services" class="toctree-checkbox" id="toctree-checkbox-40" name="toctree-checkbox-40" role="switch" type="checkbox"/><label for="toctree-checkbox-40"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/intro-to/web-servers/">Introduction to web services</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/web-services/about-web-servers/">About web servers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/web-services/about-squid-proxy-servers/">About Squid proxy servers</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../explanation/virtualisation/">Virtualisation and containers</a><input aria-label="Toggle navigation of Virtualisation and containers" class="toctree-checkbox" id="toctree-checkbox-41" name="toctree-checkbox-41" role="switch" type="checkbox"/><label for="toctree-checkbox-41"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/intro-to/virtualisation/">Introduction to virtualization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/virtualisation/vm-tools-in-the-ubuntu-space/">VM tools overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/virtualisation/qemu-microvm/">QEMU microvm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/virtualisation/live-migration/">QEMU/libvirt live migration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/virtualisation/qemu-machine-types/">QEMU machine types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/virtualisation/container-tools-in-the-ubuntu-space/">Container tools overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/virtualisation/about-rock-images/">About rock images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/virtualisation/docker-storage-networking-and-logging/">Docker storage, networking, and logging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/virtualisation/about-openstack/">About OpenStack</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../explanation/clouds/">Clouds</a><input aria-label="Toggle navigation of Clouds" class="toctree-checkbox" id="toctree-checkbox-42" name="toctree-checkbox-42" role="switch" type="checkbox"/><label for="toctree-checkbox-42"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/intro-to/cloud-init/">About cloud-init</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/clouds/find-cloud-images/">Cloud images</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../explanation/high-availability/">High Availability</a><input aria-label="Toggle navigation of High Availability" class="toctree-checkbox" id="toctree-checkbox-43" name="toctree-checkbox-43" role="switch" type="checkbox"/><label for="toctree-checkbox-43"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/intro-to/high-availability/">Introduction to HA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/high-availability/pacemaker-resource-agents/">Pacemaker resource agents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/high-availability/pacemaker-fence-agents/">Pacemaker fence agents</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../explanation/performance/">Performance</a><input aria-label="Toggle navigation of Performance" class="toctree-checkbox" id="toctree-checkbox-44" name="toctree-checkbox-44" role="switch" type="checkbox"/><label for="toctree-checkbox-44"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/performance/perf-pgo/">Profile-Guided Optimization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/performance/perf-tune-hwloc/">hwloc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/performance/perf-p-states/">CPU Power (states)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/performance/perf-tune-cpupower/">cpupower (tool)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../explanation/performance/perf-tune-tuned/">TuneD</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../contributing/">Contributing</a><input aria-label="Toggle navigation of Contributing" class="toctree-checkbox" id="toctree-checkbox-45" name="toctree-checkbox-45" role="switch" type="checkbox"/><label for="toctree-checkbox-45"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing/">Contribute to this documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing/contrib-types/">Types of contributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing/local-development/">Local development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing/writing-guidance/">Guidance for writing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing/ai-tools-in-this-project/">AI tools in this project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing/get-help/">Getting help</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing/contributors/">Our contributors</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/canonical/ubuntu-server-documentation/edit/main/docs/how-to/databases/install-postgresql.md" title="Contribute to this page">
+    <svg><use href="#svg-pencil"></use></svg>
+    <span class="visually-hidden">Contribute to this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section class="tex2jax_ignore mathjax_ignore" id="install-and-configure-postgresql">
+<span id="install-postgresql"></span><h1>Install and configure PostgreSQL<a class="headerlink" href="#install-and-configure-postgresql" title="Link to this heading">¶</a></h1>
+<p><a class="reference external" href="https://www.postgresql.org/">PostgreSQL</a> (commonly referred to as “<spellexception>Postgres</spellexception>”) is an object-relational database system that has all the features of traditional commercial database systems, but with enhancements to be found in next-generation database management systems (DBMS).</p>
+<section id="id1">
+<h2>Install PostgreSQL<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p>To install PostgreSQL, run the following command in the command prompt:</p>
+<div class="terminal docutils container">
+<div class="input docutils container">
+<div class="prompt docutils container">
+<code class="docutils literal notranslate"><span class="pre">$</span> </code></div>
+<span class="command copybutton"><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">--allow-unauthenticated</span> <span class="pre">postgresql</span></code></span></div>
+</div>
+<p>The database service is automatically configured with viable defaults, but can be customized based on your specific needs.</p>
+</section>
+<section id="configure-postgresql">
+<h2>Configure PostgreSQL<a class="headerlink" href="#configure-postgresql" title="Link to this heading">¶</a></h2>
+<p>PostgreSQL supports multiple client authentication methods. In Ubuntu, <code class="docutils literal notranslate"><span class="pre">peer</span></code> is the default authentication method used for <code class="docutils literal notranslate"><span class="pre">local</span></code> connections, while <code class="docutils literal notranslate"><span class="pre">scram-sha-256</span></code> is the default for <code class="docutils literal notranslate"><span class="pre">host</span></code> connections (this used to be <code class="docutils literal notranslate"><span class="pre">md5</span></code> until Ubuntu 21.10). Please refer to the <a class="reference external" href="https://www.postgresql.org/docs/current/admin.html">PostgreSQL Administrator’s Guide</a> if you would like to configure alternatives like Kerberos.</p>
+<p>The following discussion assumes that you wish to enable TCP/IP connections and use the <code class="docutils literal notranslate"><span class="pre">scram-sha-256</span></code> method for client authentication. PostgreSQL configuration files are stored in the <code class="docutils literal notranslate"><span class="pre">/etc/postgresql/&lt;version&gt;/main</span></code> directory. For example, if you install PostgreSQL 14, the configuration files are stored in the <code class="docutils literal notranslate"><span class="pre">/etc/postgresql/14/main</span></code> directory.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>To configure <em>IDENT</em> authentication, add entries to the <code class="docutils literal notranslate"><span class="pre">/etc/postgresql/*/main/pg_ident.conf</span></code> file. There are detailed comments in the file to guide you.</p>
+</div>
+<p>By default, only connections from the local system are allowed. To enable all other computers to connect to your PostgreSQL server, edit the file <code class="docutils literal notranslate"><span class="pre">/etc/postgresql/*/main/postgresql.conf</span></code>. Locate the line: <em>#listen_addresses = ‘localhost’</em> and change it to <code class="docutils literal notranslate"><span class="pre">*</span></code>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>listen_addresses = '*'
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To listen on all IPv4 interfaces, set <code class="docutils literal notranslate"><span class="pre">listen_addresses</span></code> to ‘<code class="docutils literal notranslate"><span class="pre">0.0.0.0</span></code>’, while ‘<code class="docutils literal notranslate"><span class="pre">::</span></code>’ will listen on all IPv6 interfaces. ‘<code class="docutils literal notranslate"><span class="pre">*</span></code>’ will cause PostgreSQL to listen on all available network interfaces, both IPv4 and IPv6.</p>
+</div>
+<p>For details on other parameters, refer to the configuration file or to the <a class="reference external" href="https://www.postgresql.org/docs/">PostgreSQL documentation</a> for information on how they can be edited.</p>
+<p>Now that we can connect to our PostgreSQL server, the next step is to set a password for the <code class="docutils literal notranslate"><span class="pre">postgres</span></code> user. Run the following command at a terminal prompt to connect to the default PostgreSQL template database:</p>
+<div class="terminal docutils container">
+<div class="input docutils container">
+<div class="prompt docutils container">
+<code class="docutils literal notranslate"><span class="pre">$</span> </code></div>
+<span class="command copybutton"><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">-u</span> <span class="pre">postgres</span> <span class="pre">psql</span> <span class="pre">template1</span></code></span></div>
+</div>
+<p>The above command connects to PostgreSQL database <code class="docutils literal notranslate"><span class="pre">template1</span></code> as user <code class="docutils literal notranslate"><span class="pre">postgres</span></code>. Once you connect to the PostgreSQL server, you will be at an SQL prompt. You can run the following SQL command at the <code class="docutils literal notranslate"><span class="pre">psql</span></code> prompt to configure the password for the user <code class="docutils literal notranslate"><span class="pre">postgres</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ALTER<span class="w"> </span>USER<span class="w"> </span>postgres<span class="w"> </span>with<span class="w"> </span>encrypted<span class="w"> </span>password<span class="w"> </span><span class="s1">'your_password'</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>After configuring the password, edit the file <code class="docutils literal notranslate"><span class="pre">/etc/postgresql/*/main/pg_hba.conf</span></code> to use <code class="docutils literal notranslate"><span class="pre">scram-sha-256</span></code> authentication with the <code class="docutils literal notranslate"><span class="pre">postgres</span></code> user, allowed for the <code class="docutils literal notranslate"><span class="pre">template1</span></code> database, from any system in the local network (which in the example is <code class="docutils literal notranslate"><span class="pre">192.168.1.1/24</span></code>) :</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>hostssl template1       postgres        192.168.1.1/24        scram-sha-256
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The config statement <code class="docutils literal notranslate"><span class="pre">hostssl</span></code> used here will reject TCP connections that would not use SSL. PostgreSQL in Ubuntu has the SSL feature built in and configured by default, so it works right away. On your PostgreSQL server this uses the certificate created by the <code class="docutils literal notranslate"><span class="pre">ssl-cert</span></code> package which is suitable for testing, but for production use you should replace it with a certificate from a trusted Certificate Authority (CA). See <a class="reference internal" href="../../security/obtain-tls-certificates/#obtain-tls-certificates"><span class="std std-ref">Obtain TLS certificates</span></a> for how to get a certificate from Let’s Encrypt or set up your own CA.</p>
+</div>
+<p>Finally, you should restart the PostgreSQL service to initialize the new configuration. From a terminal prompt enter the following to restart PostgreSQL:</p>
+<div class="terminal docutils container">
+<div class="input docutils container">
+<div class="prompt docutils container">
+<code class="docutils literal notranslate"><span class="pre">$</span> </code></div>
+<span class="command copybutton"><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">systemctl</span> <span class="pre">restart</span> <span class="pre">postgresql.service</span></code></span></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The above configuration is not complete by any means. Please refer to the <a class="reference external" href="https://www.postgresql.org/docs/current/admin.html">PostgreSQL Administrator’s Guide</a> to configure more parameters.</p>
+</div>
+<p>You can test server connections from other machines by using the PostgreSQL client as follows, replacing the domain name with your actual server domain name or IP address:</p>
+<div class="terminal docutils container">
+<div class="input docutils container">
+<div class="prompt docutils container">
+<code class="docutils literal notranslate"><span class="pre">$</span> </code></div>
+<span class="command copybutton"><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">postgresql-client</span>
+<span class="pre">&gt;</span> <span class="pre">psql</span> <span class="pre">--host</span> <span class="pre">your-servers-dns-or-ip</span> <span class="pre">--username</span> <span class="pre">postgres</span> <span class="pre">--password</span> <span class="pre">--dbname</span> <span class="pre">template1</span></code></span></div>
+</div>
+</section>
+<section id="streaming-replication">
+<h2>Streaming replication<a class="headerlink" href="#streaming-replication" title="Link to this heading">¶</a></h2>
+<p>PostgreSQL has a nice feature called <strong>streaming replication</strong> which provides the ability to continuously ship and apply the Write-Ahead Log <a class="reference external" href="https://www.postgresql.org/docs/current/wal.html">(WAL) XLOG</a> records to some number of standby servers to keep them current. Here is a simple way to replicate a PostgreSQL server (main) to a standby server.</p>
+<p>First, create a replication user in the main server, to be used from the standby server:</p>
+<div class="terminal docutils container">
+<div class="input docutils container">
+<div class="prompt docutils container">
+<code class="docutils literal notranslate"><span class="pre">$</span> </code></div>
+<span class="command copybutton"><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">-u</span> <span class="pre">postgres</span> <span class="pre">createuser</span> <span class="pre">--replication</span> <span class="pre">-P</span> <span class="pre">-e</span> <span class="pre">replicator</span></code></span></div>
+</div>
+<p>Let’s configure the main server to turn on the streaming replication. Open the file <code class="docutils literal notranslate"><span class="pre">/etc/postgresql/*/main/postgresql.conf</span></code> and make sure you have the following lines:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>listen_addresses = '*'
+wal_level = replica
+</pre></div>
+</div>
+<p>Also edit the file <code class="docutils literal notranslate"><span class="pre">/etc/postgresql/*/main/pg_hba.conf</span></code> to add an extra line to allow the standby server connection for replication (that is a special keyword) using the <code class="docutils literal notranslate"><span class="pre">replicator</span></code> user:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>host  replication   replicator   &lt;IP address of the standby&gt;      scram-sha-256
+</pre></div>
+</div>
+<p>Restart the service to apply changes:</p>
+<div class="terminal docutils container">
+<div class="input docutils container">
+<div class="prompt docutils container">
+<code class="docutils literal notranslate"><span class="pre">$</span> </code></div>
+<span class="command copybutton"><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">systemctl</span> <span class="pre">restart</span> <span class="pre">postgresql</span></code></span></div>
+</div>
+<p>Now, in the standby server, let’s stop the PostgreSQL service:</p>
+<div class="terminal docutils container">
+<div class="input docutils container">
+<div class="prompt docutils container">
+<code class="docutils literal notranslate"><span class="pre">$</span> </code></div>
+<span class="command copybutton"><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">systemctl</span> <span class="pre">stop</span> <span class="pre">postgresql</span></code></span></div>
+</div>
+<p>Edit the <code class="docutils literal notranslate"><span class="pre">/etc/postgresql/*/main/postgresql.conf</span></code> to set up hot standby:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>hot_standby = on
+</pre></div>
+</div>
+<p>Back up the current state of the main server (those commands are still issued on the standby system):</p>
+<div class="terminal docutils container">
+<div class="input docutils container">
+<div class="prompt docutils container">
+<code class="docutils literal notranslate"><span class="pre">$</span> </code></div>
+<span class="command copybutton"><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">su</span> <span class="pre">-</span> <span class="pre">postgres</span>
+<span class="pre">&gt;</span> <span class="pre">#</span> <span class="pre">backup</span> <span class="pre">the</span> <span class="pre">current</span> <span class="pre">content</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">standby</span> <span class="pre">server</span> <span class="pre">(update</span> <span class="pre">the</span> <span class="pre">version</span> <span class="pre">of</span> <span class="pre">your</span> <span class="pre">postgres</span> <span class="pre">accordingly)</span>
+<span class="pre">&gt;</span> <span class="pre">cp</span> <span class="pre">-R</span> <span class="pre">/var/lib/postgresql/14/main</span> <span class="pre">/var/lib/postgresql/14/main_bak</span>
+<span class="pre">&gt;</span> <span class="pre">#</span> <span class="pre">remove</span> <span class="pre">all</span> <span class="pre">the</span> <span class="pre">files</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">data</span> <span class="pre">directory</span>
+<span class="pre">&gt;</span> <span class="pre">rm</span> <span class="pre">-rf</span> <span class="pre">/var/lib/postgresql/14/main/*</span>
+<span class="pre">&gt;</span> <span class="pre">pg_basebackup</span> <span class="pre">-h</span> <span class="pre">&lt;IP</span> <span class="pre">address</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">main</span> <span class="pre">server&gt;</span> <span class="pre">-D</span> <span class="pre">/var/lib/postgresql/14/main</span> <span class="pre">-U</span> <span class="pre">replicator</span> <span class="pre">-P</span> <span class="pre">-v</span> <span class="pre">-R</span></code></span></div>
+</div>
+<p>After this, a full single pass will have been completed, copying the content of the main database onto the local system being the standby. In the <code class="docutils literal notranslate"><span class="pre">pg_basebackup</span></code> command the flags represent the following:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>: The <a class="hxr-hoverxref hxr-tooltip reference internal" href="../../../reference/glossary/#term-hostname"><span class="xref std std-term">hostname</span></a> or IP address of the main server</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-D</span></code>: The data directory</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-U</span></code>: The user to be used in the operation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-P</span></code>: Turns on progress reporting</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-v</span></code>: Enables verbose mode</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-R</span></code>: Creates a <code class="docutils literal notranslate"><span class="pre">standby.signal</span></code> file and appends connection settings to <code class="docutils literal notranslate"><span class="pre">postgresql.auto.conf</span></code></p></li>
+</ul>
+<p>Finally, let’s start the PostgreSQL service on standby server:</p>
+<div class="terminal docutils container">
+<div class="input docutils container">
+<div class="prompt docutils container">
+<code class="docutils literal notranslate"><span class="pre">$</span> </code></div>
+<span class="command copybutton"><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">systemctl</span> <span class="pre">start</span> <span class="pre">postgresql</span></code></span></div>
+</div>
+<p>To make sure it is working, go to the main server and run the following command:</p>
+<div class="terminal docutils container">
+<div class="input docutils container">
+<div class="prompt docutils container">
+<code class="docutils literal notranslate"><span class="pre">$</span> </code></div>
+<span class="command copybutton"><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">-u</span> <span class="pre">postgres</span> <span class="pre">psql</span> <span class="pre">-c</span> <span class="pre">&quot;select</span> <span class="pre">*</span> <span class="pre">from</span> <span class="pre">pg_stat_replication;&quot;</span></code></span></div>
+</div>
+<p>As mentioned, this is a very simple introduction, there are way more great details in the upstream documentation about the configuration of <a class="reference external" href="https://www.postgresql.org/docs/current/runtime-config-replication.html">replication</a> as well as further <a class="reference external" href="https://www.postgresql.org/docs/current/high-availability.html">High Availability, Load Balancing, and Replication</a>.</p>
+<p>To test the replication you can now create a test database in the main server and check if it is replicated in the standby server:</p>
+<div class="terminal docutils container">
+<div class="input docutils container">
+<div class="prompt docutils container">
+<code class="docutils literal notranslate"><span class="pre">$</span> </code></div>
+<span class="command copybutton"><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">-u</span> <span class="pre">postgres</span> <span class="pre">createdb</span> <span class="pre">test</span> <span class="pre">#</span> <span class="pre">on</span> <span class="pre">the</span> <span class="pre">main</span> <span class="pre">server</span></code></span></div>
+</div>
+<div class="terminal docutils container">
+<div class="input docutils container">
+<div class="prompt docutils container">
+<code class="docutils literal notranslate"><span class="pre">$</span> </code></div>
+<span class="command copybutton"><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">-u</span> <span class="pre">postgres</span> <span class="pre">psql</span> <span class="pre">-c</span> <span class="pre">&quot;\l&quot;</span> <span class="pre">#</span> <span class="pre">on</span> <span class="pre">the</span> <span class="pre">standby</span> <span class="pre">server</span></code></span></div>
+</div>
+<p>You need to be able to see the <code class="docutils literal notranslate"><span class="pre">test</span></code> database, that was created on the main server, in the standby server.</p>
+</section>
+<section id="backups">
+<h2>Backups<a class="headerlink" href="#backups" title="Link to this heading">¶</a></h2>
+<p>PostgreSQL databases should be backed up regularly. Refer to the <a class="reference external" href="https://www.postgresql.org/docs/current/backup.html">PostgreSQL Administrator’s Guide</a> for different approaches.</p>
+</section>
+<section id="further-reading">
+<h2>Further reading<a class="headerlink" href="#further-reading" title="Link to this heading">¶</a></h2>
+<ul>
+<li><p>As mentioned above, the <a class="reference external" href="https://www.postgresql.org/docs/current/admin.html">PostgreSQL Administrator’s Guide</a> is an excellent resource. The guide is also available in the <code class="docutils literal notranslate"><span class="pre">postgresql-doc</span></code> package. Execute the following in a terminal to install the package:</p>
+<div class="terminal docutils container">
+<div class="input docutils container">
+<div class="prompt docutils container">
+<code class="docutils literal notranslate"><span class="pre">$</span> </code></div>
+<span class="command copybutton"><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">postgresql-doc</span></code></span></div>
+</div>
+<p>This package provides further manual pages on PostgreSQL <a class="hxr-hoverxref hxr-tooltip reference internal" href="../../../reference/glossary/#term-dblink"><span class="xref std std-term">dblink</span></a> and “server programming interface” as well as the upstream HTML guide. To view the guide enter <code class="docutils literal notranslate"><span class="pre">xdg-open</span> <span class="pre">/usr/share/doc/postgresql-doc-*/html/index.html</span></code> or point your browser at it.</p>
+</li>
+<li><p>For general SQL information see the O’Reilly books <a class="reference external" href="https://www.oreilly.com/library/view/getting-started-with/9781491938607/">Getting Started with SQL: A Hands-On Approach for Beginners</a> by <spellexception>Thomas Nield</spellexception> as an entry point and <a class="reference external" href="https://www.oreilly.com/library/view/sql-in-a/9780596155322/">SQL in a Nutshell</a> as a quick reference.</p></li>
+</ul>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+   
+
+<div class="related-pages">
+  
+  
+      
+  
+  
+  
+</div>
+<div class="bottom-of-page">
+  <div class="left-details">
+    <div class="copyright">
+        Copyright &#169; 2026
+    </div>
+
+    <div class="last-updated">
+      Last updated on Jun 26, 2026</div>
+  </div>
+  <div>
+    
+  </div>
+  <div class="right-details">
+
+    
+
+    
+    <div class="ask-discourse">
+      <a class="muted-link" href="https://discourse.ubuntu.com/c/server/17">Ask a question on Discourse</a>
+    </div>
+    
+
+    
+    <div class="ask-matrix">
+      <a class="muted-link" href="https://matrix.to/#/#server:ubuntu.com">Ask a question on Matrix</a>
+    </div>
+    
+
+    
+
+    
+    <div class="issue-github">
+      <a class="muted-link" href="https://github.com/canonical/ubuntu-server-documentation/issues/new?template=feedback.yml">Open a GitHub issue for this page</a>
+    </div>
+    
+
+    <div class="edit-github">
+      <a class="muted-link" href="https://github.com/canonical/ubuntu-server-documentation/edit/main/docs/how-to/databases/install-postgresql.md">Edit this page on GitHub</a>
+    </div>
+    
+    <div class="view-page-source">
+      <a class="muted-link" href="../../../_sources/how-to/databases/install-postgresql.md.txt" rel="nofollow">View page source</a>
+    </div>
+    
+
+
+    </div>
+  </div>
+</div>
+
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+<div class="toc-sticky toc-scroll">
+   
+    <div class="toc-title-container">
+      <span class="toc-title">
+       Contents
+      </span>
+    </div>
+    <div class="toc-tree-container">
+      <div class="toc-tree">
+        <ul>
+<li><a class="reference internal" href="#">Install and configure PostgreSQL</a><ul>
+<li><a class="reference internal" href="#id1">Install PostgreSQL</a></li>
+<li><a class="reference internal" href="#configure-postgresql">Configure PostgreSQL</a></li>
+<li><a class="reference internal" href="#streaming-replication">Streaming replication</a></li>
+<li><a class="reference internal" href="#backups">Backups</a></li>
+<li><a class="reference internal" href="#further-reading">Further reading</a></li>
+</ul>
+</li>
+</ul>
+
+      </div>
+    </div>
+   
+    
+  </div>
+
+    </aside>
+  </div>
+</div><script src="../../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../../../_static/documentation_options.js?v=187304be"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=c2bb150d"></script>
+    <script src="../../../_static/config-options.js"></script>
+    <script src="../../../_static/contributors.js"></script>
+    <script src="../../../_static/js/hoverxref.js"></script>
+    <script src="../../../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../../../_static/js/micromodal.min.js"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../_static/js/footer.js?v=5acea47a"></script>
+    <script src="../../../_static/js/github_issue_links.js?v=3193f347"></script>
+    <script src="https://assets.ubuntu.com/v1/287a5e8f-bundle.js"></script>
+    <script src="../../../_static/js/url_overwrite.js?v=fb510a0b"></script>
+    <script src="../../../_static/header-nav.js?v=e117ad08"></script>
+    
+<script>
+  const github_url = "https://github.com/canonical/ubuntu-server-documentation";
+  const feedback_link = "";
+</script>
+</body>
+</html>

@@ -1,0 +1,3120 @@
+<!DOCTYPE html><html lang="en" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>How to Troubleshoot and Fix Kubernetes Node Not Ready Issues</title><meta name="description" content="Learn how to diagnose and fix Kubernetes “node not ready” errors. Discover causes, troubleshooting steps, and best practices for smooth Kubernetes operations."><link rel="canonical" href="https://www.groundcover.com/kubernetes-troubleshooting/kubernetes-node-not-ready"><link rel="manifest" href="/manifest.json"><meta property="og:title" content="How to Troubleshoot and Fix Kubernetes Node Not Ready Issues"><meta property="og:description" content="Learn how to diagnose and fix Kubernetes “node not ready” errors. Discover causes, troubleshooting steps, and best practices for smooth Kubernetes operations."><meta property="og:url" content="https://www.groundcover.com/kubernetes-troubleshooting/kubernetes-node-not-ready"><meta property="og:image" content="https://cdn.sanity.io/images/wlxwimgv/production/0d732f63a834177f22eb3a01a530114f62804bb6-1999x1151.jpg"><meta property="og:image:alt" content="How to Troubleshoot and Fix Kubernetes Node Not Ready Issues"><meta property="og:type" content="article"><meta property="og:site_name" content="groundcover"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@groundcover_com"><meta name="twitter:creator" content="@groundcover_com"><meta name="twitter:title" content="How to Troubleshoot and Fix Kubernetes Node Not Ready Issues"><meta name="twitter:description" content="Learn how to diagnose and fix Kubernetes “node not ready” errors. Discover causes, troubleshooting steps, and best practices for smooth Kubernetes operations."><meta name="twitter:image" content="https://cdn.sanity.io/images/wlxwimgv/production/0d732f63a834177f22eb3a01a530114f62804bb6-1999x1151.jpg"><meta name="twitter:image:alt" content="How to Troubleshoot and Fix Kubernetes Node Not Ready Issues"><meta name="twitter:url" content="https://www.groundcover.com/kubernetes-troubleshooting/kubernetes-node-not-ready"><vercel-speed-insights data-props="{}" data-params="{&quot;kind&quot;:&quot;kubernetes-troubleshooting&quot;,&quot;slug&quot;:&quot;kubernetes-node-not-ready&quot;}" data-pathname="/kubernetes-troubleshooting/kubernetes-node-not-ready"></vercel-speed-insights><script type="module">var e=()=>{window.si||(window.si=function(...e){window.siq=window.siq||[],window.siq.push(e)})},t=`@vercel/speed-insights`,n=`2.0.0`;function r(){return typeof window<`u`}function i(){return`production`}function a(){return i()===`development`}function o(e,t){if(!e||!t)return e;let n=e;try{let e=Object.entries(t);for(let[t,r]of e)if(!Array.isArray(r)){let e=s(r);e.test(n)&&(n=n.replace(e,`/[${t}]`))}for(let[t,r]of e)if(Array.isArray(r)){let e=s(r.join(`/`));e.test(n)&&(n=n.replace(e,`/[...${t}]`))}return n}catch{return e}}function s(e){return RegExp(`/${c(e)}(?=[/?#]|$)`)}function c(e){return e.replace(/[.*+?^${}()|[\]\\]/g,`\\$&`)}function l(e){return e.scriptSrc?d(e.scriptSrc):a()?`https://va.vercel-scripts.com/v1/speed-insights/script.debug.js`:e.dsn?`https://va.vercel-scripts.com/v1/speed-insights/script.js`:e.basePath?d(`${e.basePath}/speed-insights/script.js`):`/_vercel/speed-insights/script.js`}function u(e,r){let i=e;if(r)try{i={...JSON.parse(r)?.speedInsights,...e}}catch{}let o={sdkn:t+(i.framework?`/${i.framework}`:``),sdkv:n};return i.sampleRate&&(o.sampleRate=i.sampleRate.toString()),i.route&&(o.route=i.route),a()&&i.debug===!1&&(o.debug=`false`),i.dsn&&(o.dsn=i.dsn),i.endpoint?o.endpoint=d(i.endpoint):i.basePath&&(o.endpoint=d(`${i.basePath}/speed-insights/vitals`)),{src:l(i),beforeSend:i.beforeSend,dataset:o}}function d(e){return e.startsWith(`http://`)||e.startsWith(`https://`)||e.startsWith(`/`)?e:`/${e}`}function f(t={},n){var i;if(!r()||t.route===null)return null;e();let{beforeSend:a,src:o,dataset:s}=u(t,n);if(document.head.querySelector(`script[src*="${o}"]`))return null;a&&((i=window.si)==null||i.call(window,`beforeSend`,a));let c=document.createElement(`script`);c.src=o,c.defer=!0;for(let[e,t]of Object.entries(s))c.dataset[e]=t;return c.onerror=()=>{console.log(`[Vercel Speed Insights] Failed to load script from ${o}. Please check if any content blockers are enabled and try again.`)},document.head.appendChild(c),{setRoute:e=>{c.dataset.route=e??void 0}}}function p(){try{return}catch{}}function m(){try{return`{"analytics":{"scriptSrc":"7a648a0a299ce0c9/script.js","viewEndpoint":"7a648a0a299ce0c9/view","eventEndpoint":"7a648a0a299ce0c9/event","sessionEndpoint":"7a648a0a299ce0c9/session"},"speedInsights":{"scriptSrc":"e51302b72160a631/script.js","endpoint":"e51302b72160a631/vitals"}}`}catch{return}}customElements.define(`vercel-speed-insights`,class extends HTMLElement{constructor(){super();try{let e=JSON.parse(this.dataset.props??`{}`),t=JSON.parse(this.dataset.params??`{}`);f({route:o(this.dataset.pathname??``,t),...e,framework:`astro`,basePath:p(),beforeSend:window.speedInsightsBeforeSend},m())}catch(e){throw Error(`Failed to parse SpeedInsights properties: ${e}`)}}});</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"How to Troubleshoot and Fix Kubernetes Node Not Ready Issues","author":{"@type":"Person","name":"Shahar Azulay","url":"https://www.groundcover.com/writer/by-shahar-azulay"},"datePublished":"2024-11-04T00:00:00.000Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.groundcover.com/kubernetes-troubleshooting/kubernetes-node-not-ready"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.groundcover.com/"},{"@type":"ListItem","position":2,"name":"Deep Dives","item":"https://www.groundcover.com/deep-dive/kubernetes-troubleshooting"},{"@type":"ListItem","position":3,"name":"How to Troubleshoot and Fix Kubernetes Node Not Ready Issues","item":"https://www.groundcover.com/kubernetes-troubleshooting/kubernetes-node-not-ready"}]}</script><script src="https://analytics.ahrefs.com/analytics.js" data-key="TScsIBlPW2FnYF1lVTHqYQ" defer></script><style>
+	/* Webflow .style-wrapper — groundcover.css defines color/font/position;
+     these complete it (overflow:clip stops horizontal-scroll bleed). */
+	.style-wrapper {
+		color: var(--101828);
+		font-family: inherit;
+		font-weight: 400;
+		position: relative;
+		overflow: clip;
+	}
+
+	[fs-inject-element='element'],
+	#faqs-place {
+		grid-row-gap: 2.5rem;
+		background-color: var(--f9f4f2);
+		border-radius: 0.75rem;
+		flex-flow: column;
+		padding: 3.75rem 2.125rem;
+		display: flex;
+	}
+
+	/* Site-wide reset — previously shipped as an embedded <style> inside the
+     Webflow-exported site-header.html on every page. Ported here verbatim
+     when the header was rebuilt on React components so buttons/links across
+     the whole site keep their intended (unstyled-by-the-browser) appearance
+     instead of falling back to native UA chrome now that preflight is off. */
+	html {
+		scrollbar-gutter: stable;
+	}
+	body {
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		font-smoothing: antialiased;
+		text-rendering: optimizeLegibility;
+		overscroll-behavior: none;
+		font-family: Inter, Roboto, 'Helvetica Neue', 'Arial Nova', 'Nimbus Sans', Arial, sans-serif;
+		font-weight: normal;
+	}
+	.font-inter {
+		font-family: Inter, Roboto, 'Helvetica Neue', 'Arial Nova', 'Nimbus Sans', Arial, sans-serif;
+		font-weight: normal;
+	}
+	a,
+	.w-tab-link,
+	.w-nav-link,
+	.w-dropdown-btn,
+	.w-dropdown-toggle,
+	.w-dropdown-link,
+	.link {
+		color: inherit;
+		margin-top: 0;
+	}
+	a:hover {
+		opacity: 1 !important;
+	}
+	figure {
+		margin-bottom: 0;
+	}
+	img {
+		height: auto;
+	}
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	p {
+		color: inherit;
+		font-weight: inherit;
+	}
+	.w-input,
+	.w-select,
+	a {
+		color: inherit;
+		text-decoration: inherit;
+		font-size: inherit;
+	}
+	.style-wrap,
+	.style-wrapper,
+	.page-wrapper {
+		overflow: clip;
+	}
+	*[tabindex]:focus-visible,
+	input[type='file']:focus-visible {
+		outline: 0.125rem solid #4d65ff;
+		outline-offset: 0.125rem;
+	}
+	.pointer-events-none {
+		pointer-events: none;
+	}
+	.pointer-events-auto {
+		pointer-events: auto;
+	}
+	.hide {
+		display: none !important;
+	}
+	.navbar-bg,
+	.navbar-bottom {
+		background-color: #fffcf6;
+	}
+	.section {
+		position: relative;
+	}
+	.btn-bg {
+		animation: spin 10s linear infinite;
+	}
+	button {
+		background: transparent;
+		padding: 0;
+	}
+	.arrow-link,
+	.link_arrow {
+		& .flex {
+			transition: transform 0.25s ease-in-out;
+		}
+		&:hover {
+			& .flex,
+			& .product-how-works-learn-more-arrow {
+				transform: translateX(0.25rem);
+			}
+		}
+	}
+	.gradiant-text {
+		background-size: 200%;
+		animation: animatedgradient 10s ease infinite alternate;
+	}
+	[id*='cookie-confirmation'] {
+		display: none !important;
+	}
+	@keyframes spin {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
+	}
+	@keyframes animatedgradient {
+		0% {
+			background-position: 0% 50%;
+		}
+		50% {
+			background-position: 100% 50%;
+		}
+		100% {
+			background-position: 0% 50%;
+		}
+	}
+	.btn {
+		&.main_button {
+			&:focus-visible {
+				outline: none;
+			}
+		}
+	}
+	.font-inter {
+		& .title {
+			font-family: inherit;
+			font-weight: inherit;
+			letter-spacing: 0;
+		}
+	}
+	.font-500,
+	.font-600 {
+		& .title {
+			font-weight: inherit;
+			font-family: inherit;
+		}
+	}
+	.font-500 {
+		font-family: Degulardisplay_500, Arial, sans-serif;
+	}
+	[hide-scrollbar] {
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+		&::-webkit-scrollbar {
+			display: none;
+		}
+	}
+</style><script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="ff6c5260-ece3-44d4-87c7-e4ca55ff7e46" data-blockingmode="auto" type="text/javascript" defer></script><meta content="google-site-verification=oQEsr21Z1iwQvqen_68WMOkB9WqHM13tA_Xciny33Ig" name="google-site-verification">
+<link href="/webflow/css/normalize.css?v=2" rel="stylesheet" type="text/css">
+<link href="/webflow/css/components.css?v=2" rel="stylesheet" type="text/css">
+<link href="/webflow/css/groundcover.css?v=2" rel="stylesheet" type="text/css">
+<script
+  type="text/javascript">!function (o, c) { var n = c.documentElement, t = " w-mod-"; n.className += t + "js", ("ontouchstart" in o || o.DocumentTouch && c instanceof DocumentTouch) && (n.className += t + "touch") }(window, document);</script>
+<link href="/favicon.ico" rel="icon" sizes="32x32">
+<link href="/favicon.svg" rel="icon" type="image/svg+xml">
+<link href="/webclip.png" rel="apple-touch-icon">
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'G-XLTZDDTBL2', { 'anonymize_ip': false });
+</script>
+<!--  preload lottie header  -->
+<link rel="preload" href="/webflow/documents/Logo-Bounce.json" as="fetch" crossorigin="">
+<!--  preload fonts (same URLs as the @font-face src in groundcover.css)  -->
+<link rel="preload" href="/webflow/fonts/DegularDisplay-Semibold.woff2" as="font" type="font/woff2" crossorigin="">
+<link rel="preload" href="/webflow/fonts/DegularDisplay-Medium.woff2" as="font" type="font/woff2" crossorigin="">
+<!--  https://developer.chrome.com/docs/web-platform/prerender-pages  -->
+<script type="speculationrules">
+  {
+    "prerender": [{
+      "where": {
+        "and": [{
+            "href_matches": "/*"
+          },
+          {
+            "not": {
+              "selector_matches": "[rel~=nofollow]"
+            }
+          }
+        ]
+      },
+      "eagerness": "moderate"
+    }]
+  }
+</script>
+<meta name="view-transition" content="same-origin">
+<style>
+  @view-transition {
+    navigation: auto;
+  }
+</style>
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": "https://www.groundcover.com/#organization",
+    "name": "groundcover",
+    "url": "https://www.groundcover.com/",
+    "logo": "/webflow/cdn/6283a9a6eb4104a1cc3ada07_logo_256.png",
+    "sameAs": [
+      "https://www.linkedin.com/company/groundcover-com/",
+      "https://www.youtube.com/@groundcover-com"
+    ]
+  }
+</script>
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": "https://www.groundcover.com/#website",
+    "url": "https://www.groundcover.com/",
+    "name": "groundcover",
+    "publisher": {
+      "@id": "https://www.groundcover.com/#organization"
+    }
+  }
+</script>
+<script>
+  !(function () {
+    var e = ['identify', 'page', 'startAutoPage', 'stopAutoPage', 'startAutoIdentify', 'stopAutoIdentify'];
+    function t(o) {
+      return Object.assign(
+        [],
+        e.reduce(function (r, n) {
+          return (
+            (r[n] = function () {
+              return (o.push([n, [].slice.call(arguments)]), o);
+            }),
+            r
+          );
+        }, {}),
+      );
+    }
+    (window.unify || (window.unify = t(window.unify)), window.unifyBrowser || (window.unifyBrowser = t(window.unifyBrowser)));
+  })();
+
+  // Shared "user has interacted (or the page settled)" signal. Both this
+  // marketing-tag loader and PageScripts.astro's runtime loader used to each
+  // register their own copy of the same 5 window listeners; they now share one
+  // registration and each decide their own urgency from the triggering event
+  // (see PageScripts.astro, which loads groundcover.js immediately on a direct
+  // click/touchstart instead of waiting for an idle slot, e.g. for the mobile
+  // menu button).
+  window.__gcOnFirstInteraction = (function () {
+    var callbacks = [];
+    var firedEventType = null;
+
+    function notify(eventType) {
+      if (firedEventType) return;
+      firedEventType = eventType;
+      var cbs = callbacks;
+      callbacks = null;
+      cbs.forEach(function (cb) {
+        try { cb(eventType); } catch (e) { }
+      });
+    }
+
+    var events = ['scroll', 'touchstart', 'mousemove', 'keydown', 'click'];
+    function onInteraction(ev) {
+      events.forEach(function (e) { window.removeEventListener(e, onInteraction, { passive: true }); });
+      notify(ev.type);
+    }
+    events.forEach(function (ev) { window.addEventListener(ev, onInteraction, { passive: true, once: true }); });
+
+    if (document.readyState === 'complete') {
+      setTimeout(function () { notify('load-fallback'); }, 2500);
+    } else {
+      window.addEventListener('load', function () {
+        setTimeout(function () { notify('load-fallback'); }, 2500);
+      });
+    }
+
+    return function (cb) {
+      if (firedEventType) {
+        try { cb(firedEventType); } catch (e) { }
+      } else {
+        callbacks.push(cb);
+      }
+    };
+  })();
+
+  // Non-blocking loader for third-party marketing & analytics scripts
+  (function () {
+    var loaded = false;
+    function loadDeferred() {
+      if (loaded) return;
+      loaded = true;
+
+      // Google Tag Manager
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', 'GTM-T3JKQV2');
+
+      // Google Analytics
+      var ga = document.createElement('script');
+      ga.async = true;
+      ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-XLTZDDTBL2';
+      document.head.appendChild(ga);
+
+      // Finsweet Modal
+      var fsModal = document.createElement('script');
+      fsModal.src = 'https://cdn.jsdelivr.net/npm/@finsweet/attributes-modal@1/modal.js';
+      fsModal.defer = true;
+      document.head.appendChild(fsModal);
+
+      // Knock AI
+      var knock = document.createElement('script');
+      knock.src = 'https://js.knock-ai.com/887766e9-e6db-4ba7-b575-cedeb6cda995.js';
+      knock.async = true;
+      document.head.appendChild(knock);
+
+      // HubSpot
+      var hs = document.createElement('script');
+      hs.id = 'hs-script-loader';
+      hs.src = 'https://js-eu1.hs-scripts.com/25980569.js';
+      hs.async = true;
+      document.head.appendChild(hs);
+
+      // ZoomInfo
+      try {
+        window[
+          (function (_bjt, _JS) {
+            var _eDYFx = '';
+            for (var _5BDxs3 = 0; _5BDxs3 < _bjt.length; _5BDxs3++) {
+              var _IAU5 = _bjt[_5BDxs3].charCodeAt();
+              _IAU5 -= _JS;
+              _IAU5 != _5BDxs3;
+              _JS > 8;
+              _eDYFx == _eDYFx;
+              _IAU5 += 61;
+              _IAU5 %= 94;
+              _IAU5 += 33;
+              _eDYFx += String.fromCharCode(_IAU5);
+            }
+            return _eDYFx;
+          })(atob('bFtiJiN8d3UoXXct'), 18)
+        ] = '85bf0660591709048160';
+        var zi = document.createElement('script');
+        zi.type = 'text/javascript';
+        zi.async = true;
+        zi.src = (function (_sC3, _Mh) {
+          var _adf85 = '';
+          for (var _wL4dLS = 0; _wL4dLS < _sC3.length; _wL4dLS++) {
+            _adf85 == _adf85;
+            var _TaqC = _sC3[_wL4dLS].charCodeAt();
+            _TaqC -= _Mh;
+            _TaqC += 61;
+            _TaqC != _wL4dLS;
+            _Mh > 6;
+            _TaqC %= 94;
+            _TaqC += 33;
+            _adf85 += String.fromCharCode(_TaqC);
+          }
+          return _adf85;
+        })(atob('dSMjfSJHPDx3IjspdjoicCF2fSMiO3B8ejwpdjojbnQ7dyI='), 13);
+        (document.body || document.head).appendChild(zi);
+      } catch (e) { }
+
+      // Unify
+      try {
+        var un = document.createElement('script');
+        un.async = true;
+        un.src = 'https://tag.unifyintent.com/v1/Bc4YpvfqjZWXdMbHpkgR1x/script.js';
+        un.setAttribute('data-api-key', 'wk_BzRxHM9B_12xxrkabUsV4u9bgoLd8TGuMwooKEnCA');
+        un.id = 'unifytag';
+        (document.body || document.head).appendChild(un);
+      } catch (e) { }
+    }
+
+    window.__gcOnFirstInteraction(function () {
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(loadDeferred, { timeout: 2000 });
+      } else {
+        setTimeout(loadDeferred, 500);
+      }
+    });
+  })();
+</script>
+<script>
+  (function () {
+    var PARAM = 'jid';                      // same name the console reads (PR 26441)
+    var KEY = 'gc_journey_id';              // same localStorage key the console uses
+    var HOSTS = ['app.groundcover.com', 'console.groundcover.com', 'play.groundcover.com'];
+    var START_REDIRECT = 'https://app.groundcover.com/?console=true'; // /start is a 301 that drops the query
+
+    function newId() {
+      if (window.crypto && crypto.randomUUID) return crypto.randomUUID().replace(/-/g, '');
+      var s = '';
+      for (var i = 0; i < 32; i++) s += Math.floor(Math.random() * 16).toString(16);
+      return s;
+    }
+
+    function getId() {
+      var id = null;
+      try { id = localStorage.getItem(KEY); } catch (e) { }
+      if (!id) {
+        id = new URLSearchParams(location.search).get(PARAM) || newId();
+        try { localStorage.setItem(KEY, id); } catch (e) { }
+      }
+      return id;
+    }
+
+    function targetUrl(a) {
+      var href = a.getAttribute('href');
+      if (!href) return null;
+      var u;
+      try { u = new URL(href, location.href); } catch (e) { return null; }
+      if (u.hostname === location.hostname && u.pathname === '/start') u = new URL(START_REDIRECT);
+      if (HOSTS.indexOf(u.hostname) === -1) return null;
+      return u;
+    }
+
+    function decorate(a) {
+      var u = targetUrl(a);
+      if (!u) return;
+      u.searchParams.set(PARAM, getId());
+      a.href = u.toString();
+    }
+
+    function decorateAll() {
+      var links = document.querySelectorAll('a[href]');
+      for (var i = 0; i < links.length; i++) decorate(links[i]);
+    }
+
+    function rum() {
+      var g = window.groundcover;
+      return g && typeof g.sendCustomEvent === 'function' ? g : null;
+    }
+
+    var identified = false;
+    function identifyRum() {
+      var g = rum();
+      if (!g || identified) return;
+      try {
+        g.getSessionId();                   // throws or warns wheet
+        g.identifyUser({ properties: { journey_id: getId() } });
+        identified = true;
+      } catch (e) { }
+    }
+
+    // window.groundcover (the RUM SDK) loads async and gated on the same consent
+    // event, so it's rarely attached yet when consent fires — retry a few times
+    // instead of giving up after one attempt.
+    function identifyRumWithRetry() {
+      identifyRum();
+      if (identified) return;
+      var tries = 0;
+      var timer = setInterval(function () {
+        identifyRum();
+        if (identified || ++tries >= 10) clearInterval(timer);
+      }, 1000);
+    }
+
+    // Decorate on load, and again on pointerdown for links rendered later (modals, sliders).
+    document.addEventListener('DOMContentLoaded', decorateAll);
+    document.addEventListener('pointerdown', function (ev) {
+      var a = ev.target && ev.target.closest ? ev.target.closest('a[href]') : null;
+      if (a) decorate(a);
+    }, true);
+
+    // Click event to RUM, for the funnel join. Runs before navigation.
+    document.addEventListener('click', function (ev) {
+      var a = ev.target && ev.target.closest ? ev.target.closest('a[href]') : null;
+      if (!a) return;
+      var u = targetUrl(a);
+      if (!u) return;
+      identifyRum();
+      var g = rum();
+      if (!g) return;
+      try {
+        g.sendCustomEvent({
+          event: 'journey_started',
+          attributes: {
+            journey_id: getId(),
+            cta_text: (a.textContent || '').trim().slice(0, 60),
+            target_url: u.origin + u.pathname,
+            page_url: location.href
+          }
+        });
+      } catch (e) { }
+    }, true);
+
+    // RUM starts after cookie consent, so wait for consent events instead of
+    // polling from page load — but once consent is confirmed, retry briefly
+    // (see identifyRumWithRetry) since the SDK itself is still loading async.
+    window.addEventListener('CookiebotOnConsentReady', identifyRumWithRetry, { once: true });
+    window.addEventListener('CookiebotOnAccept', identifyRumWithRetry, { once: true });
+    if (window.Cookiebot && window.Cookiebot.consent && window.Cookiebot.consent.statistics) {
+      identifyRumWithRetry();
+    }
+  })();
+</script><link rel="stylesheet" href="/_astro/BaseLayout.-2q0W36t.css"><link rel="stylesheet" href="/_astro/_slug_.BPF0kiFd.css"><style>.rich-text .table-wrapper,.w-richtext .table-wrapper{width:100%;margin:2.5rem 0;overflow-x:auto}.rich-text .table-wrapper table,.w-richtext .table-wrapper table{border-spacing:0;table-layout:fixed;width:100%;min-width:38rem;font-size:.875rem}.rich-text .table-wrapper th,.w-richtext .table-wrapper th{background-color:var(--f-button-bg,#cd90e329);text-align:inherit;border-bottom:1px solid #10182833;padding:.75rem 1rem;font-weight:500}.rich-text .table-wrapper td,.w-richtext .table-wrapper td{vertical-align:top;border-bottom:1px solid #10182820;padding:.875rem 1rem}.rich-text .table-wrapper td:first-child,.w-richtext .table-wrapper td:first-child{font-weight:500}
+</style></head><body><!-- Google Tag Manager (noscript) --><noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T3JKQV2" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript><!-- End Google Tag Manager (noscript) --><div class="style-wrapper"><a href="/news/groundcover-acquires-wand-to-build-toward-autonomous-infrastructure" class="banner-top group block lg:flex lg:items-center lg:justify-center px-[4svw] py-2.5 text-center bg-[#FBE9B1] transition duration-300 hover:bg-[#ffd867] text-base lg:text-2xl font-degular" data-astro-cid-qoki2s7y><span data-astro-cid-qoki2s7y>groundcover Acquires Wand to Build Toward Autonomous Infrastructure.</span> <span class="inline-flex mb-0.5 lg:mb-0 gap-x-1 items-center font-bold whitespace-nowrap ml-1 align-middle" data-astro-cid-qoki2s7y><span data-astro-cid-qoki2s7y>Read more</span><img src="/_astro/arrow-right-banner.Bl3FAwdx_ZK4GSc.svg?dpl=dpl_27LEM2K1M6eLLGpiBt4WLuCJz6jh" alt data-astro-cid-qoki2s7y="true" loading="lazy" decoding="async" width="45" height="45" class="max-w-6 xl:max-w-8 transition group-hover:translate-x-0.5"></span></a><!-- <div class='banner-section'>
+	<a href={href} class='banner-link w-inline-block'>
+		<div class='banner-link-inner2'>
+			<div class='gradient-background-animation'>
+				<slot>{text}</slot>
+			</div>
+			<div class='flex w-embed'>
+				<svg
+					xmlns='http://www.w3.org/2000/svg'
+					style='width: 1.5rem; margin-bottom: 2px;'
+					viewBox='0 0 45 45'
+					fill='none'
+					class='gradient-arrow'>
+					<defs>
+						<linearGradient id='arrowGradient' x1='0%' y1='0%' x2='300%' y2='0%'>
+							<stop offset='0%' stop-color='#E7A200'></stop>
+							<stop offset='0%' stop-color='#F9D97B'></stop>
+							<stop offset='100%' stop-color='#EAB20B'></stop>
+						</linearGradient>
+					</defs>
+					<path
+						d='M7.43227 22.2981H37.1646M26.015 33.4477L37.1646 22.2981L26.015 11.1484'
+						stroke='url(#arrowGradient)'
+						stroke-width='2.22992'
+						stroke-linecap='round'
+						stroke-linejoin='round'></path>
+				</svg>
+			</div>
+		</div>
+	</a>
+</div> --><!-- <style>
+	.banner-link {
+		font-size: 0.875rem;
+		& .flex {
+			transition: transform 0.2s ease-in-out;
+		}
+		&:hover {
+			& .flex {
+				transform: translateX(0.25rem);
+			}
+		}
+	}
+
+	.gradient-background-animation {
+		background: linear-gradient(to right, #eab20b, #f9d97b, #fdf4d8);
+		animation: gradient-animation 5s ease infinite;
+		background-size: 300% 300%;
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+		font-size: 0.875rem;
+	}
+
+	#arrowGradient stop {
+		animation: gradient-animation 5s ease infinite;
+	}
+
+	@keyframes gradient-animation {
+		0% {
+			background-position: 0% 50%;
+		}
+		50% {
+			background-position: 100% 50%;
+		}
+		100% {
+			background-position: 0% 50%;
+		}
+	}
+
+	/* Ensure the text and container flow inline */
+	.banner-link-inner2 {
+		display: inline;
+	}
+
+	.banner-link .gradient-background-animation {
+		display: inline;
+	}
+
+	/* Make the SVG container sit inline with the text */
+	.banner-link .flex.w-embed {
+		display: inline-flex;
+		vertical-align: middle;
+		margin-left: 0.35rem;
+	}
+
+	.banner-link .gradient-arrow {
+		display: inline-block;
+		vertical-align: middle;
+	}
+</style> --><div class="sticky top-0 z-50"><header data-site-header class="group relative flex min-h-16 items-center py-2 transition-transform duration-300 ease-in-out"><div data-site-header-bg class="absolute inset-0 -z-10 border-b border-transparent bg-[var(--header-start-bg,transparent)] backdrop-blur-md transition-colors duration-200 data-[scrolled]:border-[#fff4d990] data-[scrolled]:bg-[#f9f8f6cc] group-has-[[data-open]]:border-[#fff4d990] group-has-[[data-open]]:bg-[#f9f8f6cc]" aria-hidden="true"></div><div class="relative mx-auto flex w-[100svw] max-w-[80rem] items-center justify-between gap-6 pr-[2svw] pl-[4svw] nav:w-[96svw] nav:px-0 xl:w-[92svw] xl:gap-[1.875rem]"><a href="/" aria-current="page" class="shrink-0"><img src="/webflow/images/groundcover.svg" width="163" height="26" alt="groundcover logo" loading="eager" class="nav:hidden max-w-[7.5rem]"><div class="logo_lottie hidden w-full max-w-[8.5rem] items-center nav:flex" data-src="/webflow/documents/Logo-Bounce.json"><img src="/webflow/images/groundcover.svg" width="163" height="26" alt="groundcover logo" loading="eager" class="logo_fallback flex"></div></a><div class="hidden flex-1 nav:flex"><style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var g=Object.defineProperty;var w=(a,s,c)=>s in a?g(a,s,{enumerable:!0,configurable:!0,writable:!0,value:c}):a[s]=c;var l=(a,s,c)=>w(a,typeof s!="symbol"?s+"":s,c);var E=new Set(["__proto__","constructor","prototype"]);{let a={0:t=>y(t),1:t=>c(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(c(t)),5:t=>new Set(c(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>Number.POSITIVE_INFINITY*t},s=t=>{let[p,e]=t;return p in a?a[p](e):void 0},c=t=>t.map(s),y=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([p,e])=>[p,s(e)]));class f extends HTMLElement{constructor(){super(...arguments);l(this,"Component");l(this,"hydrator");l(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let r=this.querySelectorAll("astro-slot"),n={},d=this.querySelectorAll("template[data-astro-template]");for(let o of d){let i=o.closest(this.tagName);i!=null&&i.isSameNode(this)&&(n[o.getAttribute("data-astro-template")||"default"]=o.innerHTML,o.remove())}for(let o of r){let i=o.closest(this.tagName);i!=null&&i.isSameNode(this)&&(n[o.getAttribute("name")||"default"]=o.innerHTML)}let u;try{u=this.hasAttribute("props")?y(JSON.parse(this.getAttribute("props"))):{}}catch(o){let i=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(i+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${i}`,this.getAttribute("props"),o),o}let h;await this.hydrator(this)(this.Component,u,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});l(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),r.disconnect(),this.childrenConnectedCallback()},r=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});r.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}getRetryImportUrl(e){let r=new URL(e,document.baseURI);return r.searchParams.set("astro-retry",Date.now().toString()),r.toString()}async importWithRetry(e){try{return await import(e)}catch(r){return await new Promise(n=>setTimeout(n,1e3)),import(this.getRetryImportUrl(e))}}handleHydrationError(e){let r=this.getAttribute("component-url"),n=new CustomEvent("astro:hydration-error",{cancelable:!0,bubbles:!0,composed:!0,detail:{error:e,componentUrl:r}});this.dispatchEvent(n)&&console.error(`[astro-island] Error hydrating ${r}`,e)}async start(){let e=JSON.parse(this.getAttribute("opts")),r=this.getAttribute("client");if(Astro[r]===void 0){window.addEventListener(`astro:${r}`,()=>this.start(),{once:!0});return}try{await Astro[r](async()=>{let n=this.getAttribute("renderer-url");try{let[d,{default:u}]=await Promise.all([this.importWithRetry(this.getAttribute("component-url")),n?this.importWithRetry(n):Promise.resolve({default:()=>()=>{}})]),h=this.getAttribute("component-export")||"default";if(h.includes(".")){this.Component=d;for(let m of h.split(".")){if(E.has(m)||!this.Component||typeof this.Component!="object"&&typeof this.Component!="function"||!Object.hasOwn(this.Component,m))throw new Error(`Invalid component export path: ${h}`);this.Component=this.Component[m]}}else{if(E.has(h))throw new Error(`Invalid component export path: ${h}`);this.Component=d[h]}return this.hydrator=u,this.hydrate}catch(d){return this.handleHydrationError(d),()=>{}}},e,this)}catch(n){this.handleHydrationError(n)}}attributeChangedCallback(){this.hydrate()}}l(f,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",f)}})();</script><astro-island uid="BPEi8" prefix="r6" component-url="/_astro/DesktopNav.CXBFnQes.js?dpl=dpl_27LEM2K1M6eLLGpiBt4WLuCJz6jh" component-export="DesktopNav" renderer-url="/_astro/client.CTGXYakA.js?dpl=dpl_27LEM2K1M6eLLGpiBt4WLuCJz6jh" props="{&quot;latestBlogPost&quot;:[0,{&quot;title&quot;:[0,&quot;Why we acquired Wand: Building toward autonomous infrastructure&quot;],&quot;href&quot;:[0,&quot;/blog/why-we-acquired-wand-autonomous-infrastructure&quot;],&quot;imageUrl&quot;:[0,&quot;https://cdn.sanity.io/images/wlxwimgv/production/613f8fb7eff8f2594fdd2023705c5be83ab3abe4-1999x1045.jpg&quot;]}]}" ssr client="load" opts="{&quot;name&quot;:&quot;DesktopNav&quot;,&quot;value&quot;:true}" await-children><nav data-slot="navigation-menu" class="group/navigation-menu flex relative z-50 max-w-none flex-1 items-stretch justify-between"><ul data-slot="navigation-menu-list" class="group flex pl-0 mb-0 list-none group/navlist flex-1 items-center justify-start gap-1"><li data-slot="navigation-menu-item" class="relative opacity-100 transition-opacity duration-200 group-hover/navlist:opacity-50 hover:!opacity-100"><button type="button" aria-disabled="false" tabindex="0" aria-expanded="false" data-base-ui-navigation-menu-trigger="" data-slot="navigation-menu-trigger" class="group/navigation-menu-trigger inline-flex h-9 w-max items-center justify-center rounded-lg px-2.5 py-1.5 transition-colors outline-none focus-visible:!outline-none disabled:pointer-events-none disabled:opacity-50 bg-transparent group text-sm font-medium text-[#101828] hover:bg-transparent focus:bg-transparent data-[open]:bg-transparent data-[open]:hover:bg-transparent data-[open]:focus:bg-transparent data-[popup-open]:bg-transparent data-[popup-open]:hover:bg-transparent">Product<!-- --> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down relative top-px ml-1 mb-0.5 size-3 transition duration-300 group-data-[popup-open]/navigation-menu-trigger:rotate-180 group-data-[open]/navigation-menu-trigger:rotate-180" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></li><li data-slot="navigation-menu-item" class="relative opacity-100 transition-opacity duration-200 group-hover/navlist:opacity-50 hover:!opacity-100"><button type="button" aria-disabled="false" tabindex="0" aria-expanded="false" data-base-ui-navigation-menu-trigger="" data-slot="navigation-menu-trigger" class="group/navigation-menu-trigger inline-flex h-9 w-max items-center justify-center rounded-lg px-2.5 py-1.5 transition-colors outline-none focus-visible:!outline-none disabled:pointer-events-none disabled:opacity-50 bg-transparent group text-sm font-medium text-[#101828] hover:bg-transparent focus:bg-transparent data-[open]:bg-transparent data-[open]:hover:bg-transparent data-[open]:focus:bg-transparent data-[popup-open]:bg-transparent data-[popup-open]:hover:bg-transparent">Solutions<!-- --> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down relative top-px ml-1 mb-0.5 size-3 transition duration-300 group-data-[popup-open]/navigation-menu-trigger:rotate-180 group-data-[open]/navigation-menu-trigger:rotate-180" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></li><li data-slot="navigation-menu-item" class="relative opacity-100 transition-opacity duration-200 group-hover/navlist:opacity-50 hover:!opacity-100"><button type="button" aria-disabled="false" tabindex="0" aria-expanded="false" data-base-ui-navigation-menu-trigger="" data-slot="navigation-menu-trigger" class="group/navigation-menu-trigger inline-flex h-9 w-max items-center justify-center rounded-lg px-2.5 py-1.5 transition-colors outline-none focus-visible:!outline-none disabled:pointer-events-none disabled:opacity-50 bg-transparent group text-sm font-medium text-[#101828] hover:bg-transparent focus:bg-transparent data-[open]:bg-transparent data-[open]:hover:bg-transparent data-[open]:focus:bg-transparent data-[popup-open]:bg-transparent data-[popup-open]:hover:bg-transparent">Resources<!-- --> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down relative top-px ml-1 mb-0.5 size-3 transition duration-300 group-data-[popup-open]/navigation-menu-trigger:rotate-180 group-data-[open]/navigation-menu-trigger:rotate-180" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></li><li data-slot="navigation-menu-item" class="relative opacity-100 transition-opacity duration-200 group-hover/navlist:opacity-50 hover:!opacity-100"><button type="button" aria-disabled="false" tabindex="0" aria-expanded="false" data-base-ui-navigation-menu-trigger="" data-slot="navigation-menu-trigger" class="group/navigation-menu-trigger inline-flex h-9 w-max items-center justify-center rounded-lg px-2.5 py-1.5 transition-colors outline-none focus-visible:!outline-none disabled:pointer-events-none disabled:opacity-50 bg-transparent group text-sm font-medium text-[#101828] hover:bg-transparent focus:bg-transparent data-[open]:bg-transparent data-[open]:hover:bg-transparent data-[open]:focus:bg-transparent data-[popup-open]:bg-transparent data-[popup-open]:hover:bg-transparent">Company<!-- --> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down relative top-px ml-1 mb-0.5 size-3 transition duration-300 group-data-[popup-open]/navigation-menu-trigger:rotate-180 group-data-[open]/navigation-menu-trigger:rotate-180" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></li><li data-slot="navigation-menu-item" class="relative opacity-100 transition-opacity duration-200 group-hover/navlist:opacity-50 hover:!opacity-100"><a data-slot="navigation-menu-link" href="/customer-stories" class="flex items-center gap-2 p-2 transition-colors outline-none focus-visible:!outline-none data-[active]:bg-muted/50 data-[active]:hover:bg-muted data-[active]:focus:bg-muted [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-4 rounded-lg px-2.5 py-1.5 text-sm font-medium text-[#101828] hover:bg-transparent focus:bg-transparent">Customers</a></li><li data-slot="navigation-menu-item" class="relative opacity-100 transition-opacity duration-200 group-hover/navlist:opacity-50 hover:!opacity-100"><a data-slot="navigation-menu-link" href="/pricing" class="flex items-center gap-2 p-2 transition-colors outline-none focus-visible:!outline-none data-[active]:bg-muted/50 data-[active]:hover:bg-muted data-[active]:focus:bg-muted [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-4 rounded-lg px-2.5 py-1.5 text-sm font-medium text-[#101828] hover:bg-transparent focus:bg-transparent">Pricing</a></li><li data-slot="navigation-menu-item" class="relative opacity-100 transition-opacity duration-200 group-hover/navlist:opacity-50 hover:!opacity-100"><a data-slot="navigation-menu-link" href="https://docs.groundcover.com/" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 p-2 transition-colors outline-none focus-visible:!outline-none data-[active]:bg-muted/50 data-[active]:hover:bg-muted data-[active]:focus:bg-muted [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-4 rounded-lg px-2.5 py-1.5 text-sm font-medium text-[#101828] hover:bg-transparent focus:bg-transparent">Docs</a></li></ul><div class="flex items-center gap-3"><button type="button" fs-modal-element="open-1" class="rounded-lg px-2.5 py-1.5 hover:bg-[var(--f2eae7)] transition duration-300 text-sm font-medium text-[#101828]">Book a Demo</button><div class="h-5 w-px bg-[#3f485a]"></div><a href="https://app.groundcover.com/" target="_blank" rel="noopener noreferrer" class="rounded-lg px-2.5 py-1.5 text-sm font-medium text-[#101828]">Log in</a><a href="https://app.groundcover.com/" class="rounded-lg bg-[#101828] px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90">Start Free</a></div></nav><!--astro:end--></astro-island></div><div class="flex items-center gap-4 nav:hidden"><a href="/contact-mobile" class="text-sm font-medium text-[#101828]">Book a demo</a><astro-island uid="uwKQ3" prefix="r7" component-url="/_astro/MobileNav.DQwx9HYR.js?dpl=dpl_27LEM2K1M6eLLGpiBt4WLuCJz6jh" component-export="MobileNav" renderer-url="/_astro/client.CTGXYakA.js?dpl=dpl_27LEM2K1M6eLLGpiBt4WLuCJz6jh" props="{&quot;latestBlogPost&quot;:[0,{&quot;title&quot;:[0,&quot;Why we acquired Wand: Building toward autonomous infrastructure&quot;],&quot;href&quot;:[0,&quot;/blog/why-we-acquired-wand-autonomous-infrastructure&quot;],&quot;imageUrl&quot;:[0,&quot;https://cdn.sanity.io/images/wlxwimgv/production/613f8fb7eff8f2594fdd2023705c5be83ab3abe4-1999x1045.jpg&quot;]}]}" ssr client="load" opts="{&quot;name&quot;:&quot;MobileNav&quot;,&quot;value&quot;:true}" await-children><button type="button" tabindex="0" data-base-ui-click-trigger="" id="base-ui-_r7R_f_" aria-haspopup="dialog" aria-expanded="false" data-slot="sheet-trigger" aria-label="Open menu" class="flex h-9 w-9 items-center justify-center rounded-lg text-[#101828]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu size-5" aria-hidden="true"><path d="M4 5h16"></path><path d="M4 12h16"></path><path d="M4 19h16"></path></svg></button><!--astro:end--></astro-island></div></div></header></div><div class="w-embed"></div><div class="w-embed w-script"><script src="/webflow/js/lottie.min.js"></script><script>
+		// Patch window.lottie.loadAnimation to ensure container has at most one <svg>
+		(function () {
+			if (window.__navRuntimeInitialized) return;
+			window.__navRuntimeInitialized = true;
+
+			if (window.lottie && !window.lottie.__dedupePatched) {
+				window.lottie.__dedupePatched = true;
+				const _orig = window.lottie.loadAnimation.bind(window.lottie);
+				window.lottie.loadAnimation = function (params) {
+					if (params && (params.container || params.wrapper)) {
+						const c = params.container || params.wrapper;
+						if (c && c.querySelectorAll) {
+							c.querySelectorAll(':scope > svg').forEach((s) => s.remove());
+						}
+					}
+					return _orig(params);
+				};
+			}
+
+			function initNavLotties() {
+				if (!window.lottie) {
+					return;
+				}
+
+				// 1. Desktop Header Logo
+				const logoEl = document.querySelector('.logo_lottie');
+				if (logoEl && !logoEl.__lottieInstance) {
+					const src = logoEl.getAttribute('data-src') || '/webflow/documents/Logo-Bounce.json';
+					try {
+						const anim = window.lottie.loadAnimation({
+							container: logoEl,
+							renderer: 'svg',
+							loop: false,
+							autoplay: false,
+							path: src,
+							rendererSettings: {
+								preserveAspectRatio: 'xMidYMid meet',
+								progressiveLoad: true,
+							},
+						});
+						logoEl.__lottieInstance = anim;
+
+						anim.addEventListener('DOMLoaded', () => {
+							logoEl.classList.add('is-loaded');
+							const fallback = logoEl.querySelector('.logo_fallback');
+							if (fallback) fallback.remove();
+						});
+
+						const brandLink = logoEl.closest('a') || logoEl;
+						brandLink.addEventListener('mouseenter', () => {
+							if (anim) {
+								anim.goToAndPlay(0, true);
+							}
+						});
+					} catch (e) {
+						console.error('Failed to load logo lottie:', e);
+					}
+				}
+
+				// 2. Dropdown bottom link icons (Product menu)
+				document.querySelectorAll('.drop-menu-bottom-link-left-lottie').forEach((el) => {
+					if (el.__lottieInstance) return;
+					const src = el.getAttribute('data-src');
+					if (!src) return;
+					try {
+						const anim = window.lottie.loadAnimation({
+							container: el,
+							renderer: 'svg',
+							loop: true,
+							autoplay: false,
+							path: src,
+							rendererSettings: {
+								preserveAspectRatio: 'xMidYMid meet',
+							},
+						});
+						el.__lottieInstance = anim;
+
+						const hoverTrigger = el.closest('a');
+						if (hoverTrigger) {
+							hoverTrigger.addEventListener('mouseenter', () => {
+								if (anim) anim.play();
+							});
+							hoverTrigger.addEventListener('mouseleave', () => {
+								if (anim) anim.stop();
+							});
+						}
+					} catch (e) {}
+				});
+			}
+
+			function dedupeAllLotties() {
+				document.querySelectorAll('[data-animation-type="lottie"], .logo_lottie, .drop-menu-bottom-link-left-lottie').forEach((container) => {
+					const svgs = container.querySelectorAll(':scope > svg');
+					if (svgs.length > 1) {
+						for (let i = 0; i < svgs.length - 1; i++) {
+							svgs[i].remove();
+						}
+					}
+				});
+			}
+
+			function initHeaderScroll() {
+				const header = document.querySelector('[data-site-header]');
+				const headerBg = document.querySelector('[data-site-header-bg]');
+				if (!header || header.__scrollInit) return;
+				header.__scrollInit = true;
+
+				let lastScrollY = Math.max(0, window.scrollY);
+				window.addEventListener(
+					'scroll',
+					() => {
+						const currentScrollY = Math.max(0, window.scrollY);
+						// Always show header when near the top
+						if (currentScrollY <= 50) {
+							header.style.transform = 'translateY(0)';
+						} else if (currentScrollY > lastScrollY) {
+							header.style.transform = 'translateY(-100%)';
+						} else {
+							header.style.transform = 'translateY(0)';
+						}
+						if (headerBg) {
+							if (currentScrollY <= 10) {
+								headerBg.removeAttribute('data-scrolled');
+							} else {
+								headerBg.setAttribute('data-scrolled', '');
+							}
+						}
+						lastScrollY = currentScrollY;
+					},
+					{ passive: true },
+				);
+			}
+
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', () => {
+					initNavLotties();
+					dedupeAllLotties();
+					initHeaderScroll();
+				});
+			} else {
+				initNavLotties();
+				dedupeAllLotties();
+				initHeaderScroll();
+			}
+
+			// Finsweet's @finsweet/attributes-modal script (loaded in
+			// site-head.html) does a one-time `querySelectorAll` for
+			// `fs-modal-element` triggers when IT loads, and binds click
+			// listeners directly to whatever it finds at that instant — no
+			// MutationObserver, no delegation. Any trigger that mounts later
+			// (the mobile Sheet's "Start Free", a mega-menu's "Book a Demo"
+			// card — all lazily mounted by Base UI on first open) never gets
+			// a listener and silently does nothing when clicked. Re-run its
+			// scan whenever the number of `fs-modal-element` nodes in the
+			// document changes at all (not just grows) — Base UI may unmount
+			// the Sheet/dropdown content again on close, so a later reopen
+			// can land back on a count a naive "only on increase" check
+			// would otherwise ignore.
+			let lastModalTriggerCount = document.querySelectorAll('[fs-modal-element]').length;
+			function reinitFsModal() {
+				const modal = window.fsAttributes && window.fsAttributes.modal;
+				if (!modal || typeof modal.init !== 'function') return;
+				if (typeof modal.destroy === 'function') modal.destroy();
+				modal.init();
+			}
+
+			// The Product mega-menu's bottom-row icons (and any other lottie
+			// container that isn't in the DOM at page load) only exist once
+			// their NavigationMenu item is opened for the first time — Base
+			// UI mounts a single shared content/viewport that swaps in the
+			// active item's markup, rather than pre-rendering every dropdown.
+			// So this observer has jobs for as long as the page lives: init
+			// newly-mounted lottie containers, dedupe stray <svg>s from React
+			// re-renders/animation restarts, and re-bind newly-mounted modal
+			// triggers.
+			const observer = new MutationObserver((mutations) => {
+				let sawAddedNodes = false;
+				for (const m of mutations) {
+					if (m.addedNodes.length > 0) {
+						sawAddedNodes = true;
+						break;
+					}
+				}
+				if (sawAddedNodes) {
+					initNavLotties();
+					dedupeAllLotties();
+
+					const modalTriggerCount = document.querySelectorAll('[fs-modal-element]').length;
+					if (modalTriggerCount !== lastModalTriggerCount) {
+						lastModalTriggerCount = modalTriggerCount;
+						reinitFsModal();
+					}
+				}
+			});
+
+			observer.observe(document.documentElement, { childList: true, subtree: true });
+		})();
+	</script><!--  fancybox (on-demand)  --><script>
+		(function () {
+			if (window.__fancyboxRuntimeInitialized) return;
+			window.__fancyboxRuntimeInitialized = true;
+			var fancyboxLoaded = false;
+			function loadFancybox(callback) {
+				if (fancyboxLoaded) {
+					if (callback) callback();
+					return;
+				}
+				fancyboxLoaded = true;
+				var link = document.createElement('link');
+				link.rel = 'stylesheet';
+				link.href = 'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css';
+				document.head.appendChild(link);
+
+				var script = document.createElement('script');
+				script.src = 'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js';
+				script.onload = function () {
+					if (window.Fancybox) {
+						window.Fancybox.bind('[data-fancybox]', {
+							Html: { vimeo: { color: 'ff0000' } },
+						});
+						if (callback) callback();
+					}
+				};
+				document.head.appendChild(script);
+			}
+
+			document.addEventListener(
+				'click',
+				function (e) {
+					var trigger = e.target && e.target.closest ? e.target.closest('[data-fancybox]') : null;
+					if (trigger) {
+						if (!window.Fancybox) {
+							e.preventDefault();
+							loadFancybox(function () {
+								trigger.click();
+							});
+						}
+					}
+				},
+				true,
+			);
+
+			if ('requestIdleCallback' in window) {
+				requestIdleCallback(
+					function () {
+						if (document.querySelector('[data-fancybox]')) loadFancybox();
+					},
+					{ timeout: 4000 },
+				);
+			} else {
+				setTimeout(function () {
+					if (document.querySelector('[data-fancybox]')) loadFancybox();
+				}, 3000);
+			}
+		})();
+	</script></div><main class="main-wrapper is--overflow-visibile">
+      <article>
+        <nav class="product_navigation">
+          <div class="container is_product_navigation">
+            <a data-wf--product-top-link--variant="base" href="/deep-dive/ebpf" class="product_navigation-link">eBPF</a>
+            <a data-wf--product-top-link--variant="base" href="/deep-dive/opentelemetry" class="product_navigation-link">OpenTelemetry</a>
+            <a data-wf--product-top-link--variant="base" href="/deep-dive/kubernetes-monitoring" class="product_navigation-link">Kubernetes Monitoring</a>
+            <a data-wf--product-top-link--variant="base" href="/kubernetes-troubleshooting" class="product_navigation-link">Kubernetes Troubleshooting</a>
+            <a data-wf--product-top-link--variant="base" href="/deep-dive/microservices-observability" class="product_navigation-link">Microservices Observability</a>
+          </div>
+          <div class="product_navigation-lines"></div>
+        </nav>
+        <div class="hide">
+          <div class="hide">
+            <div class="w-embed">
+              <style>
+  .key_takeaways {
+    padding: 2rem;
+    border-radius: 1rem;
+    background-color: var(--f9f8f6);
+    margin-bottom: 2rem;
+    & h2 {
+      margin-top: 0;
+      font-size: 1.5rem;
+    }
+    & ul {
+      margin-bottom: 0;
+      display: flex;
+      flex-direction: column;
+      row-gap: 0.875rem;
+    }
+  }
+  @media only screen and (orientation: portrait) {
+    .key_takeaways {
+      padding: 2rem 1rem;
+    }
+  }
+</style>
+            </div>
+            <div class="w-embed">
+              <style>
+  .expert2,
+  .expert-grid-content,
+  .expert-grid-expert-content {
+    & > :not(div):first-child,
+    & > div:first-child > :first-child {
+      margin-top: 0 !important;
+    }
+    & > :last-child,
+    & ol li:last-child,
+    & ul li:last-child,
+    & p:last-child {
+      margin-bottom: 0;
+    }
+  }
+  .expert2 {
+    & > :not(div):first-child,
+    & > div:first-child > :first-child {
+      margin-top: 0 !important;
+    }
+    & > :last-child,
+    & ol li:last-child,
+    & ul li:last-child,
+    & p:last-child {
+      margin-bottom: 0;
+    }
+    border-radius: 1rem;
+    background-color: var(--f9f8f6);
+    overflow: hidden;
+    margin-top: 1.5rem;
+    & .expert-header {
+      font-size: 1.875rem;
+      background-color: var(--fffcf6);
+      padding: 1.5rem;
+      font-weight: 600;
+    }
+    & .expert-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    }
+    .expert-grid-expert-content {
+      padding: 1rem;
+      border-right: 1px dotted var(--fffcf6);
+      display: flex;
+      flex-direction: column;
+      row-gap: 1.25rem;
+      & .expert-grid-content-top {
+        line-height: 1.2;
+        font-size: 0.875rem;
+        display: flex;
+        flex-direction: column;
+        row-gap: 0.5rem;
+        & figure {
+          margin: 0;
+          border-radius: 999px;
+          overflow: hidden;
+          width: 3.5rem;
+          flex-shrink: 0;
+        }
+        & > div {
+          display: flex;
+          flex-direction: column;
+          & .expert-name {
+            font-size: 1.125rem;
+            font-weight: 500;
+          }
+        }
+      }
+      & .expert-grid-content-bio {
+        font-size: 0.875rem;
+        margin-bottom: 0;
+      }
+      & .expert-grid-content-sm {
+        display: flex;
+        column-gap: 1rem;
+        & svg {
+          display: flex;
+        }
+      }
+    }
+    & .expert-grid-content {
+      padding: 1rem;
+    }
+    & .expert-grid-content {
+      & h2 {
+        margin-top: 0;
+        font-size: 1.5rem;
+      }
+    }
+  }
+  .rich-text {
+    overflow-wrap: break-word;
+  }
+  @media only screen and (max-width: 676px) {
+    .expert2 {
+      & .expert-grid {
+        display: flex;
+        flex-direction: column-reverse;
+      }
+      & .expert-grid-expert-content {
+        border-top: 1px dotted var(--fffcf6);
+        border-right: none;
+      }
+    }
+  }
+</style>
+            </div>
+            <div class="w-embed">
+              <style>
+  .rich-text {
+    & blockquote {
+      & strong {
+        font-size: 0.8em;
+        font-weight: 600;
+        display: flex;
+        /* justify-content: end; */
+        padding-top: 1rem;
+      }
+    }
+  }
+</style>
+            </div>
+          </div>
+          <div class="w-embed">
+            <style>
+  /* Get rid of top margin on first element in any rich text element */
+  .w-richtext > :not(div):first-child,
+  .w-richtext > div:first-child > :first-child {
+    margin-top: 0 !important;
+  }
+  /* Get rid of bottom margin on last element in any rich text element */
+  .w-richtext > :last-child,
+  .w-richtext ol li:last-child,
+  .w-richtext ul li:last-child,
+  .w-richtext p:last-child {
+    margin-bottom: 0;
+  }
+  /* table css */
+  .table-wrapper {
+    width: calc(100%);
+    overflow-x: auto;
+    margin: 2.5rem 0;
+  }
+  table {
+    border-spacing: 0;
+    width: 100%;
+    table-layout: fixed;
+    font-size: 0.875rem;
+  }
+  th {
+    padding: 0.75rem 1rem;
+    background-color: var(--f-button-bg);
+    font-weight: 500;
+    text-align: inherit;
+  }
+  td:first-child {
+    font-weight: 500;
+  }
+  td {
+    padding: 0.875rem 1rem;
+  }
+  /* avoid flash of unstyled content */
+  markdown {
+    display: none;
+  }
+  /* table css end */
+  .rich-text {
+    & img {
+      cursor: pointer;
+    }
+  }
+  .gcontainer {
+    padding: 1.5rem;
+  }
+  .title-toc {
+    & .title {
+      font-size: inherit;
+      font-weight: inherit;
+      letter-spacing: inherit;
+      font-family: inherit;
+    }
+  }
+  .rich-text {
+    & .box {
+      background-color: #fff2db;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      margin-top: 2.5rem;
+      & h2 {
+        margin-top: 0;
+      }
+      & .last-ul {
+        margin-bottom: 0;
+      }
+    }
+  }
+  .rich-text {
+    & p {
+      & code {
+        &.hljs {
+          color: inherit !important;
+          padding: 0;
+          background-color: transparent;
+          & .hljs-string,
+          & .hljs-built_in {
+            color: inherit !important;
+          }
+        }
+      }
+    }
+    & .w-embed {
+      overflow: auto;
+      & code {
+        border-radius: 0.75rem;
+      }
+      & table {
+        min-width: 38rem;
+      }
+    }
+  }
+  @media only screen and (min-width: 1280px) {
+    .rich-text {
+      & .box {
+        padding: 2rem;
+      }
+    }
+  }
+  .drop-trigger {
+    & img {
+      transition: transform 0.2s ease-in-out;
+    }
+    &.w--open {
+      & img {
+        transform: rotate(90deg);
+      }
+    }
+  }
+  .rich-text div[id],
+  .rich-text .toolbar {
+    margin-bottom: 3.6rem;
+  }
+  /* Override for the last child */
+  .rich-text div[id]:last-child,
+  .rich-text .toolbar:last-child {
+    margin-bottom: 0;
+  }
+  .rich-text ul ul {
+    margin-bottom: 0;
+  }
+  .w-embed:has(pre) {
+    margin-top: -1.5rem;
+  }
+  .learn-toc-wrap-right-bottom {
+    & .btn {
+      font-size: 0.875rem;
+    }
+  }
+  [fs-accordion-element='group'] {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1.5rem;
+  }
+</style>
+          </div>
+          <div class="w-embed">
+            <style>
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @media (hover: hover) {
+    .guide_1_top-link {
+      &:hover {
+        & .guide_1_top-link-base {
+          animation: spin 20s linear infinite;
+        }
+        & .guide_1_top-link-shadow {
+          opacity: 1;
+        }
+      }
+    }
+  }
+  [fs-inject-element='element'] {
+    grid-row-gap: 2.5rem;
+    background-color: var(--f9f4f2);
+    border-radius: 0.75rem;
+    flex-flow: column;
+    padding: 3.75rem 2.125rem;
+    display: flex;
+  }
+  @media screen and (max-width: 479px) {
+    [fs-inject-element='element'] {
+      grid-row-gap: 1rem;
+      padding: 2.5rem 1.5rem;
+    }
+  }
+</style>
+          </div>
+          <div class="w-embed w-script"><style>
+.learn-acc {
+  & .rich-text {
+    color: #5E5E5E;
+    font-size: 0.875rem;
+  }
+  & .w-richtext > :last-child,
+  & .w-richtext ol li:last-child,
+  & .w-richtext ul li:last-child {
+      margin-bottom: 0;
+  }
+  &.is-active-accordion {
+    & .learn-acc-arrow {
+      & .learn-acc-arrow-line2 {
+        transform: rotate(90deg);
+        opacity: 0;
+      }
+    }
+  }
+}
+</style>
+          </div>
+        </div>
+        <section class="p-section guide_2">
+          <div class="container guide_2-top">
+            <nav class="breadcrubs-new">
+              <a href="/" class="w-inline-block">
+                <div class="breadcrub-text">Home</div>
+              </a>
+              <div>&gt; </div>
+              <div>
+                <a href="/kubernetes-troubleshooting" class="breadcrub-text">Kubernetes Troubleshooting</a>
+              </div>
+              <div>&gt;</div>
+              <div class="is--current-bread">How to Troubleshoot and Fix Kubernetes Node Not Ready Issues</div>
+            </nav>
+            <div class="guide_1_top">
+              <div class="flex-col is-24gap">
+                <div class="guide_2-bottom">
+                  <div class="hide-d-t">
+                    <div class="flex">
+                      <div class="post_card-tag is_post">Kubernetes Troubleshooting</div>
+                    </div>
+                  </div>
+                  <div class="flex-col is-12gap">
+                    <h1 class="title is--40">How to Troubleshoot and Fix Kubernetes Node Not Ready Issues</h1>
+                    <p class="text is--18">Learn how to diagnose and fix Kubernetes “node not ready” errors. Discover causes, troubleshooting steps, and best practices for smooth Kubernetes operations.</p>
+                  </div>
+                </div>
+              </div>
+              <a href="/kubernetes-troubleshooting" class="guide_1_top-link w-inline-block"><img width="162" height="162" alt="" src="/webflow/images/Badge_1.svg" loading="eager" class="guide_1_top-link-top"><img width="162" height="162" alt="" src="/webflow/images/Frame-2147204698.svg" loading="eager" class="guide_1_top-link-base"></a>
+            </div>
+          </div>
+          <div class="container">
+            <div class="blog-t-bottom">
+              <a href="/writer/by-shahar-azulay" class="w-inline-block"><div class="article-autor"><img width="56" height="56" alt="Shahar Azulay" src="https://cdn.sanity.io/images/wlxwimgv/production/3ba007d18bde6c618bb17f143523f8be6479e66e-240x240.png?w=56&h=56&fit=crop" loading="eager" class="article-autor-image">
+                <div>
+                  <div class="articel-autor-name is--t-page">Shahar Azulay</div>
+                </div>
+              </div></a>
+              <div class="blog-t-bottom-devider"></div>
+              <div class="blog-t-bottom-date-wrap">
+                <div class="blog-t-bottom-date">November 4, 2024</div>
+                <div class="blog-t-time-read-div"><div>5</div><div>min read</div></div>
+              </div>
+              <div class="blog-t-bottom-devider is-abit-more-left"></div>
+              <div class="hide-tablet-mobile">
+                <div class="post_card-tag is_post">Kubernetes Troubleshooting</div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="p-section">
+          <div class="container learn1">
+            <div class="learn1-grid">
+              <div class="hide-tablet-mobile">
+                <aside class="post_2-aside">
+                  <div class="hide">
+                    <div class="w-embed">
+                      <style>
+  .toc_link-post {
+    &.w--current {
+      & .toc_link-dot {
+        opacity: 1;
+      }
+    }
+  }
+  .related-social-share-block {
+    padding-top: 0;
+  }
+  .toc_updates {
+    [data-name='hubspot-form'] {
+      & form {
+        & .field {
+          & > label {
+            /* display: none; */
+          }
+        }
+        & input {
+          &[type='email'] {
+            border: 1px solid #d0d5dd;
+            background-color: var(--fff);
+          }
+          &[type='submit'] {
+            border-radius: 0.75rem;
+            background-image: none;
+            font-weight: 600;
+            font-size: 1rem;
+            background-color: var(--101828);
+            color: var(--fff);
+            transition: opacity 0.2s ease-in-out;
+            &:hover {
+              opacity: 0.8;
+            }
+          }
+        }
+      }
+    }
+  }
+</style>
+                    </div>
+                  </div>
+                  <div class="toc_wrap">
+                    <div class="text is--20"><strong class="font-700">Table of contents</strong></div>
+                    <div class="flex-col is-12gap">
+                      <div>
+                        <a href="#" class="toc_link-post w-inline-block">
+                          <div class="toc_link-dot"></div><span fs-toc-element="link" style="padding:0;" class="toc_link-text"></span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="toc_updates">
+                    <div class="hide">
+                      <div class="w-embed">
+                        <style>
+  .toc_updates {
+    [data-name='hubspot-form'] {
+      & form {
+        & input[type='submit'] {
+          background-color: #101828;
+          color: #fff;
+          height: 3.5rem;
+          border-radius: 0.75rem;
+          background-image: none;
+          font-weight: 600;
+          transition: opacity 0.3s ease-in-out;
+          &:hover {
+            opacity: 0.8;
+          }
+        }
+        & .hs-form-field {
+          & input,
+          & select,
+          & textarea {
+            height: 3.5rem;
+            border: 1px solid #d0d5dd;
+            border-radius: 0.75rem;
+            box-shadow: 0 1.5px 3px 0 rgba(16, 24, 40, 0.05);
+            background-color: #ffffff !important;
+          }
+        }
+      }
+    }
+  }
+</style>
+                      </div>
+                    </div>
+                    <div class="toc_updates-head"><img width="103" height="62" alt="" src="/webflow/images/Frame-2147204458.svg" loading="lazy">
+                      <div class="text is--20"><strong class="font-700">Subscribe for updates</strong></div>
+                    </div>
+                    <div>
+                      <div data-name="hubspot-form" class="w-embed w-script">
+                        <script charset="utf-8" type="text/javascript" src="https://js-eu1.hsforms.net/forms/embed/v2.js"></script>
+                        <script>
+hbspt.forms.create({
+  portalId: '25980569',
+  formId: 'a3215c9a-c069-4d07-8987-8a1fbb2a4035',
+  region: 'eu1',
+  onFormSubmit: function ($form) {
+    const email = $form.find('input[name="email"]').val();
+    const page_path_value = window.location.href;
+    analytics.identify(email || '', {
+      email: email || '',
+    });
+    analytics.track('subscribe_left_form', {
+      userId: email || '',
+      page_path: page_path_value,
+      reporter: 'webflow',
+      source: 'subscribe_left_form',
+      userType: 'lead',
+    });
+    document.querySelector('#check-subscribe').style.display = 'none';
+  },
+});
+</script>
+                      </div>
+                      <div class="w-embed">
+                        <div style="height: .25rem;"></div>
+                      </div>
+                      <p id="check-subscribe" class="check-lable w-node-_9be3086c-ab27-c008-5a2c-63d395bd011c-95bd011a">By submitting this form you agree to our friendly <a href="/legal/privacy" target="_blank" class="underline-text">privacy policy</a>.</p>
+                    </div>
+                  </div>
+                  <div data-wf--share-left--variant="base" class="related-social-share-block"><button data-sharer="linkedin" data-url="" data-tipy="&lt;div style=&quot;font-size: 12px&quot;&gt;Share on Linkedin&lt;/div&gt;" class="social-share-link">
+                      <div class="social-share-icon w-embed"><svg width="34" height="34" viewbox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect x="0.0185547" y="0.774414" width="33" height="33" rx="6.6" fill="currentColor"></rect>
+                          <path d="M11.8611 13.4819H7.82324V26.1288H11.8611V13.4819Z" fill="white"></path>
+                          <path d="M22.7743 13.2003C22.6227 13.183 22.4664 13.172 22.3092 13.1656C21.5481 13.1254 20.7884 13.2672 20.0953 13.5788C19.4022 13.8905 18.7964 14.3626 18.3299 14.9547C18.267 15.0345 18.2084 15.1175 18.1541 15.2032V13.5101H14.292V26.157H18.3299V20.2178C18.3299 19.3598 18.262 18.4424 18.702 17.6593C19.074 17.0005 19.741 16.6707 20.4981 16.6707C22.7306 16.6707 22.7799 18.6516 22.7799 18.8408V26.2127H26.8178V17.9654C26.8122 15.1429 25.3518 13.4735 22.7743 13.2003Z" fill="white"></path>
+                          <path d="M12.1137 10.0695C12.4107 8.83326 11.6313 7.59459 10.3728 7.30282C9.11436 7.01105 7.85339 7.77667 7.55636 9.01287C7.25934 10.2491 8.03874 11.4877 9.29721 11.7795C10.5557 12.0713 11.8166 11.3057 12.1137 10.0695Z" fill="white"></path>
+                        </svg></div>
+                    </button><button data-sharer="twitter" data-url="" data-tipy="&lt;div style=&quot;font-size: 12px&quot;&gt;Share on X&lt;/div&gt;" class="social-share-link">
+                      <div class="social-share-icon w-embed"><svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewbox="0 0 34 34" fill="none">
+                          <rect x="0.816406" y="0.5" width="33" height="33" rx="6.6" fill="currentColor"></rect>
+                          <path d="M23.5677 7.50836H26.6332L19.9357 15.1283L27.8164 25.5H21.645L16.8097 19.21L11.2803 25.5H8.21472L15.3794 17.3398L7.81641 7.5H14.1441L18.5139 13.248L23.5677 7.50836ZM22.492 23.6716H24.1912L13.2248 9.23811H11.4013L22.492 23.6716Z" fill="white"></path>
+                        </svg></div>
+                    </button><button data-sharer="whatsapp" data-url="" data-tipy="&lt;div style=&quot;font-size: 12px&quot;&gt;Share on WhatsApp&lt;/div&gt;" class="social-share-link">
+                      <div class="social-share-icon w-embed"><svg width="34" height="33" viewbox="0 0 34 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M27.7227 33H5.35585C2.40258 33 0 30.6025 0 27.6552V5.34475C0 2.39745 2.40258 0 5.35585 0H27.7227C30.6751 0 33.0777 2.39745 33.0777 5.34475V27.6561C33.0777 30.6034 30.6751 33 27.7227 33ZM11.7226 23.5374L7.21285 24.7054L8.90166 20.2913L8.73602 19.9301C7.93114 18.1698 7.71749 16.1963 8.12699 14.3045C8.5365 12.4128 9.54716 10.7043 11.008 9.43443C14.7442 6.18659 20.4048 6.58275 23.6527 10.3181C26.9005 14.0543 26.5043 19.715 22.7681 22.9628C21.3073 24.2327 19.4747 24.9957 17.5443 25.1379C15.6139 25.2801 13.6893 24.7938 12.0581 23.7517L11.7234 23.5374H11.7226ZM9.53773 7.74221C7.7639 9.28419 6.51973 11.3448 5.98117 13.6326C5.44262 15.9205 5.63694 18.3197 6.53665 20.4911L4.22799 27.3009L11.1975 25.8529C13.2224 27.0456 15.5709 27.5717 17.9111 27.3568C20.2513 27.1418 22.4647 26.1967 24.2384 24.655C28.9086 20.5952 29.4038 13.519 25.344 8.84872C21.2842 4.17762 14.2071 3.68327 9.53688 7.74391L9.53773 7.74221ZM21.5532 18.6989L21.3824 18.5982C20.9299 18.3164 19.9139 17.7111 19.7124 17.6206C19.2992 17.4242 18.9892 17.4328 18.6938 17.8042C18.5589 17.9749 18.185 18.3549 17.852 18.6767C17.823 18.7049 17.8605 18.7032 17.7666 18.6443C16.1102 17.6274 15.469 17.0059 14.7834 15.5553C14.909 15.4468 15.3111 15.0567 15.5262 14.7348C15.5544 14.6921 15.5826 14.6494 15.6091 14.6059C15.7627 14.3497 15.7576 14.0987 15.6543 13.8357C15.4861 13.4105 14.0859 11.1915 13.7367 11.1608C13.5592 11.1484 13.381 11.1727 13.2134 11.2324C13.0458 11.292 12.8923 11.3857 12.7625 11.5074C12.7813 11.4904 12.6216 11.6355 12.5644 11.6893C12.4667 11.7822 12.3746 11.8808 12.2887 11.9847C11.9045 12.4509 11.6534 13.0246 11.5894 13.7521C11.5331 14.3967 11.685 15.0763 11.9753 15.7602C12.1273 16.1171 12.2468 16.3365 12.4304 16.6396C12.3279 16.4791 12.7002 17.1041 12.9085 17.42C13.2586 17.951 13.6564 18.4761 14.1089 18.9764C14.8321 19.7764 15.627 20.4364 16.4944 20.906C17.9536 21.6932 18.6605 21.8921 19.6262 21.8341C20.3485 21.7905 21.4328 21.2211 21.7248 20.579C21.9895 19.9967 22.1005 19.3589 21.9664 19.0874C21.9237 18.9833 21.8383 18.8911 21.7154 18.8031C21.6628 18.7661 21.6087 18.7314 21.5532 18.6989Z" fill="currentColor"></path>
+                        </svg></div>
+                    </button><button data-sharer="email" data-url="" data-tipy="&lt;div style=&quot;font-size: 12px&quot;&gt;Share via Mail&lt;/div&gt;" class="social-share-link">
+                      <div class="social-share-icon w-embed"><svg width="33" height="33" viewbox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect width="33" height="33" rx="6.6" fill="currentColor"></rect>
+                          <path d="M27 24V10.7546L19.8305 16.2125L23.5547 20.4453L23.4453 20.5546L19.1305 16.7484L16.5 18.75L13.8695 16.7484L9.55469 20.5546L9.44531 20.4453L13.1641 16.2125L6 10.7656V24H27Z" fill="white"></path>
+                          <path d="M26.5461 10H6.4375L16.5 17.6508L26.5461 10Z" fill="white"></path>
+                        </svg></div>
+                    </button><button data-sharer="hackernews" data-url="" data-tipy="&lt;div style=&quot;font-size: 12px&quot;&gt;Share on Hackernews&lt;/div&gt;" class="social-share-link">
+                      <div class="social-share-icon w-embed"><svg width="33" height="33" viewbox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <g clip-path="url(#clip0_1438_3830)">
+                            <path d="M33 3.53513C33 1.584 31.416 0 29.4649 0H3.53513C1.584 0 0 1.584 0 3.53513V29.4635C0 31.416 1.584 33 3.53513 33H29.4635C31.416 33 33 31.416 33 29.4649V3.53513ZM17.6192 18.4951V25.9284H15.3065V18.3631L9.427 7.07163H12.1742C16.0408 14.3124 15.7974 14.5269 16.5426 16.3226C17.4487 14.333 16.9702 14.5255 21.0072 7.07163H23.5702L17.6179 18.4965L17.6192 18.4951Z" fill="currentColor"></path>
+                          </g>
+                          <defs>
+                            <clippath id="clip0_1438_3830">
+                              <rect width="33" height="33" fill="white"></rect>
+                            </clippath>
+                          </defs>
+                        </svg></div>
+                    </button><button data-sharer="reddit" data-url="" data-tipy="&lt;div style=&quot;font-size: 12px&quot;&gt;Share on Reddit&lt;/div&gt;" class="social-share-link">
+                      <div class="social-share-icon w-embed"><svg width="33" height="33" viewbox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect width="33" height="33" rx="6.6" fill="currentColor"></rect>
+                          <g clip-path="url(#clip0_1438_3843)">
+                            <path d="M13.5 18.875L12.875 18.8738V18.875H13.5ZM19.125 18.875H19.75L19.125 18.8738V18.875Z" fill="white"></path>
+                            <path d="M26.0875 17C26.0875 15.6212 24.9663 14.5 23.5875 14.5C23.0363 14.5 22.5125 14.68 22.085 15.0062C20.69 14.0375 18.8625 13.46 16.9188 13.3137L17.9675 10.8537L21.0188 11.5662C21.1163 12.51 21.9063 13.25 22.875 13.25C23.9088 13.25 24.75 12.4087 24.75 11.375C24.75 10.3412 23.9088 9.49998 22.875 9.49998C22.22 9.49998 21.6438 9.83873 21.3088 10.35L17.7425 9.51623C17.599 9.48237 17.4482 9.5003 17.3167 9.56686C17.1852 9.63342 17.0814 9.74432 17.0238 9.87998L15.5738 13.28C13.475 13.3525 11.475 13.9437 9.96501 14.9737C9.59153 14.7047 9.1511 14.544 8.69217 14.5091C8.23323 14.4742 7.77357 14.5666 7.36372 14.776C6.95388 14.9855 6.60974 15.3039 6.36914 15.6962C6.12854 16.0886 6.00082 16.5397 6.00001 17C5.99905 17.4405 6.11566 17.8732 6.33782 18.2536C6.55997 18.634 6.87962 18.9482 7.26376 19.1637C7.25411 19.2755 7.24952 19.3877 7.25001 19.5C7.25001 22.9462 11.175 25.75 16 25.75C20.8238 25.75 24.75 22.9462 24.75 19.5C24.75 19.4025 24.7463 19.3062 24.74 19.21C25.1467 19.0019 25.4879 18.6852 25.7257 18.2952C25.9635 17.9051 26.0887 17.4568 26.0875 17ZM22.875 10.75C23.0411 10.7503 23.2003 10.8166 23.3175 10.9343C23.4347 11.052 23.5003 11.2114 23.5 11.3775C23.4997 11.5436 23.4334 11.7027 23.3157 11.8199C23.198 11.9371 23.0386 12.0028 22.8725 12.0025C22.7903 12.0023 22.7089 11.986 22.6329 11.9543C22.557 11.9227 22.4881 11.8764 22.43 11.8182C22.372 11.7599 22.326 11.6908 22.2947 11.6147C22.2634 11.5387 22.2473 11.4572 22.2475 11.375C22.2477 11.2927 22.264 11.2113 22.2957 11.1354C22.3273 11.0595 22.3735 10.9906 22.4318 10.9325C22.4901 10.8745 22.5592 10.8285 22.6353 10.7972C22.7113 10.7658 22.7928 10.7498 22.875 10.75ZM11.625 18.875C11.625 18.1862 12.1863 17.625 12.875 17.625C13.5638 17.625 14.125 18.1862 14.125 18.875C14.1106 19.1968 13.9726 19.5007 13.7398 19.7234C13.5069 19.946 13.1972 20.0703 12.875 20.0703C12.5528 20.0703 12.2431 19.946 12.0102 19.7234C11.7774 19.5007 11.6394 19.1968 11.625 18.875ZM18.8863 23.0212C18.0468 23.6293 17.0366 23.9568 16 23.9568C14.9634 23.9568 13.9533 23.6293 13.1138 23.0212C13.0452 22.974 12.9868 22.9135 12.942 22.8433C12.8972 22.7732 12.8668 22.6947 12.8527 22.6127C12.8386 22.5306 12.841 22.4466 12.8598 22.3655C12.8786 22.2844 12.9135 22.2079 12.9623 22.1404C13.0111 22.073 13.0728 22.0159 13.144 21.9727C13.2151 21.9294 13.2942 21.9008 13.3766 21.8886C13.4589 21.8763 13.5429 21.8806 13.6235 21.9012C13.7042 21.9219 13.7799 21.9584 13.8463 22.0087C14.4724 22.4633 15.2263 22.708 16 22.708C16.7737 22.708 17.5276 22.4633 18.1538 22.0087C18.2201 21.9584 18.2958 21.9219 18.3765 21.9012C18.4571 21.8806 18.5411 21.8763 18.6235 21.8886C18.7058 21.9008 18.7849 21.9294 18.856 21.9727C18.9272 22.0159 18.989 22.073 19.0378 22.1404C19.0866 22.2079 19.1214 22.2844 19.1402 22.3655C19.159 22.4466 19.1614 22.5306 19.1473 22.6127C19.1332 22.6947 19.1029 22.7732 19.058 22.8433C19.0132 22.9135 18.9548 22.974 18.8863 23.0212ZM19.125 20.125C18.7935 20.125 18.4755 19.9933 18.2411 19.7589C18.0067 19.5244 17.875 19.2065 17.875 18.875C17.875 18.5435 18.0067 18.2255 18.2411 17.9911C18.4755 17.7567 18.7935 17.625 19.125 17.625C19.4565 17.625 19.7745 17.7567 20.0089 17.9911C20.2433 18.2255 20.375 18.5435 20.375 18.875C20.375 19.2065 20.2433 19.5244 20.0089 19.7589C19.7745 19.9933 19.4565 20.125 19.125 20.125Z" fill="white"></path>
+                          </g>
+                          <defs>
+                            <clippath id="clip0_1438_3843">
+                              <rect width="20" height="20" fill="white" transform="translate(6 7)"></rect>
+                            </clippath>
+                          </defs>
+                        </svg></div>
+                    </button>
+                    <div class="hide">
+                      <div class="w-embed w-script">
+                        <script src="https://unpkg.com/@popperjs/core@2"></script>
+                        <script src="https://unpkg.com/tippy.js@6"></script>
+                        <script src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.2/sharer.min.js"></script>
+                        <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const windowLocation = window.location.href;
+  const pageTitle = document.querySelector('h1').innerHTML;
+  const shareButtons = document.querySelectorAll('.social-share-link');
+  shareButtons.forEach(button => {
+    button.setAttribute('data-url', windowLocation);
+    button.setAttribute('data-title', pageTitle);
+  });
+});
+tippy('[data-tipy]', {
+  content: '<div style="font-size: 12px">Share on Linkedin</div>',
+  allowHTML: true,
+  hideOnClick: 'toggle',
+  interactive: true,
+  content(reference) {
+    const title = reference.getAttribute('data-tipy');
+    reference.removeAttribute('data-tipy');
+    return title;
+  },
+});
+</script>
+                      </div>
+                    </div>
+                  </div>
+                </aside>
+              </div>
+              <div class="learn1-artical">
+                <div class="flex-col is-24gap">
+                  <div fs-richtext-resetix="true" fs-codehighlight-theme="base16/sandcastle" fs-toc-element="contents" fs-toc-offsettop="4.5rem" fs-codehighlight-element="code" vdx-readtime-article="blog-content" class="rich-text w-richtext"><p>Nodes are one of the fundamental building blocks of a Kubernetes cluster – which is why having nodes stuck in the &quot;not ready&quot; state is a big problem. When nodes aren&#39;t ready, they can&#39;t host workloads. They are, in other words, dead weight until you figure out what caused them to end up being not ready and fix the issue.</p><p>Keep reading for guidance as we explain everything Kubernetes admins need to know about “node not ready” issues – including what they mean, what causes them, how to troubleshoot nodes that are not ready, and how to fix the problem.</p><h2>What is the Kubernetes node not ready error?</h2><p>Kubernetes &quot;node not ready&quot; is an error indicating that <a href="/blog/kubernetes-nodes">Kubernetes nodes</a> can&#39;t host workload (to put that in slightly more technical terms, it means the nodes can&#39;t schedule pods). It&#39;s a node status assigned by the Kubernetes node controller, which is responsible for monitoring the state of nodes.</p><p>&quot;Node not ready&quot; could indicate that the Kubernetes API server and other control plane components can&#39;t communicate reliably with the node at all because of problems like the node being stuck in a crash-restart loop or a flaky network connection. The error could also indicate that the node is reachable but is unable to support pods due to issues with the kubelet or kube-proxy processes running on the node.</p><p>You can determine whether a “node not ready” issue exists for any of your nodes by running:</p><div class="w-embed"><pre><code>kubectl get nodes</code></pre></div><p>The output will include a list of nodes and their status (among other information). Any nodes whose status matches NotReady are in the “not ready” state.</p><h2>Understanding Kubernetes node states</h2><div class="table-wrapper"><table><thead><tr><th>State</th><th>Meaning</th><th>Main causes</th></tr></thead><tbody><tr><td>Ready</td><td>Node is operating normally.</td><td>Not applicable.</td></tr><tr><td>NotReady</td><td>Node can't schedule pods.</td><td>Resource exhaustion, problems with kubelet or kube-proxy, networking issues.</td></tr><tr><td>SchedulingDisabled</td><td>Node is "cordoned" and can't schedule pods.</td><td>Admins deliberately configured node not to be able to host pods.</td></tr><tr><td>Unknown</td><td>The node is entirely unreachable and Kubernetes.</td><td>Node has permanently crashed; network connection to node has permanently failed.</td></tr></tbody></table></div><p>Before diving deeper into what causes &quot;node not ready&quot; errors, let&#39;s step back a bit and explain how Kubernetes tracks node status in general.</p><p>In Kubernetes, a node is a server that forms part of a Kubernetes cluster. Most nodes function as worker nodes, which means their job is to host applications (which are deployed in Kubernetes using pods). Some nodes are control-plane nodes, meaning they host the software that manages the rest of the Kubernetes cluster.</p><p>Once you join a node to a cluster, it can exist in one of the following four node states:</p><ul><li><strong>Ready</strong>: The node is functioning normally and can host applications.</li><li><strong>NotReady</strong>: The node has a problem and can&#39;t host applications.</li><li><strong>SchedulingDisabled</strong>: The node is functioning normally but can&#39;t host applications because admins have used Kubernetes &quot;<a href="https://kubernetes.io/docs/reference/kubectl/generated/kubectl_cordon/" target="_blank" rel="noopener noreferrer">cordon</a>&quot; feature to disable scheduling on that node.</li><li><strong>Unknown</strong>: The node is completely unreachable, typically due either to a failed network connection or because the node has permanently shut down.</li></ul><h2>What causes “node not ready” errors?</h2><p>There are many potential causes of the “node not ready” error. The following are the most common.</p><h3>1. Insufficient system resources</h3><p>Nodes that lack sufficient CPU or memory to host workloads may experience “node not ready” errors.</p><p>Typically, this issue occurs when you join a server to your cluster that simply doesn&#39;t have enough spare resources to host any workloads because all of its CPU and memory is being consumed by other, non-Kubernetes related applications or processes that are running on the node. Memory leaks or other bugs that cause the node to waste CPU or memory resources could also be the underlying problem.</p><h3>2. kubelet issues</h3><p>Kubelet is an agent that runs on each node and manages the node&#39;s connection with the cluster. If kubelet experiences a problem, it could lead to Kubernetes node not ready problems because Kubernetes can no longer reliably communicate with the node via kubelet.</p><p>In general, kubelet issues are rare because kubelet is stable software. But you may experience situations where the node&#39;s operating system kills the kubelet process to free up CPU or memory. Or, you may be running a buggy version of kubelet, especially if you&#39;re using an experimental Kubernetes release.</p><figure class="rich-text-figure w-richtext-figure-type-image"><div><img src="https://cdn.sanity.io/images/wlxwimgv/production/830426f359198c415e9efde73ba56d4771bba76d-1477x912.jpg?w=1400&amp;fit=max&amp;auto=format" alt="Kubernetes architecture with a control plane and managing nodes, connecting to Cloud Provider API for infrastructure management and workload orchestration." loading="lazy"></div></figure><h3>3. kube-proxy issues</h3><p>Each node in a Kubernetes cluster also runs kube-proxy, a networking agent whose main job is to enforce a networking configuration on each node that matches the network Services configured through Kubernetes. Problems with node-proxy could cause node not ready errors by preventing the node from being able to communicate normally with the control plane.</p><p>As with kubelet, kube-proxy is typically stable and issues with it are rare. But the operating system could kill kube-proxy for some reason, or buggy code could trigger unusual kube-proxy behavior.</p><h3>4. Networking issues</h3><p>Even if kube-proxy is functioning normally, problems with other networking software or infrastructure could lead to “node not ready” problems. The network that connects a node to the cluster might simply be flaky, causing intermittent disconnects. Or, problems like IP address conflicts (which happen when the node is assigned the same IP address as other endpoints on the network) could make it difficult for the control plane to reach the node reliably.</p><h2>How to troubleshoot “node not ready” issues</h2><p>Use the following steps to troubleshoot problems with nodes stuck in the NotReady state.</p><h3>1. Confirm node status</h3><p>First, double-check that your node is indeed in the NotReady node status. As noted above, you can do this by running:</p><div class="w-embed"><pre><code>kubectl get nodes</code></pre></div><p>If you&#39;ve just noticed this issue for the first time, it may be worth waiting a few minutes and checking again. Occasionally, the “node not ready” issue will resolve itself (especially in cases where the problem is due to a fluke, like a short-lived networking problem that doesn&#39;t frequently occur).</p><h3>2. Connect to node</h3><p>As a next step, connect to the node to make sure it&#39;s definitely up and functioning. This allows you to rule out issues like the node crashing or being completely unreachable via the network.</p><p>The best way to connect to the node will depend on how you set up your nodes. But in most cases, you can use an SSH command like the following:</p><div class="w-embed"><pre><code>ssh user@node-name</code></pre></div><h3>3. Describe node</h3><p>Assuming the node is indeed up and running, the next step in the troubleshooting process is to use kubectl to get more information about the node. You can do this by running:</p><div class="w-embed"><pre><code>kubectl describe node-name</code></pre></div><p>(Replace <em>node-name</em> with the actual name of the node.)</p><p>Review the output, looking in particular at the following sections:</p><ul><li><strong>Conditions</strong>: This tells you whether the node is experiencing any adverse conditions, such as MemoryPressure (meaning it&#39;s running low on memory) or DiskPressure (meaning it&#39;s low on disk space due to <a href="https://www.groundcover.com/blog/kubernetes-disk-pressure">Kubernetes disk pressure</a> problems). If one of these conditions is true, it&#39;s likely the cause of the issue, and you can resolve it by mitigating the problem – such as by allocating killing processes to free up memory, in the case of MemoryPressure. (This section will also tell you that the node is in the NotReady state, but you already know that.)<strong>‍</strong></li><li><strong>Events</strong>: This will typically tell you when the node first became NotReady. It may also include information about other relevant events, like failure to start containers.</li></ul><figure class="rich-text-figure w-richtext-figure-type-image"><div><img src="https://cdn.sanity.io/images/wlxwimgv/production/4e8f65e2c7171a1341acf7ef4c2f00b452d091aa-1999x1235.jpg?w=1400&amp;fit=max&amp;auto=format" alt="Resource utilization for Nodes showing CPU and memory usage where CPU is overcommitted." loading="lazy"></div></figure><h3>4. View node and kubelet logs</h3><p>If no node conditions or events help to explain what caused the Kubernetes node not ready error, the next step is to examine the node and kubelet logs. The exact location of logs varies between operating systems, but on most Linux distributions, you can find most logs in /var/log. The most important log file is typically syslog.</p><p>So, SSH into the node and open up syslog by running:</p><div class="w-embed"><pre><code>less /var/log/syslog</code></pre></div><p>As you review the log, look for events related to kubelet or kube-proxy. If these processes have shut down or been killed, you&#39;ll typically find information about those events in this log.</p><p>Depending on how you installed Kubernetes, you can also typically view kubelet logs using:</p><div class="w-embed"><pre><code>journalctl -u kubelet</code></pre></div><p>As with syslog, reviewing the kubelet logs can help identify events related to kubelet crashing or otherwise behaving erratically.</p><h3>5. Review other node details</h3><p>If you&#39;re still at a loss as to why the Kubernetes node is NotReady, there are a few other things you can check while logged into the node:</p><ul><li>The <strong>top</strong> command on most Linux distributions will display information about running processes and how many resources they are using. If kubelet or kube-proxy are misbehaving because of issues like memory leaks, this data may clue you in.</li><li>The <strong>df</strong> command displays data about disk space usage. If the node is running very low on disk space, this will tell you. It will also tell you exactly which partition is running out of space, in the event that there are multiple partitions.</li><li>The <strong>netstat</strong> command displays information about network connections, which may be useful for identifying unusual network behavior.</li></ul><p>Generally, most of the relevant data you can get from these commands would also be recorded in syslog. But in certain cases – such as if the system has run out of space to the point that it can no longer record events in syslog because there is no space to expand the file – it may not be, so it&#39;s worth performing these additional checks.</p><h3>6. Verify network connectivity</h3><p>In some cases, the node&#39;s networking configuration may appear valid based on information provided by the Kubernetes node itself, but this doesn&#39;t necessarily mean the Kubernetes control plane can reach the node.</p><p>To check for issues in the connection between the node and the control plane, first determine the node&#39;s IP address, which you can find by running the following kubectl get nodes command:</p><div class="w-embed"><pre><code>kubectl get nodes -o wide</code></pre></div><p>Then, SSH into a control plane node and run the following command:</p><div class="w-embed"><pre><code>traceroute node-ip-address</code></pre></div><p>Replace <em>node-ip-address</em> with the IP address that kubectl reports for the node.</p><p>The output will display data about the flow of network packets between the control plane and the node. If packets are being held up at some point on the network – such as when they exit a subnet – this information will help you identify the problem.</p><h3>7. Check kube-system components</h3><p>Kube-system is a namespace that hosts objects created by the control plane, including kube-proxy. Verifying the status of resources running in this namespace can be helpful for troubleshooting in cases where an issue on the control plane side, like a failed kube-proxy pod, has caused nodes to become NotReady (that said, if the issue lies with the control plane, it&#39;s likely that most or all of your nodes will become NotReady, so this is rarely the culprit).</p><h3>8. Restart kubelet and kube-proxy</h3><p>Restarting the kubelet service and kube-proxy on the node may help to resolve Kubernetes node “not ready” issues. In addition, watching log events and resource utilization by kubelet and kube-proxy as they restart could provide insight into why they are not functioning normally. For example, you may notice that one of these processes steadily increases its memory usage over time, which is an indication of a memory leak.</p><p>On most Linux distributions, you can restart the kubelet service and kube-proxy with:</p><div class="w-embed"><pre><code>sudo systemctl restart kubelet
+sudo systemctl restart kube-proxy</code></pre></div><h3>9. Restart the node</h3><p>As a final troubleshooting step, you can try restarting the entire Kubernetes node. While this won&#39;t necessarily tell you why the issue occurred, it may resolve it in cases where the problem stemmed from a temporary failure or misconfiguration.</p><p>That said, if this does fix the issue, you&#39;ll want to keep watching the node closely to ensure that it operates normally. It&#39;s possible that problems like memory leaks will cause the node to run low on resources again over time, causing the NotReady error to recur eventually.</p><h2>Best practices to prevent node NotReady errors</h2><p>Successfully troubleshooting node NotReady errors is good. What&#39;s even better is preventing them from occurring in the first place. The following best practices can help in this regard by minimizing the risk of node NotReady problems.</p><h3>1. Regular monitoring and alerting</h3><p>The single most important step you can take to prevent node not ready issues is to use <a href="/kubernetes-monitoring">Kubernetes monitoring</a> tools to observe your nodes continuously and generate alerts when something looks awry.</p><p>For example, alerting tools can tell you that your node is running short on CPU, memory, or disk space well before the issue becomes critical and causes the node to stop functioning normally. Likewise, network monitoring tools can alert you to network disconnects, high network latency, or packet loss issues, which provides early warning about problems that may cause the node to become unavailable due to networking problems.</p><h3>2. Resource capacity planning</h3><p>Carefully planning resource capacity for nodes is another best practice for preventing NotReady errors. Capacity planning means ensuring that the servers you join to your cluster as worker nodes have enough CPU, memory, and disk space to support the workloads you intend to run on them.</p><p>In addition, you should avoid forcing pods to run on nodes that lack enough resources to handle them. For example, before creating a DaemonSet to schedule pods on a specific node, check the node&#39;s resource utilization status to ensure it&#39;s a good fit.</p><h3>3. Node autoscaling</h3><p>Node autoscaling allows you to increase the total nodes in your cluster and/or modify the resource allocations to individual nodes. Autoscaling can help to prevent “node not ready” issues by ensuring that if a node starts running short on resources, the node either receives more resources, or the cluster adds nodes and shifts some workloads to new nodes.</p><h3>4. Network topology planning</h3><p>Network configurations that are highly complex, or ones where control plane nodes are distant from worker nodes, could contribute to node NotReady errors due to network connectivity issues. For that reason, consider trying to keep your network topology and configuration simple. For example, assign control plane nodes and worker nodes to the same subnet if possible.</p><p>To be clear, having a complex network topology doesn&#39;t necessarily mean your nodes will end up being NotReady, and there are situations where you have little control over the network anyway. But as a general best practice, if you can keep your network design simpler, do it.</p><h2>Solving Kubernetes node errors with groundcover</h2><p>As a comprehensive Kubernetes monitoring and observability platform, groundcover provides the visibility you need to detect, troubleshoot, and resolve node NotReady errors.</p><figure class="rich-text-figure w-richtext-figure-type-image"><div><img src="https://cdn.sanity.io/images/wlxwimgv/production/9155712961b31a1b8bc625498119dbf5570c25df-1477x912.jpg?w=1400&amp;fit=max&amp;auto=format" alt="Node status groundcover dashboard showing CPU, Memory, Disk, and Pods metrics over time, along with metadata like OS, kernel version, container runtime, and internal IP and DNS details." loading="lazy"></div></figure><p>With groundcover, you can continuously track <a href="/kubernetes-monitoring/kubernetes-metrics">Kubernetes metrics</a> and node resource utilization. You can also drill down to get details about individual nodes. The result is the ability not just to detect issues fast, but also to investigate their context and get to the root of the problem as rapidly as possible.</p></div><div class="blog-rich-text is--conclution w-richtext"><h2>Keeping nodes at the ready</h2><p>Without properly functioning nodes, your Kubernetes cluster may as well not exist at all. That&#39;s why it&#39;s critical to know how to diagnose and troubleshoot node NotReady errors – and, even better, to adopt best practices that help prevent these issues from occurring in the first place.</p></div>
+                </div>
+                <div class="learn1-artical-bottom"><button class="copy-button is-bottom"><img width="16" height="16" alt="" src="/webflow/images/Component-2.svg" loading="eager"><span>Share</span></button>
+                  <a href="/kubernetes-troubleshooting" class="copy-button is-bottom w-inline-block"><span><span>Back to </span><span>Kubernetes Troubleshooting</span></span></a>
+                </div>
+              </div>
+              <aside class="hide-l-m">
+                <div class="learn-toc-wrap-right">
+                  <div class="learn-toc-wrap-right-top"><span class="title is--20"><span class="font-inter is--600">Browse All Topics</span></span>
+                    <div class="flex-col is-8gap">
+                      <div class="topic_wrap">
+                        <a href="/deep-dive/microservices-observability" class="side_guide-link w-inline-block">
+                          <div class="side_guide-link-left"><img width="16" height="16" alt="" src="/webflow/images/Group-1410083154.svg" loading="lazy"><span>Microservices Observability</span></div><span class="side_guide-link-num">4</span>
+                        </a>
+                        
+                      </div>
+                      <div class="topic_wrap">
+                        <a href="/kubernetes-troubleshooting" class="side_guide-link w-inline-block">
+                          <div class="side_guide-link-left"><img width="16" height="16" alt="" src="/webflow/images/Union_1.svg" loading="lazy"><span>Kubernetes Troubleshooting</span></div><span class="side_guide-link-num">10</span>
+                        </a>
+                        
+                      </div>
+                      <div class="topic_wrap">
+                        <a href="/deep-dive/ebpf" class="side_guide-link w-inline-block">
+                          <div class="side_guide-link-left"><img width="16" height="17" alt="" src="/webflow/images/Frame-2147204643.svg" loading="lazy"><span>eBPF</span></div><span class="side_guide-link-num">6</span>
+                        </a>
+                        
+                      </div>
+                      <div class="topic_wrap">
+                        <a href="/deep-dive/kubernetes-monitoring" class="side_guide-link w-inline-block">
+                          <div class="side_guide-link-left"><img width="19" height="18" alt="" src="/webflow/images/Frame-2147204642_1.svg" loading="lazy"><span>Kubernetes Monitoring</span></div><span class="side_guide-link-num">8</span>
+                        </a>
+                        
+                      </div>
+                      <div class="topic_wrap">
+                        <a href="/deep-dive/opentelemetry" class="side_guide-link w-inline-block">
+                          <div class="side_guide-link-left"><img width="16" height="17" alt="" src="/webflow/images/Frame-2147204644.svg" loading="lazy"><span>OpenTelemetry</span></div><span class="side_guide-link-num">3</span>
+                        </a>
+                        
+                      </div>
+                      
+                    </div>
+                  </div>
+                  <div class="learn-toc-wrap-right-bottom">
+                    <div><span class="title is--20"><span class="font-inter is--600">See It in Action</span></span>
+                      <p class="text is--14">Monitor and troubleshoot issues instantly with groundcover&#x27;s real-time observability</p>
+                    </div><img width="475" height="289" alt="" src="/webflow/images/68769c011556c62a3e0b57f6_image1-3.png" loading="eager">
+                    <div class="flex-center">
+                      <div data-wf--button-link--variant="base">
+                        <a href="https://play.groundcover.com/" target="_blank" class="btn main_button w-button">Launch playground</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </aside>
+            </div>
+          </div>
+        </section>
+      </article>
+      <section class="p-section prod_10">
+        <div class="container prod_6">
+          <div class="prod_6-header">
+            <div class="font-500">
+              <h2 class="title is--40">Explore more Deep Dives</h2>
+            </div>
+            <p class="text is--16">Explore the platform built for the full stack.</p>
+          </div>
+          <ul data-name="stagger" role="list" class="p-list prod_6 w-list-unstyled">
+            <li>
+              <a href="/deep-dive/opentelemetry" class="prod_6-li w-inline-block">
+                <figure class="prod_6-li-figure"><img width="363" height="200" src="/webflow/images/tetimonial-3.avif" loading="lazy" alt="OpenTelemetry" sizes="363px" srcset="/webflow/images/tetimonial-3-p-500.avif 500w, /webflow/images/tetimonial-3.avif 756w" class="img-cover"></figure>
+                <div class="prod_6-li-bottom">
+                  <div class="font-inter is--600">
+                    <h3 class="title is--20">OpenTelemetry</h3>
+                  </div>
+                  <p class="text is--14">Collect, standardize, and route telemetry data across your entire stack - without vendor lock-in.</p>
+                </div>
+              </a>
+            </li>
+            <li>
+              <a href="/deep-dive/kubernetes-monitoring" class="prod_6-li w-inline-block">
+                <figure class="prod_6-li-figure"><img width="363" height="200" src="/webflow/images/tetimonial-2.avif" loading="lazy" alt="Kubernetes Monitoring" sizes="363px" srcset="/webflow/images/tetimonial-2-p-500.avif 500w, /webflow/images/tetimonial-2.avif 756w" class="img-cover"></figure>
+                <div class="prod_6-li-bottom">
+                  <div class="font-inter is--600">
+                    <h3 class="title is--20">Kubernetes Monitoring</h3>
+                  </div>
+                  <p class="text is--14">Monitor cluster health, workloads, and performance with full Kubernetes context.</p>
+                </div>
+              </a>
+            </li>
+            <li>
+              <a href="/deep-dive/microservices-observability" class="prod_6-li w-inline-block">
+                <figure class="prod_6-li-figure"><img width="363" height="200" src="/webflow/images/tetimonial_3.svg" loading="lazy" alt="Microservices Observability" class="img-cover"></figure>
+                <div class="prod_6-li-bottom">
+                  <div class="font-inter is--600">
+                    <h3 class="title is--20">Microservices Observability</h3>
+                  </div>
+                  <p class="text is--14">Get full visibility into distributed systems, service dependencies, and application performance</p>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <div>
+        <div class="hide">
+          <div class="w-embed">
+            <style>.sections-grid {padding-bottom: 0;}</style>
+          </div>
+        </div>
+        <div class="sections-grid">
+          <section id="section-updates" class="p-section">
+            <div class="container sign-dark">
+              <div class="sign1-left">
+                <div class="flex-col is-6gap">
+                  <h2 class="title is--40">Sign up for Updates</h2>
+                  <p class="text is--20">Keep up with all things cloud-native observability.</p>
+                </div>
+                <div id="sign-up-form-wrapper" class="flex-col is-12gap">
+                  <div id="sign-up-form-wrapper" data-name="hubspot-form" theme="dark" class="w-embed w-script">
+                    <style>
+  #sign-up-form-wrapper {
+    [data-name='hubspot-form'] {
+      & form {
+        display: flex;
+        align-items: flex-start;
+        column-gap: 1rem;
+        & input[type='submit'] {
+          min-height: 2.75rem;
+        }
+        & .field {
+          margin-bottom: 0;
+          flex-grow: 1;
+        }
+        & .submitted-message {
+          font-family: Ppneuemachina, Arial, sans-serif;
+          font-weight: 700;
+          line-height: 1.2;
+          font-size: 1.5rem;
+        }
+        & .hs-form-field {
+          & > label {
+            /* color: #ffffff; */
+            display: none;
+          }
+        }
+      }
+    }
+  }
+  @media only screen and (max-width: 767px) {
+    #sign-up-form-wrapper {
+      [data-name='hubspot-form'] {
+        & form {
+          flex-direction: column;
+          row-gap: 0.85rem;
+          align-items: stretch;
+        }
+      }
+    }
+  }
+</style>
+                    <script charset="utf-8" type="text/javascript" src="https://js-eu1.hsforms.net/forms/embed/v2.js"></script>
+                    <script>
+  hbspt.forms.create({
+    portalId: '25980569',
+    formId: '7f5411fb-c730-4169-8ced-267784daa482',
+    region: 'eu1',
+    onFormSubmit: function ($form) {
+      const email = $form.find('input[name="email"]').val();
+      const page_path_value = window.location.href;
+      analytics.identify(email || '', {
+        email: email || '',
+      });
+      analytics.track('bottom_updates_form', {
+        email: email || '',
+        page_path: page_path_value,
+        reporter: 'webflow',
+        event: 'form_submit',
+        source: '',
+        userType: 'lead',
+      });
+    },
+  });
+</script>
+                  </div>
+                  <p class="text is--12">We care about data. Check out our <a href="/legal/privacy" target="_blank" class="underline-text">privacy policy</a>.</p>
+                </div>
+              </div>
+              <figure class="sign1-right"><img src="/webflow/images/Frame-2147204783.svg" loading="lazy" width="324" height="293" alt=""></figure>
+            </div>
+            <div class="hide">
+              <div class="w-embed">
+                <style>
+  .container {
+    &.sign1,
+    &.sign2,
+    &.sign3,
+    &.sign5,
+    &.sign6 {
+      #sign-up-form-wrapper {
+        & [data-name='hubspot-form'] {
+          & form {
+            & input {
+              background-color: #ffffff;
+            }
+            & input[type='submit'] {
+              color: #ffffff;
+              background-color: #101828;
+              border-radius: 0.5rem;
+              background-image: none;
+              transition: background-color 0.2s ease-in-out;
+              &:hover {
+                background-color: #10182890;
+              }
+            }
+            & .hs_utm_content {
+              display: none;
+            }
+          }
+        }
+      }
+    }
+  }
+  #sign-up-form-wrapper {
+    & [data-name='hubspot-form'] {
+      & form {
+        & .hs_utm_content {
+          display: none;
+        }
+        & input[type='submit'] {
+          border-radius: 0.5rem;
+          background-image: none;
+          transition: background-color 0.4s ease-in-out;
+          &:hover {
+            background-color: #dfb100;
+          }
+        }
+      }
+    }
+  }
+</style>
+              </div>
+            </div>
+          </section>
+          <section id="cta-section" data-wf--section-cta-ai--variant="base" class="p-section">
+            <div class="container is_agent">
+              <div class="hp3-top is_ai-agent">
+                <div class="flex-col is-8gap">
+                  <h2 class="title is--50 is--30-m">Observability <br>for what comes next.</h2>
+                  <p class="text is--18"><span class="block-desktop">Start in minutes. No migrations. No data leaving </span>your infrastructure. No surprises on the bill.</p>
+                </div>
+                <div class="flex-center">
+                  <div class="hide-l-m">
+                    <div class="hero-btns is-flex-wrap">
+                      <div>
+                        <div class="start-wrap-desktop">
+                          <div data-wf--button-link--variant="size_lg">
+                            <a href="https://app.groundcover.com/#register" target="_blank" class="btn main_button w-variant-b99e078d-ef60-ddff-6c7d-1f4e446bc9e9 w-button">Start Free</a>
+                          </div>
+                        </div>
+                        <div class="start-wrap-mobile">
+                          <a href="#/" class="btn main_button open-mobile-modal w-button">Start free</a>
+                        </div>
+                      </div>
+                      <div data-wf--button-link--variant="base">
+                        <a href="https://docs.groundcover.com/use-groundcover/ai-agent" target="_blank" class="link_arrow black-centered w-inline-block">
+                          <div class="product-how-works-learn-more-text-wrapper">
+                            <div class="product-how-works-learn-more-text">Learn more</div>
+                            <div class="product-how-works-learn-more-text-line black"></div>
+                          </div>
+                          <div class="product-how-works-learn-more-arrow w-embed"><svg width="100%" height="100%" style="margin-bottom: 2px;" viewbox="0 0 19 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M1 6H16" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round"></path>
+                              <path d="M12.5 1L17.5 6L12.5 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                            </svg></div>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="hide-d-t">
+                    <div class="hero-btns is-flex-wrap">
+                      <div class="hide-tablet-mobile">
+                        <div data-wf--button-link--variant="base">
+                          <a href="https://play.groundcover.com/" target="_blank" class="btn main_button w-button">Launch Playground</a>
+                        </div>
+                      </div>
+                      <div class="hide-tablet-mobile"><button type="button" fs-modal-element="open-1" class="btn button_secondery">Book a demo</button></div>
+                      <div class="hide-desktop">
+                        <div data-wf--button-link--variant="base">
+                          <a href="/contact-mobile" class="btn main_button w-button">Book a demo</a>
+                        </div>
+                      </div>
+                      <div class="hide-desktop">
+                        <a id="see-the-platform" data-fancybox="" href="https://groundcover-public-assets.s3.us-east-1.amazonaws.com/groundcover_Mobile+%2B+menu.mp4" class="btn button_secondery w-node-fdbb9382-873c-5d4d-dee7-31d8e2aefe02-e2aefddd w-inline-block">
+                          <div class="events-none">
+                            <div class="flex w-embed"><svg style="margin-top: 2px;" width="22" height="22" viewbox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10.9997 20.1666C16.0623 20.1666 20.1663 16.0626 20.1663 11C20.1663 5.93737 16.0623 1.83331 10.9997 1.83331C5.93706 1.83331 1.83301 5.93737 1.83301 11C1.83301 16.0626 5.93706 20.1666 10.9997 20.1666Z" stroke="black" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <path d="M8.70801 8.2182C8.70801 7.78069 8.70801 7.56193 8.79944 7.43981C8.87911 7.33338 9.00108 7.2668 9.13369 7.25732C9.28586 7.24646 9.46987 7.36475 9.8379 7.60134L14.1651 10.3831C14.4845 10.5884 14.6441 10.6911 14.6993 10.8216C14.7475 10.9356 14.7475 11.0643 14.6993 11.1784C14.6441 11.3089 14.4845 11.4115 14.1651 11.6168L9.8379 14.3986C9.46987 14.6352 9.28586 14.7535 9.13369 14.7426C9.00108 14.7332 8.87911 14.6666 8.79944 14.5601C8.70801 14.438 8.70801 14.2193 8.70801 13.7818V8.2182Z" stroke="black" stroke-linecap="round" stroke-linejoin="round"></path>
+                              </svg></div>
+                          </div>
+                          <div class="events-none">See the platform</div>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="hide-d-t"><img width="375" height="383" alt="" src="/webflow/images/Image_1.svg" loading="lazy" class="hp3-bg"></div>
+              <div class="hide-l-m"><img width="2250" height="938" alt="" src="/webflow/images/gg_6.svg" loading="lazy" class="hp3-bg is_ai_agent"></div>
+            </div>
+            <div class="section-bg-new"></div>
+          </section>
+        </div>
+        <div class="hide">
+          <div class="w-embed w-script">
+            <script type="module">
+  document.addEventListener('DOMContentLoaded', function () {
+    const BASE_DOMAIN = 'www.groundcover.com';
+    const article = document.querySelector('article');
+    if (!article) return;
+    article.querySelectorAll('a[href]').forEach(function (link) {
+      const href = link.getAttribute('href');
+      try {
+        const url = new URL(href);
+        if (url.hostname === BASE_DOMAIN) {
+          link.setAttribute('href', url.pathname + url.search + url.hash);
+        } else {
+          link.setAttribute('target', '_blank');
+          link.setAttribute('rel', 'noopener noreferrer');
+        }
+      } catch (e) {
+        // Relative links — leave them alone
+      }
+    });
+  });
+</script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+            <script type="module">
+  document.addEventListener('DOMContentLoaded', function () {
+    // Initialize markdown converter
+    let converter = new showdown.Converter({
+      tables: true, // allow tables
+      noHeaderId: true,
+      headerLevelStart: 2,
+      literalMidWordUnderscores: true,
+    });
+    // Find <markdown> elements
+    let markdowns = document.querySelectorAll('markdown');
+    markdowns.forEach((el) => {
+      el.outerHTML = converter.makeHtml(el.innerHTML);
+    });
+  });
+</script>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
+            <script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js"></script>
+            <script>
+  // https://biati-digital.github.io/glightbox/#examples
+  const lightboxVideo = GLightbox({
+    selector: '.rich-text img',
+  });
+</script>
+            <script type="module">
+  document.addEventListener('DOMContentLoaded', () => {
+    // 1. Select all elements with the class 'copy-button'
+    const copyButtons = document.querySelectorAll('button.copy-button');
+    // 2. Get the current page's URL
+    const pageUrl = window.location.href;
+    // 3. Iterate over the NodeList of buttons and attach the event listener
+    copyButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        // Get the <span> element inside the button
+        const textSpan = button.querySelector('span');
+        // Store the original text to revert it later
+        const originalText = textSpan ? textSpan.textContent : 'Copy link'; // Default if span isn't found
+        // 4. Copy the URL to the clipboard
+        navigator.clipboard
+          .writeText(pageUrl)
+          .then(() => {
+            // Success: Change the button text
+            if (textSpan) {
+              textSpan.textContent = 'Copied!';
+              // Optional: Add a class for visual feedback (e.g., green color)
+              button.classList.add('copied-state');
+            }
+            // 5. Revert the text back after 3 seconds (3000 milliseconds)
+            setTimeout(() => {
+              if (textSpan) {
+                textSpan.textContent = originalText;
+                // Optional: Remove the visual feedback class
+                button.classList.remove('copied-state');
+              }
+            }, 3000);
+          })
+          .catch((err) => {
+            // Error handling in case the copy fails (e.g., due to browser permissions)
+            console.error('Failed to copy the URL:', err);
+            alert('Could not copy link. Please try manually.');
+          });
+      });
+    });
+  });
+</script>
+            <script type="module">
+  document.addEventListener('DOMContentLoaded', () => {
+    // 1. Select all elements with the class 'copy-button'
+    const copyButtons = document.querySelectorAll('button.copy-button');
+    // 2. Get the current page's URL
+    const pageUrl = window.location.href;
+    // 3. Iterate over the NodeList of buttons and attach the event listener
+    copyButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        // Get the <span> element inside the button
+        const textSpan = button.querySelector('span');
+        // Store the original text to revert it later
+        const originalText = textSpan ? textSpan.textContent : 'Copy link'; // Default if span isn't found
+        // 4. Copy the URL to the clipboard
+        navigator.clipboard
+          .writeText(pageUrl)
+          .then(() => {
+            // Success: Change the button text
+            if (textSpan) {
+              textSpan.textContent = 'Copied!';
+              // Optional: Add a class for visual feedback (e.g., green color)
+              button.classList.add('copied-state');
+            }
+            // 5. Revert the text back after 3 seconds (3000 milliseconds)
+            setTimeout(() => {
+              if (textSpan) {
+                textSpan.textContent = originalText;
+                // Optional: Remove the visual feedback class
+                button.classList.remove('copied-state');
+              }
+            }, 3000);
+          })
+          .catch((err) => {
+            // Error handling in case the copy fails (e.g., due to browser permissions)
+            console.error('Failed to copy the URL:', err);
+            alert('Could not copy link. Please try manually.');
+          });
+      });
+    });
+  });
+</script>
+            <script type="module">
+document.addEventListener('DOMContentLoaded', () => {
+  const tables = document.querySelectorAll('table');
+//   console.log('tables', tables);
+  if (tables.length === 0) return;
+  tables.forEach((table) => {
+    const cols = table.querySelector('tr')?.querySelectorAll('th, td').length || 0;
+    if (cols >= 4) {
+      const minColWidth = 160; // px per column
+      table.style.minWidth = cols * minColWidth + 'px';
+      table.style.width = 'max-content';
+      // Wrap in a scrollable div if not already wrapped
+      if (!table.parentElement.classList.contains('table-wrapper')) {
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('table-wrapper');
+        table.parentNode.insertBefore(wrapper, table);
+        wrapper.appendChild(table);
+      }
+    }
+  });
+});
+</script>
+          </div>
+          <div class="w-embed w-script">
+            <script type="module">
+document.addEventListener('DOMContentLoaded', () => {
+  const element = document.querySelector('[fs-inject-element="element"]');
+  const target = document.querySelector('[fs-inject-element="target"]');
+  if (element && target) {
+    target.replaceWith(element);
+  }
+});
+</script>
+          </div>
+        </div>
+      </div>
+    </main><div class="hide"><div class="w-embed"><style>
+  [data-name='hubspot-form'] {
+    width: 100%;
+
+    & form {
+      font-size: 0.875rem;
+      text-align: left;
+      position: relative;
+
+      & .submitted-message {
+        font-size: 0.875rem;
+      }
+
+      & input[type='submit'] {
+        background-color: var(--101828);
+        max-width: 100%;
+        min-height: 2.875rem;
+        color: var(--white);
+        border-style: none;
+        border-radius: 0.75rem;
+        justify-content: center;
+        align-items: center;
+        padding: 0.625rem 2.25rem;
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.6;
+        text-align: center;
+        white-space: pre;
+        border: 1px solid #0000;
+        text-decoration: none;
+        transition:
+          background-color 0.3s ease-in-out,
+          color 0.3s ease-in-out;
+        display: flex;
+        cursor: pointer;
+        width: 100%;
+        /* margin-top: 1rem; */
+        &:hover {
+          background-color: var(--005d46);
+          color: var(--white);
+        }
+      }
+
+      & .field {
+        margin-bottom: 0.6rem;
+      }
+      & .input {
+        margin-right: 0 !important;
+        font-size: 0.875rem;
+      }
+
+      & .hs-form-required {
+        color: var(--coral);
+      }
+
+      & fieldset.form-columns-1 .hs-input {
+        width: 100%;
+      }
+
+      & fieldset.form-columns-2 .hs-form-field {
+        width: 100%;
+      }
+
+      & .form-columns-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+      }
+
+      & .hs-error-msgs {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+
+        & label {
+          color: #ff5a34;
+          font-size: 0.7rem;
+        }
+      }
+    }
+
+    &[theme='dark'] {
+      & form {
+        & input[type='submit'] {
+          background-color: #f9f4f2;
+          color: var(--101828);
+          &:hover {
+            background-color: #f8da92 !important;
+            background-color: var(--f8da92);
+          }
+        }
+      }
+    }
+
+    .hs-form-field {
+      display: flex;
+      flex-direction: column;
+      row-gap: 0.375rem;
+
+      & label {
+        font-weight: 500;
+        font-size: 0.875rem;
+        color: #344054;
+        margin: 0;
+      }
+
+      & .hs-button.primary.large {
+        opacity: 0 !important;
+      }
+
+      & input,
+      & select,
+      & textarea {
+        border: 1px solid #f3f4f2;
+        box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+        background-color: #f3f4f2;
+        min-height: 3rem;
+        border-radius: 0.5rem;
+        padding: 0.25rem 0.875rem;
+        margin: 0;
+        width: 100% !important;
+        display: block;
+        color: var(--101828);
+      }
+
+      & textarea {
+        min-height: 6.875rem;
+      }
+    }
+  }
+
+  .modal-contact-right {
+    [data-name='hubspot-form'] {
+      & form {
+        & input[type='submit'] {
+          margin-top: 1rem;
+        }
+      }
+    }
+  }
+
+  [data-form='dark-bg'] {
+    & form {
+      color: var(--101828);
+
+      & .hs-form-required {
+        color: #ffffff;
+      }
+
+      & .hs-error-msgs {
+        & label {
+          color: #ffffff;
+        }
+      }
+    }
+
+    .hs-form-field {
+      & label {
+        color: #ffffff;
+      }
+    }
+  }
+
+  @media only screen and (max-width: 767px) {
+    [data-name='hubspot-form'] {
+      & form {
+        & .form-columns-2 {
+          display: flex;
+          flex-direction: column;
+          gap: 0;
+        }
+      }
+    }
+  }
+
+  [data-form='submit-center'] {
+    & form {
+      & .actions {
+        display: flex;
+        justify-content: center;
+      }
+      & input[type='submit'] {
+        width: auto;
+      }
+    }
+  }
+
+  .toc_updates {
+    &:hover {
+      [data-name='hubspot-form'] {
+        & form {
+          & input[type='email'] {
+            border: 1px solid #d0d5dd;
+            background-color: #fff;
+          }
+        }
+      }
+    }
+  }
+</style></div></div><div fs-modal-element="modal-2" class="modal-warp is-mobile"><div class="hide w-embed"><style>
+	.modal_content {
+  	background-image: url(/webflow/cdn/64a2dc9150589fb4c5a7857f_1.png);
+    background-position: 50%;
+    background-size: 420px;
+    overflow: hidden;
+  }
+  #mobile-error-email {
+  	display: none;
+  }
+  
+  .modal-warp {
+  	& .rounded-image {
+    	display: flex;
+    }
+  }
+</style></div><div fs-modal-element="close-2" class="modal_bg"></div><div class="modal_content is-mobile"><button fs-modal-element="close-2" class="x-icon"><div class="flex w-embed"><svg xmlns="http://www.w3.org/2000/svg" width="27" height="26" viewBox="0 0 27 26" fill="none">
+  <path d="M6.60107 6.22815L20.8281 20.4552" stroke="#646464" stroke-width="2.01201" stroke-linecap="round"/>
+  <path d="M20.8281 6.22815L6.60105 20.4552" stroke="#646464" stroke-width="2.01201" stroke-linecap="round"/>
+</svg></div></button><div class="mobile-step1"><div class="contact-m1"><h2 class="title is--30 mobile-30"><span class="font-inter is--600">Get started<br/>with groundcover</span></h2><p class="text is--16">Monitor everything, deploy in minutes.</p></div><div data-form="submit-center" data-name="hubspot-form" class="w-embed w-script"><style>
+  .mobile-step2,
+  .success-inner-mobile {
+  	display: none;
+  }
+</style>
+
+<script charset="utf-8" type="text/javascript" src="//js-eu1.hsforms.net/forms/embed/v2.js"></script>
+<script>
+// form email step 1
+hbspt.forms.create({
+  portalId: '25980569',
+  formId: '39020311-4d3f-4acf-b1aa-638c63f47efb',
+  region: 'eu1',
+  onFormSubmit: function ($form) {
+    document.querySelector('.mobile-step1').style.display = 'none';
+    document.querySelector('.mobile-step2').style.display = 'flex';
+
+    // segment
+    const email = $form.find('input[name="email"]').val();
+    const page_path_value = window.location.href;
+
+    analytics.identify(email || '', {
+      email: email || '',
+    });
+    analytics.track('mobile_form', {
+      userId: email || '',
+      page_path: page_path_value,
+      reporter: 'webflow',
+      source: 'mobile_form',
+      userType: 'lead',
+    });
+  },
+});
+</script></div></div><div class="mobile-step2"><div class="mobile-step2-flex"><div class="mobile-step2-top"><div class="relative"><div class="flex w-embed"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" fill="none">
+  <path d="M12.1565 2.92128C13.0409 1.82715 14.7091 1.82715 15.5935 2.92128C16.3917 3.90872 17.697 4.33282 18.9231 4.00314C20.2818 3.63784 21.6313 4.61834 21.7037 6.02337C21.7691 7.29139 22.5758 8.40171 23.7616 8.85571C25.0754 9.35877 25.5909 10.9453 24.8237 12.1245C24.1312 13.1888 24.1312 14.5612 24.8237 15.6255C25.5909 16.8048 25.0754 18.3912 23.7616 18.8943C22.5758 19.3483 21.7691 20.4586 21.7037 21.7266C21.6313 23.1317 20.2818 24.1122 18.9231 23.7469C17.697 23.4172 16.3917 23.8413 15.5935 24.8287C14.7091 25.9228 13.0409 25.9228 12.1565 24.8287C11.3583 23.8413 10.053 23.4172 8.82687 23.7469C7.46822 24.1122 6.11868 23.1317 6.04626 21.7266C5.9809 20.4586 5.17421 19.3483 3.98844 18.8943C2.67456 18.3912 2.15908 16.8048 2.92634 15.6255C3.61879 14.5612 3.61879 13.1888 2.92634 12.1245C2.15908 10.9453 2.67456 9.35877 3.98844 8.85571C5.17421 8.40171 5.9809 7.29139 6.04626 6.02337C6.11868 4.61834 7.46822 3.63784 8.82687 4.00314C10.053 4.33282 11.3583 3.90872 12.1565 2.92128Z" fill="#89C5A5" stroke="#005D46"/>
+  <path d="M9.25 14.6458L11.9053 17.3011C12.1345 17.5303 12.5114 17.5115 12.7167 17.2607L19.2708 9.25" stroke="#005D46" stroke-linecap="round"/>
+</svg></div></div><div class="mobile-step2-message"><p class="text is--12"><strong class="font-500">groundcover works best on desktop.<br/>We’ve sent you a link on how to deploy<br/>when you’re at your computer.</strong></p></div></div><div class="flex-col is-12gap"><h3 class="title is--24 mobile-24"><span class="font-inter">See the platform in action</span></h3><div id="demo_header" class="flex w-embed w-iframe"><!-- <iframe
+			id='demo-vid-header'
+      width="100%"
+      style='aspect-ratio: 16 / 9;'
+      src="https://www.youtube-nocookie.com/embed/H1itWbtz3lA?si=FrCsCOwjfr1LGz_K&enablejsapi=1"
+      title="Quick demo of groundcover's observability platform"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen></iframe> -->
+
+<!--  -->
+
+<video width="100%" controls playsinline muted>
+  <source src="https://harel.b-cdn.net/groundcover/mobile_demo_popup.mp4" type="video/mp4" />
+  Your browser does not support HTML video.
+</video></div></div><div class="text-center"><div class="w-embed"><div style='height:10px;'></div></div><h3 class="title is--24 mobile-24"><span class="font-inter">Book an on-demand demo with a customer engineer</span></h3></div><div data-name="hubspot-form" class="w-embed w-script"><script charset="utf-8" type="text/javascript" src="//js-eu1.hsforms.net/forms/embed/v2.js"></script>
+<script>
+// second form
+hbspt.forms.create({
+  portalId: '25980569',
+  formId: 'cacdde77-e62d-402e-af69-db7ae5a96973',
+  region: 'eu1',
+  onFormSubmit: function ($form) {
+    document.querySelector('.success-inner-mobile').style.display = 'flex';
+    document.querySelector('.mobile-step2-flex').style.display = 'none';
+
+    // fields
+    const firstname = $form.find('input[name="firstname"]').val();
+    const lastname = $form.find('input[name="lastname"]').val();
+    const email = $form.find('input[name="email"]').val();
+    const phone = $form.find('input[name="phone"]').val();
+    const jobtitle = $form.find('input[name="jobtitle"]').val();
+    const company = $form.find('input[name="company"]').val();
+    const message = $form.find('textarea[name="message"]').val();
+    const page_path_value = window.location.href;
+
+    analytics.identify(email || '', {
+      first_name: firstname || '',
+      last_name: lastname || '',
+      email: email || '',
+      job_title: jobtitle || '',
+      company_name: company || '',
+      phone: phone || '',
+      message: message || '',
+    });
+
+    analytics.track('mobile_start_free_request_demo', {
+      first_name: firstname || '',
+      last_name: lastname || '',
+      email: email || '',
+      job_title: jobtitle || '',
+      company_name: company || '',
+      phone: phone || '',
+      message: message || '',
+      page_path: page_path_value,
+      reporter: 'webflow',
+      event: 'mobile demo form submit',
+      source: `book_a_demo_mobile - ${page_path_value}` || '',
+      userType: 'lead',
+    });
+  },
+});
+
+/* document.addEventListener('DOMContentLoaded', () => {
+  document.querySelector('.mobile-step1').style.display = 'flex';
+  document.querySelector('.mobile-step2').style.display = 'none';
+  document.querySelector('.success-inner-mobile').style.display = 'none';
+}); */
+</script></div><div class="mobile-step2-bottom"><div class="mobile-step2-bottom-item"><h4 class="title is--20"><span class="font-inter is--600">100% visibility all the time.</span></h4><div><p class="text is--14">Cover your entire Kubernetes stack instantly<br/>with no code changes.</p></div></div><div class="mobile-step2-bottom-item"><h4 class="title is--20"><span class="font-inter is--600">Troubleshoot like a pro.</span></h4><div><p class="text is--14">Auto-detect issues across your entire cluster.</p></div></div><div class="mobile-step2-bottom-item"><h4 class="title is--20"><span class="font-inter is--600">Reduce data &amp; growth costs, dramatically.</span></h4><div><p class="text is--14">See it all. Store what matters. Pay Accordingly.</p></div></div></div></div><div class="success-inner-mobile"><img width="64" height="66" alt="" src="/webflow/cdn/67bc7ba788e37ae73f52e45c_Group-1261156925.png" loading="lazy"/><div><h3 class="title is--34 is--35-m">Done! </h3><div class="text is--16">We&#x27;ll get in touch with you shortly</div></div></div></div><div class="modal-mobile-bg"></div></div></div><div fs-modal-element="modal-1" class="modal-warp"><div class="container contact-modal"><button type="button" fs-modal-element="close-1" class="x-icon"><div class="flex w-embed"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1 1L11.5 11.5" stroke="currentColor"/>
+<path d="M11.5 1L1 11.5" stroke="currentColor"/>
+</svg></div></button><div class="modal-contact-left-wrap"><div class="modal-contact-left-top"><div><h2 class="title is--40">Book a demo</h2><p class="text is--18"><strong class="font-500">Meet the groundcover team for a 30 minute live session</strong></p></div><ul role="list" class="modal-contact-left-top-list w-list-unstyled"><li class="li flex-gap-8"><div class="shrink-0"><div class="flex w-embed"><svg style='margin-top: .25rem;' width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.6333 4.21215C13.6333 7.05541 11.2546 9.82835 10 9.82835C8.74537 9.82835 6.36669 7.05541 6.36669 4.21215C6.36669 1.36889 8.26093 0 10 0C11.7391 0 13.6333 1.36889 13.6333 4.21215Z" fill="#137159"/>
+<path d="M16.8104 9.07103C14.5094 10.8438 10.7823 10.776 10 9.82835C9.21775 8.8807 9.97872 5.35513 12.2797 3.58238C14.5807 1.80963 16.8695 2.38691 17.9538 3.70047C19.0381 5.01404 19.1113 7.29829 16.8104 9.07103Z" fill="#137159"/>
+<path d="M14.8591 14.5002C11.9898 13.8675 9.72082 11.0101 10 9.82835C10.2792 8.64665 13.6068 7.02327 16.476 7.65595C19.3453 8.28864 20.3052 10.3774 19.9182 12.0154C19.5312 13.6533 17.7283 15.1329 14.8591 14.5002Z" fill="#137159"/>
+<path d="M9.24879 16.4114C7.97186 13.8497 8.86962 10.3543 10 9.82835C11.1304 9.30244 14.5189 10.8037 15.7958 13.3654C17.0727 15.9271 15.9809 17.9544 14.414 18.6834C12.8472 19.4124 10.5257 18.973 9.24879 16.4114Z" fill="#137159"/>
+<path d="M4.2042 13.3654C5.48114 10.8037 8.86962 9.30244 10 9.82835C11.1304 10.3543 12.0281 13.8497 10.7512 16.4114C9.47427 18.973 7.15283 19.4124 5.58598 18.6834C4.01913 17.9544 2.92726 15.9271 4.2042 13.3654Z" fill="#137159"/>
+<path d="M3.52397 7.65595C6.39322 7.02327 9.72082 8.64665 10 9.82835C10.2792 11.0101 8.0102 13.8675 5.14094 14.5002C2.27168 15.1329 0.468773 13.6534 0.0817927 12.0154C-0.305188 10.3774 0.654707 8.28864 3.52397 7.65595Z" fill="#137159"/>
+<path d="M7.72031 3.58238C10.0213 5.35513 10.7823 8.8807 10 9.82835C9.21775 10.776 5.49061 10.8438 3.18965 9.07103C0.888682 7.29829 0.961922 5.01403 2.04622 3.70047C3.13051 2.38691 5.41935 1.80963 7.72031 3.58238Z" fill="#137159"/>
+<path d="M7 10.1818L8.53024 11.4736C8.88098 11.7697 9.40134 11.7426 9.71948 11.4117L13 8" stroke="white" stroke-linecap="round"/>
+</svg></div></div><div class="text-141418"><p class="text is--14"><span class="block-desktop">Explore how groundcover provides instant, </span>out of the box insights across logs, traces, metrics, and more.</p></div></li><li class="li flex-gap-8"><div class="shrink-0"><div class="flex w-embed"><svg style='margin-top: .25rem;' width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.6333 4.21215C13.6333 7.05541 11.2546 9.82835 10 9.82835C8.74537 9.82835 6.36669 7.05541 6.36669 4.21215C6.36669 1.36889 8.26093 0 10 0C11.7391 0 13.6333 1.36889 13.6333 4.21215Z" fill="#137159"/>
+<path d="M16.8104 9.07103C14.5094 10.8438 10.7823 10.776 10 9.82835C9.21775 8.8807 9.97872 5.35513 12.2797 3.58238C14.5807 1.80963 16.8695 2.38691 17.9538 3.70047C19.0381 5.01404 19.1113 7.29829 16.8104 9.07103Z" fill="#137159"/>
+<path d="M14.8591 14.5002C11.9898 13.8675 9.72082 11.0101 10 9.82835C10.2792 8.64665 13.6068 7.02327 16.476 7.65595C19.3453 8.28864 20.3052 10.3774 19.9182 12.0154C19.5312 13.6533 17.7283 15.1329 14.8591 14.5002Z" fill="#137159"/>
+<path d="M9.24879 16.4114C7.97186 13.8497 8.86962 10.3543 10 9.82835C11.1304 9.30244 14.5189 10.8037 15.7958 13.3654C17.0727 15.9271 15.9809 17.9544 14.414 18.6834C12.8472 19.4124 10.5257 18.973 9.24879 16.4114Z" fill="#137159"/>
+<path d="M4.2042 13.3654C5.48114 10.8037 8.86962 9.30244 10 9.82835C11.1304 10.3543 12.0281 13.8497 10.7512 16.4114C9.47427 18.973 7.15283 19.4124 5.58598 18.6834C4.01913 17.9544 2.92726 15.9271 4.2042 13.3654Z" fill="#137159"/>
+<path d="M3.52397 7.65595C6.39322 7.02327 9.72082 8.64665 10 9.82835C10.2792 11.0101 8.0102 13.8675 5.14094 14.5002C2.27168 15.1329 0.468773 13.6534 0.0817927 12.0154C-0.305188 10.3774 0.654707 8.28864 3.52397 7.65595Z" fill="#137159"/>
+<path d="M7.72031 3.58238C10.0213 5.35513 10.7823 8.8807 10 9.82835C9.21775 10.776 5.49061 10.8438 3.18965 9.07103C0.888682 7.29829 0.961922 5.01403 2.04622 3.70047C3.13051 2.38691 5.41935 1.80963 7.72031 3.58238Z" fill="#137159"/>
+<path d="M7 10.1818L8.53024 11.4736C8.88098 11.7697 9.40134 11.7426 9.71948 11.4117L13 8" stroke="white" stroke-linecap="round"/>
+</svg></div></div><div class="text-141418"><p class="text is--14"><span class="block-desktop">Get a walkthrough of the platform, pricing model, and real </span>world use cases tailored to modern observability challenges.</p></div></li><li class="li flex-gap-8"><div class="shrink-0"><div class="flex w-embed"><svg style='margin-top: .25rem;' width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.6333 4.21215C13.6333 7.05541 11.2546 9.82835 10 9.82835C8.74537 9.82835 6.36669 7.05541 6.36669 4.21215C6.36669 1.36889 8.26093 0 10 0C11.7391 0 13.6333 1.36889 13.6333 4.21215Z" fill="#137159"/>
+<path d="M16.8104 9.07103C14.5094 10.8438 10.7823 10.776 10 9.82835C9.21775 8.8807 9.97872 5.35513 12.2797 3.58238C14.5807 1.80963 16.8695 2.38691 17.9538 3.70047C19.0381 5.01404 19.1113 7.29829 16.8104 9.07103Z" fill="#137159"/>
+<path d="M14.8591 14.5002C11.9898 13.8675 9.72082 11.0101 10 9.82835C10.2792 8.64665 13.6068 7.02327 16.476 7.65595C19.3453 8.28864 20.3052 10.3774 19.9182 12.0154C19.5312 13.6533 17.7283 15.1329 14.8591 14.5002Z" fill="#137159"/>
+<path d="M9.24879 16.4114C7.97186 13.8497 8.86962 10.3543 10 9.82835C11.1304 9.30244 14.5189 10.8037 15.7958 13.3654C17.0727 15.9271 15.9809 17.9544 14.414 18.6834C12.8472 19.4124 10.5257 18.973 9.24879 16.4114Z" fill="#137159"/>
+<path d="M4.2042 13.3654C5.48114 10.8037 8.86962 9.30244 10 9.82835C11.1304 10.3543 12.0281 13.8497 10.7512 16.4114C9.47427 18.973 7.15283 19.4124 5.58598 18.6834C4.01913 17.9544 2.92726 15.9271 4.2042 13.3654Z" fill="#137159"/>
+<path d="M3.52397 7.65595C6.39322 7.02327 9.72082 8.64665 10 9.82835C10.2792 11.0101 8.0102 13.8675 5.14094 14.5002C2.27168 15.1329 0.468773 13.6534 0.0817927 12.0154C-0.305188 10.3774 0.654707 8.28864 3.52397 7.65595Z" fill="#137159"/>
+<path d="M7.72031 3.58238C10.0213 5.35513 10.7823 8.8807 10 9.82835C9.21775 10.776 5.49061 10.8438 3.18965 9.07103C0.888682 7.29829 0.961922 5.01403 2.04622 3.70047C3.13051 2.38691 5.41935 1.80963 7.72031 3.58238Z" fill="#137159"/>
+<path d="M7 10.1818L8.53024 11.4736C8.88098 11.7697 9.40134 11.7426 9.71948 11.4117L13 8" stroke="white" stroke-linecap="round"/>
+</svg></div></div><div class="text-141418"><p class="text is--14"><span class="block-desktop">Ask anything- our team will address your specific stack, </span>scale, and deployment needs.</p></div></li></ul></div><div class="modal-contact-left-bottom"><div class="text is--12"><strong class="font-500">Trusted by industry leaders</strong></div><div class="logos-row is-modal"><div class="logo-row"><figure><img width="110" height="48" alt="" src="/webflow/cdn/68c9bda9ba67ad77f264f62d_4.svg" loading="lazy"/></figure><figure><img width="110" height="48" alt="" src="/webflow/cdn/690b504716ab9724eb0fb3f7_gg.svg" loading="lazy"/></figure><figure><img width="110" height="48" alt="" src="/webflow/cdn/690b50964cca311dae76513a_Frame-1618873187.png" loading="lazy"/></figure><figure><img width="110" height="48" alt="" src="/webflow/cdn/68c9bdaa8e85598c934ea345_8.png" loading="lazy"/></figure><figure><img width="110" height="48" alt="" src="/webflow/cdn/68c9bdab9ab270ca74992d80_9.svg" loading="lazy"/></figure></div><div class="logo-row"><figure><img src="/webflow/cdn/69691171b4899a54efd729aa_Logo-5-2.svg" loading="eager" width="110" height="48" alt=""/></figure><figure><img width="110" height="48" alt="" src="/webflow/cdn/68c9bdaaf623c3e91e12a609_7.png" loading="lazy"/></figure><figure><img width="110" height="48" alt="" src="/webflow/cdn/68c9bda732bf377e7a6ec89f_2.png" loading="lazy"/></figure><figure><img width="110" height="48" alt="" src="/webflow/cdn/68cba10e1b14a6cf552edc60_3.svg" loading="lazy"/></figure></div></div></div></div><div><div class="modal-contact-right-wrap"><div class="modal-contact-right"><div data-name="hubspot-form" class="w-embed w-script"><style>
+#success-header-demo {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  inset: 0;
+  display: none;
+}
+.container.contact-modal::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.container.contact-modal {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+</style>
+
+<script charset="utf-8" type="text/javascript" src="//js-eu1.hsforms.net/forms/embed/v2.js"></script>
+<script>
+hbspt.forms.create({
+  portalId: '25980569',
+  formId: '5e72b787-7791-4ef4-9e5c-d104cb8ff66d',
+  region: 'eu1',
+  onFormSubmit: function ($form) {
+    const firstname = $form.find('input[name="firstname"]').val();
+    const lastname = $form.find('input[name="lastname"]').val();
+    const email = $form.find('input[name="email"]').val();
+    const phone = $form.find('input[name="phone"]').val();
+    const jobtitle = $form.find('input[name="jobtitle"]').val();
+    const company = $form.find('input[name="company"]').val();
+    const message = $form.find('textarea[name="message"]').val();
+    const page_path_value = window.location.href;
+
+    analytics.identify(email || '', {
+      first_name: firstname || '',
+      last_name: lastname || '',
+      company: company || '',
+      email: email || '',
+      job_title: jobtitle || '',
+      phone: phone || '',
+      message: message || '',
+    });
+
+    analytics.track('header_demo_form', {
+      first_name: firstname || '',
+      last_name: lastname || '',
+      company: company || '',
+      email: email || '',
+      job_title: jobtitle || '',
+      phone: phone || '',
+      message: message || '',
+      page_path: page_path_value,
+      reporter: 'webflow',
+      event: 'form submit',
+      source: `header_demo_form - ${page_path_value}` || '',
+      userType: 'lead',
+    });
+
+    document.querySelector('#success-header-demo').style.display = 'flex';
+    const elementsToHideAfterSubmit = document.querySelectorAll(
+      '.modal-contact-right-wrap [data-name="hubspot-form"], .modal-contact-right-wrap .privacy-text'
+    );
+    const modelcontentRight = document.querySelector(
+      '.modal-contact-right-wrap .modal-contact-right'
+    );
+
+    elementsToHideAfterSubmit.forEach(item => (item.style.display = 'none'));
+    modelcontentRight.style.backgroundColor = 'transparent';
+    modelcontentRight.style.boxShadow = 'none';
+  },
+});
+</script></div><p class="privacy-text"><span>By submitting this form </span><span>you agree to our friendly </span><a href="/legal/privacy" target="_blank" class="underline-text"><span>privacy policy</span></a><span>.</span></p><div id="success-header-demo" class="success-inner"><div class="relative z-20"><div class="text-center"><div class="flex-center"><div class="relative"><img src="/webflow/cdn/66f1961347eebe2f89de898c_Group-1261156572.svg" loading="lazy" width="64" height="72" alt=""/><div class="success-day">14</div></div></div><div class="w-embed"><div style='height: 20px;'></div></div><div><div class="title is--34">Done!</div><div class="text is--18">We&#x27;ll get in touch  with you shortly</div></div></div></div></div></div><img src="/webflow/cdn/686fe8eb37fa15828178ec7c_Desktop--1-.svg" loading="lazy" width="637" height="822" alt="" class="img-cover"/></div></div></div><div fs-modal-element="close-1" class="modal_bg"></div></div><footer class="relative w-full footer z-20 pb-0! flex flex-col gap-y-6 bg-[#f9f4f2] text-[#101828] pt-6 md:pt-20 nav:pt-14" data-astro-cid-63k7wqxu="true"><div class="footer-desktop" data-astro-cid-dltcfm3h><div class="container is-footer-top" data-astro-cid-dltcfm3h><div class="footer-top-left2" data-astro-cid-dltcfm3h><a href="/" class="w-inline-block" data-astro-cid-dltcfm3h><img width="206" height="31" alt="groundcover" src="/webflow/images/groundcover_3.svg" loading="lazy" data-astro-cid-dltcfm3h></a><div class="opacity-70" data-astro-cid-dltcfm3h><p class="text is--12" data-astro-cid-dltcfm3h><strong class="font-500" data-astro-cid-dltcfm3h>groundcover is a cloud-native observability platform powered by eBPF that breaks free from the limits of SaaS. Built for modern production environments, it runs entirely in your cloud to deliver full visibility at a fraction of the cost, with no blind spots, no compromises, and no operational overhead.</strong></p></div><div class="footer-middle-right-flex" data-astro-cid-dltcfm3h><a href="https://join.slack.com/t/groundcover-community/shared_invite/zt-3h47w6vj6-9ajuW0ySTaKd_pH5DoTr1w" target="_blank" aria-label="Slack community" class="relative w-inline-block" data-astro-cid-dltcfm3h><img src="/webflow/images/2_14.svg" loading="lazy" width="32" height="32" alt="" data-astro-cid-dltcfm3h></a><a href="https://github.com/groundcover-com" target="_blank" aria-label="GitHub" class="relative w-inline-block" data-astro-cid-dltcfm3h><img src="/webflow/images/1_16.svg" loading="lazy" width="32" height="32" alt="" data-astro-cid-dltcfm3h></a><a href="https://www.youtube.com/@groundcover-com" target="_blank" aria-label="YouTube" class="relative w-inline-block" data-astro-cid-dltcfm3h><img src="/webflow/images/4_9.svg" loading="lazy" width="32" height="32" alt="" data-astro-cid-dltcfm3h></a><a href="https://www.linkedin.com/company/groundcover-com/" target="_blank" aria-label="LinkedIn" class="relative w-inline-block" data-astro-cid-dltcfm3h><img src="/webflow/images/3_10.svg" loading="lazy" width="32" height="32" alt="" data-astro-cid-dltcfm3h></a></div></div><nav class="footer-top-right" aria-label="Footer" data-astro-cid-dltcfm3h><div class="footer-links-wrapper" data-astro-cid-dltcfm3h><div class="footer-upper-title" data-astro-cid-dltcfm3h>Product</div><a href="/product/agent-mode" class="footer-upper-link" data-astro-cid-dltcfm3h>Agent Mode</a><a href="/product/infrastructure-monitoring" class="footer-upper-link" data-astro-cid-dltcfm3h>Infrastructure Monitoring</a><a href="/product/application-performance-monitoring" class="footer-upper-link" data-astro-cid-dltcfm3h>Application Performance Monitoring</a><a href="/product/logs" class="footer-upper-link" data-astro-cid-dltcfm3h>Log Management</a><a href="/product/real-user-monitoring" class="footer-upper-link" data-astro-cid-dltcfm3h>Real User Monitoring</a><a href="/product/migration" class="footer-upper-link" data-astro-cid-dltcfm3h>Migration</a><a href="/product/synthetic-performance-monitoring" class="footer-upper-link" data-astro-cid-dltcfm3h>Synthetic performance monitoring</a><a href="/ebpf-sensor" class="footer-upper-link" data-astro-cid-dltcfm3h>eBPF Sensor</a><a href="/byoc" class="footer-upper-link" data-astro-cid-dltcfm3h>BYOC Architecture</a><a href="/integrations" class="footer-upper-link" data-astro-cid-dltcfm3h>Integrations</a><a href="/ai-observability/mcp-server" class="footer-upper-link" data-astro-cid-dltcfm3h>groundcover MCP</a><a href="/ai-observability" class="footer-upper-link" data-astro-cid-dltcfm3h>AI Observability</a><a href="/product/agent-mode/connectors" class="footer-upper-link" data-astro-cid-dltcfm3h>Connectors</a><a href="/product/dashboards" class="footer-upper-link" data-astro-cid-dltcfm3h>Dashboards</a><a href="/product/monitors" class="footer-upper-link" data-astro-cid-dltcfm3h>Monitors</a><a href="/product/gcql" class="footer-upper-link" data-astro-cid-dltcfm3h>gcQL</a><a href="https://play.groundcover.com/" target="_blank" class="footer-upper-link hide-tablet-mobile" data-astro-cid-dltcfm3h>Launch Playground</a></div><div class="footer-links-wrapper" data-astro-cid-dltcfm3h><div class="footer-upper-title" data-astro-cid-dltcfm3h>Solutions</div><a href="/solutions/aws" class="footer-upper-link" data-astro-cid-dltcfm3h>AWS Monitoring</a><a href="/solutions/google-cloud" class="footer-upper-link" data-astro-cid-dltcfm3h>Google Cloud Monitoring</a><a href="/solutions/azure" class="footer-upper-link" data-astro-cid-dltcfm3h>Azure Monitoring</a><a href="/solutions/kubernetes" class="footer-upper-link" data-astro-cid-dltcfm3h>Kubernetes monitoring</a><a href="/calculator" class="footer-upper-link" data-astro-cid-dltcfm3h>Cost Efficiency</a><a href="/oss-stack-replacement" class="footer-upper-link" data-astro-cid-dltcfm3h>Replace OSS Stack</a><a href="/onprem-and-airgapped" class="footer-upper-link" data-astro-cid-dltcfm3h>On Premise Solutions</a></div><div class="footer-links-wrapper" data-astro-cid-dltcfm3h><div class="footer-upper-title" data-astro-cid-dltcfm3h>Resources</div><a href="/blog" class="footer-upper-link" data-astro-cid-dltcfm3h>Blog</a><a href="/customer-stories" class="footer-upper-link" data-astro-cid-dltcfm3h>Customer Stories</a><a href="/events-webinars" class="footer-upper-link" data-astro-cid-dltcfm3h>Events &amp; Webinars</a><a href="/learn" class="footer-upper-link" data-astro-cid-dltcfm3h>Learn Center</a><a href="/guides" class="footer-upper-link" data-astro-cid-dltcfm3h>Guides</a><a href="/whats-new" class="footer-upper-link" data-astro-cid-dltcfm3h>What&#39;s New</a><a href="/deep-dive/ebpf" class="footer-upper-link" data-astro-cid-dltcfm3h>eBPF</a><a href="/deep-dive/opentelemetry" class="footer-upper-link" data-astro-cid-dltcfm3h>OpenTelemetry</a><a href="/deep-dive/kubernetes-monitoring" class="footer-upper-link" data-astro-cid-dltcfm3h>Kubernetes Monitoring</a><a href="/deep-dive/kubernetes-troubleshooting" class="footer-upper-link" data-astro-cid-dltcfm3h>Kubernetes Troubleshooting</a><a href="/deep-dive/microservices-observability" class="footer-upper-link" data-astro-cid-dltcfm3h>Microservices Observability</a><a href="/observability-tool-comparison" class="footer-upper-link" data-astro-cid-dltcfm3h>Observability Tool Comparison</a><a href="/ai-observability-tool-comparison" class="footer-upper-link" data-astro-cid-dltcfm3h>AI Observability Tool Comparison</a><a href="https://docs.groundcover.com/" target="_blank" class="footer-upper-link" data-astro-cid-dltcfm3h>Documentation</a></div><div class="footer-links-wrapper" data-astro-cid-dltcfm3h><div class="footer-upper-title" data-astro-cid-dltcfm3h>Company</div><a href="/about" class="footer-upper-link" data-astro-cid-dltcfm3h>About Us</a><a href="/brand" class="footer-upper-link" data-astro-cid-dltcfm3h>Brand Guidelines</a><a href="/contact" class="footer-upper-link" data-astro-cid-dltcfm3h>Contact Us</a><a href="/partners" class="footer-upper-link" data-astro-cid-dltcfm3h>Partners</a><a href="/careers" class="footer-upper-link w-inline-block" data-astro-cid-dltcfm3h><div data-astro-cid-dltcfm3h>Careers</div><img src="/webflow/images/Badge.svg" loading="lazy" alt="" data-astro-cid-dltcfm3h></a><a href="/pricing" class="footer-upper-link" data-astro-cid-dltcfm3h>Pricing</a><a href="/news" class="footer-upper-link" data-astro-cid-dltcfm3h>In the News</a></div></nav></div><div class="container is-footer-bottom" data-astro-cid-dltcfm3h><div class="flex-col" data-astro-cid-dltcfm3h><div class="flex justify-between" data-astro-cid-dltcfm3h><div class="footer-upper-tags-flex" data-astro-cid-dltcfm3h><img src="/webflow/images/Frame-1261155099.svg" loading="lazy" width="103" height="29" alt="" data-astro-cid-dltcfm3h></div></div><div class="footer-line" data-astro-cid-dltcfm3h></div><div class="flex-col is-12gap" data-astro-cid-dltcfm3h><div class="footer-bottom-bottom" data-astro-cid-dltcfm3h><div class="footer-text-separating-flex" data-astro-cid-dltcfm3h><a href="/legal/terms" class="footer-middle-address-text" data-astro-cid-dltcfm3h>Terms of Use</a><div class="footer-middle-address-text" data-astro-cid-dltcfm3h>I</div><a href="/legal/privacy" class="footer-middle-address-text" data-astro-cid-dltcfm3h>Privacy Policy</a></div><address class="footer-text-separating-flex" data-astro-cid-dltcfm3h><div class="footer-middle-address-text" data-astro-cid-dltcfm3h>HaMasger 47, Tel Aviv</div><div class="footer-middle-address-text" data-astro-cid-dltcfm3h>I</div><a href="/cdn-cgi/l/email-protection#90d9fef6ffd0f7e2ffe5fef4f3ffe6f5e2bef3fffdafe3e5f2faf5f3e4add7e2ffe5fef4f3ffe6f5e2" class="footer-middle-address-text" data-astro-cid-dltcfm3h><span class="__cf_email__" data-cfemail="eba2858d84ab8c99849e858f88849d8e99c5888486">[email&#160;protected]</span></a></address></div><p class="text is--14" data-astro-cid-dltcfm3h>©<span vdx-date-year data-astro-cid-dltcfm3h>2026</span> groundcover, Inc. All rights reserved</p></div></div></div></div><div class="footer-mobile" data-astro-cid-7unro7w2><div class="container is-footer-top" data-astro-cid-7unro7w2><nav class="flex-col is-12gap" aria-label="Footer" data-astro-cid-7unro7w2><details name="footer-nav" class="footer-drop" data-astro-cid-7unro7w2><summary class="footer-drop-toggle" data-astro-cid-7unro7w2><div data-astro-cid-7unro7w2>Product</div><div class="toggle-icon" data-astro-cid-7unro7w2><svg xmlns="http://www.w3.org/2000/svg" width="12" height="7" viewBox="0 0 12 7" fill="none" aria-hidden="true" data-astro-cid-7unro7w2><path d="M10.5787 1.35205L5.94155 5.474L1.30436 1.35205" stroke="currentColor" stroke-width="1.28816" stroke-linecap="round" data-astro-cid-7unro7w2></path></svg></div></summary><div class="footer-drop-list" data-astro-cid-7unro7w2><div class="footer-links-wrapper" data-astro-cid-7unro7w2><a href="/product/agent-mode" class="footer-upper-link" data-astro-cid-7unro7w2>Agent Mode</a><a href="/product/infrastructure-monitoring" class="footer-upper-link" data-astro-cid-7unro7w2>Infrastructure Monitoring</a><a href="/product/application-performance-monitoring" class="footer-upper-link" data-astro-cid-7unro7w2>Application Performance Monitoring</a><a href="/product/logs" class="footer-upper-link" data-astro-cid-7unro7w2>Log Management</a><a href="/product/real-user-monitoring" class="footer-upper-link" data-astro-cid-7unro7w2>Real User Monitoring</a><a href="/product/migration" class="footer-upper-link" data-astro-cid-7unro7w2>Migration</a><a href="/product/synthetic-performance-monitoring" class="footer-upper-link" data-astro-cid-7unro7w2>Synthetic performance monitoring</a><a href="/ebpf-sensor" class="footer-upper-link" data-astro-cid-7unro7w2>eBPF Sensor</a><a href="/byoc" class="footer-upper-link" data-astro-cid-7unro7w2>BYOC Architecture</a><a href="/integrations" class="footer-upper-link" data-astro-cid-7unro7w2>Integrations</a><a href="/ai-observability/mcp-server" class="footer-upper-link" data-astro-cid-7unro7w2>groundcover MCP</a><a href="/ai-observability" class="footer-upper-link" data-astro-cid-7unro7w2>AI Observability</a><a href="/product/agent-mode/connectors" class="footer-upper-link" data-astro-cid-7unro7w2>Connectors</a><a href="/product/dashboards" class="footer-upper-link" data-astro-cid-7unro7w2>Dashboards</a><a href="/product/monitors" class="footer-upper-link" data-astro-cid-7unro7w2>Monitors</a><a href="/product/gcql" class="footer-upper-link" data-astro-cid-7unro7w2>gcQL</a></div></div></details><details name="footer-nav" class="footer-drop" data-astro-cid-7unro7w2><summary class="footer-drop-toggle" data-astro-cid-7unro7w2><div data-astro-cid-7unro7w2>Solutions</div><div class="toggle-icon" data-astro-cid-7unro7w2><svg xmlns="http://www.w3.org/2000/svg" width="12" height="7" viewBox="0 0 12 7" fill="none" aria-hidden="true" data-astro-cid-7unro7w2><path d="M10.5787 1.35205L5.94155 5.474L1.30436 1.35205" stroke="currentColor" stroke-width="1.28816" stroke-linecap="round" data-astro-cid-7unro7w2></path></svg></div></summary><div class="footer-drop-list" data-astro-cid-7unro7w2><div class="footer-links-wrapper" data-astro-cid-7unro7w2><a href="/solutions/aws" class="footer-upper-link" data-astro-cid-7unro7w2>Amazon Web Services Monitoring</a><a href="/solutions/google-cloud" class="footer-upper-link" data-astro-cid-7unro7w2>Google Cloud Monitoring</a><a href="/solutions/azure" class="footer-upper-link" data-astro-cid-7unro7w2>Azure Monitoring</a><a href="/solutions/kubernetes" class="footer-upper-link" data-astro-cid-7unro7w2>Kubernetes monitoring</a><a href="/calculator" class="footer-upper-link" data-astro-cid-7unro7w2>Cost Efficiency</a><a href="/oss-stack-replacement" class="footer-upper-link" data-astro-cid-7unro7w2>Replace OSS Stack</a><a href="/onprem-and-airgapped" class="footer-upper-link" data-astro-cid-7unro7w2>On Premise Solutions</a></div></div></details><details name="footer-nav" class="footer-drop" data-astro-cid-7unro7w2><summary class="footer-drop-toggle" data-astro-cid-7unro7w2><div data-astro-cid-7unro7w2>Resources</div><div class="toggle-icon" data-astro-cid-7unro7w2><svg xmlns="http://www.w3.org/2000/svg" width="12" height="7" viewBox="0 0 12 7" fill="none" aria-hidden="true" data-astro-cid-7unro7w2><path d="M10.5787 1.35205L5.94155 5.474L1.30436 1.35205" stroke="currentColor" stroke-width="1.28816" stroke-linecap="round" data-astro-cid-7unro7w2></path></svg></div></summary><div class="footer-drop-list" data-astro-cid-7unro7w2><div class="footer-links-wrapper" data-astro-cid-7unro7w2><a href="/blog" class="footer-upper-link" data-astro-cid-7unro7w2>Blog</a><a href="/customer-stories" class="footer-upper-link" data-astro-cid-7unro7w2>Customer Stories</a><a href="/events-webinars" class="footer-upper-link" data-astro-cid-7unro7w2>Events &amp; Webinars</a><a href="/learn" class="footer-upper-link" data-astro-cid-7unro7w2>Learn Center</a><a href="/guides" class="footer-upper-link" data-astro-cid-7unro7w2>Guides</a><a href="/whats-new" class="footer-upper-link" data-astro-cid-7unro7w2>What&#39;s New</a><a href="/ebpf" class="footer-upper-link" data-astro-cid-7unro7w2>eBPF</a><a href="/opentelemetry" class="footer-upper-link" data-astro-cid-7unro7w2>OpenTelemetry</a><a href="/kubernetes-monitoring" class="footer-upper-link" data-astro-cid-7unro7w2>Kubernetes Monitoring</a><a href="/kubernetes-troubleshooting" class="footer-upper-link" data-astro-cid-7unro7w2>Kubernetes Troubleshooting</a><a href="/microservices-observability" class="footer-upper-link" data-astro-cid-7unro7w2>Microservices Observability</a><a href="/observability-tool-comparison" class="footer-upper-link" data-astro-cid-7unro7w2>Observability Tool Comparison</a><a href="/ai-observability-tool-comparison" class="footer-upper-link" data-astro-cid-7unro7w2>AI Observability Tool Comparison</a></div></div></details><details name="footer-nav" class="footer-drop" data-astro-cid-7unro7w2><summary class="footer-drop-toggle" data-astro-cid-7unro7w2><div data-astro-cid-7unro7w2>Company</div><div class="toggle-icon" data-astro-cid-7unro7w2><svg xmlns="http://www.w3.org/2000/svg" width="12" height="7" viewBox="0 0 12 7" fill="none" aria-hidden="true" data-astro-cid-7unro7w2><path d="M10.5787 1.35205L5.94155 5.474L1.30436 1.35205" stroke="currentColor" stroke-width="1.28816" stroke-linecap="round" data-astro-cid-7unro7w2></path></svg></div></summary><div class="footer-drop-list" data-astro-cid-7unro7w2><div class="footer-links-wrapper" data-astro-cid-7unro7w2><a href="/about" class="footer-upper-link" data-astro-cid-7unro7w2>About Us</a><a href="/brand" class="footer-upper-link" data-astro-cid-7unro7w2>Brand Guidelines</a><a href="/contact" class="footer-upper-link" data-astro-cid-7unro7w2>Contact Us</a><a href="/partners" class="footer-upper-link" data-astro-cid-7unro7w2>Partners</a><a href="/careers" class="footer-upper-link w-inline-block" data-astro-cid-7unro7w2><div data-astro-cid-7unro7w2>Careers</div><img src="/webflow/images/Badge.svg" loading="lazy" alt="" data-astro-cid-7unro7w2></a><a href="/news" class="footer-upper-link" data-astro-cid-7unro7w2>In the News</a></div></div></details><a href="/pricing" class="footer-drop-toggle w-inline-block" data-astro-cid-7unro7w2><div data-astro-cid-7unro7w2>Pricing</div></a><a href="https://docs.groundcover.com/" target="_blank" class="footer-drop-toggle w-inline-block" data-astro-cid-7unro7w2><div data-astro-cid-7unro7w2>Docs</div></a></nav><div class="footer-top-left2" data-astro-cid-7unro7w2><div data-astro-cid-7unro7w2><address class="footer-text-separating-flex" data-astro-cid-7unro7w2><div class="footer-middle-address-text" data-astro-cid-7unro7w2>HaMasger 47, Tel Aviv</div><div class="footer-middle-address-text" data-astro-cid-7unro7w2>I</div><a href="/cdn-cgi/l/email-protection#1b52757d745b7c69746e757f78746d7e693578747624686e79717e786f265c69746e757f78746d7e69" class="footer-middle-address-text" data-astro-cid-7unro7w2><span class="__cf_email__" data-cfemail="7e371018113e190c110b101a1d11081b0c501d1113">[email&#160;protected]</span></a></address><div class="footer-line" data-astro-cid-7unro7w2></div></div><div class="opacity-70" data-astro-cid-7unro7w2><p class="text is--12" data-astro-cid-7unro7w2><strong class="font-500" data-astro-cid-7unro7w2>groundcover is a cloud-native observability platform powered by eBPF that breaks free from the limits of SaaS. Built for modern production environments, it runs entirely in your cloud to deliver full visibility at a fraction of the cost, with no blind spots, no compromises, and no operational overhead.</strong></p></div><div class="footer-text-separating-flex" data-astro-cid-7unro7w2><a href="/legal/terms" class="footer-middle-address-text" data-astro-cid-7unro7w2>Terms of Use</a><div class="footer-middle-address-text" data-astro-cid-7unro7w2>I</div><a href="/legal/privacy" class="footer-middle-address-text" data-astro-cid-7unro7w2>Privacy Policy</a></div></div></div><div class="container is-footer-bottom" data-astro-cid-7unro7w2><div class="flex-col" data-astro-cid-7unro7w2><div class="flex justify-between" data-astro-cid-7unro7w2><div class="footer-middle-right-flex" data-astro-cid-7unro7w2><a href="https://join.slack.com/t/groundcover-community/shared_invite/zt-3h47w6vj6-9ajuW0ySTaKd_pH5DoTr1w" target="_blank" aria-label="Slack community" class="relative w-inline-block" data-astro-cid-7unro7w2><img src="/webflow/images/2_14.svg" loading="lazy" width="32" height="32" alt="" data-astro-cid-7unro7w2></a><a href="https://github.com/groundcover-com" target="_blank" aria-label="GitHub" class="relative w-inline-block" data-astro-cid-7unro7w2><img src="/webflow/images/1_16.svg" loading="lazy" width="32" height="32" alt="" data-astro-cid-7unro7w2></a><a href="https://www.youtube.com/@groundcover-com" target="_blank" aria-label="YouTube" class="relative w-inline-block" data-astro-cid-7unro7w2><img src="/webflow/images/4_9.svg" loading="lazy" width="32" height="32" alt="" data-astro-cid-7unro7w2></a><a href="https://www.linkedin.com/company/groundcover-com/" target="_blank" aria-label="LinkedIn" class="relative w-inline-block" data-astro-cid-7unro7w2><img src="/webflow/images/3_10.svg" loading="lazy" width="32" height="32" alt="" data-astro-cid-7unro7w2></a></div><div class="footer-upper-tags-flex" data-astro-cid-7unro7w2><img src="/webflow/images/Frame-1261155099.svg" loading="lazy" width="103" height="29" alt="" data-astro-cid-7unro7w2></div></div><div class="flex-col is-12gap" data-astro-cid-7unro7w2><p class="text is--14" data-astro-cid-7unro7w2>©<span vdx-date-year data-astro-cid-7unro7w2>2026</span> groundcover, Inc. All rights reserved</p></div></div></div></div><div class="relative z-20 container w-[80rem] mx-auto max-w-[92svw] overflow-hidden" data-astro-cid-63k7wqxu="true"><img src="/_astro/groundcover-clip.B5dlzarP_Z1qkSzi.svg?dpl=dpl_27LEM2K1M6eLLGpiBt4WLuCJz6jh" alt="groundcover" data-footer-logo="true" data-astro-cid-63k7wqxu="true" loading="lazy" decoding="async" width="1255" height="137" class="w-full translate-y-12 opacity-0 transition-all duration-1000 ease-out will-change-transform"><div class="pointer-events-none absolute bottom-0 left-0 h-[70%] w-full bg-gradient-to-b from-transparent to-[#f9f4f2]" data-astro-cid-63k7wqxu></div></div></footer><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">var e=document.querySelector(`[data-footer-logo]`);if(e){let t=new IntersectionObserver(([n])=>{n.isIntersecting&&(e.classList.remove(`opacity-0`,`translate-y-12`),e.classList.add(`opacity-100`,`translate-y-0`),t.unobserve(n.target))},{threshold:.1,rootMargin:`0px 0px -40px 0px`});t.observe(e)}</script></div><div class="hide">
+        <div class="w-embed">
+          <style>
+  .button {
+    &:hover {
+      & .button-round-bg {
+        transform: translateY(-68%);
+      }
+    }
+  }
+  .navbar-navigation-inner-left {
+    &:hover {
+      & .nav-item {
+        opacity: 0.5;
+        &:hover {
+          opacity: 1;
+        }
+      }
+    }
+  }
+  .new-drop-toggle {
+    & .flex {
+      transition: transform 0.2s ease-in-out;
+    }
+    &.w--open {
+      & .flex {
+        transform: rotate(180deg);
+      }
+    }
+  }
+  .drop-link {
+    &:hover {
+      & .drop-link-arrow {
+        opacity: 1;
+        transform: translate(0);
+      }
+    }
+  }
+  .new-navbar {
+    &.active {
+      & .nav-bg {
+        background-color: #f9f8f6cc;
+        border-color: #fff4d990;
+      }
+    }
+  }
+  @media only screen and (max-width: 991px) {
+    .new-drop-toggle {
+      &.w--open {
+        background-color: #f8f4f2;
+        & .mobile-hr {
+          opacity: 0;
+        }
+      }
+    }
+    .nav-item {
+      &.w--nav-dropdown-open {
+        margin-top: -1px;
+      }
+    }
+  }
+  .drop-menu-bottom-link,
+  .play-lottie-on-hover {
+    & .drop-link-arrow {
+      transition: transform 0.2s ease-in-out;
+    }
+    &:hover {
+      & .drop-link-arrow {
+        transform: translateX(0.25rem);
+        opacity: 1;
+      }
+    }
+  }
+  .drop-col-link {
+    opacity: 1 !important;
+    & .flex {
+      & img {
+        transition: transform 0.2s ease-in-out;
+      }
+    }
+    &:hover {
+      & .drop-col-link-figure {
+        box-shadow: none;
+      }
+      & .flex {
+        & img {
+          transform: translateX(0.25rem);
+        }
+      }
+    }
+  }
+  .relative:has(.drop-menu-bottom-link.is-top:hover) .drop-link-arrow {
+    transform: translateX(0.25rem);
+    opacity: 1;
+  }
+  .drop-link {
+    & .drop-link-dot {
+      opacity: 0;
+      transform: scale(0);
+    }
+    &:hover {
+      & .drop-link-dot {
+        opacity: 1;
+        transform: scale(1);
+        background-color: var(--fecc2f);
+      }
+      & .drop-link-dot-text {
+        transform: translate(0);
+      }
+    }
+  }
+</style>
+        </div>
+        <div class="w-embed w-script">
+          <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const header = document.querySelector('.new-navbar');
+  if (!header) return;
+  let lastScrollY = window.scrollY;
+  window.addEventListener('scroll', () => {
+    const currentScrollY = window.scrollY;
+    // Always show header when near the top
+    if (currentScrollY <= 50) {
+      header.style.transform = 'translateY(0)';
+    } else if (currentScrollY > lastScrollY) {
+      header.style.transform = 'translateY(-100%)';
+    } else {
+      header.style.transform = 'translateY(0)';
+    }
+    if (currentScrollY <= 10) {
+      header.classList.remove('active');
+    } else {
+      header.classList.add('active');
+    }
+    lastScrollY = currentScrollY;
+  });
+});
+//
+document.addEventListener('DOMContentLoaded', function () {
+  const tabletSize = 991;
+  if (window.innerWidth > tabletSize) {
+    const dropdowns = document.querySelectorAll('.nav-item.w-dropdown');
+    const pageOverlay = document.querySelector('.nav-body-cover');
+    const body = document.querySelector('body');
+    function dropOpen(dropdown) {
+      // console.log('Dropdown OPENED:', dropdown);
+      anyDropdownOpen = true;
+      // body.style.overflow = 'hidden';
+      pageOverlay.style.opacity = 1;
+    }
+    function dropClose(dropdown) {
+      // console.log('Dropdown CLOSED:', dropdown);
+      // Small delay to ensure DOM has updated
+      setTimeout(() => {
+        // Check if any dropdown is still open
+        const stillOpenDropdown = Array.from(dropdowns).find(d => {
+          const list = d.querySelector('.w-dropdown-list');
+          const toggle = d.querySelector('.w-dropdown-toggle');
+          return (
+            list &&
+            toggle &&
+            (window.getComputedStyle(list).display !== 'none' ||
+              toggle.getAttribute('aria-expanded') === 'true')
+          );
+        });
+        if (!stillOpenDropdown) {
+          anyDropdownOpen = false;
+          body.style.overflow = 'auto';
+          pageOverlay.style.opacity = 0;
+        }
+      }, 10);
+    }
+    dropdowns.forEach(dropdown => {
+      const dropdownToggle = dropdown.querySelector('.w-dropdown-toggle');
+      const dropdownList = dropdown.querySelector('.w-dropdown-list');
+      if (!dropdownToggle || !dropdownList) {
+        console.warn(
+          'Webflow dropdown structure not found for an element with .w-dropdown class.',
+          dropdown
+        );
+        return;
+      }
+      let isOpen = false;
+      function checkDropdownState() {
+        const currentDisplay = window.getComputedStyle(dropdownList).display;
+        const ariaExpanded = dropdownToggle.getAttribute('aria-expanded');
+        const opacity = window.getComputedStyle(dropdownList).opacity;
+        const visibility = window.getComputedStyle(dropdownList).visibility;
+        // More comprehensive check for dropdown state
+        const shouldBeOpen =
+          (currentDisplay !== 'none' &&
+            opacity !== '0' &&
+            visibility !== 'hidden') ||
+          ariaExpanded === 'true';
+        // console.log('Dropdown state check:', {
+        //   display: currentDisplay,
+        //   opacity: opacity,
+        //   visibility: visibility,
+        //   ariaExpanded: ariaExpanded,
+        //   shouldBeOpen: shouldBeOpen,
+        //   isOpen: isOpen
+        // });
+        if (shouldBeOpen && !isOpen) {
+          isOpen = true;
+          dropOpen(dropdown);
+        } else if (!shouldBeOpen && isOpen) {
+          isOpen = false;
+          dropClose(dropdown);
+        }
+      }
+      // Observer for style changes (display, opacity, visibility)
+      const listObserver = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+          if (
+            mutation.type === 'attributes' &&
+            mutation.attributeName === 'style'
+          ) {
+            checkDropdownState();
+          }
+        });
+      });
+      listObserver.observe(dropdownList, {
+        attributes: true,
+        attributeFilter: ['style'],
+      });
+      // Observer for class changes (Webflow might use classes)
+      const classObserver = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+          if (
+            mutation.type === 'attributes' &&
+            mutation.attributeName === 'class'
+          ) {
+            // console.log('Class changed on dropdown list:', dropdownList.className);
+            checkDropdownState();
+          }
+        });
+      });
+      classObserver.observe(dropdownList, {
+        attributes: true,
+        attributeFilter: ['class'],
+      });
+      // Observer for aria-expanded changes
+      const toggleObserver = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+          if (
+            mutation.type === 'attributes' &&
+            mutation.attributeName === 'aria-expanded'
+          ) {
+            checkDropdownState();
+          }
+        });
+      });
+      toggleObserver.observe(dropdownToggle, {
+        attributes: true,
+        attributeFilter: ['aria-expanded'],
+      });
+      // Additional observer for toggle class changes
+      const toggleClassObserver = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+          if (
+            mutation.type === 'attributes' &&
+            mutation.attributeName === 'class'
+          ) {
+            // console.log('Class changed on dropdown toggle:', dropdownToggle.className);
+            checkDropdownState();
+          }
+        });
+      });
+      toggleClassObserver.observe(dropdownToggle, {
+        attributes: true,
+        attributeFilter: ['class'],
+      });
+    });
+  }
+});
+</script>
+          <!--  fancybox  -->
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css">
+          <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+          <script>
+  Fancybox.bind('[data-fancybox]', {
+    Html : {
+      vimeo: {
+        color: 'ff0000'
+      }
+    }
+  });
+</script>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="/webflow/js/jquery.min.js" type="text/javascript" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+  <script src="/webflow/js/groundcover.js" type="text/javascript"></script>
+  <script src="/webflow/js/gsap.min.js" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/visualdx@1/dist/vdx.min.js?v1.1.9"></script>
+  <script type="module">
+  const style = document.createElement('style');
+  style.innerHTML = '#CybotCookiebotDialog { display: flex; }';
+  document.head.appendChild(style);
+  window.addEventListener('load', function () {
+    setTimeout(function () {
+      style.innerHTML = '#CybotCookiebotDialog { display: block !important; }';
+    }, 500);
+  });
+</script>
+  <style>
+  #CybotCookiebotDialog {
+    --0a3c2f: #0a3c2f;
+    --101828: #101828;
+    --font-title: Degulardisplay_600, Arial, sans-serif;
+    z-index: 2147483647 !important;
+    & * {
+      line-height: 1.375 !important;
+    }
+    & #CybotCookiebotDialogHeader {
+      display: none;
+    }
+    & .CybotCookiebotDialogBodyContentHeading {
+      font-size: 1.5rem !important;
+      font-family: var(--font-title);
+    }
+    #CybotCookiebotDialogFooter #CybotCookiebotDialogBodyButtonAccept,
+    #CybotCookiebotDialogFooter #CybotCookiebotDialogBodyLevelButtonAccept,
+    #CybotCookiebotDialogFooter #CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll,
+    #CybotCookiebotDialogFooter #CybotCookiebotDialogBodyLevelButtonCustomize,
+    #CybotCookiebotDialogFooter #CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection {
+      background-color: var(--101828);
+      border-color: var(--101828);
+    }
+  }
+  @media (max-width: 480px) {
+    #CybotCookiebotDialog {
+      top: auto !important;
+      transform: translate(-50%, 0%) !important;
+      bottom: 1% !important;
+      position: fixed !important;
+      overflow-y: auto !important;
+      & .CybotCookiebotDialogBodyContentHeading {
+        font-size: 1.125rem !important;
+      }
+      & #CybotCookiebotDialogBodyContentText {
+        font-size: 0.75rem !important;
+      }
+      &.CybotEdge #CybotCookiebotDialogBodyEdgeMoreDetails {
+        margin: 0.5em 2em 0.5em 0 !important;
+      }
+      & #CybotCookiebotDialogBodyButtonsWrapper {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+        & #CybotCookiebotDialogBodyLevelButtonCustomize {
+          margin-top: 0;
+        }
+      }
+    }
+    #CybotCookiebotDialog {
+      opacity: 0.98;
+    }
+    #CybotCookiebotDialogBody .CybotCookiebotScrollContainer {
+      max-height: 7em !important;
+    }
+    #CybotCookiebotDialogFooter .CybotCookiebotDialogBodyButton {
+      padding: 0.5em;
+      padding: 0.5em !important;
+    }
+    #CybotCookiebotDialogHeader {
+      display: none !important;
+    }
+  }
+  #warmly-widget {
+    z-index: 2147483646 !important;
+  }
+  @media screen and (min-width: 1280px) {
+    #CybotCookiebotDialog {
+      max-height: 80dvh !important;
+      overflow: auto !important;
+    }
+  }
+</style>
+  <script type="module">
+  // Run after the page is fully loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    // Select all links that contain the domain (safer than 'starts with')
+    const appLinks = document.querySelectorAll('a[href*="app.groundcover.com"]');
+    appLinks.forEach((link) => {
+      try {
+        // Use the URL API to handle the logic
+        const url = new URL(link.href);
+        // Add the parameter without losing the #register part
+        url.searchParams.set('console', 'true');
+        // Update the link
+        link.href = url.toString();
+        // console.log("Updated link to:", link.href); // Debugging line
+      } catch (e) {
+        // Ignore invalid URLs
+      }
+    });
+  });
+</script>
+  <!--  <script id="warmly-script-loader" src="https://opps-widget.getwarmly.com/warmly.js?clientId=172eb8aaf4af04e7d4c0f89b5172ead8" defer></script>  -->
+  <script type="module">
+  window.addEventListener('DOMContentLoaded', () => {
+    const blockedPaths = ['/writer', '/tag', '/legal', '/careers', '/guides-category', '/about', '/brand', '/event', '/events-and-webinars', '/news'];
+    // Normalize: strip trailing slash, lowercase
+    const path = (window.location.pathname.replace(/\/+$/, '') || '/').toLowerCase();
+    const isBlocked = blockedPaths.some((blocked) => path === blocked || path.startsWith(blocked + '/'));
+    if (isBlocked) return;
+    setTimeout(() => {
+      const script = document.createElement('script');
+      script.src = 'https://opps-widget.getwarmly.com/warmly.js?clientId=172eb8aaf4af04e7d4c0f89b5172ead8';
+      script.async = true;
+      script.id = 'warmly-script-loader';
+      document.body.appendChild(script);
+    }, 5000);
+  });
+</script>
+  <script type="text/javascript">
+  (function (c, l, a, r, i, t, y) {
+    c[a] =
+      c[a] ||
+      function () {
+        (c[a].q = c[a].q || []).push(arguments);
+      };
+    t = l.createElement(r);
+    t.async = 1;
+    t.src = 'https://www.clarity.ms/tag/' + i;
+    y = l.getElementsByTagName(r)[0];
+    y.parentNode.insertBefore(t, y);
+  })(window, document, 'clarity', 'script', 's6qiv1yi39');
+</script>
+  <script>
+  let player; // general site
+  let player2; // /byoc-demo
+  // /byoc-demo
+  const vidTriggers2 = document.querySelectorAll('.video-wrapper');
+  const modalCloses2 = document.querySelectorAll('.modal-close');
+  const vidModal2 = document.querySelector('#vid-modal');
+  // general site
+  const modalCloses = document.querySelectorAll('.modal-warp.is-mobile .close-modal');
+  const vidModal = document.querySelector('#vid-modal');
+  function onYouTubePlayerAPIReady() {
+    if (window.location.pathname.startsWith('/byoc-demo')) {
+      // /byoc-demo
+      player2 = new YT.Player('demo-vid');
+    }
+    // general site
+    player = new YT.Player('demo-vid-header');
+  }
+  // /byoc-demo
+  vidTriggers2.forEach(function (link) {
+    link.addEventListener('click', () => {
+      vidModal2.style.display = 'flex';
+      player2.playVideo();
+    });
+  });
+  modalCloses2.forEach(function (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      vidModal2.style.display = 'none';
+      player2.pauseVideo();
+    });
+  });
+  // general site
+  modalCloses.forEach(function (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      player.pauseVideo();
+    });
+  });
+</script>
+  <!--  <script src="https://www.youtube.com/iframe_api"></script>  -->
+  <script>
+  // <meta property="og:url" content="page url" />
+  const metaTag = document.createElement('meta');
+  metaTag.setAttribute('property', 'og:url');
+  metaTag.setAttribute('content', window.location.href);
+  document.head.appendChild(metaTag);
+</script>
+  <script type="module">
+  document.addEventListener('DOMContentLoaded', () => {
+    const pagePathInputs = document.querySelectorAll('[name="page_path"]');
+    pagePathInputs.forEach((input) => (input.value = window.location.href));
+  });
+</script>
+  <!--  segment  -->
+  <script>
+  !(function () {
+    var analytics = (window.analytics = window.analytics || []);
+    if (!analytics.initialize)
+      if (analytics.invoked) window.console && console.error && console.error('Segment snippet included twice.');
+      else {
+        analytics.invoked = !0;
+        analytics.methods = ['trackSubmit', 'trackClick', 'trackLink', 'trackForm', 'identify', 'reset', 'group', 'track', 'ready', 'alias', 'debug', 'once', 'off', 'on', 'addSourceMiddleware', 'addIntegrationMiddleware', 'setAnonymousId', 'addDestinationMiddleware'];
+        analytics.factory = function (e) {
+          return function () {
+            if (window.analytics.initialized) return window.analytics[e].apply(window.analytics, arguments);
+            var i = Array.prototype.slice.call(arguments);
+            i.unshift(e);
+            analytics.push(i);
+            return analytics;
+          };
+        };
+        for (var i = 0; i < analytics.methods.length; i++) {
+          var key = analytics.methods[i];
+          analytics[key] = analytics.factory(key);
+        }
+        analytics.load = function (key, i) {
+          var t = document.createElement('script');
+          t.type = 'text/javascript';
+          t.async = !0;
+          t.src = 'https://cdn.segment.com/analytics.js/v1/' + key + '/analytics.min.js';
+          var n = document.getElementsByTagName('script')[0];
+          n.parentNode.insertBefore(t, n);
+          analytics._loadOptions = i;
+        };
+        analytics._writeKey = 'Q7VrI9eK3gohMPQODQ3NHS041syl0YB4';
+        analytics.SNIPPET_VERSION = '4.16.1';
+        analytics.load('Q7VrI9eK3gohMPQODQ3NHS041syl0YB4');
+      }
+  })();
+</script>
+  <script>
+  const banner_wrapper = document.querySelector('.banner-wrapper' || null);
+  const menu_button = document.querySelector('.menu-button');
+  if (menu_button) {
+    menu_button.addEventListener('click', () => {
+      if (banner_wrapper && banner_wrapper.style.display === 'none') {
+        banner_wrapper.style.display = 'flex';
+      } else {
+        banner_wrapper.style.display = 'none';
+      }
+    });
+  }
+</script>
+<script>
+  function ready(callback) {
+    if (document.readyState != 'loading') callback();
+    else if (document.addEventListener) document.addEventListener('DOMContentLoaded', callback);
+    else
+      document.attachEvent('onreadystatechange', function () {
+        if (document.readyState == 'complete') callback();
+      });
+  }
+  function openAllExternalsInTabs() {
+    var thisDomain = location.hostname;
+    var externalDomains = 'a:not([href*="' + thisDomain + '"]):not([href^="/"])';
+    var allExternalLinks = document.querySelectorAll(externalDomains);
+    for (var i in allExternalLinks) {
+      allExternalLinks[i].target = '_blank';
+    }
+  }
+  function addNoReferrer() {
+    var selector = '[target="_blank"]';
+    var externalLinks = document.querySelectorAll(selector);
+    for (var i in externalLinks) {
+      externalLinks[i].rel = 'noreferrer';
+    }
+  }
+</script>
+  <script data-cookieconsent="ignore">
+  (function () {
+    var started = false;
+    function init() {
+      if (started) return;
+      started = true;
+      import('https://cdn.jsdelivr.net/npm/@groundcover/browser@1.0.9/+esm')
+        .then(function (m) {
+          m.default.init({
+            apiKey: 'gcik_AEBAAAER_Y6CE2GUP_ISQYCCVS_ZDF2NDSC',
+            dsn: 'https://melody.platform.grcv.io',
+            cluster: 'karma',
+            appId: 'groundcover.com',
+            environment: 'production',
+          });
+          // Start replay only after consent. This line runs after consent.
+          m.default.startReplayRecording();
+        })
+        .catch(function (e) {
+          console.warn('groundcover RUM failed to load', e);
+        });
+    }
+    function afterActivation() {
+      // Do not report prerendered pages that the user never opens.
+      if (document.prerendering) {
+        document.addEventListener('prerenderingchange', init, { once: true });
+      } else {
+        init();
+      }
+    }
+    function check() {
+      var c = window.Cookiebot && window.Cookiebot.consent;
+      if (c && c.statistics) afterActivation();
+    }
+    window.addEventListener('CookiebotOnConsentReady', check);
+    window.addEventListener('CookiebotOnAccept', check);
+    // Cover the case of a stored consent that Cookiebot applies before this code runs.
+    check();
+  })();
+</script><!--  table style - start  -->
+  <!--  https://cms-html-tables.webflow.io/  -->
+  <!--  https://www.tablesgenerator.com/markdown_tables  -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  let converter = new showdown.Converter({
+    tables: true,
+    noHeaderId: true,
+    headerLevelStart: 2,
+    literalMidWordUnderscores: true
+  });
+  let markdowns = document.querySelectorAll('markdown');
+  markdowns.forEach((el) => {
+    el.outerHTML = converter.makeHtml(el.innerHTML);
+  });
+});
+</script>
+  <!--  table style - end  -->
+  <!--  tippy  -->
+  <!-- <script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://unpkg.com/tippy.js@6"></script>
+<script>
+  tippy('[share-btn="linkedin"]', {
+    content: '<div style="font-size: 12px">Share on Linkedin</div>',                                   
+  	allowHTML: true,
+  	hideOnClick: 'toggle',
+    interactive: true,
+  });
+  tippy('[share-btn="github"]', {
+    content: '<div style="font-size: 12px">Share on Github</div>',                                   
+  	allowHTML: true,
+  	hideOnClick: 'toggle',
+    interactive: true,
+  });
+  tippy('[share-btn="slack"]', {
+    content: '<div style="font-size: 12px">Share on Slack</div>',                                   
+  	allowHTML: true,
+  	hideOnClick: 'toggle',
+    interactive: true,
+  });
+    tippy('[share-btn="discord"]', {
+    content: '<div style="font-size: 12px">Share on Discord</div>',                                   
+  	allowHTML: true,
+  	hideOnClick: 'toggle',
+    interactive: true,
+  });
+  tippy('[share-btn="Twitter"]', {
+    content: '<div style="font-size: 12px">Share on Twitter</div>',                                   
+  	allowHTML: true,
+  	hideOnClick: 'toggle',
+    interactive: true,
+  });
+</script> -->
+  <script>
+// Get all the headers (h2, h3, h4, h5, h6) within the rich text element
+const headers = document.querySelectorAll('.blog-rich-text h2');
+// Get the .blog-track element
+const blogTrack = document.querySelector('.academy-toc-wrap');
+// Check if there are no headers
+if (headers.length === 0) {
+  // Hide the .blog-track element
+  blogTrack.style.display = 'none';
+}
+</script>
+  <!-- 
+<script>
+/* Subscribe bottom segment code */
+const subscribe_bottom = document.querySelector(
+  '[data-name="subscribe_bottom"]'
+);
+const email_subscribe_bottom = document.querySelector(
+  "#email_subscribe_bottom"
+);
+subscribe_bottom.addEventListener("submit", (event) => {
+  event.preventDefault();
+  analytics.identify(email_subscribe_bottom.value || "", {
+    email: email_subscribe_bottom.value || ""
+  });
+  analytics.track("subscribe_bottom", {
+    userId: email_subscribe_bottom.value || "",
+    page_path: window.location.href,
+    reporter: "webflow",
+    source: "subscribe_bottom",
+    userType: "lead"
+  });
+});
+/* END of Subscribe bottom segment code */
+/* Subscribe left segment code */
+const subscribe_left = document.querySelector('[data-name="subscribe_left"]');
+const email_subscribe_left = document.querySelector("#email_subscribe_left");
+subscribe_left.addEventListener("submit", (event) => {
+  event.preventDefault();
+  analytics.identify(email_subscribe_left.value || "", {
+    email: email_subscribe_left.value || ""
+  });
+  analytics.track("subscribe_left", {
+    userId: email_subscribe_left.value || "",
+    page_path: window.location.href,
+    reporter: "webflow",
+    source: "subscribe_left",
+    userType: "lead"
+  });
+});
+/* END of Subscribe left segment code */
+</script> -->
+<script async="" src="https://cdn.jsdelivr.net/npm/@finsweet/attributes-codehighlight@1/codehighlight.js"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/@finsweet/attributes-toc@1/toc.js"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/@finsweet/attributes-socialshare@1/socialshare.js"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/@finsweet/attributes-copyclip@1/copyclip.js"></script><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"ef0ce12b28b842ea926932b14ec317fd","spa":2}' crossorigin="anonymous"></script>
+</body></html>

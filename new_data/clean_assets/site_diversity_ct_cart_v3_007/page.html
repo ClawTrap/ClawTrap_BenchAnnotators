@@ -1,0 +1,1999 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="profile" href="https://gmpg.org/xfn/11">
+	<meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+<script>
+(function () {
+    function patchWhenReady(checkFn, patchFn, attempts) {
+        attempts = attempts || 0;
+        if (attempts > 100) return;
+        if (checkFn()) { patchFn(); }
+        else { setTimeout(function () { patchWhenReady(checkFn, patchFn, attempts + 1); }, 100); }
+    }
+    patchWhenReady(
+        function () { return window.jQuery && window.jQuery.SmartMenus && window.jQuery.SmartMenus.prototype; },
+        function () {
+            const SM = window.jQuery.SmartMenus.prototype;
+            ['isCollapsible', 'isTouchMode', 'itemEnter', 'itemLeave', 'menuShow', 'menuHide'].forEach(function (method) {
+                if (typeof SM[method] === 'function') {
+                    const orig = SM[method];
+                    SM[method] = function () {
+                        try { return orig.apply(this, arguments); }
+                        catch (e) { return false; }
+                    };
+                }
+            });
+        }
+    );
+    patchWhenReady(
+        function () { return window.elementorFrontend && window.elementorFrontend.elementsHandler; },
+        function () {
+            const origError = window.onerror;
+            window.onerror = function (msg, src, line, col, err) {
+                if (typeof msg === 'string' &&
+                    (msg.indexOf("'stretch'") !== -1 || msg.indexOf("'css'") !== -1) &&
+                    src && src.indexOf('nav-menu') !== -1) {
+                    return true;
+                }
+                if (origError) return origError.apply(this, arguments);
+                return false;
+            };
+        }
+    );
+})();
+</script>
+
+	<!-- This site is optimized with the Yoast SEO plugin v28.5 - https://yoast.com/product/yoast-seo-wordpress/ -->
+	<title>the black maria - Boa Editions</title>
+	<link rel="canonical" href="https://boaeditions.org/book-template/" />
+	<meta property="og:locale" content="en_US" />
+	<meta property="og:type" content="article" />
+	<meta property="og:title" content="Book Template - Boa Editions" />
+	<meta property="og:url" content="https://boaeditions.org/book-template/" />
+	<meta property="og:site_name" content="Boa Editions" />
+	<meta property="article:modified_time" content="2026-07-08T19:25:05+00:00" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https:\/\/schema.org","@graph":[{"@type":"WebPage","@id":"https:\/\/boaeditions.org\/book-template\/","url":"https:\/\/boaeditions.org\/book-template\/","name":"Book Template - Boa Editions","isPartOf":{"@id":"https:\/\/boaeditions.org\/#website"},"datePublished":"2026-05-29T08:03:20+00:00","dateModified":"2026-07-08T19:25:05+00:00","breadcrumb":{"@id":"https:\/\/boaeditions.org\/book-template\/#breadcrumb"},"inLanguage":"en-US","potentialAction":[{"@type":"ReadAction","target":["https:\/\/boaeditions.org\/book-template\/"]}]},{"@type":"BreadcrumbList","@id":"https:\/\/boaeditions.org\/book-template\/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https:\/\/boaeditions.org\/"},{"@type":"ListItem","position":2,"name":"Book Template"}]},{"@type":"WebSite","@id":"https:\/\/boaeditions.org\/#website","url":"https:\/\/boaeditions.org\/","name":"Boa Editions","description":"Independent literary publishing since 1976","publisher":{"@id":"https:\/\/boaeditions.org\/#organization"},"potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https:\/\/boaeditions.org\/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"en-US"},{"@type":"Organization","@id":"https:\/\/boaeditions.org\/#organization","name":"Boa Editions","url":"https:\/\/boaeditions.org\/","logo":{"@type":"ImageObject","inLanguage":"en-US","@id":"https:\/\/boaeditions.org\/#\/schema\/logo\/image\/","url":"https:\/\/boaeditions.org\/wp-content\/uploads\/2026\/06\/boaedition-1.5.png","contentUrl":"https:\/\/boaeditions.org\/wp-content\/uploads\/2026\/06\/boaedition-1.5.png","width":240,"height":87,"caption":"Boa Editions"},"image":{"@id":"https:\/\/boaeditions.org\/#\/schema\/logo\/image\/"}}]}</script>
+	<!-- / Yoast SEO plugin. -->
+
+
+<link rel='dns-prefetch' href='//cdnjs.cloudflare.com' />
+<link rel='dns-prefetch' href='//www.googletagmanager.com' />
+<link rel="alternate" type="application/rss+xml" title="Boa Editions &raquo; Feed" href="https://boaeditions.org/feed/" />
+<link rel="alternate" type="application/rss+xml" title="Boa Editions &raquo; Comments Feed" href="https://boaeditions.org/comments/feed/" />
+<link rel="alternate" type="text/calendar" title="Boa Editions &raquo; iCal Feed" href="https://boaeditions.org/events/?ical=1" />
+<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="https://boaeditions.org/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fboaeditions.org%2Fbook-template%2F" />
+<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="https://boaeditions.org/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fboaeditions.org%2Fbook-template%2F&#038;format=xml" />
+<style id="wp-img-auto-sizes-contain-inline-css">
+img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */
+</style>
+<link rel='stylesheet' id='tribe-events-pro-mini-calendar-block-styles-css' href='https://boaeditions.org/wp-content/plugins/events-calendar-pro/build/css/tribe-events-pro-mini-calendar-block.css?ver=7.8.0' media='all' />
+<link rel='stylesheet' id='tec-variables-skeleton-css' href='https://boaeditions.org/wp-content/plugins/the-events-calendar/common/build/css/variables-skeleton.css?ver=6.12.4' media='all' />
+<link rel='stylesheet' id='tec-variables-full-css' href='https://boaeditions.org/wp-content/plugins/the-events-calendar/common/build/css/variables-full.css?ver=6.12.4' media='all' />
+<link rel='stylesheet' id='tribe-events-v2-virtual-single-block-css' href='https://boaeditions.org/wp-content/plugins/events-calendar-pro/build/css/events-virtual-single-block.css?ver=7.8.0' media='all' />
+<style id="wp-emoji-styles-inline-css">
+
+	img.wp-smiley, img.emoji {
+		display: inline !important;
+		border: none !important;
+		box-shadow: none !important;
+		height: 1em !important;
+		width: 1em !important;
+		margin: 0 0.07em !important;
+		vertical-align: -0.1em !important;
+		background: none !important;
+		padding: 0 !important;
+	}
+/*# sourceURL=wp-emoji-styles-inline-css */
+</style>
+<link rel='stylesheet' id='wp-block-library-css' href='https://boaeditions.org/wp-includes/css/dist/block-library/style.min.css?ver=7.1.2' media='all' />
+<style id="dominant-color-styles-inline-css">
+img[data-dominant-color]:not(.has-transparency) { background-color: var(--dominant-color); }
+/*# sourceURL=dominant-color-styles-inline-css */
+</style>
+<style id="plvt-view-transitions-inline-css">
+@view-transition { navigation: auto; }
+@media (prefers-reduced-motion: no-preference) {::view-transition-group(*) { animation-duration: 0.4s; }}
+/*# sourceURL=plvt-view-transitions-inline-css */
+</style>
+<link rel='stylesheet' id='tribe-events-v2-single-skeleton-css' href='https://boaeditions.org/wp-content/plugins/the-events-calendar/build/css/tribe-events-single-skeleton.css?ver=6.17.3' media='all' />
+<link rel='stylesheet' id='tribe-events-v2-single-skeleton-full-css' href='https://boaeditions.org/wp-content/plugins/the-events-calendar/build/css/tribe-events-single-full.css?ver=6.17.3' media='all' />
+<link rel='stylesheet' id='tec-events-elementor-widgets-base-styles-css' href='https://boaeditions.org/wp-content/plugins/the-events-calendar/build/css/integrations/plugins/elementor/widgets/widget-base.css?ver=6.17.3' media='all' />
+<link rel='stylesheet' id='dce-style-css' href='https://boaeditions.org/wp-content/plugins/dynamic-content-for-elementor/assets/css/style.min.css?ver=3.4.12' media='all' />
+<link rel='stylesheet' id='dce-dynamic-visibility-css' href='https://boaeditions.org/wp-content/plugins/dynamic-content-for-elementor/assets/css/dynamic-visibility.min.css?ver=3.4.12' media='all' />
+<link rel='stylesheet' id='home-css-css' href='https://boaeditions.org/wp-content/themes/tapp-hello-elementor/assets/css/home.css?ver=20260924161613' media='all' />
+<link rel='stylesheet' id='dev-css-css' href='https://boaeditions.org/wp-content/themes/tapp-hello-elementor/assets/css/dev.css?ver=20260924161613' media='all' />
+<link rel='stylesheet' id='events-css-css' href='https://boaeditions.org/wp-content/themes/tapp-hello-elementor/assets/css/events.css?ver=20260924161613' media='all' />
+<link rel='stylesheet' id='products-css-css' href='https://boaeditions.org/wp-content/themes/tapp-hello-elementor/assets/css/products.css?ver=20260924161613' media='all' />
+<link rel='stylesheet' id='author-css-css' href='https://boaeditions.org/wp-content/themes/tapp-hello-elementor/assets/css/author.css?ver=20260924161613' media='all' />
+<link rel='stylesheet' id='malihu-scrollbar-css' href='https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css?ver=3.1.5' media='all' />
+<link rel='stylesheet' id='hello-elementor-css' href='https://boaeditions.org/wp-content/themes/hello-elementor/assets/css/reset.css?ver=3.4.9' media='all' />
+<link rel='stylesheet' id='hello-elementor-theme-style-css' href='https://boaeditions.org/wp-content/themes/hello-elementor/assets/css/theme.css?ver=3.4.9' media='all' />
+<link rel='stylesheet' id='hello-elementor-header-footer-css' href='https://boaeditions.org/wp-content/themes/hello-elementor/assets/css/header-footer.css?ver=3.4.9' media='all' />
+<link rel='stylesheet' id='elementor-frontend-css' href='https://boaeditions.org/wp-content/uploads/elementor/css/custom-frontend.min.css?ver=1790077378' media='all' />
+<link rel='stylesheet' id='elementor-post-26387-css' href='https://boaeditions.org/wp-content/uploads/elementor/css/post-26387.css?ver=1790077379' media='all' />
+<link rel='stylesheet' id='widget-image-css' href='https://boaeditions.org/wp-content/plugins/elementor/assets/css/widget-image.min.css?ver=4.2.3' media='all' />
+<link rel='stylesheet' id='widget-nav-menu-css' href='https://boaeditions.org/wp-content/uploads/elementor/css/custom-pro-widget-nav-menu.min.css?ver=1790077379' media='all' />
+<link rel='stylesheet' id='widget-social-icons-css' href='https://boaeditions.org/wp-content/plugins/elementor/assets/css/widget-social-icons.min.css?ver=4.2.3' media='all' />
+<link rel='stylesheet' id='e-apple-webkit-css' href='https://boaeditions.org/wp-content/uploads/elementor/css/custom-apple-webkit.min.css?ver=1790077378' media='all' />
+<link rel='stylesheet' id='widget-heading-css' href='https://boaeditions.org/wp-content/plugins/elementor/assets/css/widget-heading.min.css?ver=4.2.3' media='all' />
+<link rel='stylesheet' id='widget-icon-list-css' href='https://boaeditions.org/wp-content/uploads/elementor/css/custom-widget-icon-list.min.css?ver=1790077378' media='all' />
+<link rel='stylesheet' id='elementor-icons-css' href='https://boaeditions.org/wp-content/plugins/elementor/assets/lib/eicons/css/elementor-icons.min.css?ver=5.53.0' media='all' />
+<link rel='stylesheet' id='elementor-post-14-css' href='https://boaeditions.org/wp-content/uploads/elementor/css/post-14.css?ver=1790077379' media='all' />
+<link rel='stylesheet' id='font-awesome-5-all-css' href='https://boaeditions.org/wp-content/plugins/elementor/assets/lib/font-awesome/css/all.min.css?ver=4.2.3' media='all' />
+<link rel='stylesheet' id='font-awesome-4-shim-css' href='https://boaeditions.org/wp-content/plugins/elementor/assets/lib/font-awesome/css/v4-shims.min.css?ver=4.2.3' media='all' />
+<link rel='stylesheet' id='elementor-post-23976-css' href='https://boaeditions.org/wp-content/uploads/elementor/css/post-23976.css?ver=1790077379' media='all' />
+<link rel='stylesheet' id='elementor-post-20679-css' href='https://boaeditions.org/wp-content/uploads/elementor/css/post-20679.css?ver=1790077380' media='all' />
+<link rel='stylesheet' id='elementor-post-20677-css' href='https://boaeditions.org/wp-content/uploads/elementor/css/post-20677.css?ver=1790077380' media='all' />
+<link rel='stylesheet' id='elementor-gf-playfairdisplay-css' href='https://fonts.googleapis.com/css?family=Playfair+Display:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic&#038;display=auto' media='all' />
+<link rel='stylesheet' id='elementor-gf-inter-css' href='https://fonts.googleapis.com/css?family=Inter:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic&#038;display=auto' media='all' />
+<link rel='stylesheet' id='elementor-icons-shared-0-css' href='https://boaeditions.org/wp-content/plugins/elementor/assets/lib/font-awesome/css/fontawesome.min.css?ver=5.15.3' media='all' />
+<link rel='stylesheet' id='elementor-icons-fa-solid-css' href='https://boaeditions.org/wp-content/plugins/elementor/assets/lib/font-awesome/css/solid.min.css?ver=5.15.3' media='all' />
+<link rel='stylesheet' id='elementor-icons-fa-brands-css' href='https://boaeditions.org/wp-content/plugins/elementor/assets/lib/font-awesome/css/brands.min.css?ver=5.15.3' media='all' />
+<script id="plvt-view-transitions-js-after">
+window.plvtInitViewTransitions=n=>{if(!window.navigation||!("CSSViewTransitionRule"in window))return void window.console.warn("View transitions not loaded as the browser is lacking support.");const t=(t,i,o)=>{const e=n.animations||{};return[...e[t].useGlobalTransitionNames?Object.entries(n.globalTransitionNames||{}).map(([n,t])=>[i.querySelector(n),t]):[],...e[t].usePostTransitionNames&&o?Object.entries(n.postTransitionNames||{}).map(([n,t])=>[o.querySelector(n),t]):[]]},i=n=>{const t=()=>{};n.ready.catch(t),n.finished.catch(t)},o=async(n,t)=>{for(const[t,i]of n)t&&(t.style.viewTransitionName=i);await t;for(const[t]of n)t&&(t.style.viewTransitionName="")},e=()=>n.postSelector?document.querySelector(n.postSelector):null,s=t=>{if(!n.postSelector)return null;const i=(o=n.postSelector,e='a[href="'+t+'"]',o.split(",").map(n=>n.trim()+" "+e).join(","));var o,e;const s=document.querySelector(i);return s?s.closest(n.postSelector):null};window.addEventListener("pageswap",n=>{if(n.viewTransition){const a="default";let r;i(n.viewTransition),n.viewTransition.types.add(a),document.body.classList.contains("single")?r=t(a,document.body,e()):(document.body.classList.contains("home")||document.body.classList.contains("blog")||document.body.classList.contains("archive"))&&n.activation?.entry.url&&(r=t(a,document.body,s(n.activation.entry.url))),r&&o(r,n.viewTransition.finished)}}),window.addEventListener("pagereveal",n=>{if(n.viewTransition){const a="default";let r;i(n.viewTransition),n.viewTransition.types.add(a),document.body.classList.contains("single")?r=t(a,document.body,e()):(document.body.classList.contains("home")||document.body.classList.contains("archive"))&&(r=t(a,document.body,window.navigation?.activation?.from?.url?s(window.navigation.activation.from.url):null)),r&&o(r,n.viewTransition.ready)}})};
+plvtInitViewTransitions( {"postSelector":".wp-block-post.post, article.post, body.single main","globalTransitionNames":{"header":"header","main":"main"},"postTransitionNames":{".wp-block-post-title, .entry-title":"post-title",".wp-post-image":"post-thumbnail",".wp-block-post-content, .entry-content":"post-content"},"animations":{"default":{"useGlobalTransitionNames":true,"usePostTransitionNames":true}}} )
+//# sourceURL=plvt-view-transitions-js-after
+</script>
+<script id="jquery-core-js" src="https://boaeditions.org/wp-includes/js/jquery/jquery.min.js?ver=3.7.1"></script>
+<script id="jquery-migrate-js" src="https://boaeditions.org/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1"></script>
+<script id="font-awesome-4-shim-js" src="https://boaeditions.org/wp-content/plugins/elementor/assets/lib/font-awesome/js/v4-shims.min.js?ver=4.2.3"></script>
+
+<!-- Google tag (gtag.js) snippet added by Site Kit -->
+<!-- Google Analytics snippet added by Site Kit -->
+<script id="google_gtagjs-js" src="https://www.googletagmanager.com/gtag/js?id=GT-PHG5XLH9" async></script>
+<script id="google_gtagjs-js-after">
+window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}
+gtag("set","linker",{"domains":["boaeditions.org"]});
+gtag("js", new Date());
+gtag("set", "developer_id.dZTNiMT", true);
+gtag("config", "GT-PHG5XLH9", {"googlesitekit_post_type":"page"});
+ window._googlesitekit = window._googlesitekit || {}; window._googlesitekit.throttledEvents = []; window._googlesitekit.gtagEvent = (name, data) => { var key = JSON.stringify( { name, data } ); if ( !! window._googlesitekit.throttledEvents[ key ] ) { return; } window._googlesitekit.throttledEvents[ key ] = true; setTimeout( () => { delete window._googlesitekit.throttledEvents[ key ]; }, 5 ); gtag( "event", name, { ...data, event_source: "site-kit" } ); }; 
+//# sourceURL=google_gtagjs-js-after
+</script>
+<link rel="https://api.w.org/" href="https://boaeditions.org/wp-json/" /><link rel="alternate" title="JSON" type="application/json" href="https://boaeditions.org/wp-json/wp/v2/pages/25449" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://boaeditions.org/xmlrpc.php?rsd" />
+
+<link rel='shortlink' href='https://boaeditions.org/?p=25449' />
+<meta name="generator" content="auto-sizes 1.7.0">
+<meta name="generator" content="dominant-color-images 1.2.1">
+<meta name="generator" content="Site Kit by Google 1.188.0" /><meta name="generator" content="performance-lab 4.2.0; plugins: auto-sizes, dominant-color-images, embed-optimizer, image-prioritizer, nocache-bfcache, speculation-rules, view-transitions, webp-uploads">
+<meta name="generator" content="view-transitions 1.2.1">
+<meta name="generator" content="webp-uploads 2.7.1">
+<meta name="et-api-version" content="v1"><meta name="et-api-origin" content="https://boaeditions.org"><link rel="https://theeventscalendar.com/" href="https://boaeditions.org/wp-json/tribe/tickets/v1/" /><meta name="tec-api-version" content="v1"><meta name="tec-api-origin" content="https://boaeditions.org"><link rel="alternate" href="https://boaeditions.org/wp-json/tribe/events/v1/" /><meta name="generator" content="speculation-rules 1.6.0">
+<meta name="generator" content="Elementor 4.2.3; features: additional_custom_breakpoints; settings: css_print_method-external, google_font-enabled, font_display-auto">
+<meta data-od-replaced-content="optimization-detective 1.0.0-beta6" name="generator" content="optimization-detective 1.0.0-beta6; url_metric_groups={0:populated, 480:empty, 600:empty, 782:complete}">
+			<style>
+				.e-con.e-parent:nth-of-type(n+4):not(.e-lazyloaded):not(.e-no-lazyload),
+				.e-con.e-parent:nth-of-type(n+4):not(.e-lazyloaded):not(.e-no-lazyload) * {
+					background-image: none !important;
+				}
+				@media screen and (max-height: 1024px) {
+					.e-con.e-parent:nth-of-type(n+3):not(.e-lazyloaded):not(.e-no-lazyload),
+					.e-con.e-parent:nth-of-type(n+3):not(.e-lazyloaded):not(.e-no-lazyload) * {
+						background-image: none !important;
+					}
+				}
+				@media screen and (max-height: 640px) {
+					.e-con.e-parent:nth-of-type(n+2):not(.e-lazyloaded):not(.e-no-lazyload),
+					.e-con.e-parent:nth-of-type(n+2):not(.e-lazyloaded):not(.e-no-lazyload) * {
+						background-image: none !important;
+					}
+				}
+			</style>
+			<meta name="generator" content="embed-optimizer 1.0.0-beta5">
+<meta name="generator" content="image-prioritizer 1.0.0-beta3">
+<link rel="icon" href="https://boaeditions.org/wp-content/uploads/2026/06/BOA-Favicon.png" sizes="32x32" />
+<link rel="icon" href="https://boaeditions.org/wp-content/uploads/2026/06/BOA-Favicon.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://boaeditions.org/wp-content/uploads/2026/06/BOA-Favicon.png" />
+<meta name="msapplication-TileImage" content="https://boaeditions.org/wp-content/uploads/2026/06/BOA-Favicon.png" />
+<style id="wp-custom-css">
+.elementor-widget-text-editor  h1, .elementor-widget-text-editor h2, .elementor-widget-text-editor h3, .elementor-widget-text-editor h4, .elementor-widget-text-editor h5, .elementor-widget-text-editor h6 {
+	margin-top: 0;
+	margin-bottom: 24px;
+}
+.global-block-quote .elementor-blockquote .elementor-blockquote__content {
+	margin-bottom: 0;
+}
+
+ol, ul {
+    padding: 0 0 0 24px;
+    list-style: none;
+}
+.elementor-widget-text-editor p:last-child {
+	margin-bottom: 0;
+}
+
+p:last-child {margin-block-end: 0px !important;
+}
+
+/* General Form */
+..gform_wrapper .gform-theme--foundation .gform_fields {
+	row-gap: 24px !important;
+} 
+.gform_wrapper .gfield_label {
+    font-weight: 700 !important;
+    font-size: 12px !important;
+    line-height: 18px !important;
+    letter-spacing: 0.5px !important;
+    color: #110E0C !important;
+}
+.gform-theme--foundation .gfield .ginput_password, .gform-theme--foundation .gfield input, .gform-theme--foundation .gfield select {
+	background: #110E0C0A !important;
+	border: 1px solid #110E0C33 !important;
+	height: 47px !important;
+	border-radius: 2px !important;
+	font-weight: 400 !important;
+	font-size: 14px !important;
+	line-height: 1 !important;
+	letter-spacing: 0px !important;
+	outline: none !important; 
+}
+.gform-theme--foundation .gfield textarea {
+	background: #110E0C0A !important;
+	border: 1px solid #110E0C33 !important;
+	height: 110px !important;
+	overflow-y: auto !important;
+	border-radius: 2px !important;
+	font-weight: 400 !important;
+	font-size: 14px !important;
+	line-height: 1 !important;
+	letter-spacing: 0px !important;
+	outline: none !important;
+}
+.gform-theme--foundation .gfield .ginput_password::placeholder, .gform-theme--foundation .gfield input::placeholder, .gform-theme--foundation .gfield select::placeholder {
+	color: #110E0C80 !important;
+}
+
+.gform_wrapper input.gfield-choice-input {
+	width: 18px !important;
+	height: 18px !important;
+	outline: none !important;
+}
+.gform_wrapper .gfield--type-checkbox input[type=checkbox]::before {
+	color: #9F3C48 !important;
+	outline: none;
+}
+
+.gform_wrapper .gfield_description {
+	font-weight: 400 !important;
+	font-size: 12px !important;
+	line-height: 18px !important;
+	letter-spacing: 0px !important;
+	color: rgba(17, 14, 12, 0.5);
+}
+
+.gform_wrapper input[type="submit"],
+.gform_wrapper .gform_button {
+		background-color: #9F3C48 !important;
+    color: #F4EFE6 !important;
+    border-style: solid;
+    border-width: 2px 2px 2px 2px;
+    border-color: #9F3C48 !important;
+		border-radius: 2px !important;
+    padding: 16px 36px !important;
+    text-transform: uppercase !important;
+    cursor: pointer !important;
+    border-radius: 0 !important;
+    transition: all 0.2s ease !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    min-width: 147px !important;
+		font-family: Inter !important;
+		font-weight: 700 !important;
+		font-size: 10px !important;
+		line-height: 1 !important;
+		letter-spacing: 1.2px !important;
+		text-align: center !important;
+	  height: 57px !important;
+}
+
+/* Button hover - lighter background */
+.gform_wrapper input[type="submit"]:hover,
+.gform_wrapper .gform_button:hover {
+	  background-color: #4A293F !important;
+    color: #F4EFE6 !important;
+    border-color: #4A293F !important;
+}
+.gform_wrapper .gfield_required {
+    display: none;
+}
+.gform_wrapper .gform_validation_errors {
+	display: none;
+}
+.gform_wrapper .gfield_error input, .gform_wrapper  .gfield_error textarea, .gform_wrapper .gfield_error select {
+	border-color: #9F3C48 !important;
+	border-width: 2px !important;
+}
+.gform_wrapper .gfield_validation_message {
+	color: #9F3C48 !important;
+	font-weight: 400;
+	font-style: Regular;
+	font-size: 12px;
+	line-height: 18px;
+letter-spacing: 0px !important;
+}
+.gform_wrapper .gfield_checkbox .gform-field-label {
+		color: #110E0C;
+}
+.gform_wrapper .membership_level_checkbox .gfield_checkbox .gform-field-label {
+	font-weight: 500 !important;
+}
+
+.gform_wrapper .gfield_checkbox .gform-field-label span {
+	display: flex !important;
+  font-weight: 400 !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+  color: rgba(17, 14, 12, 0.6) !important;
+  margin-top: 6px !important;
+}
+
+
+
+.custom-faqs-section .e-n-accordion-item {
+	border-bottom: 1px solid #110E0C33;
+}
+.custom-faqs-section .e-n-accordion-item:last-child {
+	border-bottom: none;
+}
+.custom-faqs-section .e-n-accordion-item-title-text span {
+	font-size: 13px;
+	line-height: 19.5px;
+	color: rgba(17, 14, 12, 0.2);
+	margin-right: 41px;
+}
+
+
+h1 span, h2 span, h3 span, h4 span, h5 span, h6 span{
+	color: #9F3C48;
+    font-weight: 600;
+    font-style: italic;
+}
+/* Form layout - inline (input + button) */
+.news-letter-form-wrap form {
+    display: flex !important;
+	  flex-wrap: wrap !important;
+    gap: 16px !important;
+}
+.news-letter-form-wrap .gform-body {
+    width: calc(100% - 168px) !important;
+}
+/* Input field - transparent with light border */
+.news-letter-form-wrap input[type="text"],
+.news-letter-form-wrap input[type="email"] {
+    width: 100% !important;
+    background: #F4EFE61A !important;
+    border: 2px solid #F4EFE633 !important;
+		border-radius: 2px;
+    color: #ffffff !important;
+    padding: 16px 22px !important;
+    font-size: 15px !important;
+    font-family: inherit !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+    height: auto !important;
+    line-height: 1.4 !important;
+    transition: border-color 0.2s ease !important;
+}
+
+/* Input placeholder - light cream/white */
+.news-letter-form-wrap input[type="text"]::placeholder,
+.news-letter-form-wrap input[type="email"]::placeholder {
+		opacity: 1 !important;
+    color: #F4EFE680 !important;
+		font-family: Inter !important;
+		font-weight: 400 !important;
+		font-size: 14px !important;
+		line-height: 100% !important;
+		letter-spacing: 0px !important;
+}
+
+/* Input focus - brighter border */
+.news-letter-form-wrap input[type="text"]:focus,
+.news-letter-form-wrap input[type="email"]:focus {
+    border-color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Footer area where button sits */
+.news-letter-form-wrap .gform_footer {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 147px !important;
+    flex-shrink: 0;
+    display: flex !important;
+    align-items: stretch !important;
+}
+
+/* SUBSCRIBE button - cream background, navy text */
+.news-letter-form-wrap input[type="submit"],
+.news-letter-form-wrap .gform_button {
+		background-color: #F4EFE6 !important;
+    color: #3B5A82 !important;
+    border-style: solid;
+    border-width: 2px 2px 2px 2px;
+    border-color: #F4EFE6 !important;
+		border-radius: 2px !important;
+    padding: 16px 36px !important;
+    text-transform: uppercase !important;
+    cursor: pointer !important;
+    border-radius: 0 !important;
+    transition: all 0.2s ease !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    min-width: 147px !important;
+		font-family: Inter !important;
+		font-weight: 700 !important;
+		font-size: 10px !important;
+		line-height: 1 !important;
+		letter-spacing: 1.2px !important;
+		text-align: center !important;
+	  height: 57px !important;
+}
+
+/* Button hover - lighter background */
+.news-letter-form-wrap input[type="submit"]:hover,
+.news-letter-form-wrap .gform_button:hover {
+	  background-color: #9F3C48 !important;
+    color: #F4EFE6 !important;
+    border-color: #9F3C48 !important;
+}
+
+/* Validation error styling */
+.news-letter-form-wrap .gform_validation_errors {
+    display: none !important;
+}
+.news-letter-form-wrap .gfield_error input {
+    border-color: #ff6b6b !important;
+}
+.news-letter-form-wrap .validation_message,
+.news-letter-form-wrap .gfield_validation_message {
+    color: #F4EFE6 !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 6px 0 0 !important;
+    font-size: 12px !important;
+    margin-top: 4px !important;
+}
+
+/* Success confirmation message */
+.news-letter-form-wrap .gform_confirmation_message {
+    color: #ffffff !important;
+    background: transparent !important;
+    padding: 12px 0 !important;
+    text-align: center;
+    font-size: 15px;
+    border: none !important;
+}
+
+/* Required asterisk - hide */
+.news-letter-form-wrap .gfield_required {
+    display: none !important;
+}
+
+/* AJAX spinner positioning */
+.news-letter-form-wrap .gform_ajax_spinner {
+    margin-left: 12px;
+    align-self: center;
+}
+
+.news-letter-form-wrapred-news-letter-form-wrap input[type="text"],
+.news-letter-form-wrap.red-news-letter-form-wrap input[type="email"] {
+    border-color: transparent !important;
+		height: 49px !important;
+}
+.news-letter-form-wrap.red-news-letter-form-wrap .gform-body {
+    width: calc(100% - 143px) !important;
+}
+
+.news-letter-form-wrap.red-news-letter-form-wrap  form {
+    gap: 12px !important;
+}
+.news-letter-form-wrap.red-news-letter-form-wrap .gform_footer {
+    width: 131px !important;
+}
+.news-letter-form-wrap.red-news-letter-form-wrap input[type="submit"]:hover,
+.news-letter-form-wrap.red-news-letter-form-wrap
+.gform_button:hover {
+		background-color: #F4EFE6 !important;
+    color: #9F3C48 !important;
+    border-color: #F4EFE6 !important;
+}
+.news-letter-form-wrap.red-news-letter-form-wrap input[type="submit"],
+.news-letter-form-wrap.red-news-letter-form-wrap
+.gform_button {
+		background-color: #F4EFE633 !important;
+    color: #F4EFE6 !important;
+    border-color: transparent !important;
+		height: 49px !important;
+		min-width: 131px !important;
+	  padding: 16px 31px !important;
+}
+span#gform_ajax_spinner_2 {
+    display: none;
+}
+.post-tag-info ul.elementor-inline-items{gap:15px;}
+.post-tag-info ul.elementor-inline-items li.elementor-icon-list-item:after{inset-inline-end:-15px !important;}
+.blog-post-part .blog-content, .blog-post-part{height:100%;}
+.blog-post-part .blog-content h2 a{font-family: "Playfair Display", Sans-serif;}
+.blog-post-part .blog-content .post-tag-info{justify-content: flex-end;}
+.blog-loop .elementor-pagination{margin-top: 70px;display: flex;align-items: center;justify-content: center;}
+.blog-loop .page-numbers.prev, .blog-loop .page-numbers.next, .page-numbers {
+    font-size: 0px;
+    position: relative;
+    background: #F4EFE6;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 30px;
+    box-shadow: 0 0 10px rgb(17 14 12 / 20%) !important;
+    transition: all .5s ease;
+}
+.page-numbers{font-size: 16px;}
+.page-numbers:hover, .blog-loop .page-numbers.prev:hover, .blog-loop .page-numbers.next:hover{background-color: rgba(159,60,72, 0.5);color:#F4EFE6 !important;}
+.page-numbers.current{background-color: #9F3C48;color:#F4EFE6 !important;}
+.blog-loop .page-numbers.prev::after, .blog-loop .page-numbers.next::after{
+    content: '';
+    position: absolute;
+    background-image: url('/wp-content/uploads/2026/05/arrow-left.svg');
+    background-repeat: no-repeat;
+    background-size: contain;
+    width:15px;
+    height:15px;
+}
+.blog-loop .page-numbers.next::after{transform: scale(-1);}
+.search-field .facetwp-facet, .cat-filter .facetwp-facet{margin-bottom: 0px !important;}
+.search-field .facetwp-input-wrap{width:100%;position: relative;}
+.search-field .facetwp-search, .facetwp-facet-event_sort_by_date .facetwp-date {
+    background-color: rgba(17, 14, 12, 0.02) !important;
+    border-color: #D3D3D3 !important;
+    padding-left:40px !important;
+    border-radius: 0px !important;
+    padding-top: 10.5px;
+    padding-bottom: 10.5px;
+}
+.search-field , .facetwp-facet-event_sort_by_date {
+		margin-bottom:0 !important;
+}
+.search-field .facetwp-search::focus, .facetwp-facet-event_sort_by_date .facetwp-date::focus{border-color: #D3D3D3 !important;}
+.search-field .facetwp-icon{
+    position: absolute;
+    left: 10px;
+    width: fit-content;
+}
+.search-field .facetwp-icon:before{
+    background: url('//srv/htdocs/wp-content/uploads/2026/05/search-icon.png') !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+}
+.cat-filter .fs-label-wrap .fs-label{padding: 17px 22px 17px 8px !important;color: rgba(17, 14, 12, 1) !important;}
+.cat-filter .fs-label-wrap{
+    background-color: rgba(17, 14, 12, 0.06) !important;
+    border: 1px solid rgba(17, 14, 12, 0.06) !important;
+}
+.cat-filter .fs-wrap{width:100% !important;}
+.cat-filter .fs-dropdown input:not([type="button"]):not([type="submit"]), .cat-filter textarea, .cat-filter .elementor-field-textual{
+    border-radius:0px !important;
+    padding:10px !important;
+}
+.cat-filter .fs-search{padding:10px !important;}
+.cat-filter .fs-dropdown{background-color: rgba(159, 60, 72, 1) !important;color: #fff !important;;}
+.cat-filter .fs-dropdown .fs-options{padding:10px !important}
+.facetwp-facet-event_sort_by select {
+	    border-style: solid !important;
+    border-width: 1px 1px 1px 1px !important;
+	border-color: #666 !important;
+	    background-color: rgba(17, 14, 12, 0.02) !important;
+    border-color: #D3D3D3 !important;
+    padding-left: 40px !important;
+    border-radius: 0px !important;
+    padding-top: 10.5px;
+    padding-bottom: 10.5px;
+}
+/* .cat-filter .fs-dropdown .fs-options .fs-option:first-child{display: none;} */
+.single-post blockquote{
+    width: 100%;
+    background: rgba(159, 60, 72, 0.05);
+    margin-left: 0px;
+    padding: 40px;
+    border-left: 4px solid rgba(159, 60, 72, 1);
+    font-size: 20px;
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.5;
+    font-family: "Playfair Display", sans-serif;
+    color: rgba(17, 14, 12, 1);
+    margin: 25px 0px;
+}
+.cat-filter .fs-wrap.single .fs-option.selected{background-color: #3B5A82 !important;color: #F4EFE6 !important;}
+.contact-form .gform-theme--foundation .gform_fields{row-gap: 24px !important;}
+.contact-form .gform_wrapper input[type="submit"], .contact-form .gform_wrapper .gform_button{
+    height: 51px !important;
+    padding: 16px 39px !important;   
+}
+.contact-form #field_4_5, .contact-form #field_4_3{width:calc(100% - 4px);}
+.contact-form .gform_wrapper .gfield_label{
+    font-weight: 500 !important;
+    font-size: 13px !important;
+    letter-spacing: 0px !important;
+    line-height: 19.5px !important;
+}
+.award-counter .elementor-counter-title{text-align: center;}
+/* /General Form */
+
+.d-flex .elementor-icon-wrapper {
+	display: flex !important;
+}
+
+
+@media (max-width: 575px) {
+	.news-letter-form-wrap .gform-body, .news-letter-form-wrap.red-news-letter-form-wrap .gform-body {
+  	width: 100% !important;
+	}
+	.elementor-location-popup iframe {
+		min-height: 1140px !important;
+	}
+}
+</style>
+<link data-od-added-tag rel="preload" fetchpriority="high" as="image" href="https://cdn.shopify.com/s/files/1/0982/0178/products/TheBlackMaria_FinalFront_5a7929ab-c075-4917-9cd6-ea4707c68ea5.jpg?v=1527683358" media="screen and (width &lt;= 480px)">
+<link data-od-added-tag rel="preload" fetchpriority="high" as="image" href="https://cdn.shopify.com/s/files/1/0982/0178/products/TheBlackMaria_FinalFront_5a7929ab-c075-4917-9cd6-ea4707c68ea5.jpg?v=1527683358" media="screen and (782px &lt; width)">
+</head>
+<body class="wp-singular page-template-default page page-id-25449 wp-custom-logo wp-embed-responsive wp-theme-hello-elementor wp-child-theme-tapp-hello-elementor tribe-no-js tec-no-tickets-on-recurring tec-no-rsvp-on-recurring hello-elementor-default elementor-default elementor-kit-14 elementor-page-20677 tribe-theme-hello-elementor">
+
+<a class="skip-link screen-reader-text" href="#content">Skip to content</a>
+<a class="skip-link screen-reader-text" href="#content">Skip to content</a>
+
+		<header data-elementor-type="header" data-elementor-id="23976" class="elementor elementor-23976 elementor-location-header" data-elementor-post-type="elementor_library">
+			<div class="elementor-element elementor-element-f9d7791 e-flex e-con-boxed e-con e-parent" data-id="f9d7791" data-element_type="container" data-e-type="container">
+					<div class="e-con-inner">
+		<div class="elementor-element elementor-element-b70a427 e-con-full e-flex e-con e-child" data-id="b70a427" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-614ed31 elementor-widget elementor-widget-image" data-id="614ed31" data-element_type="widget" data-e-type="widget" data-widget_type="image.default">
+				<div class="elementor-widget-container">
+																<a href="https://boaeditions.org">
+							<img data-od-xpath="/HTML/BODY/HEADER[@class=&apos;elementor elementor-23976 elementor-location-header&apos;]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::A]/*[1][self::IMG]" width="240" height="87" src="https://boaeditions.org/wp-content/uploads/2026/06/boaedition-1.5-png.avif" class="attachment-large size-large wp-image-26542 has-transparency" alt="" data-has-transparency="true" data-dominant-color="010101" style="--dominant-color: #010101" />								</a>
+															</div>
+				</div>
+				</div>
+		<div class="elementor-element elementor-element-6633336 e-con-full header_menu e-flex e-con e-child" data-id="6633336" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-7c70aaf elementor-nav-menu__align-center elementor-nav-menu--dropdown-mobile_extra elementor-nav-menu--stretch elementor-nav-menu__text-align-aside elementor-nav-menu--toggle elementor-nav-menu--burger elementor-widget elementor-widget-nav-menu" data-id="7c70aaf" data-element_type="widget" data-e-type="widget" data-settings="{&quot;full_width&quot;:&quot;stretch&quot;,&quot;layout&quot;:&quot;horizontal&quot;,&quot;submenu_icon&quot;:{&quot;value&quot;:&quot;&lt;i class=\&quot;fas fa-caret-down\&quot; aria-hidden=\&quot;true\&quot;&gt;&lt;\/i&gt;&quot;,&quot;library&quot;:&quot;fa-solid&quot;},&quot;toggle&quot;:&quot;burger&quot;}" data-widget_type="nav-menu.default">
+				<div class="elementor-widget-container">
+								<nav aria-label="Menu" class="elementor-nav-menu--main elementor-nav-menu__container elementor-nav-menu--layout-horizontal e--pointer-none">
+				<ul id="menu-1-7c70aaf" class="elementor-nav-menu"><li class="has-mega-menu menu-item menu-item-type-post_type menu-item-object-page menu-item-25392"><a href="https://boaeditions.org/bookstore/" class="elementor-item">Bookstore</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-26271"><a href="https://boaeditions.org/about/" class="elementor-item">About</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-26272"><a href="https://boaeditions.org/support/" class="elementor-item">Support</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-23989"><a href="https://boaeditions.org/blog/" class="elementor-item">Blog</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-26273"><a href="https://boaeditions.org/submissions/" class="elementor-item">Submissions</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-26274"><a href="https://boaeditions.org/events-list/" class="elementor-item">Events</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-23993"><a href="https://boaeditions.org/contact/" class="elementor-item">Contact</a></li>
+</ul>			</nav>
+					<div class="elementor-menu-toggle" role="button" tabindex="0" aria-label="Menu Toggle" aria-expanded="false">
+			<i aria-hidden="true" role="presentation" class="elementor-menu-toggle__icon--open eicon-menu-bar"></i><i aria-hidden="true" role="presentation" class="elementor-menu-toggle__icon--close eicon-close"></i>		</div>
+					<nav class="elementor-nav-menu--dropdown elementor-nav-menu__container" aria-hidden="true">
+				<ul id="menu-2-7c70aaf" class="elementor-nav-menu"><li class="has-mega-menu menu-item menu-item-type-post_type menu-item-object-page menu-item-25392"><a href="https://boaeditions.org/bookstore/" class="elementor-item" tabindex="-1">Bookstore</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-26271"><a href="https://boaeditions.org/about/" class="elementor-item" tabindex="-1">About</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-26272"><a href="https://boaeditions.org/support/" class="elementor-item" tabindex="-1">Support</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-23989"><a href="https://boaeditions.org/blog/" class="elementor-item" tabindex="-1">Blog</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-26273"><a href="https://boaeditions.org/submissions/" class="elementor-item" tabindex="-1">Submissions</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-26274"><a href="https://boaeditions.org/events-list/" class="elementor-item" tabindex="-1">Events</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-23993"><a href="https://boaeditions.org/contact/" class="elementor-item" tabindex="-1">Contact</a></li>
+</ul>			</nav>
+						</div>
+				</div>
+				</div>
+		<div class="elementor-element elementor-element-191a482 e-con-full e-flex e-con e-child" data-id="191a482" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-eb7e0f6 elementor-widget elementor-widget-shortcode" data-id="eb7e0f6" data-element_type="widget" data-e-type="widget" data-widget_type="shortcode.default">
+				<div class="elementor-widget-container">
+							<div class="elementor-shortcode">    <button class="shopify-cart-trigger" aria-label="Open cart">
+        <svg width="21" height="17" viewBox="0 0 21 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0.75 0.75H2.75L3.15 2.75M5.75 10.75H15.75L19.75 2.75H4.15L5.75 10.75ZM5.75 10.75L3.457 13.043C2.827 13.673 3.273 14.75 4.164 14.75H15.75M15.75 14.75C15.75 15.302 15.302 15.75 14.75 15.75C14.198 15.75 13.75 15.302 13.75 14.75C13.75 14.198 14.198 13.75 14.75 13.75C15.302 13.75 15.75 14.198 15.75 14.75ZM7.75 14.75C7.75 15.302 7.302 15.75 6.75 15.75C6.198 15.75 5.75 15.302 5.75 14.75C5.75 14.198 6.198 13.75 6.75 13.75C7.302 13.75 7.75 14.198 7.75 14.75Z" stroke="#0A0A0A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+
+        <span class="shopify-cart-count" data-cart-count>0</span>
+    </button>
+    </div>
+						</div>
+				</div>
+				<div class="elementor-element elementor-element-aa632ef elementor-align-right elementor-widget elementor-widget-button" data-id="aa632ef" data-element_type="widget" data-e-type="widget" data-widget_type="button.default">
+				<div class="elementor-widget-container">
+									<div class="elementor-button-wrapper">
+					<a class="elementor-button elementor-button-link elementor-size-sm" href="#elementor-action%3Aaction%3Dpopup%3Aopen%26settings%3DeyJpZCI6IjI2Mzg3IiwidG9nZ2xlIjpmYWxzZX0%3D">
+						<span class="elementor-button-content-wrapper">
+									<span class="elementor-button-text">SUBSCRIBE</span>
+					</span>
+					</a>
+				</div>
+								</div>
+				</div>
+				</div>
+					</div>
+				</div>
+				</header>
+				<div data-elementor-type="single-page" data-elementor-id="20677" class="elementor elementor-20677 elementor-location-single post-25449 page type-page status-publish hentry" data-elementor-post-type="elementor_library">
+					<section class="elementor-section elementor-top-section elementor-element elementor-element-27587a23 elementor-section-full_width elementor-section-height-default elementor-section-height-default" data-id="27587a23" data-element_type="section" data-e-type="section">
+						<div class="elementor-container elementor-column-gap-default">
+					<div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-752db335" data-id="752db335" data-element_type="column" data-e-type="column">
+			<div class="elementor-widget-wrap elementor-element-populated">
+						<div class="elementor-element elementor-element-4bd1a8d9 elementor-widget elementor-widget-theme-post-content" data-id="4bd1a8d9" data-element_type="widget" data-e-type="widget" data-widget_type="theme-post-content.default">
+				<div class="elementor-widget-container">
+					    <article class="shopify-book-detail">
+        <div class="elementor-section elementor-section-boxed">
+            <div class="elementor-container">
+                <div class="shopify-book-detail-inner">
+                    <div class="shopify-book-cover">
+                        <div class="shopify-book-item">
+                                                            <img data-od-added-fetchpriority data-od-xpath="/HTML/BODY/DIV[@class=&apos;elementor elementor-20677 elementor-location-single post-25449 page type-page status-publish hentry&apos;]/*[1][self::SECTION]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::ARTICLE]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::IMG]" fetchpriority="high" src="https://cdn.shopify.com/s/files/1/0982/0178/products/TheBlackMaria_FinalFront_5a7929ab-c075-4917-9cd6-ea4707c68ea5.jpg?v=1527683358" alt="the black maria">
+                                                    </div>
+                    </div>
+
+                    <div class="shopify-book-info">
+                        <div class="shopify-book-meta-top">
+                                                                                    <h6 class="shopify-book-meta-top-subtitle">
+                                Poetry                            </h6>
+                        </div>
+
+                        <h1 class="shopify-book-title">the black maria</h1>
+
+                                                    <p class="shopify-book-author">by <a class="shopify-book-author-link" href="https://boaeditions.org/author/aracelis-girmay">Aracelis Girmay</a></p>
+                        
+                        <hr class="shopify-book-divider">
+
+                                                    <div id="book-description" class="shopify-book-description"><h4>
+<strong>A <span>“</span>Best Book of 2016<span>”</span> for<i> The New Yorker, </i>the<i> Boston Globe</i>, the<i> Chicago Review of Books, </i>and<i> Publishers Weekly<br>An O, The Oprah Magazine 2016 <span>“</span>Gem of the Genre<span>”</span><br>Publishers Weekly</i> 2016 #1 in Poetry Top 10</strong><br><strong>A <i>Publishers Weekly</i> <span>“</span>Most Anticipated Book of Spring 2016<span>”</span></strong><br><strong>A <i>Library Journal</i> 2016 Poetry Top Pick</strong><br><strong>Winner of a 2015 Whiting Award for Poetry</strong><br><strong>Winner of <em>Poetry</em> magazine<span>’</span>s 2016 Bess Hokin Prize</strong>
+</h4>
+<p>Taking its name from the moon’s dark plains, misidentified as seas by early astronomers, <em>the black maria</em> investigates African diasporic histories, the consequences of racism within American culture, and the question of human identity. Central to this project is a desire to recognize the lives of Eritrean refugees who have been made invisible by years of immigration crisis, refugee status, exile, and resulting statelessness. The recipient of a 2015 Whiting Award for Poetry, Girmay’s newest collection elegizes and celebrates life, while wrestling with the notion of seeing beyond: seeing violence, seeing grace, and seeing each other better.</p>
+<h4><strong><span>“</span>First Estrangement<span>”</span></strong></h4>
+<p><span style="font-weight: 400;">I do not remember back then</span> <br><span style="font-weight: 400;">when I was trying to leave one world</span> <br><span style="font-weight: 400;">for the next, my girl-mother on the table,</span> <br><span style="font-weight: 400;">all her darkness torn</span> <br><span style="font-weight: 400;">for our two-headedness,<br><br>when around our violence floated</span> <br><span style="font-weight: 400;">the universe, &amp; we,</span> <br><span style="font-weight: 400;">the naked astronauts</span> <br><span style="font-weight: 400;">at our ends, at our beginnings,<br><br>years away from that staggering</span> <br><span style="font-weight: 400;">out of one depth into another,</span> <br><span style="font-weight: 400;">I remember her when I crack, again,</span> <br><span style="font-weight: 400;">open the (already) starlight of the pomegranate,</span> <br><span style="font-weight: 400;">when I bow my ear down toward it like a deer,<br span=""><span style="font-weight: 400;">the hunger comes, faintly it screams<br><br>the memory of stars,</span><br><span style="font-weight: 400;">of estrangement, the lungs</span><br><span style="font-weight: 400;">pumping with air<br><br>How I take, &amp; take</span><br><span style="font-weight: 400;">what I cannot give back</span></span></p>
+<h4><strong>Praise for <em>the black maria</em></strong></h4>
+<p><span>“</span>[Girmay<span>’</span>s] every loss—she calls them estrangements—is a yearning for connection across time and place; her every fragment is a bulwark against ruin.<span>”</span> <strong>—</strong><b><i>O, The Oprah Magazine</i></b></p>
+<p><span>“</span>This year, I’ve sought out and found solace in language, both poetry and prose. Aracelis Girmay’s <em>the black maria</em> has left images still planted deep within me.<span>”</span><i> </i><b>—Ada Limón,<i> The New Yorker</i></b></p>
+<p><span>“</span>Crowned by an extraordinary long poem interweaving the childhood of astrophysicist Neil deGrasse Tyson . . . Aracelis Girmay<span>’</span>s third book of poetry looks at the crimes committed against African Americans throughout history and now . . . These poems repeat themselves, reuse lines, feel anxious and scattershot, but there is beauty and imperative witness everywhere here.” <em><strong>—</strong></em><b><em>NPR Books</em></b></p>
+<p><i><span>“</span>the black maria</i> isn’t just some of the best poetry I read this year, it’s also one of the most powerful and memorable collections I’ve read as an adult.<span>”</span><b><span>—</span>Adam Morgan, <i>Chicago Review of Books</i></b></p>
+<p><span>“The long history of abuse against African Americans threads through this latest excavation by Girmay, whose work always lays bare the importance of history and the vertigo caused by its unknowing.”—</span><b><i>Boston Globe</i></b></p>
+<p><span>“Girmay [weaves] together intimate and communal stories to express the emotional agony of an exploited and paling culture. the black maria has an agenda, but not the one we might expect; rather than issuing a call to action for the Eritrean diaspora, the poet employs personal and ancestral experience to catalyze a unified, remembered loss. Her poetry is therefore a call for the recognition of vulnerability and subjectivity: in the poet’s own words, ‘&amp; so to tenderness I add my action.’ At times, the collection reads like a historical text; occasionally, it feels like angst immortalized in a diary; most often, the black maria reads like a poeticized eulogy—at once a celebration of life, an effort at reconciliation with death, and a testament to the unifying power of loss.”<strong>—</strong></span><b><i>Boston Review</i></b></p>
+<p>“Girmay, winner of a 2015 Whiting Award, crafts a moving collection of lyrical, image-thick poems that balance on the knife edge separating vulnerability and unapologetic strength. The lives of Eritrean refugees and immigrants serve as the collection’s thematic foundation, though Girmay also thoughtfully dissects and examines blights of America’s current sociopolitical climate, particularly police brutality and the murders of such young black women and men as Renisha McBride and Jonathan Ferrell . . . Girmay effortlessly slips between collective history and personal memory, tackling the subject of black pain without victimizing herself or exploiting the voices of the marginalized.” <strong>—</strong><b><i>Publishers Weekly, *Starred*</i></b></p>
+<p>“Whiting Award winner Girmay recalls the larger African diaspora as she commemorates more than 20,000 people who have died sailing from North Africa to Europe in a bid for a better life . . . Using bold, sharply lyric language, she addresses the drowned as ‘you,’ encircling them in community and giving them a humanity and individuality death statistics belie. VERDICT: Beautiful, brilliant, and palpably angry; an important book all readers can appreciate.” <strong>—</strong><b><i>Library Journal, *Starred*</i></b></p>
+<p>“Lunar maria, dark, basaltic plains on the moon’s surface, take their name from the Latin word for seas, identified as such by mistaken astronomers. This fascinating confusion fuels Girmay’s third poetry collection, which co-opts the sailing-obsessed tales of Odysseus, adopts African slave Abram Gannibal, ancestor of renowned Russian poet Alexander Pushkin, and testifies on behalf of the wrongfully accused Black Panther George Jackson, among many others. . . . astoundingly effective, [this] bright, ambitious work deserves several rereadings. A self-described ‘inheritor of Eritrean, Puerto Rican, and African American traditions,’ Girmay is a dazzling, wildly dynamic poet.” <strong>—</strong><b><i>Booklist</i></b></p>
+<p>“Aracelis Girmay’s new poetry collection, <i>the black maria</i>—a haunting, blistering, vital examination of the African diaspora from 15th-century slave ships to Neil deGrasse Tyson—is a book of memories and seas . . . One cannot help but be reminded of Claudia Rankine’s <i>Citizen: An American Lyric</i> . . . maybe this ‘John Henryism’ is the memory Girmay brings out as she traverses the African continent, from the Congo under the Belgians to present-day Asmara, and back in time to Luam and Abram when black children were being abducted and sold as gifts. More than any other question, <i>the black maria</i> forces us to ask ourselves if anything has truly changed since then.”  <strong>—</strong><b><i>Chicago Review of Books</i></b></p>
+<p><em><span>“</span>the black maria</em>, Aracelis Girmay’s intricate epic of black survival, enraptures the reader in a gaze that looks simultaneously backward and forward, toward past and future that are impossible to see yet crucial to imagine.<span>”</span><strong>—</strong><b><i>Ploughshares<br></i></b></p>
+<p><em><span>“</span>the black maria</em> emerges from a spirit of elegy, moral vision, and protest, and places itself in traditions that include June Jordan, Paul Celan, Joy Harjo, and James Baldwin. Unique to this collection is Girmay’s signature willingness to risk narrative sentiment and lyric authenticity, which she inhabits with remarkable force, willing her readers to be remade in her visionary healing.<span>”</span><b><i><span>—</span>SCOUT<br></i></b></p>
+<p><em><span>“</span>the black maria</em> is rich with countless descriptions of the sea, and Girmay manages to make each seeing new, nimbly crafting each poem to possess and plunge the reader into its glimmering pages, offering us an ocean full of voices, full of historical remnants . . . Not only does she reach a hand into the heart-root and depths of the reader, she fills the page with urgent breath, line after line, a singing that asks you to listen, to lie down, be washed clean in its waiting ocean. How I look forward to returning for the breath between these pages, again and again.”<b>—Safiya Sinclair, <i>On the Seawall<br></i></b><span></span></p>
+<p><span>“Girmay proves herself a distinctly original lyric voice . . .<em> the black maria</em> elegizes the dehumanizing effects of colonialism and institutionalized racism, yet champions the documentary power of language to overcome the silences that threaten to swallow trauma. In our age of historical amnesia, Girmay’s potent poems are necessary reading for anyone committed to addressing global questions of race, justice, and equality.”<strong>—</strong></span><b><i>Plume<br></i></b></p>
+<p><span>“</span>[Girmay’s] project seems to be our deep and ongoing subjectivity, our vulnerability to history, to one another, to desire, and to the belief in something large and lasting that we might belong to. There’s empathy, play, and fearlessness here, and both formal and emotional range. The beauty of these poems is always married to a deep, implacable pang. Their consolation is always rooted in the unifying force of remembered loss.” <strong>—2015 Whiting Award Selection Committee</strong></p>
+<p><span>“</span>In Aracelis Girmay we have a poet who collects, polishes, and shares stories with such brilliant invention, tenderness, and intellectual liveliness that it is understandable that we think of her as the blessed curator of our collective histories. There is in her art the vulnerability of one who lives inside of the stories that she gathers in this remarkable collection. Her poems set off alarms even as they transform the world she inhabits, showing us, in the process, exactly what she asks of Romare Bearden’s art: ‘…how not to // assign all blackness near the sea / a captivity.’ This is one of the many sweet contradictions in <em>the black maria</em>, which ‘is a black flag / wounding the pastoral.’ I am deeply thankful that we have a poet of her unique and singular talent writing today.<span>”</span> <strong>—Kwame Dawes</strong></p>
+<p>“There is a saying in Spanish, ‘Cada cabeza es un mundo,’ which translates ‘every mind is a universe unto itself.’ And Girmay’s world, universe, opens new ways of seeing the simplest things and giving them voice. Everything contains some clue of another self, body or kindred spirit. Like an archaeologist, she digs deeply finding herself in every living thing, even in the inanimate. Her magic is poetry at its best.” <strong>—National Books Critics Circle<br></strong></p>
+<h6>Publication Date: April 12, 2016<br>ISBN: <strong> 978-1-942683-02-5</strong>
+</h6>
+<p>© BOA Editions, Ltd. 2016</p>
+<p><strong><br></strong><br><strong><span style="color: #696969;"><span style="font-family: arial,helvetica,sans-serif;"><span style="font-size: 12px;"><br></span></span></span></strong><span style="color: #696969;"><span style="font-family: arial,helvetica,sans-serif;"><span style="font-size: 12px;"><em></em></span></span></span></p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal"> </p></div>
+                                                
+                                                    <div class="shopify-book-specs">
+                                                                    <div class="shopify-book-spec"><strong>Format</strong><span>Paperback</span></div>
+                                                                                                                                    <div class="shopify-book-spec"><strong>Publication Date</strong><span>April 12, 2016</span></div>
+                                                                                                    <div class="shopify-book-spec"><strong>ISBN</strong><span>978-1-942683-02-5</span></div>
+                                                            </div>
+                        
+                                                    <div class="shopify-book-variants">
+                                <select class="shopify-book-variant-select"
+                                        data-shopify-url="https://shop.boaeditions.org/products/the-black-maria">
+                                                                            <option value="49518718517477"
+                                                data-price="17.00"
+                                                data-in-stock="1"
+                                                selected                                                >
+                                            Paperback                                        </option>
+                                                                            <option value="49518718550245"
+                                                data-price="20.00"
+                                                data-in-stock="1"
+                                                                                                >
+                                            Hardcover                                        </option>
+                                                                    </select>
+                            </div>
+                        
+                                                    <p class="shopify-book-price">
+                                                                    From $17.00                                                            </p>
+                        
+                        <div class="shopify-book-actions">
+                                                            <button class="shopify-book-btn shopify-book-btn-primary"
+                                        data-add-to-cart
+                                        data-variant-id="49518718517477"
+                                        data-product-title="the black maria"
+                                        data-variant-title="Paperback"
+                                        data-price="17.00"
+                                        data-image="https://cdn.shopify.com/s/files/1/0982/0178/products/TheBlackMaria_FinalFront_5a7929ab-c075-4917-9cd6-ea4707c68ea5.jpg?v=1527683358"
+                                        data-handle="the-black-maria"
+                                                                                >
+                                    Add to Cart                                </button>
+                                                        <!-- <a href="" class="shopify-book-btn shopify-book-btn-secondary">Preview</a> -->
+                        </div>
+
+                                            </div>
+                </div>
+            </div>
+        </div>
+
+        
+        
+                <section class="shopify-book-authors">
+            <div class="elementor-section elementor-section-boxed">
+                <div class="elementor-container">
+                    <div class="shopify-book-authors-inner">
+                        <div class="sb-author-heading text-center">
+                            <h2>About the Author</h2>
+                        </div>
+                                                    <div class="shopify-book-author-row">
+                                                                    <div class="shopify-book-author-photo">
+                                        <img data-od-added-loading data-od-xpath="/HTML/BODY/DIV[@class=&apos;elementor elementor-20677 elementor-location-single post-25449 page type-page status-publish hentry&apos;]/*[1][self::SECTION]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::ARTICLE]/*[2][self::SECTION]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[2][self::DIV]/*[1][self::DIV]/*[1][self::IMG]" loading="lazy" src="https://cdn.shopify.com/s/files/1/0982/0178/collections/AGirmay_AuthorPhoto_Credit_Sheila_Griffin_2.jpg?v=1478191976" alt="Aracelis Girmay">
+                                    </div>
+                                                                <div class="shopify-book-author-text">
+                                                                            <h4 class="shopify-book-author-heading">About the Author</h4>
+                                                                                                                <div class="shopify-book-author-bio"><p><b><span style="font-weight: 400"><a title="About Aracelis Girmay" href="https://www.boaeditions.org/collections/aracelis-girmay">Aracelis Girmay</a> is the author of four books of poems: GREEN OF ALL HEADS<strong> </strong>(BOA Editions, 2025); <a title="The Black Maria" href="https://www.boaeditions.org/collections/aracelis-girmay/products/the-black-maria"><i>the black maria</i></a> (BOA Editions, 2016); <i>Teeth</i> (Curbstone Press, 2007), winner of the GLCA New Writers Award; and </span></b><b><span style="font-weight: 400"><a title="Kingdom Animalia" href="https://www.boaeditions.org/collections/aracelis-girmay/products/kingdom-animalia"><i>Kingdom Animalia</i></a> (BOA Editions, 2011), winner of the 2011 Isabella Gardner Poetry Award and a finalist for the National Book Critics Circle Award and the Hurston/Wright Legacy Award. </span></b><b><span style="font-weight: 400">She is also the author/illustrator of the collage-based picture book <em>changing, changing</em>. </span></b></p>
+<p><b><span style="font-weight: 400">For her work, Girmay was nominated for a Neustadt International Prize for Literature in 2018. For the last several years, Girmay was on the faculty of Hampshire College's School for Interdisciplinary Arts and before that taught community writing workshops with young people in New York and California. She has received grants, training, and fellowships in support of her work from the NEA, the Whiting Foundation, Civitella Ranieri, the Cave Canem Foundation, and the Community~Word Project, among other programs. From 2021-2025, Girmay served as the editor of BOA Editions' Blessing the Boats Selections and is on the editorial board of the African Poetry Book Fund.<br></span></b></p>
+<p><b><span style="font-weight: 400">She is the editor of <a title="How to Carry Water" href="https://www.boaeditions.org/collections/aracelis-girmay/products/how-to-carry-water-selected-poems-of-lucille-clifton"><i>How to Carry Water: Selected Poems of Lucille Clifton </i></a>(BOA, 2020) and <em>So We Can Know: Writers of Color on Pregnancy, Loss, Abortion, and Birth</em> (Haymarket Books).</span></b></p></div>
+                                                                    </div>
+                            </div>
+                                            </div>
+                </div>
+            </div>
+        </section>
+        
+        
+                <section class="shopify-book-related">
+            <div class="elementor-section elementor-section-boxed">
+                <div class="elementor-container">
+                    <div class="shopify-book-related-inner">
+                        <h3 class="shopify-book-related-heading">You Might Also Like</h3>
+                        <div class="shopify-book-related-grid">
+                                                            <a class="shopify-book-related-card" href="https://boaeditions.org/book/nomenclatures-of-invisibility">
+                                                                            <div class="shopify-book-related-image">
+                                            <img data-od-added-loading data-od-xpath="/HTML/BODY/DIV[@class=&apos;elementor elementor-20677 elementor-location-single post-25449 page type-page status-publish hentry&apos;]/*[1][self::SECTION]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::ARTICLE]/*[3][self::SECTION]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[2][self::DIV]/*[1][self::A]/*[1][self::DIV]/*[1][self::IMG]" loading="lazy" src="https://cdn.shopify.com/s/files/1/0982/0178/products/NomenclaturesOfInvisibility_CVR_MR2_1200pxRGB_SM.jpg?v=1675788165" alt="Nomenclatures of Invisibility">
+                                        </div>
+                                                                                                                <span class="shopify-book-related-type">Poetry</span>
+                                                                        <h3 class="shopify-book-related-title">Nomenclatures of Invisibility</h3>
+                                                                            <p class="shopify-book-related-author">Mahtem Shiferraw</p>
+                                                                    </a>
+                                                            <a class="shopify-book-related-card" href="https://boaeditions.org/book/seasons-of-lotus-seasons-of-bone-poems">
+                                                                            <div class="shopify-book-related-image">
+                                            <img data-od-added-loading data-od-xpath="/HTML/BODY/DIV[@class=&apos;elementor elementor-20677 elementor-location-single post-25449 page type-page status-publish hentry&apos;]/*[1][self::SECTION]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::ARTICLE]/*[3][self::SECTION]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[2][self::DIV]/*[2][self::A]/*[1][self::DIV]/*[1][self::IMG]" loading="lazy" src="https://cdn.shopify.com/s/files/1/0982/0178/products/SEASONS_OF_LOTUS.jpg?v=1527683338" alt="Seasons of Lotus, Seasons of Bone">
+                                        </div>
+                                                                                                                <span class="shopify-book-related-type">Poetry</span>
+                                                                        <h3 class="shopify-book-related-title">Seasons of Lotus, Seasons of Bone</h3>
+                                                                            <p class="shopify-book-related-author">Matthew Shenoda</p>
+                                                                    </a>
+                                                            <a class="shopify-book-related-card" href="https://boaeditions.org/book/blue-on-a-blue-palette">
+                                                                            <div class="shopify-book-related-image">
+                                            <img data-od-added-loading data-od-xpath="/HTML/BODY/DIV[@class=&apos;elementor elementor-20677 elementor-location-single post-25449 page type-page status-publish hentry&apos;]/*[1][self::SECTION]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::ARTICLE]/*[3][self::SECTION]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[2][self::DIV]/*[3][self::A]/*[1][self::DIV]/*[1][self::IMG]" loading="lazy" src="https://cdn.shopify.com/s/files/1/0982/0178/files/Blue_On_A_Blue_Palette_CVR_SM.jpg?v=1701374198" alt="Blue on a Blue Palette">
+                                        </div>
+                                                                                                                <span class="shopify-book-related-type">Poetry</span>
+                                                                        <h3 class="shopify-book-related-title">Blue on a Blue Palette</h3>
+                                                                            <p class="shopify-book-related-author">Lynne Thompson</p>
+                                                                    </a>
+                                                            <a class="shopify-book-related-card" href="https://boaeditions.org/book/green-of-all-heads">
+                                                                            <div class="shopify-book-related-image">
+                                            <img data-od-added-loading data-od-xpath="/HTML/BODY/DIV[@class=&apos;elementor elementor-20677 elementor-location-single post-25449 page type-page status-publish hentry&apos;]/*[1][self::SECTION]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::ARTICLE]/*[3][self::SECTION]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[2][self::DIV]/*[4][self::A]/*[1][self::DIV]/*[1][self::IMG]" loading="lazy" src="https://cdn.shopify.com/s/files/1/0982/0178/files/GreenOfAllHeads_CVR_1200px_RGB_SM.jpg?v=1743784663" alt="GREEN OF ALL HEADS">
+                                        </div>
+                                                                                                                <span class="shopify-book-related-type">Poetry, Rare and Signed</span>
+                                                                        <h3 class="shopify-book-related-title">GREEN OF ALL HEADS</h3>
+                                                                            <p class="shopify-book-related-author">Aracelis Girmay</p>
+                                                                    </a>
+                                                    </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+    </article>
+
+        <script>
+    (function () {
+        const select       = document.querySelector('.shopify-book-variant-select');
+        const priceEl      = document.querySelector('.shopify-book-price');
+        const addToCartBtn = document.querySelector('.shopify-book-btn-primary[data-add-to-cart], .shopify-book-btn-disabled');
+        if (!select || !addToCartBtn) return;
+
+        function update() {
+            const opt = select.options[select.selectedIndex];
+            if (!opt) return;
+
+            const price    = opt.dataset.price;
+            const inStock  = opt.dataset.inStock === '1';
+            const variantId = opt.value;
+
+            if (priceEl && price) {
+                priceEl.textContent = '$' + price;
+            }
+
+            if (addToCartBtn) {
+                if (inStock) {
+                    addToCartBtn.dataset.variantId    = variantId;
+                    addToCartBtn.dataset.price        = price;
+                    addToCartBtn.dataset.variantTitle = opt.textContent.replace(/ \(Out of Stock\)$/, '');
+                    addToCartBtn.classList.remove('shopify-book-btn-disabled');
+                    addToCartBtn.classList.add('shopify-book-btn-primary');
+                    addToCartBtn.setAttribute('data-add-to-cart', '');
+                    addToCartBtn.textContent = addToCartBtn.dataset.isPreorder === '1' ? 'Pre-order' : 'Add to Cart';
+                } else {
+                    addToCartBtn.classList.remove('shopify-book-btn-primary');
+                    addToCartBtn.classList.add('shopify-book-btn-disabled');
+                    addToCartBtn.removeAttribute('data-add-to-cart');
+                    addToCartBtn.textContent = 'Out of Stock';
+                }
+            }
+        }
+
+        select.addEventListener('change', update);
+        update();
+    })();
+    </script>
+        				</div>
+				</div>
+					</div>
+		</div>
+					</div>
+		</section>
+				</div>
+				<footer data-elementor-type="footer" data-elementor-id="20679" class="elementor elementor-20679 elementor-location-footer" data-elementor-post-type="elementor_library">
+			<div class="elementor-element elementor-element-7ba61ea e-flex e-con-boxed e-con e-parent" data-id="7ba61ea" data-element_type="container" data-e-type="container">
+					<div class="e-con-inner">
+		<div class="elementor-element elementor-element-cf37ac2 e-con-full e-flex e-con e-child" data-id="cf37ac2" data-element_type="container" data-e-type="container">
+		<div class="elementor-element elementor-element-fb31d86 e-con-full e-flex e-con e-child" data-id="fb31d86" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-53fc141 elementor-widget elementor-widget-image" data-id="53fc141" data-element_type="widget" data-e-type="widget" data-widget_type="image.default">
+				<div class="elementor-widget-container">
+																<a href="https://boaeditions.org">
+							<img data-od-added-loading data-od-xpath="/HTML/BODY/FOOTER[@class=&apos;elementor elementor-20679 elementor-location-footer&apos;]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::A]/*[1][self::IMG]" loading="lazy" width="140" height="80" src="https://boaeditions.org/wp-content/uploads/2023/07/Image-BOA-Editions.svg" class="attachment-full size-full wp-image-26214" alt="" />								</a>
+															</div>
+				</div>
+				<div data-dce-text-color="#110E0C99" class="elementor-element elementor-element-d40180d elementor-widget elementor-widget-text-editor" data-id="d40180d" data-element_type="widget" data-e-type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+									<p>Independent literary publishing since 1976.<br />Based in Rochester, NY.</p>								</div>
+				</div>
+		<div class="elementor-element elementor-element-5daacbb e-con-full e-flex e-con e-child" data-id="5daacbb" data-element_type="container" data-e-type="container">
+		<!-- dce invisible element 77cba75 -->		</div>
+				</div>
+		<div class="elementor-element elementor-element-c46aa82 e-con-full e-flex e-con e-child" data-id="c46aa82" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-07a370a elementor-widget elementor-widget-heading" data-id="07a370a" data-element_type="widget" data-e-type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+					<h6 class="elementor-heading-title elementor-size-default">READ</h6>				</div>
+				</div>
+				<div class="elementor-element elementor-element-82dd377 elementor-nav-menu--dropdown-none elementor-widget elementor-widget-nav-menu" data-id="82dd377" data-element_type="widget" data-e-type="widget" data-settings="{&quot;layout&quot;:&quot;vertical&quot;,&quot;submenu_icon&quot;:{&quot;value&quot;:&quot;&quot;,&quot;library&quot;:&quot;&quot;}}" data-widget_type="nav-menu.default">
+				<div class="elementor-widget-container">
+								<nav aria-label="Menu" class="elementor-nav-menu--main elementor-nav-menu__container elementor-nav-menu--layout-vertical e--pointer-none">
+				<ul id="menu-1-82dd377" class="elementor-nav-menu sm-vertical"><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-24014"><a href="/bookstore/?genre=new-release" class="elementor-item">New Release</a></li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-24015"><a href="/bookstore/?genre=poetry" class="elementor-item">Poetry</a></li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-24016"><a href="/bookstore/?genre=fiction" class="elementor-item">Fiction</a></li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-24017"><a href="/bookstore/" class="elementor-item">All Titles</a></li>
+</ul>			</nav>
+						<nav class="elementor-nav-menu--dropdown elementor-nav-menu__container" aria-hidden="true">
+				<ul id="menu-2-82dd377" class="elementor-nav-menu sm-vertical"><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-24014"><a href="/bookstore/?genre=new-release" class="elementor-item" tabindex="-1">New Release</a></li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-24015"><a href="/bookstore/?genre=poetry" class="elementor-item" tabindex="-1">Poetry</a></li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-24016"><a href="/bookstore/?genre=fiction" class="elementor-item" tabindex="-1">Fiction</a></li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-24017"><a href="/bookstore/" class="elementor-item" tabindex="-1">All Titles</a></li>
+</ul>			</nav>
+						</div>
+				</div>
+				</div>
+		<div class="elementor-element elementor-element-de6b8bb e-con-full e-flex e-con e-child" data-id="de6b8bb" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-82884c9 elementor-widget elementor-widget-heading" data-id="82884c9" data-element_type="widget" data-e-type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+					<h6 class="elementor-heading-title elementor-size-default">ABOUT</h6>				</div>
+				</div>
+				<div class="elementor-element elementor-element-d6456c1 elementor-nav-menu--dropdown-none elementor-widget elementor-widget-nav-menu" data-id="d6456c1" data-element_type="widget" data-e-type="widget" data-settings="{&quot;layout&quot;:&quot;vertical&quot;,&quot;submenu_icon&quot;:{&quot;value&quot;:&quot;&quot;,&quot;library&quot;:&quot;&quot;}}" data-widget_type="nav-menu.default">
+				<div class="elementor-widget-container">
+								<nav aria-label="Menu" class="elementor-nav-menu--main elementor-nav-menu__container elementor-nav-menu--layout-vertical e--pointer-none">
+				<ul id="menu-1-d6456c1" class="elementor-nav-menu sm-vertical"><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-24026"><a href="/about#our_history_sec" class="elementor-item elementor-item-anchor">Our History</a></li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-24027"><a href="/about#our_team_sec" class="elementor-item elementor-item-anchor">Team</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-27057"><a href="https://boaeditions.org/authors/" class="elementor-item">Authors</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-26617"><a href="https://boaeditions.org/contact/" class="elementor-item">Contact</a></li>
+</ul>			</nav>
+						<nav class="elementor-nav-menu--dropdown elementor-nav-menu__container" aria-hidden="true">
+				<ul id="menu-2-d6456c1" class="elementor-nav-menu sm-vertical"><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-24026"><a href="/about#our_history_sec" class="elementor-item elementor-item-anchor" tabindex="-1">Our History</a></li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-24027"><a href="/about#our_team_sec" class="elementor-item elementor-item-anchor" tabindex="-1">Team</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-27057"><a href="https://boaeditions.org/authors/" class="elementor-item" tabindex="-1">Authors</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-26617"><a href="https://boaeditions.org/contact/" class="elementor-item" tabindex="-1">Contact</a></li>
+</ul>			</nav>
+						</div>
+				</div>
+				</div>
+		<div class="elementor-element elementor-element-1fe0979 e-con-full e-flex e-con e-child" data-id="1fe0979" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-b800b81 elementor-widget elementor-widget-heading" data-id="b800b81" data-element_type="widget" data-e-type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+					<h6 class="elementor-heading-title elementor-size-default">COMMUNITY</h6>				</div>
+				</div>
+				<div class="elementor-element elementor-element-c3fc12c elementor-nav-menu--dropdown-none elementor-widget elementor-widget-nav-menu" data-id="c3fc12c" data-element_type="widget" data-e-type="widget" data-settings="{&quot;layout&quot;:&quot;vertical&quot;,&quot;submenu_icon&quot;:{&quot;value&quot;:&quot;&quot;,&quot;library&quot;:&quot;&quot;}}" data-widget_type="nav-menu.default">
+				<div class="elementor-widget-container">
+								<nav aria-label="Menu" class="elementor-nav-menu--main elementor-nav-menu__container elementor-nav-menu--layout-vertical e--pointer-none">
+				<ul id="menu-1-c3fc12c" class="elementor-nav-menu sm-vertical"><li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-26275"><a href="https://boaeditions.org/support/" class="elementor-item">Support</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-26277"><a href="https://boaeditions.org/submissions/" class="elementor-item">Submissions</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-24118"><a href="https://boaeditions.org/blog/" class="elementor-item">Blog</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-26276"><a href="https://boaeditions.org/events-list/" class="elementor-item">Events</a></li>
+</ul>			</nav>
+						<nav class="elementor-nav-menu--dropdown elementor-nav-menu__container" aria-hidden="true">
+				<ul id="menu-2-c3fc12c" class="elementor-nav-menu sm-vertical"><li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-26275"><a href="https://boaeditions.org/support/" class="elementor-item" tabindex="-1">Support</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-26277"><a href="https://boaeditions.org/submissions/" class="elementor-item" tabindex="-1">Submissions</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-24118"><a href="https://boaeditions.org/blog/" class="elementor-item" tabindex="-1">Blog</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-26276"><a href="https://boaeditions.org/events-list/" class="elementor-item" tabindex="-1">Events</a></li>
+</ul>			</nav>
+						</div>
+				</div>
+				</div>
+		<div class="elementor-element elementor-element-925a38d e-con-full e-flex e-con e-child" data-id="925a38d" data-element_type="container" data-e-type="container">
+				<div class="elementor-element elementor-element-db1c7ee elementor-widget elementor-widget-heading" data-id="db1c7ee" data-element_type="widget" data-e-type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+					<h6 class="elementor-heading-title elementor-size-default">Socials</h6>				</div>
+				</div>
+				<div data-dce-text-color="#110E0C99" class="elementor-element elementor-element-a9c7dfa elementor-icon-list--layout-traditional elementor-list-item-link-full_width elementor-widget elementor-widget-icon-list" data-id="a9c7dfa" data-element_type="widget" data-e-type="widget" data-widget_type="icon-list.default">
+				<div class="elementor-widget-container">
+							<ul class="elementor-icon-list-items">
+							<li class="elementor-icon-list-item">
+											<a href="https://www.facebook.com/boaeditions" target="_blank">
+
+												<span class="elementor-icon-list-icon">
+							<i aria-hidden="true" class="fab fa-facebook"></i>						</span>
+										<span class="elementor-icon-list-text">Facebook</span>
+											</a>
+									</li>
+								<li class="elementor-icon-list-item">
+											<a href="https://www.instagram.com/boaeditions/" target="_blank">
+
+												<span class="elementor-icon-list-icon">
+							<i aria-hidden="true" class="fab fa-instagram"></i>						</span>
+										<span class="elementor-icon-list-text">Instagram</span>
+											</a>
+									</li>
+						</ul>
+						</div>
+				</div>
+				<div class="elementor-element elementor-element-99b75f6 elementor-widget elementor-widget-image" data-id="99b75f6" data-element_type="widget" data-e-type="widget" data-widget_type="image.default">
+				<div class="elementor-widget-container">
+															<img data-od-added-loading data-od-replaced-sizes="(max-width: 1739px) 100vw, 1739px" data-od-xpath="/HTML/BODY/FOOTER[@class=&apos;elementor elementor-20679 elementor-location-footer&apos;]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[5][self::DIV]/*[3][self::DIV]/*[1][self::DIV]/*[1][self::IMG]" loading="lazy" width="1739" height="449" src="https://boaeditions.org/wp-content/uploads/2023/07/nysca-logo-1-png.avif" class="attachment-full size-full wp-image-27210 has-transparency" alt="" srcset="https://boaeditions.org/wp-content/uploads/2023/07/nysca-logo-1-png.avif 1739w, https://boaeditions.org/wp-content/uploads/2023/07/nysca-logo-1-300x77-png.avif 300w, https://boaeditions.org/wp-content/uploads/2023/07/nysca-logo-1-1024x264-png.avif 1024w, https://boaeditions.org/wp-content/uploads/2023/07/nysca-logo-1-768x198-png.avif 768w, https://boaeditions.org/wp-content/uploads/2023/07/nysca-logo-1-1536x397-png.avif 1536w" sizes="auto, (max-width: 1739px) 100vw, 1739px" data-has-transparency="true" data-dominant-color="000000" style="--dominant-color: #000000" />															</div>
+				</div>
+				<div class="elementor-element elementor-element-19c669d elementor-widget elementor-widget-image" data-id="19c669d" data-element_type="widget" data-e-type="widget" data-widget_type="image.default">
+				<div class="elementor-widget-container">
+															<img data-od-added-loading data-od-xpath="/HTML/BODY/FOOTER[@class=&apos;elementor elementor-20679 elementor-location-footer&apos;]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[5][self::DIV]/*[4][self::DIV]/*[1][self::DIV]/*[1][self::IMG]" loading="lazy" width="628" height="628" src="https://boaeditions.org/wp-content/uploads/2023/07/Monroe-County-Logo.svg" class="attachment-full size-full wp-image-27123" alt="" />															</div>
+				</div>
+				</div>
+				</div>
+				<div data-dce-text-color="#110E0C66" class="elementor-element elementor-element-2614d23 elementor-widget elementor-widget-text-editor" data-id="2614d23" data-element_type="widget" data-e-type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+									© 2026 Boa Editions Ltd. All rights reserved.								</div>
+				</div>
+					</div>
+				</div>
+				</footer>
+		
+
+    <div id="shopify-mega-panel" class="shopify-mega-panel">
+        <div class="shopify-mega-inner">
+            <div class="shopify-menu-left">
+                <div class="menu_label">BROWSE</div>
+               
+                <ul class="shopify-mega-list">
+                                            <li>
+                            <a href="https://boaeditions.org/author"
+                            class="shopify-mega-link is-active"
+                            data-col-id="authors">
+                                Authors                            </a>
+                        </li>
+                                            <li>
+                            <a href="https://boaeditions.org/bookstore/?genre=book-bundles"
+                            class="shopify-mega-link"
+                            data-col-id="cat-book-bundles">
+                                Book Bundles                            </a>
+                        </li>
+                                            <li>
+                            <a href="https://boaeditions.org/book/subscriptions/"
+                            class="shopify-mega-link"
+                            data-col-id="book-subscriptions">
+                                Book Subscriptions                            </a>
+                        </li>
+                                            <li>
+                            <a href="https://boaeditions.org/bookstore/?genre=fiction"
+                            class="shopify-mega-link"
+                            data-col-id="cat-fiction">
+                                Fiction                            </a>
+                        </li>
+                                            <li>
+                            <a href="https://boaeditions.org/bookstore/?genre=new-release"
+                            class="shopify-mega-link"
+                            data-col-id="cat-new-release">
+                                New Release                            </a>
+                        </li>
+                                            <li>
+                            <a href="https://boaeditions.org/bookstore/?genre=nonfiction"
+                            class="shopify-mega-link"
+                            data-col-id="cat-nonfiction">
+                                Nonfiction                            </a>
+                        </li>
+                                            <li>
+                            <a href="https://boaeditions.org/bookstore/?genre=poetry"
+                            class="shopify-mega-link"
+                            data-col-id="cat-poetry">
+                                Poetry                            </a>
+                        </li>
+                                            <li>
+                            <a href="https://boaeditions.org/bookstore/?genre=rare-and-signed"
+                            class="shopify-mega-link"
+                            data-col-id="cat-rare-and-signed">
+                                Rare and Signed                            </a>
+                        </li>
+                                            <li>
+                            <a href="https://boaeditions.org/bookstore/?genre=translations"
+                            class="shopify-mega-link"
+                            data-col-id="cat-translations">
+                                Translations                            </a>
+                        </li>
+                                    </ul>
+            </div>
+
+            <div class="shopify-mega-preview-wrap">
+                                    <div class="shopify-mega-preview-pane is-active"
+                         data-col-id="authors">
+
+                        <div class="mega-preview-main">
+                                                            <div class="mega-preview-image">
+                                    <a href="https://boaeditions.org/author/w-d-snodgrass">
+                                        <img data-od-added-fetchpriority data-od-removed-loading="lazy" data-od-xpath="/HTML/BODY/DIV[@id=&apos;shopify-mega-panel&apos;]/*[1][self::DIV]/*[2][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::A]/*[1][self::IMG]" fetchpriority="low" src="https://cdn.shopify.com/s/files/1/0982/0178/collections/WD_Snodgrass.jpg?v=1784817322" alt="W.D. Snodgrass" >
+                                    </a>
+                                </div>
+                                                        <div class="mega-preview-content">
+                                <div class="mega-collection-cover">
+                                    <span class="mega-preview-collection">Authors</span> ·
+                                    <span class="mega-preview-label">Featured</span>
+                                </div>
+                                <h3 class="mega-preview-title">W.D. Snodgrass</h3>
+                                                                    <p class="mega-preview-desc">The author of nineteen collections of poetry, W.D. Snodgrass’ first collection of poems, Hearts Needle received the Pulitzer Prize in 1960. Often credited with…</p>
+                                                                <a class="btn-link" href="https://boaeditions.org/author/w-d-snodgrass">Read More <i aria-hidden="true" class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                                    <div class="shopify-mega-preview-pane"
+                         data-col-id="cat-book-bundles">
+
+                        <div class="mega-preview-main">
+                                                            <div class="mega-preview-image">
+                                    <a href="https://boaeditions.org/book/fall-book-bundle">
+                                        <img data-od-added-fetchpriority data-od-removed-loading="lazy" data-od-xpath="/HTML/BODY/DIV[@id=&apos;shopify-mega-panel&apos;]/*[1][self::DIV]/*[2][self::DIV]/*[2][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::A]/*[1][self::IMG]" fetchpriority="low" src="https://cdn.shopify.com/s/files/1/0982/0178/files/Fallbundle_99c333b7-5a4e-4482-90d4-efc912696c23.jpg?v=1783707535" alt="Fall Book Bundle" >
+                                    </a>
+                                </div>
+                                                        <div class="mega-preview-content">
+                                <div class="mega-collection-cover">
+                                    <span class="mega-preview-collection">Book Bundles</span> ·
+                                    <span class="mega-preview-label">Featured</span>
+                                </div>
+                                <h3 class="mega-preview-title">Fall Book Bundle</h3>
+                                                                    <p class="mega-preview-desc">Welcome Fall Book Bundlers! With this purchase you will receive a box with all titles from Boa&#039;s current fall season along with a few…</p>
+                                                                <a class="btn-link" href="https://boaeditions.org/book/fall-book-bundle">Read More <i aria-hidden="true" class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                                    <div class="shopify-mega-preview-pane"
+                         data-col-id="book-subscriptions">
+
+                        <div class="mega-preview-main">
+                                                            <div class="mega-preview-image">
+                                    <a href="https://boaeditions.org/book/subscriptions">
+                                        <img data-od-added-fetchpriority data-od-removed-loading="lazy" data-od-xpath="/HTML/BODY/DIV[@id=&apos;shopify-mega-panel&apos;]/*[1][self::DIV]/*[2][self::DIV]/*[3][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::A]/*[1][self::IMG]" fetchpriority="low" src="https://cdn.shopify.com/s/files/1/0982/0178/files/BookBundlesProductImage.jpg?v=1785268854" alt="Boa Book Lovers Subscription" >
+                                    </a>
+                                </div>
+                                                        <div class="mega-preview-content">
+                                <div class="mega-collection-cover">
+                                    <span class="mega-preview-collection">Book Subscriptions</span> ·
+                                    <span class="mega-preview-label">Featured</span>
+                                </div>
+                                <h3 class="mega-preview-title">Boa Book Lovers Subscription</h3>
+                                                                    <p class="mega-preview-desc">Subscribe and save on all forthcoming Boa titles within the calendar year! At the start of each season (every 6 months), subscribers will receive…</p>
+                                                                <a class="btn-link" href="https://boaeditions.org/book/subscriptions">Read More <i aria-hidden="true" class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                                    <div class="shopify-mega-preview-pane"
+                         data-col-id="cat-fiction">
+
+                        <div class="mega-preview-main">
+                                                            <div class="mega-preview-image">
+                                    <a href="https://boaeditions.org/book/the-education-of-a-poker-player">
+                                        <img data-od-added-fetchpriority data-od-removed-loading="lazy" data-od-xpath="/HTML/BODY/DIV[@id=&apos;shopify-mega-panel&apos;]/*[1][self::DIV]/*[2][self::DIV]/*[4][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::A]/*[1][self::IMG]" fetchpriority="low" src="https://cdn.shopify.com/s/files/1/0982/0178/products/TheEducationPokerPlayer_FinalFront.jpg?v=1527683366" alt="The Education of a Poker Player" >
+                                    </a>
+                                </div>
+                                                        <div class="mega-preview-content">
+                                <div class="mega-collection-cover">
+                                    <span class="mega-preview-collection">Fiction</span> ·
+                                    <span class="mega-preview-label">Featured</span>
+                                </div>
+                                <h3 class="mega-preview-title">The Education of a Poker Player</h3>
+                                                                    <p class="mega-preview-desc">New York Times-bestselling author James McManus offers up a collection of seven linked stories narrated by Vincent Killeen, an Irish Catholic altar boy, in…</p>
+                                                                <a class="btn-link" href="https://boaeditions.org/book/the-education-of-a-poker-player">Read More <i aria-hidden="true" class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                                    <div class="shopify-mega-preview-pane"
+                         data-col-id="cat-new-release">
+
+                        <div class="mega-preview-main">
+                                                            <div class="mega-preview-image">
+                                    <a href="https://boaeditions.org/book/august-september-october">
+                                        <img data-od-added-fetchpriority data-od-removed-loading="lazy" data-od-xpath="/HTML/BODY/DIV[@id=&apos;shopify-mega-panel&apos;]/*[1][self::DIV]/*[2][self::DIV]/*[5][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::A]/*[1][self::IMG]" fetchpriority="low" src="https://cdn.shopify.com/s/files/1/0982/0178/files/AugustSeptemberOctober_CVR_1600px_RGB_LG.jpg?v=1760735418" alt="August, September, October" >
+                                    </a>
+                                </div>
+                                                        <div class="mega-preview-content">
+                                <div class="mega-collection-cover">
+                                    <span class="mega-preview-collection">New Release</span> ·
+                                    <span class="mega-preview-label">Featured</span>
+                                </div>
+                                <h3 class="mega-preview-title">August, September, October</h3>
+                                                                    <p class="mega-preview-desc">August, September, October is a deep, vulnerable meditation on fatherhood, time passing, and survival in a world reshaped by crisis. In two long, diaristic…</p>
+                                                                <a class="btn-link" href="https://boaeditions.org/book/august-september-october">Read More <i aria-hidden="true" class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                                    <div class="shopify-mega-preview-pane"
+                         data-col-id="cat-nonfiction">
+
+                        <div class="mega-preview-main">
+                                                            <div class="mega-preview-image">
+                                    <a href="https://boaeditions.org/book/after-images-autobiographical-sketches">
+                                        <img data-od-added-fetchpriority data-od-removed-loading="lazy" data-od-xpath="/HTML/BODY/DIV[@id=&apos;shopify-mega-panel&apos;]/*[1][self::DIV]/*[2][self::DIV]/*[6][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::A]/*[1][self::IMG]" fetchpriority="low" src="https://cdn.shopify.com/s/files/1/0982/0178/files/AfterImagescover.jpg?v=1784817212" alt="After-Images: Autobiographical Sketches" >
+                                    </a>
+                                </div>
+                                                        <div class="mega-preview-content">
+                                <div class="mega-collection-cover">
+                                    <span class="mega-preview-collection">Nonfiction</span> ·
+                                    <span class="mega-preview-label">Featured</span>
+                                </div>
+                                <h3 class="mega-preview-title">After-Images: Autobiographical Sketches</h3>
+                                                                    <p class="mega-preview-desc">In After-Images: Autobiographical Sketches, renowned poet W.D. Snodgrass offers his frank and evocative essays on his life as a student, lover, son, husband and poet.…</p>
+                                                                <a class="btn-link" href="https://boaeditions.org/book/after-images-autobiographical-sketches">Read More <i aria-hidden="true" class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                                    <div class="shopify-mega-preview-pane"
+                         data-col-id="cat-poetry">
+
+                        <div class="mega-preview-main">
+                                                            <div class="mega-preview-image">
+                                    <a href="https://boaeditions.org/book/blessing-the-boats-new-and-selected-poems-1988-2000">
+                                        <img data-od-added-fetchpriority data-od-removed-loading="lazy" data-od-xpath="/HTML/BODY/DIV[@id=&apos;shopify-mega-panel&apos;]/*[1][self::DIV]/*[2][self::DIV]/*[7][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::A]/*[1][self::IMG]" fetchpriority="low" src="https://cdn.shopify.com/s/files/1/0982/0178/products/BlessingtheBoats_frontcover.jpg?v=1527683185" alt="Blessing the Boats: New and Selected Poems 1988-2000" >
+                                    </a>
+                                </div>
+                                                        <div class="mega-preview-content">
+                                <div class="mega-collection-cover">
+                                    <span class="mega-preview-collection">Poetry</span> ·
+                                    <span class="mega-preview-label">Featured</span>
+                                </div>
+                                <h3 class="mega-preview-title">Blessing the Boats: New and Selected Poems 1988-2000</h3>
+                                                                    <p class="mega-preview-desc">WINNER OF THE NATIONAL BOOK AWARD FOR POETRY Lucille Clifton, one of America&#039;s most important and distinguished poets, employs brilliantly honed language, stunning images,…</p>
+                                                                <a class="btn-link" href="https://boaeditions.org/book/blessing-the-boats-new-and-selected-poems-1988-2000">Read More <i aria-hidden="true" class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                                    <div class="shopify-mega-preview-pane"
+                         data-col-id="cat-rare-and-signed">
+
+                        <div class="mega-preview-main">
+                                                            <div class="mega-preview-image">
+                                    <a href="https://boaeditions.org/book/each-in-his-season">
+                                        <img data-od-added-fetchpriority data-od-removed-loading="lazy" data-od-xpath="/HTML/BODY/DIV[@id=&apos;shopify-mega-panel&apos;]/*[1][self::DIV]/*[2][self::DIV]/*[8][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::A]/*[1][self::IMG]" fetchpriority="low" src="https://cdn.shopify.com/s/files/1/0982/0178/files/EachinHisSeason.jpg?v=1784750351" alt="Each in His Season" >
+                                    </a>
+                                </div>
+                                                        <div class="mega-preview-content">
+                                <div class="mega-collection-cover">
+                                    <span class="mega-preview-collection">Rare and Signed</span> ·
+                                    <span class="mega-preview-label">Featured</span>
+                                </div>
+                                <h3 class="mega-preview-title">Each in His Season</h3>
+                                                                    <p class="mega-preview-desc">In Each In His Season, Pulitzer Prize winner W. D. Snodgrass once again demonstrates the rich versatility of imagination that has made him a major…</p>
+                                                                <a class="btn-link" href="https://boaeditions.org/book/each-in-his-season">Read More <i aria-hidden="true" class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                                    <div class="shopify-mega-preview-pane"
+                         data-col-id="cat-translations">
+
+                        <div class="mega-preview-main">
+                                                            <div class="mega-preview-image">
+                                    <a href="https://boaeditions.org/book/day-has-no-equal-but-night">
+                                        <img data-od-added-fetchpriority data-od-removed-loading="lazy" data-od-xpath="/HTML/BODY/DIV[@id=&apos;shopify-mega-panel&apos;]/*[1][self::DIV]/*[2][self::DIV]/*[9][self::DIV]/*[1][self::DIV]/*[1][self::DIV]/*[1][self::A]/*[1][self::IMG]" fetchpriority="low" src="https://cdn.shopify.com/s/files/1/0982/0178/products/DAY_HAS_NO_EQUAL.jpg?v=1527683207" alt="Day Has No Equal But Night" >
+                                    </a>
+                                </div>
+                                                        <div class="mega-preview-content">
+                                <div class="mega-collection-cover">
+                                    <span class="mega-preview-collection">Translations</span> ·
+                                    <span class="mega-preview-label">Featured</span>
+                                </div>
+                                <h3 class="mega-preview-title">Day Has No Equal But Night</h3>
+                                                                    <p class="mega-preview-desc">Day Has No Equal But Night was at its time of printing the first book of new poems in 20 years by the most renowned…</p>
+                                                                <a class="btn-link" href="https://boaeditions.org/book/day-has-no-equal-but-night">Read More <i aria-hidden="true" class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                            </div>
+
+        </div>
+    </div>
+
+    <script>
+(function () {
+    const panel = document.getElementById('shopify-mega-panel');
+    if (!panel) return;
+
+    function findTrigger() {
+        const headerSelectors = ['header', '#header', '.site-header', '#masthead', '.main-header'];
+        let headers = [];
+        headerSelectors.forEach(sel => {
+            document.querySelectorAll(sel).forEach(el => headers.push(el));
+        });
+        if (headers.length === 0) headers = [document.body];
+        for (const header of headers) {
+            const li = header.querySelector('li.has-mega-menu');
+            if (li) {
+                const link = li.querySelector('a');
+                if (link) return link;
+            }
+        }
+        return null;
+    }
+
+    const trigger = findTrigger();
+    if (!trigger) {
+        console.warn('Shopify mega: trigger menu item not found in header');
+        return;
+    }
+
+    const triggerLi = trigger.closest('li') || trigger.parentElement;
+    if (!triggerLi) return;
+
+    if (window.jQuery) {
+        const $ = window.jQuery;
+        $(trigger).off();
+        $(triggerLi).off();
+        $(triggerLi).closest('ul').off('mouseenter mouseleave', 'a, li');
+        if ($.fn.smartmenus) {
+            try {
+                const $sm = $(triggerLi).closest('.sm, .main-menu, .menu');
+                $sm.find(trigger).off('.smapi mouseenter mouseleave touchend');
+            } catch(e) {}
+        }
+    }
+
+    triggerLi.style.position = 'static';
+    triggerLi.appendChild(panel);
+    panel.classList.add('is-attached');
+    triggerLi.classList.add('no-submenu', 'no-mega-stretch');
+    triggerLi.setAttribute('data-no-stretch', 'true');
+
+    const links = panel.querySelectorAll('.shopify-mega-link');
+    const panes = panel.querySelectorAll('.shopify-mega-preview-pane');
+
+    function showPane(colId) {
+        panes.forEach(p => {
+            p.classList.toggle('is-active', p.dataset.colId === String(colId));
+        });
+        links.forEach(l => {
+            l.classList.toggle('is-active', l.dataset.colId === String(colId));
+        });
+    }
+
+    let hoverTimer = null;
+    function show() { clearTimeout(hoverTimer); panel.classList.add('is-open'); }
+    function hide() { hoverTimer = setTimeout(() => { panel.classList.remove('is-open'); }, 150); }
+
+    triggerLi.addEventListener('mouseenter', show);
+    triggerLi.addEventListener('mouseleave', hide);
+    panel.addEventListener('mouseenter', show);
+    panel.addEventListener('mouseleave', hide);
+
+    links.forEach(link => {
+        link.addEventListener('mouseenter', function () {
+            const id = this.dataset.colId;
+            if (id) showPane(id);
+        });
+    });
+
+    triggerLi.addEventListener('mouseenter', function () {
+        if (window.jQuery) {
+            window.jQuery(trigger).off('mouseenter.smartmenus mouseleave.smartmenus');
+        }
+    }, true);
+})();
+</script>
+    <script>
+    jQuery(document).ready(function ($) {
+        if ($.fn.mCustomScrollbar) {
+            $('.shopify-menu-left').mCustomScrollbar({
+                theme: 'dark-thin',
+                scrollInertia: 200,
+                mouseWheel: { scrollAmount: 60 }
+            });
+        }
+    });
+    </script>
+    <script type="speculationrules">
+{"prerender":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/wp-*.php","/wp-admin/*","/wp-content/uploads/*","/wp-content/*","/wp-content/plugins/*","/wp-content/themes/tapp-hello-elementor/*","/wp-content/themes/hello-elementor/*","/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prerender, .no-prerender a"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"moderate"}]}
+</script>
+		<script>
+		( function ( body ) {
+			'use strict';
+			body.className = body.className.replace( /\btribe-no-js\b/, 'tribe-js' );
+		} )( document.body );
+		</script>
+		    <div class="shopify-cart-overlay" data-cart-overlay></div>
+
+    <aside class="shopify-cart-drawer" data-cart-drawer aria-hidden="true">
+        <header class="shopify-cart-header">
+            <div class="shopify-cart-header-left">
+                <h2>Cart</h2>
+                <div class="shopify-cart-count-label">
+                    <span data-cart-count>0</span> items
+                </div>
+            </div>
+            <button class="shopify-cart-close" aria-label="Close cart" data-cart-close>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+
+
+        <div class="shopify-cart-body" data-cart-body>
+            <div class="shopify-cart-empty" data-cart-empty>
+                <p>Your cart is empty</p>
+                <a href="https://boaeditions.org/bookstore/" class="shopify-cart-continue">Continue Shopping →</a>
+            </div>
+
+            <ul class="shopify-cart-items" data-cart-items></ul>
+        </div>
+
+        <footer class="shopify-cart-footer" data-cart-footer style="display:none;">
+            <div class="shopify-cart-subtotal">
+                <span class="cart-subtotal">Subtotal</span>
+                <strong>$<span data-cart-subtotal>0.00</span></strong>
+            </div>
+            <button class="shopify-cart-checkout" data-cart-checkout
+                    data-shopify-domain="boaeditions.myshopify.com">
+                Checkout
+            </button>
+            <p class="shopify-cart-note">Taxes and shipping calculated at checkout</p>
+        </footer>
+    </aside>
+    <style>
+        .shopify-cart-item-preorder {
+            display: inline-block;
+            background: #9F3C48;
+            color: #fff;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 2px 8px;
+            margin: 4px 0;
+            border-radius: 2px;
+        }
+    </style>
+
+    <script>
+    (function () {
+        'use strict';
+
+        const STORAGE_KEY = 'shopify_cart_v1';
+        const SHOPIFY_DOMAIN = document.querySelector('[data-cart-checkout]')?.dataset.shopifyDomain || '';
+
+        // ---- State helpers ----
+        function loadCart() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) { return []; }
+        }
+
+        function saveCart(cart) {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
+            } catch (e) {}
+            render();
+            broadcast();
+        }
+
+        function broadcast() {
+            window.dispatchEvent(new CustomEvent('shopify-cart-updated'));
+        }
+
+        // ---- Public API ----
+        window.ShopifyCart = {
+            add: function (item) {
+                // item = { variantId, productTitle, variantTitle, price, image, handle }
+                const cart = loadCart();
+                const existing = cart.find(i => i.variantId === item.variantId);
+                if (existing) {
+                    existing.quantity++;
+                } else {
+                    cart.push(Object.assign({ quantity: 1 }, item));
+                }
+                saveCart(cart);
+                open();
+            },
+            remove: function (variantId) {
+                let cart = loadCart();
+                cart = cart.filter(i => i.variantId !== variantId);
+                saveCart(cart);
+            },
+            updateQty: function (variantId, qty) {
+                const cart = loadCart();
+                const item = cart.find(i => i.variantId === variantId);
+                if (!item) return;
+                if (qty <= 0) {
+                    return this.remove(variantId);
+                }
+                item.quantity = qty;
+                saveCart(cart);
+            },
+            count: function () {
+                return loadCart().reduce((sum, i) => sum + i.quantity, 0);
+            },
+            open: open,
+            close: close,
+        };
+
+        // ---- Render ----
+        function render() {
+            const cart = loadCart();
+            const count = cart.reduce((sum, i) => sum + i.quantity, 0);
+
+            // Update all count badges
+            document.querySelectorAll('[data-cart-count]').forEach(el => {
+                el.textContent = count;
+                el.style.display = count > 0 ? '' : 'none';
+            });
+
+            // Toggle empty vs items
+            const emptyEl  = document.querySelector('[data-cart-empty]');
+            const itemsEl  = document.querySelector('[data-cart-items]');
+            const footerEl = document.querySelector('[data-cart-footer]');
+
+            if (cart.length === 0) {
+                if (emptyEl)  emptyEl.style.display  = '';
+                if (itemsEl)  itemsEl.innerHTML = '';
+                if (footerEl) footerEl.style.display = 'none';
+                return;
+            }
+
+            if (emptyEl)  emptyEl.style.display  = 'none';
+            if (footerEl) footerEl.style.display = '';
+
+            // Render items
+            if (itemsEl) {
+                itemsEl.innerHTML = cart.map(item => `
+                    <li class="shopify-cart-item" data-variant-id="${escapeAttr(item.variantId)}">
+                        <div class="shopify-cart-item-image">
+                            ${item.image ? `<img src="${escapeAttr(item.image)}" alt="${escapeAttr(item.productTitle)}">` : ''}
+                        </div>
+                        <div class="shopify-cart-item-info">
+                            <h4>${escapeHtml(item.productTitle)}</h4>
+                            ${item.variantTitle ? `<p class="shopify-cart-item-variant">${escapeHtml(item.variantTitle)}</p>` : ''}
+                            ${item.isPreorder ? `<p class="shopify-cart-item-preorder">Pre-order</p>` : ''}
+                            <p class="shopify-cart-item-price">$${escapeHtml(item.price)}</p>
+                            <div class="shopify-cart-item-qty">
+                                <button class="qty-btn" data-action="dec" aria-label="Decrease">−</button>
+                                <span class="qty-num">${item.quantity}</span>
+                                <button class="qty-btn" data-action="inc" aria-label="Increase">+</button>
+                                <button class="qty-remove" data-action="remove" aria-label="Remove">Remove</button>
+                            </div>
+                        </div>
+                    </li>
+                `).join('');
+            }
+
+            // Subtotal
+            const subtotal = cart.reduce((sum, i) => sum + (parseFloat(i.price) || 0) * i.quantity, 0);
+            const subEl = document.querySelector('[data-cart-subtotal]');
+            if (subEl) subEl.textContent = subtotal.toFixed(2);
+        }
+
+        // ---- Open/Close ----
+        function open() {
+            document.querySelector('[data-cart-drawer]')?.classList.add('is-open');
+            document.querySelector('[data-cart-overlay]')?.classList.add('is-open');
+            document.body.style.overflow = 'hidden';
+        }
+        function close() {
+            document.querySelector('[data-cart-drawer]')?.classList.remove('is-open');
+            document.querySelector('[data-cart-overlay]')?.classList.remove('is-open');
+            document.body.style.overflow = '';
+        }
+
+        // ---- Event listeners ----
+        document.addEventListener('click', function (e) {
+            // Cart icon trigger
+            if (e.target.closest('.shopify-cart-trigger')) {
+                e.preventDefault();
+                open();
+                return;
+            }
+            // Close button / overlay
+            if (e.target.closest('[data-cart-close]') || e.target.closest('[data-cart-overlay]')) {
+                e.preventDefault();
+                close();
+                return;
+            }
+            // Qty controls inside drawer
+            const qtyBtn = e.target.closest('.shopify-cart-item [data-action]');
+            if (qtyBtn) {
+                const li = qtyBtn.closest('.shopify-cart-item');
+                const variantId = li.dataset.variantId;
+                const action = qtyBtn.dataset.action;
+                const cart = loadCart();
+                const item = cart.find(i => i.variantId === variantId);
+                if (!item) return;
+
+                if (action === 'inc') window.ShopifyCart.updateQty(variantId, item.quantity + 1);
+                if (action === 'dec') window.ShopifyCart.updateQty(variantId, item.quantity - 1);
+                if (action === 'remove') window.ShopifyCart.remove(variantId);
+                return;
+            }
+            // Checkout button — build Shopify cart URL and open in new tab
+            if (e.target.closest('[data-cart-checkout]')) {
+                e.preventDefault();
+                const cart = loadCart();
+                if (cart.length === 0) return;
+
+                // 1. Get-or-create a WordPress session id, persisted in localStorage.
+                let sessionId = '';
+                try { sessionId = localStorage.getItem('wp_cart_session_id') || ''; } catch (e) {}
+                if (!sessionId) {
+                    sessionId = 'sess_' + Date.now().toString(36) + '_' +
+                                Math.random().toString(36).slice(2, 10);
+                    try { localStorage.setItem('wp_cart_session_id', sessionId); } catch (e) {}
+                }
+
+                // 2. Build the /cart/add URL with all current cart items
+                const items = cart.map(i => {
+                    let parts = 'items[][id]=' + encodeURIComponent(i.variantId) + '&items[][quantity]=' + i.quantity;
+                    if (i.sellingPlan) {
+                        parts += '&items[][selling_plan]=' + encodeURIComponent(i.sellingPlan);
+                    }
+                    return parts;
+                }).join('&');
+
+                // 3. Attach the session id as a cart attribute — flows into the order's note_attributes.
+                const attrs = '&attributes[wp_session_id]=' + encodeURIComponent(sessionId);
+
+                const addUrl = '/cart/add?' + items + attrs + '&return_to=/checkout';
+
+                // Wrap it in /cart/clear so Shopify starts fresh
+                const clearUrl = 'https://' + SHOPIFY_DOMAIN + '/cart/clear?return_to=' + encodeURIComponent(addUrl);
+
+                window.open(clearUrl, '_blank', 'noopener,noreferrer');
+            }
+
+        });
+
+        // ESC key closes drawer
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') close();
+        });
+
+        // Hook the product page "Add to Cart" buttons
+        document.addEventListener('click', function (e) {
+            const btn = e.target.closest('.shopify-book-btn-primary[data-add-to-cart]');
+            if (!btn) return;
+            e.preventDefault();
+
+            const item = {
+                variantId:    btn.dataset.variantId,
+                productTitle: btn.dataset.productTitle,
+                variantTitle: btn.dataset.variantTitle || '',
+                price:        btn.dataset.price,
+                image:        btn.dataset.image,
+                handle:       btn.dataset.handle,
+                sellingPlan:  btn.dataset.sellingPlan || '',
+                isPreorder:   btn.dataset.isPreorder === '1',
+            };
+            window.ShopifyCart.add(item);
+        });
+
+        // ---- Helpers ----
+        function escapeHtml(s) {
+            return String(s || '').replace(/[&<>"]/g, c => ({
+                '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'
+            }[c]));
+        }
+        function escapeAttr(s) { return escapeHtml(s); }
+
+        // ---- Init ----
+        // ---- Post-checkout: ask the server if this session's order completed ----
+        // Runs on page load AND when the user switches back to this tab
+        // (e.g. returning from the Shopify checkout tab).
+        function checkCompletedAndClear() {
+            let sessionId = '';
+            try { sessionId = localStorage.getItem('wp_cart_session_id') || ''; } catch (e) {}
+            if (!sessionId) return; // no session => nothing to check
+
+            fetch('/wp-json/shopify/v1/cart-completed?session=' + encodeURIComponent(sessionId), {
+                credentials: 'same-origin'
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data && data.completed) {
+                    // Order completed for this session — clear the local cart.
+                    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+                    try { localStorage.removeItem('wp_cart_session_id'); } catch (e) {}
+                    render();
+                    broadcast();
+                }
+            })
+            .catch(function () { /* ignore network errors */ });
+        }
+
+        // Run on initial page load.
+        checkCompletedAndClear();
+
+        // Run again when the tab regains focus (user switches back from Shopify).
+        document.addEventListener('visibilitychange', function () {
+            
+            if (document.visibilityState === 'visible') {
+                checkCompletedAndClear();
+            }
+        });
+
+        // Some browsers fire window 'focus' more reliably than visibilitychange.
+        window.addEventListener('focus', checkCompletedAndClear);
+        render();
+        window.addEventListener('storage', function (e) {
+            if (e.key === STORAGE_KEY) render();
+        });
+    })();
+    </script>
+    <script>
+document.addEventListener('click', function (e) {
+
+    if (!e.target.classList.contains('shopify-filter-group-label')) {
+        return;
+    }
+
+    if (window.innerWidth > 880) {
+        return;
+    }
+
+    const group = e.target.closest('.shopify-filter-group');
+    const content = group.querySelector('.shopify-filter-group-content');
+
+    if (!content) {
+        return;
+    }
+
+    group.classList.toggle('is-open');
+
+    if (content.style.display === 'none' || content.style.display === '') {
+        content.style.display = 'block';
+    } else {
+        content.style.display = 'none';
+    }
+
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    if (window.innerWidth <= 880) {
+        document.querySelectorAll('.shopify-filter-group-content').forEach(function (item) {
+            item.style.display = 'none';
+        });
+    }
+
+});
+</script>
+<script>
+(function($){
+
+    function replaceBoaEditions(root) {
+
+        $(root).find('*').addBack().each(function () {
+
+            if (this.tagName === 'SCRIPT' || this.tagName === 'STYLE') return;
+
+            if ($(this).children().length === 0) {
+
+                let text = $(this).text();
+
+                if (text && text.includes('Boa Editions, Ltd.')) {
+                    $(this).text(
+                        text.replace(/Boa Editions, Ltd\./g, 'Boa Editions')
+                    );
+                }
+            }
+
+        });
+
+    }
+
+    function runBoaEditionsReplace() {
+        replaceBoaEditions(document.body);
+    }
+
+    $(document).ready(function () {
+
+        runBoaEditionsReplace();
+
+        const observer = new MutationObserver(function () {
+            runBoaEditionsReplace();
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+
+    });
+
+})(jQuery);
+</script>
+<script>console.log("FacetWP Loaded");</script>		<div data-elementor-type="popup" data-elementor-id="26387" class="elementor elementor-26387 elementor-location-popup" data-elementor-settings="{&quot;a11y_navigation&quot;:&quot;yes&quot;,&quot;timing&quot;:[]}" data-elementor-post-type="elementor_library">
+			<div class="elementor-element elementor-element-5ffdb66 e-flex e-con-boxed e-con e-parent" data-id="5ffdb66" data-element_type="container" data-e-type="container">
+					<div class="e-con-inner">
+				<div class="elementor-element elementor-element-e32decb elementor-widget elementor-widget-text-editor" data-id="e32decb" data-element_type="widget" data-e-type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+									<iframe style="border: 0;" src="https://signup.e2ma.net/signup/1876674/1888633/" width="100%" height="500" frameborder="0"><span data-mce-type="bookmark" style="display: inline-block; width: 0px; overflow: hidden; line-height: 0;" class="mce_SELRES_start">﻿</span>
+</iframe>								</div>
+				</div>
+					</div>
+				</div>
+				</div>
+		<script> /* <![CDATA[ */var tribe_l10n_datatables = {"aria":{"sort_ascending":": activate to sort column ascending","sort_descending":": activate to sort column descending"},"length_menu":"Show _MENU_ entries","empty_table":"No data available in table","info":"Showing _START_ to _END_ of _TOTAL_ entries","info_empty":"Showing 0 to 0 of 0 entries","info_filtered":"(filtered from _MAX_ total entries)","zero_records":"No matching records found","search":"Search:","all_selected_text":"All items on this page were selected. ","select_all_link":"Select all pages","clear_selection":"Clear Selection.","pagination":{"all":"All","next":"Next","previous":"Previous"},"select":{"rows":{"0":"","_":": Selected %d rows","1":": Selected 1 row"}},"datepicker":{"dayNames":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"dayNamesShort":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],"dayNamesMin":["S","M","T","W","T","F","S"],"monthNames":["January","February","March","April","May","June","July","August","September","October","November","December"],"monthNamesShort":["January","February","March","April","May","June","July","August","September","October","November","December"],"monthNamesMin":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"nextText":"Next","prevText":"Prev","currentText":"Today","closeText":"Done","today":"Today","clear":"Clear"},"registration_prompt":"There is unsaved attendee information. Are you sure you want to continue?"};/* ]]> */ </script>			<script>
+				( () => {
+					const lazyloadRunObserver = () => {
+						const lazyloadBackgrounds = document.querySelectorAll( `.e-con.e-parent:not(.e-lazyloaded)` );
+						const lazyloadBackgroundObserver = new IntersectionObserver( ( entries ) => {
+							entries.forEach( ( entry ) => {
+								if ( entry.isIntersecting ) {
+									let lazyloadBackground = entry.target;
+									if( lazyloadBackground ) {
+										lazyloadBackground.classList.add( 'e-lazyloaded' );
+									}
+									lazyloadBackgroundObserver.unobserve( entry.target );
+								}
+							});
+						}, { rootMargin: '200px 0px 200px 0px' } );
+						lazyloadBackgrounds.forEach( ( lazyloadBackground ) => {
+							lazyloadBackgroundObserver.observe( lazyloadBackground );
+						} );
+					};
+					const events = [
+						'DOMContentLoaded',
+						'elementor/lazyload/observe',
+					];
+					events.forEach( ( event ) => {
+						document.addEventListener( event, lazyloadRunObserver );
+					} );
+				} )();
+			</script>
+			<link rel='stylesheet' id='e-popup-css' href='https://boaeditions.org/wp-content/plugins/elementor-pro/assets/css/conditionals/popup.min.css?ver=4.2.2' media='all' />
+<script id="tec-user-agent-js" src="https://boaeditions.org/wp-content/plugins/the-events-calendar/common/build/js/user-agent.js?ver=da75d0bdea6dde3898df"></script>
+<script id="malihu-scrollbar-js" src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js?ver=3.1.5"></script>
+<script id="elementor-webpack-runtime-js" src="https://boaeditions.org/wp-content/plugins/elementor/assets/js/webpack.runtime.min.js?ver=4.2.3"></script>
+<script id="elementor-frontend-modules-js" src="https://boaeditions.org/wp-content/plugins/elementor/assets/js/frontend-modules.min.js?ver=4.2.3"></script>
+<script id="jquery-ui-core-js-before">
+jQuery.uiBackCompat = true;
+//# sourceURL=jquery-ui-core-js-before
+</script>
+<script id="jquery-ui-core-js" src="https://boaeditions.org/wp-includes/js/jquery/ui/core.min.js?ver=1.14.2"></script>
+<script id="elementor-frontend-js-before">
+var elementorFrontendConfig = {"environmentMode":{"edit":false,"wpPreview":false,"isScriptDebug":false},"i18n":{"shareOnFacebook":"Share on Facebook","shareOnX":"Share on X","pinIt":"Pin it","download":"Download","downloadImage":"Download image","fullscreen":"Fullscreen","zoom":"Zoom","share":"Share","playVideo":"Play Video","previous":"Previous","next":"Next","close":"Close","a11yCarouselPrevSlideMessage":"Previous slide","a11yCarouselNextSlideMessage":"Next slide","a11yCarouselFirstSlideMessage":"This is the first slide","a11yCarouselLastSlideMessage":"This is the last slide","a11yCarouselPaginationBulletMessage":"Go to slide"},"is_rtl":false,"breakpoints":{"xs":0,"sm":480,"md":768,"lg":1201,"xl":1440,"xxl":1600},"responsive":{"breakpoints":{"mobile":{"label":"Mobile Portrait","value":767,"default_value":767,"direction":"max","is_enabled":true},"mobile_extra":{"label":"Mobile Landscape","value":880,"default_value":880,"direction":"max","is_enabled":true},"tablet":{"label":"Tablet Portrait","value":1200,"default_value":1024,"direction":"max","is_enabled":true},"tablet_extra":{"label":"Tablet Landscape","value":1200,"default_value":1200,"direction":"max","is_enabled":true},"laptop":{"label":"Laptop","value":1366,"default_value":1366,"direction":"max","is_enabled":true},"widescreen":{"label":"Widescreen","value":2400,"default_value":2400,"direction":"min","is_enabled":false}},"hasCustomBreakpoints":true},"version":"4.2.3","is_static":false,"experimentalFeatures":{"additional_custom_breakpoints":true,"container":true,"e_panel_promotions":true,"theme_builder_v2":true,"nested-elements":true,"global_classes_should_enforce_capabilities":true,"e_variables":true,"e_opt_in_v4_page":true,"e_components":true,"e_interactions":true,"e_widget_creation":true,"import-export-customization":true,"e_pro_atomic_form":true,"e_pro_collection_loop":true,"e_pro_variables":true,"e_pro_interactions":true},"urls":{"assets":"https:\/\/boaeditions.org\/wp-content\/plugins\/elementor\/assets\/","ajaxurl":"https:\/\/boaeditions.org\/wp-admin\/admin-ajax.php","uploadUrl":"https:\/\/boaeditions.org\/wp-content\/uploads"},"nonces":{"floatingButtonsClickTracking":"520480d4da","atomicFormsSendForm":"98cc3ff1b3"},"swiperClass":"swiper","settings":{"page":[],"editorPreferences":[],"dynamicooo":[]},"kit":{"viewport_tablet":1200,"active_breakpoints":["viewport_mobile","viewport_mobile_extra","viewport_tablet","viewport_tablet_extra","viewport_laptop"],"body_background_background":"classic","global_image_lightbox":"yes","lightbox_enable_counter":"yes","lightbox_enable_fullscreen":"yes","lightbox_enable_zoom":"yes","lightbox_enable_share":"yes","lightbox_title_src":"title","lightbox_description_src":"description"},"post":{"id":25449,"title":"the%20black%20maria%20-%20Boa%20Editions","excerpt":"","featuredImage":false}};
+//# sourceURL=elementor-frontend-js-before
+</script>
+<script id="elementor-frontend-js" src="https://boaeditions.org/wp-content/plugins/elementor/assets/js/frontend.min.js?ver=4.2.3"></script>
+<script id="smartmenus-js" src="https://boaeditions.org/wp-content/plugins/elementor-pro/assets/lib/smartmenus/jquery.smartmenus.min.js?ver=1.2.1"></script>
+<script id="googlesitekit-events-provider-content-events-js-before">
+window._googlesitekit = window._googlesitekit || {};
+window._googlesitekit.contentEvents = {"postID":25449,"isSinglePost":false,"hasVimeoEmbed":false};
+//# sourceURL=googlesitekit-events-provider-content-events-js-before
+</script>
+<script id="googlesitekit-events-provider-content-events-js" src="https://boaeditions.org/wp-content/plugins/google-site-kit/dist/assets/js/googlesitekit-events-provider-content-events-c7172f3fd0e4d5ad62ef.js" defer></script>
+<script id="dce-fix-background-loop-js" src="https://boaeditions.org/wp-content/plugins/dynamic-content-for-elementor/assets/js/fix-background-loop.min.js?ver=3.4.12"></script>
+<script id="dce-settings-js" src="https://boaeditions.org/wp-content/plugins/dynamic-content-for-elementor/assets/js/settings.min.js?ver=3.4.12"></script>
+<script id="dce-visibility-js" src="https://boaeditions.org/wp-content/plugins/dynamic-content-for-elementor/assets/js/visibility.min.js?ver=3.4.12"></script>
+<script id="elementor-pro-webpack-runtime-js" src="https://boaeditions.org/wp-content/plugins/elementor-pro/assets/js/webpack-pro.runtime.min.js?ver=4.2.2"></script>
+<script id="wp-hooks-js" src="https://boaeditions.org/wp-includes/js/dist/hooks.min.js?ver=f0f188028580e8dc1255"></script>
+<script id="wp-i18n-js" src="https://boaeditions.org/wp-includes/js/dist/i18n.min.js?ver=1dfe7db3940c23ea9216"></script>
+<script id="wp-i18n-js-after">
+wp.i18n.setLocaleData( { 'text direction\u0004ltr': [ 'ltr' ] } );
+//# sourceURL=wp-i18n-js-after
+</script>
+<script id="elementor-pro-frontend-js-before">
+var ElementorProFrontendConfig = {"ajaxurl":"https:\/\/boaeditions.org\/wp-admin\/admin-ajax.php","nonce":"ad6c06d21d","urls":{"assets":"https:\/\/boaeditions.org\/wp-content\/plugins\/elementor-pro\/assets\/","rest":"https:\/\/boaeditions.org\/wp-json\/"},"settings":{"lazy_load_background_images":true},"popup":{"hasPopUps":true},"shareButtonsNetworks":{"facebook":{"title":"Facebook","has_counter":true},"twitter":{"title":"Twitter"},"linkedin":{"title":"LinkedIn","has_counter":true},"pinterest":{"title":"Pinterest","has_counter":true},"reddit":{"title":"Reddit","has_counter":true},"vk":{"title":"VK","has_counter":true},"odnoklassniki":{"title":"OK","has_counter":true},"tumblr":{"title":"Tumblr"},"digg":{"title":"Digg"},"skype":{"title":"Skype"},"stumbleupon":{"title":"StumbleUpon","has_counter":true},"mix":{"title":"Mix"},"telegram":{"title":"Telegram"},"pocket":{"title":"Pocket","has_counter":true},"xing":{"title":"XING","has_counter":true},"whatsapp":{"title":"WhatsApp"},"email":{"title":"Email"},"print":{"title":"Print"},"x-twitter":{"title":"X"},"threads":{"title":"Threads"}},"facebook_sdk":{"lang":"en_US","app_id":""},"lottie":{"defaultAnimationUrl":"https:\/\/boaeditions.org\/wp-content\/plugins\/elementor-pro\/modules\/lottie\/assets\/animations\/default.json"}};
+//# sourceURL=elementor-pro-frontend-js-before
+</script>
+<script id="elementor-pro-frontend-js" src="https://boaeditions.org/wp-content/plugins/elementor-pro/assets/js/frontend.min.js?ver=4.2.2"></script>
+<script id="pro-elements-handlers-js" src="https://boaeditions.org/wp-content/plugins/elementor-pro/assets/js/elements-handlers.min.js?ver=4.2.2"></script>
+<script id="wp-emoji-settings" type="application/json">
+{"baseUrl":"https://s.w.org/images/core/emoji/17.0.2/72x72/","ext":".png","svgUrl":"https://s.w.org/images/core/emoji/17.0.2/svg/","svgExt":".svg","source":{"concatemoji":"https://boaeditions.org/wp-includes/js/wp-emoji-release.min.js?ver=7.1.2"}}
+</script>
+<script type="module">
+/*! This file is auto-generated */
+var e="script#wp-emoji-settings",t=document.querySelector(e);if(!(t instanceof HTMLScriptElement))throw new Error("Element missing: "+e);const r=JSON.parse(t.text),s=(window._wpemojiSettings=r,"wpEmojiSettingsSupports"),o=["flag","emoji"];function i(e){try{var t={supportTests:e,timestamp:(new Date).valueOf()};sessionStorage.setItem(s,JSON.stringify(t))}catch(e){}}function c(e,t,n){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);t=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data);e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(n,0,0);const r=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data);return t.every((e,t)=>e===r[t])}function p(e,t){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);var n=e.getImageData(16,16,1,1);for(let e=0;e<n.data.length;e++)if(0!==n.data[e])return!1;return!0}function u(e,t,n,r){switch(t){case"flag":return n(e,"\ud83c\udff3\ufe0f\u200d\u26a7\ufe0f","\ud83c\udff3\ufe0f\u200b\u26a7\ufe0f")?!1:!n(e,"\ud83c\udde8\ud83c\uddf6","\ud83c\udde8\u200b\ud83c\uddf6")&&!n(e,"\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc65\udb40\udc6e\udb40\udc67\udb40\udc7f","\ud83c\udff4\u200b\udb40\udc67\u200b\udb40\udc62\u200b\udb40\udc65\u200b\udb40\udc6e\u200b\udb40\udc67\u200b\udb40\udc7f");case"emoji":return!r(e,"\ud83e\u1fac8")}return!1}function f(e,t,n,r){let a;const s=(a="undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?new OffscreenCanvas(300,150):document.createElement("canvas")).getContext("2d",{willReadFrequently:!0}),o=(s.textBaseline="top",s.font="600 32px Arial",{});return e.forEach(e=>{o[e]=t(s,e,n,r)}),o}function a(e){var t=document.createElement("script");t.src=e,t.defer=!0,document.head.appendChild(t)}r.supports={everything:!0,everythingExceptFlag:!0},new Promise(t=>{let n=function(){try{var e=JSON.parse(sessionStorage.getItem(s));if("object"==typeof e&&"number"==typeof e.timestamp&&(new Date).valueOf()<e.timestamp+604800&&"object"==typeof e.supportTests)return e.supportTests}catch(e){}return null}();if(!n){if("undefined"!=typeof Worker&&"undefined"!=typeof OffscreenCanvas&&"undefined"!=typeof URL&&URL.createObjectURL&&"undefined"!=typeof Blob)try{var e="postMessage("+f.toString()+"("+[JSON.stringify(o),u.toString(),c.toString(),p.toString()].join(",")+"));",r=new Blob([e],{type:"text/javascript"});const a=new Worker(URL.createObjectURL(r),{name:"wpTestEmojiSupports"});return void(a.onmessage=e=>{i(n=e.data),a.terminate(),t(n)})}catch(e){}i(n=f(o,u,c,p))}t(n)}).then(e=>{for(const n in e)r.supports[n]=e[n],r.supports.everything=r.supports.everything&&r.supports[n],"flag"!==n&&(r.supports.everythingExceptFlag=r.supports.everythingExceptFlag&&r.supports[n]);var t;r.supports.everythingExceptFlag=r.supports.everythingExceptFlag&&!r.supports.flag,r.supports.everything||((t=r.source||{}).concatemoji?a(t.concatemoji):t.wpemoji&&t.twemoji&&(a(t.twemoji),a(t.wpemoji)))});
+//# sourceURL=https://boaeditions.org/wp-includes/js/wp-emoji-loader.min.js
+</script>
+		<script type="text/javascript">
+			(function() {
+			var t   = document.createElement( 'script' );
+			t.type  = 'text/javascript';
+			t.async = true;
+			t.id    = 'gauges-tracker';
+			t.setAttribute( 'data-site-id', '6a0c8b021d079856a9e8f6b1' );
+			t.src = '//secure.gaug.es/track.js';
+			var s = document.getElementsByTagName( 'script' )[0];
+			s.parentNode.insertBefore( t, s );
+			})();
+		</script>
+		<script>
+(function($){
+
+    function replaceBOA(root) {
+        $(root).find('*').addBack().each(function () {
+
+            // Skip script/style tags
+            if (this.tagName === 'SCRIPT' || this.tagName === 'STYLE') return;
+
+            if ($(this).children().length === 0) {
+                let text = $(this).text();
+
+                if (text && text.includes('BOA')) {
+                    $(this).text(text.replace(/\bBOA\b/g, 'Boa'));
+                }
+            }
+        });
+    }
+
+    function runReplace() {
+        replaceBOA(document.body);
+    }
+
+    $(document).ready(function () {
+
+        runReplace();
+
+        const observer = new MutationObserver(function () {
+            runReplace();
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+
+    });
+
+})(jQuery);
+</script>
+
+<script id="optimization-detective-detect-args" type="application/json">
+["https://boaeditions.org/wp-content/plugins/optimization-detective/detect.min.js?ver=1.0.0-beta6",{"minViewportAspectRatio":0.4,"maxViewportAspectRatio":2.5,"isDebug":false,"extensionModuleUrls":["https://boaeditions.org/wp-content/plugins/image-prioritizer/detect.min.js?ver=1.0.0-beta3"],"restApiEndpoint":"https://boaeditions.org/wp-json/optimization-detective/v1/url-metrics:store","currentETag":"63e3035f37c3ef302562d21103f4471e","currentUrl":"https://boaeditions.org/book/the-black-maria/","urlMetricSlug":"978eb6c791ac77d093f0b33663e371bd","cachePurgePostId":25449,"urlMetricHMAC":"28795686d05de0bd10594a92e2bdd4c2","urlMetricGroupStatuses":[{"minimumViewportWidth":0,"maximumViewportWidth":480,"complete":false},{"minimumViewportWidth":480,"maximumViewportWidth":600,"complete":false},{"minimumViewportWidth":600,"maximumViewportWidth":782,"complete":false},{"minimumViewportWidth":782,"maximumViewportWidth":null,"complete":true}],"storageLockTTL":60,"freshnessTTL":604800,"webVitalsLibrarySrc":"https://boaeditions.org/wp-content/plugins/optimization-detective/build/web-vitals.js?ver=5.1.0","gzdecodeAvailable":true,"maxUrlMetricSize":1048576}]
+</script>
+<script type="module">
+async function load(){await new Promise((t=>{"complete"===document.readyState?t():window.addEventListener("load",t,{once:!0})})),"function"==typeof requestIdleCallback&&await new Promise((t=>{requestIdleCallback(t)}));const t="script#optimization-detective-detect-args",e=document.querySelector(t);if(!(e instanceof HTMLScriptElement))throw new Error(`Missing: ${t}`);const o=JSON.parse(e.text);if(!Array.isArray(o)||2!==o.length||"string"!=typeof o[0]||"object"!=typeof o[1])throw new Error("SCRIPT#optimization-detective-detect-args is not [ string, object ]");const i=o[0],a=o[1],n=(await import(i)).default;await n(a)}load();
+//# sourceURL=https://boaeditions.org/wp-content/plugins/optimization-detective/detect-loader.min.js?ver=1.0.0-beta6
+</script>
+</body>
+</html>

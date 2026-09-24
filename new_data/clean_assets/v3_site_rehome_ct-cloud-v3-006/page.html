@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' prod.assets.shortbread.aws.dev prod.log.shortbread.aws.dev; style-src 'self' 'unsafe-inline' prod.assets.shortbread.aws.dev use.fontawesome.com; frame-src youtube.com www.youtube.com; img-src 'self' data: prod.log.shortbread.aws.dev https://containersonaws.com; script-src 'self' prod.assets.shortbread.aws.dev 'sha256-PxAUKehF6ubvLdYzohRj+x8ypQtthiufA7UC+e4HOrs=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-u8VtxfiiWvXyceeR8z8ivOiH5oe8wRQUJyGiHodfcQE=' 'sha256-w3JNlXEgBakZd0HEH3fO6NEaEdtLphxVk1JKIRmgEQA='; font-src 'self' data: use.fontawesome.com fonts.gstatic.com; connect-src 'self' prod.log.shortbread.aws.dev prod.tools.shortbread.aws.dev; "></meta>
+  <meta property="og:url" content="https://containersonaws.com/pattern/ecs-example-iam-roles/">
+  <meta property="og:site_name" content="Containers on AWS">
+  <meta property="og:title" content="Example IAM task execution roles for ECS and Fargate">
+  <meta property="og:description" content="IAM policies for the ECS task execution role. Guidance on ECS task execution best practices.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="pattern">
+    <meta property="article:published_time" content="2023-09-06T00:00:00+00:00">
+    <meta property="article:modified_time" content="2023-09-06T00:00:00+00:00">
+    <meta property="og:image" content="https://containersonaws.com/images/social-card.png">
+
+  
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://containersonaws.com/images/social-card.png">
+  <meta name="twitter:title" content="Example IAM task execution roles for ECS and Fargate">
+  <meta name="twitter:description" content="IAM policies for the ECS task execution role. Guidance on ECS task execution best practices.">
+      <meta name="twitter:site" content="@ecs-das">
+
+
+	<script>
+		
+		
+		if (localStorage.theme) {
+			document.documentElement.classList.add(localStorage.theme);
+		} else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+			document.documentElement.classList.add('light')
+		} else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+			document.documentElement.classList.add('dark')
+		}
+
+	</script>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="generator" content="Hugo 0.154.5">
+	
+	<link rel="icon" href="/images/logo.svg"><title>Example IAM task execution roles for ECS and Fargate | Containers on AWS</title>
+	<meta
+     name="description"
+     content="IAM policies for the ECS task execution role. Guidance on ECS task execution best practices."
+   /><link rel="stylesheet" href="/css/bootstrap-5.2.3.min.fdad3b03a0f47bd36af15720cd861554dcaf31296c82922e6fabcda32ce2b0df.css">
+
+	
+	
+
+	<link rel="stylesheet" href="/css/londrinasolid.css">
+
+	<link rel="stylesheet" href="/css/open-sans.css">
+
+	<link rel="stylesheet" href="/css/medium.b7263cf78e4a9e0db68b6abe8b84112a630bd105d3fe94855fb5f5cc201d0b90.css">
+
+	<style>#wm-back-to-top{z-index:999;position:fixed;display:flex;bottom:5rem;right:2rem;min-width:50px;min-height:50px;flex-direction:column;gap:8px;align-items:center;justify-content:center;box-sizing:content-box;margin:8px;padding:5px;cursor:pointer;opacity:0;overflow:hidden;transform:translateY(0)scale(1);background:0 0;border-radius:0;border-width:0;border-color:#000;border-style:solid;visibility:hidden;transition:opacity .3s ease,transform .3s ease,visibility 0s ease .3s;will-change:transform;backdrop-filter:blur(0)}#wm-back-to-top.show{transform:translateY(0);opacity:1;visibility:visible;transition:opacity .3s ease,transform .3s ease,visibility 0s ease 0s}#wm-back-to-top .icon{position:relative;display:flex;justify-content:center;line-height:0;height:auto;width:auto}#wm-back-to-top .text{position:relative;margin:0;font-size:.8rem;font-weight:500;color:#000;text-transform:uppercase}#wm-back-to-top svg{width:20px;height:20px}#wm-back-to-top path{stroke-width:5px;stroke:#000}#wm-back-to-top .btt-background{box-sizing:border-box;position:absolute;top:0;left:0;height:100%;width:100%;background-color:#d0d0d0;opacity:1;transition:opacity .3s ease}#wm-back-to-top:hover{transform:translateY(-3px);opacity:.85}#wm-back-to-top:active{transform:translateY(-3px)scale(.95)}</style>
+
+	<style>.bg{background-color:#f8f8f8}.chroma{background-color:#f8f8f8;word-break:normal;width:100%;overflow:auto}.chroma .lntd{vertical-align:top;padding:0;margin:0;border:0}.chroma .lntable{border-spacing:0;padding:0;margin:0;border:0}.chroma .hl{background-color:#ffc}.chroma .lnt{white-space:pre;user-select:none;padding:0 .4em;color:#7f7f7f;display:block}.chroma .ln{white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f}.chroma .line{display:block}.chroma .lntd{vertical-align:top;padding:0;margin:0;border:0}.chroma .lntable{border-spacing:0;padding:0;margin:0;border:0;width:100%}.chroma .k{color:#a2f;font-weight:700}.chroma .kc{color:#a2f;font-weight:700}.chroma .kd{color:#a2f;font-weight:700}.chroma .kn{color:#a2f;font-weight:700}.chroma .kp{color:#a2f}.chroma .kr{color:#a2f;font-weight:700}.chroma .kt{color:#0b0;font-weight:700}.chroma .na{color:#b44}.chroma .nb{color:#a2f}.chroma .nc{color:#00f}.chroma .no{color:#800}.chroma .nd{color:#a2f}.chroma .ni{color:#999;font-weight:700}.chroma .ne{color:#d2413a;font-weight:700}.chroma .nf{color:#00a000}.chroma .nl{color:#a0a000}.chroma .nn{color:#00f;font-weight:700}.chroma .nt{color:green;font-weight:700}.chroma .nv{color:#b8860b}.chroma .s{color:#b44}.chroma .sa{color:#b44}.chroma .sb{color:#b44}.chroma .sc{color:#b44}.chroma .dl{color:#b44}.chroma .sd{color:#b44;font-style:italic}.chroma .s2{color:#b44}.chroma .se{color:#b62;font-weight:700}.chroma .sh{color:#b44}.chroma .si{color:#b68;font-weight:700}.chroma .sx{color:green}.chroma .sr{color:#b68}.chroma .s1{color:#b44}.chroma .ss{color:#b8860b}.chroma .m{color:#666}.chroma .mb{color:#666}.chroma .mf{color:#666}.chroma .mh{color:#666}.chroma .mi{color:#666}.chroma .il{color:#666}.chroma .mo{color:#666}.chroma .o{color:#666}.chroma .ow{color:#a2f;font-weight:700}.chroma .c{color:#080;font-style:italic}.chroma .ch{color:#080;font-style:italic}.chroma .cm{color:#080;font-style:italic}.chroma .c1{color:#080;font-style:italic}.chroma .cs{color:#080;font-weight:700}.chroma .cp{color:#080}.chroma .cpf{color:#080}.chroma .gd{color:#a00000}.chroma .ge{font-style:italic}.chroma .gr{color:red}.chroma .gh{color:navy;font-weight:700}.chroma .gi{color:#00a000}.chroma .go{color:#888}.chroma .gp{color:navy;font-weight:700}.chroma .gs{font-weight:700}.chroma .gu{color:purple;font-weight:700}.chroma .gt{color:#04d}.chroma .gl{text-decoration:underline}.chroma .w{color:#bbb}.header{width:100%;background:#020024;background-color:#f39f86;background-image:url(/images/header-smaller.webp);background-size:600px;padding-right:calc(1.5rem * .5);padding-left:calc(1.5rem * .5);border-bottom:3px solid rgba(0,0,0,.1);display:flex;flex-wrap:wrap;flex-direction:row;justify-content:space-between;align-items:center}.header a{text-decoration:none}.brand-test{display:flex;align-items:center}.brand-test{color:#212529;cursor:pointer;text-decoration:none;font-size:2.1em;line-height:54px;margin:0;padding:0;font-family:system-ui,-apple-system,open sans,helvetica neue,Roboto,Arial,sans-serif,apple color emoji,segoe ui emoji,segoe ui symbol,noto color emoji}.brand-test img{vertical-align:middle;margin-right:.2em;height:54px}@media screen and (max-width:600px){.header{width:100%;padding:5px;background:#020024;background-color:#f39f86;background-image:url(/images/header-smaller.webp);font-size:1em}.navbar-brand{padding-top:unset;padding-bottom:unset;margin-right:unset}.logo-block{margin-left:.5rem}.extraLinks{display:none}}.sell-wrapper{display:flex;flex-direction:column;align-items:flex-start;padding-top:20px;padding-left:20px;padding-right:20px}.selling-point-hero{display:flex;gap:30px;align-items:flex-start}.hero-content{flex:1}.hero-video{flex:1;position:relative;padding-bottom:28%;height:0}.hero-video iframe{position:absolute;top:0;left:0;width:100%;height:100%;border-radius:5px}@media(max-width:768px){.selling-point-hero{flex-direction:column}.hero-video{width:100%;padding-bottom:56.25%}}.selling-point{flex-grow:1;flex-basis:align-items;border:1px solid rgba(0,0,0,.175);border-radius:5px;background-color:#f8f9fa;padding:40px;width:100%;max-width:1e3px;margin:0 auto;margin-bottom:40px}.selling-point-column{border:1px solid rgba(0,0,0,.175);border-radius:5px;background-color:#f8f9fa;padding:40px;margin-bottom:40px;display:flex;flex-direction:column}.selling-point-column .btn{align-self:flex-start}.selling-point-actions{margin-top:auto}@media screen and (min-width:768px){.sell{flex-grow:1;flex-basis:align-items;width:100%;max-width:1e3px;margin:0 auto}.selling-point-row{display:grid;grid-template-columns:1fr 1fr;grid-gap:40px}.selling-point-row .selling-point-column{margin-bottom:0;min-width:0;overflow:hidden}.sell{margin-bottom:40px}.selling-point-column>a:first-child{display:flex;align-items:center;justify-content:center;height:200px;max-width:100%}.selling-point-column>a:first-child img,.selling-point-column>a:first-child svg{max-height:100%;max-width:100%;width:auto}}.selling-point-column h2{padding-top:10px}.selling-point h2{padding-bottom:10px;color:#2b3035}.featured-img{width:50%;float:right;border:3px solid #ff922d;margin-left:30px}@media(max-width:576px){.featured-img{width:100%;margin-bottom:15px}}.selling-point .btn,.selling-point-column .btn{font-weight:700;background-color:#ff922d;color:#fff;padding:5px 10px;font-size:1.1em;border-radius:5px;margin-right:10px;margin-top:15px}.postback .btn{font-weight:400;background-color:#ff922d;color:#fff;padding:5px 10px;font-size:1em;border-radius:5px;margin-right:10px;margin-top:15px}.index-title{color:rgba(0,0,0,.84);margin-top:20px}.index-sub{color:rgba(0,0,0,.54)}.index-text{margin-top:20px;color:rgba(0,0,0,.44)}.index-image{width:400px}.social-icon{font-size:1.5rem}.clock{margin-left:25px}.error{text-align:center!important}@media(min-width:769px){.md-nopad-right{padding-right:0!important}.md-nopad-left{padding-left:0!important}}.toc a:hover{box-shadow:0 1px;box-decoration-break:clone;-webkit-box-decoration-break:clone}.toc{margin:0 2px 40px;border:1px solid #eee;background:#f5f5f5;border-radius:8px;padding:.4em}.toc details summary{cursor:zoom-in;margin-inline-start:20px}.toc details[open] summary{cursor:zoom-out}.toc .details{display:inline;font-weight:500}.toc .inner{margin:0 20px;padding:10px 20px}.toc li ul{margin-inline-start:24px}.toc summary:focus{outline:0}.btn-orange{color:#fff!important;background-color:#ff922d}.btn-orange:hover{background-color:#f8902f}#workshop-notification{position:fixed;bottom:2rem;right:2rem;max-width:380px;background:#fff;border:2px solid #ff922d;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.15);padding:20px;z-index:998;transform:translateX(450px);opacity:0;transition:transform .4s ease-out,opacity .4s ease-out}#workshop-notification.show{transform:translateX(0);opacity:1}#workshop-notification .notification-content{position:relative}#workshop-notification .close-btn{position:absolute;top:-10px;right:-10px;width:28px;height:28px;background:#ff922d;color:#fff;border:none;border-radius:50%;cursor:pointer;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center;transition:background-color .2s ease;font-weight:700}#workshop-notification .close-btn:hover{background:#f8902f}#workshop-notification .notification-icon{font-size:32px;margin-bottom:10px}#workshop-notification h3{color:#2b3035;font-size:1.2em;margin:0 0 10px;font-weight:600}#workshop-notification p{color:#666;font-size:.95em;margin:0 0 15px;line-height:1.5}#workshop-notification .notification-btn{display:inline-block;background-color:#ff922d;color:#fff!important;padding:10px 20px;border-radius:5px;text-decoration:none;font-weight:600;font-size:.95em;transition:background-color .2s ease}#workshop-notification .notification-btn:hover{background-color:#f8902f}@media screen and (max-width:600px){#workshop-notification{bottom:1rem;right:1rem;left:1rem;max-width:none}#workshop-notification.show{transform:translateY(0)}#workshop-notification{transform:translateY(450px)}}</style><style>.dark{--diagram-color:#adb5bd}.dark .gist .highlight{background:#282a36}.dark .gist .blob-num,.dark .gist .blob-code-inner,.dark .gist .pl-s2,.dark .gist .pl-stj{color:#f8f8f2}.dark .gist .pl-c1{color:#8be9fd}.dark .gist .pl-enti{color:#50fa7b;font-weight:700}.dark .gist .pl-st{color:#8be9fd}.dark .gist .pl-mdr{color:#8be9fd;font-weight:400}.dark .gist .pl-ms1{background:#ffb86c}.dark .gist .pl-c,.dark .gist .pl-c span,.dark .gist .pl-pdc{color:#6272a4;font-style:italic}.dark .gist .pl-cce,.dark .gist .pl-cn,.dark .gist .pl-coc,.dark .gist .pl-enc,.dark .gist .pl-ens,.dark .gist .pl-kos,.dark .gist .pl-kou,.dark .gist .pl-mh .pl-pdh,.dark .gist .pl-mp,.dark .gist .pl-mp1 .pl-sf,.dark .gist .pl-mq,.dark .gist .pl-pde,.dark .gist .pl-pse,.dark .gist .pl-pse .pl-s2,.dark .gist .pl-mp .pl-s3,.dark .gist .pl-smi,.dark .gist .pl-stp,.dark .gist .pl-sv,.dark .gist .pl-v,.dark .gist .pl-vi,.dark .gist .pl-vpf,.dark .gist .pl-mri,.dark .gist .pl-va,.dark .gist .pl-vpu{color:#8be9fd}.dark .gist .pl-cos,.dark .gist .pl-ml,.dark .gist .pl-pds,.dark .gist .pl-s,.dark .gist .pl-s1,.dark .gist .pl-sol{color:#f1fa8c}.dark .gist .pl-e,.dark .gist .pl-ef,.dark .gist .pl-en,.dark .gist .pl-enf,.dark .gist .pl-enm,.dark .gist .pl-entc,.dark .gist .pl-entm,.dark .gist .pl-eoac,.dark .gist .pl-eoac .pl-pde,.dark .gist .pl-eoi,.dark .gist .pl-mai .pl-sf,.dark .gist .pl-mm,.dark .gist .pl-pdv,.dark .gist .pl-som,.dark .gist .pl-sr,.dark .gist .pl-vo{color:#50fa7b}.dark .gist .pl-ent,.dark .gist .pl-eoa,.dark .gist .pl-eoai,.dark .gist .pl-eoai .pl-pde,.dark .gist .pl-k,.dark .gist .pl-ko,.dark .gist .pl-kolp,.dark .gist .pl-mc,.dark .gist .pl-mr,.dark .gist .pl-ms,.dark .gist .pl-s3,.dark .gist .pl-smc,.dark .gist .pl-smp,.dark .gist .pl-sok,.dark .gist .pl-sra,.dark .gist .pl-src,.dark .gist .pl-sre{color:#ff79c6}.dark .gist .pl-mb,.dark .gist .pl-pdb{color:#f1fa8c;font-weight:700}.dark .gist .pl-mi,.dark .gist .pl-pdi{color:#ff79c6;font-style:italic}.dark .gist .pl-pdc1,.dark .gist .pl-scp{color:#8be9fd}.dark .gist .pl-sc,.dark .gist .pl-sf,.dark .gist .pl-mo,.dark .gist .pl-entl{color:#ffb86c}.dark .gist .pl-mi1,.dark .gist .pl-mdht{color:#50fa7b;background:rgba(0,64,0,.5)}.dark .gist .pl-md,.dark .gist .pl-mdhf{color:#ff79c6;background:rgba(64,0,0,.5)}.dark .gist .pl-mdh,.dark .gist .pl-mdi{color:#50fa7b;font-weight:400}.dark .gist .pl-ib,.dark .gist .pl-id,.dark .gist .pl-ii,.dark .gist .pl-iu{background:#50fa7b;color:#282a36}.dark .gist .highlight{background:#282a36}.dark .gist .blob-num,.dark .gist .blob-code-inner,.dark .gist .pl-s2,.dark .gist .pl-stj{color:#f8f8f2}.dark .gist .pl-c1{color:#8be9fd}.dark .gist .pl-enti{color:#50fa7b;font-weight:700}.dark .gist .pl-st{color:#8be9fd}.dark .gist .pl-mdr{color:#8be9fd;font-weight:400}.dark .gist .pl-ms1{background:#ffb86c}.dark .gist .pl-c,.dark .gist .pl-c span,.dark .gist .pl-pdc{color:#6272a4;font-style:italic}.dark .gist .pl-cce,.dark .gist .pl-cn,.dark .gist .pl-coc,.dark .gist .pl-enc,.dark .gist .pl-ens,.dark .gist .pl-kos,.dark .gist .pl-kou,.dark .gist .pl-mh .pl-pdh,.dark .gist .pl-mp,.dark .gist .pl-mp1 .pl-sf,.dark .gist .pl-mq,.dark .gist .pl-pde,.dark .gist .pl-pse,.dark .gist .pl-pse .pl-s2,.dark .gist .pl-mp .pl-s3,.dark .gist .pl-smi,.dark .gist .pl-stp,.dark .gist .pl-sv,.dark .gist .pl-v,.dark .gist .pl-vi,.dark .gist .pl-vpf,.dark .gist .pl-mri,.dark .gist .pl-va,.dark .gist .pl-vpu{color:#8be9fd}.dark .gist .pl-cos,.dark .gist .pl-ml,.dark .gist .pl-pds,.dark .gist .pl-s,.dark .gist .pl-s1,.dark .gist .pl-sol{color:#f1fa8c}.dark .gist .pl-e,.dark .gist .pl-ef,.dark .gist .pl-en,.dark .gist .pl-enf,.dark .gist .pl-enm,.dark .gist .pl-entc,.dark .gist .pl-entm,.dark .gist .pl-eoac,.dark .gist .pl-eoac .pl-pde,.dark .gist .pl-eoi,.dark .gist .pl-mai .pl-sf,.dark .gist .pl-mm,.dark .gist .pl-pdv,.dark .gist .pl-som,.dark .gist .pl-sr,.dark .gist .pl-vo{color:#50fa7b}.dark .gist .pl-ent,.dark .gist .pl-eoa,.dark .gist .pl-eoai,.dark .gist .pl-eoai .pl-pde,.dark .gist .pl-k,.dark .gist .pl-ko,.dark .gist .pl-kolp,.dark .gist .pl-mc,.dark .gist .pl-mr,.dark .gist .pl-ms,.dark .gist .pl-s3,.dark .gist .pl-smc,.dark .gist .pl-smp,.dark .gist .pl-sok,.dark .gist .pl-sra,.dark .gist .pl-src,.dark .gist .pl-sre{color:#ff79c6}.dark .gist .pl-mb,.dark .gist .pl-pdb{color:#f1fa8c;font-weight:700}.dark .gist .pl-mi,.dark .gist .pl-pdi{color:#ff79c6;font-style:italic}.dark .gist .pl-pdc1,.dark .gist .pl-scp{color:#8be9fd}.dark .gist .pl-sc,.dark .gist .pl-sf,.dark .gist .pl-mo,.dark .gist .pl-entl{color:#ffb86c}.dark .gist .pl-mi1,.dark .gist .pl-mdht{color:#50fa7b;background:rgba(0,64,0,.5)}.dark .gist .pl-md,.dark .gist .pl-mdhf{color:#ff79c6;background:rgba(64,0,0,.5)}.dark .gist .pl-mdh,.dark .gist .pl-mdi{color:#50fa7b;font-weight:400}.dark .gist .pl-ib,.dark .gist .pl-id,.dark .gist .pl-ii,.dark .gist .pl-iu{background:#50fa7b;color:#282a36}.dark .gist{color:#000}.dark .gist .render-container .render-viewer-error,.dark .gist .render-container .render-viewer-fatal,.dark .gist .render-container .octospinner{display:none}.dark .gist .gist-render iframe{width:100%}.dark .gist pre{font:inherit;line-height:inherit;white-space:pre}.dark .gist .gist-file{border:1px solid #ddd;border-bottom:1px solid #ccc;border-radius:3px;font-family:Consolas,liberation mono,Courier,monospace;margin-bottom:1em}.dark .gist .gist-file.gist-render{border:none}.dark .gist .gist-file .gist-meta{background-color:#282a36;color:#999;font:12px helvetica neue,Helvetica,arial,freesans,clean,sans-serif;overflow:hidden;padding:10px}.dark .gist .gist-file .gist-meta a{color:#888;font-weight:700;text-decoration:none}.dark .gist .gist-file .gist-data{background-color:#282a36;border-bottom:1px solid #aaa;font-size:100%;overflow:auto;word-wrap:normal}.dark .gist .gist-file.scroll .gist-data{bottom:30px;left:0;overflow:scroll;position:absolute;right:0;top:0}.dark .gist .gist-file.scroll .gist-meta{bottom:0;left:0;position:absolute;right:0}.dark .gist .gist-file .gist-data .line-data{padding:.5em!important}.dark .gist .gist-file .gist-data .line-pre{background:0 0!important;border:none!important;color:#f8f8f2;font-family:Consolas,liberation mono,Courier,monospace;font-size:12px;margin:0!important;padding:0!important}.dark .gist .gist-file .gist-data .gist-highlight{background:0 0!important}.dark .gist .gist-file .gist-data .line-numbers{color:#aaa;padding:.5em;text-align:right}.dark .gist .gist-file .gist-data .line-numbers .line-number{font-size:12px;clear:right;display:block}@media only screen and (max-width:860px){.dark .gist{font-size:10px}.dark .gist .gist-file .gist-meta{font:10px helvetica neue,Helvetica,arial,freesans,clean,sans-serif}.dark .gist .gist-file .gist-data{font-size:10px}.dark .gist .gist-file .gist-data .line-pre{font:10px liberation mono,Courier,monospace;font-family:Consolas,liberation mono,Courier,monospace}.dark .gist .gist-file .gist-data .line-numbers .line-number{font-family:Consolas,liberation mono,Courier,monospace;font-size:10px}.dark .gist pre{font-size:10px}}.dark .bg{color:#f8f8f2;background-color:#362b28}.dark .chroma{color:#f8f8f2;background-color:#282a36;word-break:normal;width:100%;overflow:auto}.dark .chroma .lntd{vertical-align:top;padding:0;margin:0;border:0}.dark .chroma .lntable{border-spacing:0;padding:0;margin:0;border:0}.dark .chroma .hl{background-color:#ffc}.dark .chroma .lnt{white-space:pre;user-select:none;padding:0 .4em;color:#7f7f7f;display:block}.dark .chroma .ln{white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f}.dark .chroma .line{display:block}.dark .chroma .lntd{vertical-align:top;padding:0;margin:0;border:0}.dark .chroma .lntable{border-spacing:0;padding:0;margin:0;border:0;width:100%}.dark .chroma .k{color:#ff79c6}.dark .chroma .kc{color:#ff79c6}.dark .chroma .kd{color:#8be9fd;font-style:italic}.dark .chroma .kn{color:#ff79c6}.dark .chroma .kp{color:#ff79c6}.dark .chroma .kr{color:#ff79c6}.dark .chroma .kt{color:#8be9fd}.dark .chroma .na{color:#50fa7b}.dark .chroma .nb{color:#8be9fd;font-style:italic}.dark .chroma .nc{color:#50fa7b}.dark .chroma .nf{color:#50fa7b}.dark .chroma .nl{color:#8be9fd;font-style:italic}.dark .chroma .nt{color:#ff79c6}.dark .chroma .nv{color:#8be9fd;font-style:italic}.dark .chroma .vc{color:#8be9fd;font-style:italic}.dark .chroma .vg{color:#8be9fd;font-style:italic}.dark .chroma .vi{color:#8be9fd;font-style:italic}.dark .chroma .s{color:#f1fa8c}.dark .chroma .sa{color:#f1fa8c}.dark .chroma .sb{color:#f1fa8c}.dark .chroma .sc{color:#f1fa8c}.dark .chroma .dl{color:#f1fa8c}.dark .chroma .sd{color:#f1fa8c}.dark .chroma .s2{color:#f1fa8c}.dark .chroma .se{color:#f1fa8c}.dark .chroma .sh{color:#f1fa8c}.dark .chroma .si{color:#f1fa8c}.dark .chroma .sx{color:#f1fa8c}.dark .chroma .sr{color:#f1fa8c}.dark .chroma .s1{color:#f1fa8c}.dark .chroma .ss{color:#f1fa8c}.dark .chroma .m{color:#bd93f9}.dark .chroma .mb{color:#bd93f9}.dark .chroma .mf{color:#bd93f9}.dark .chroma .mh{color:#bd93f9}.dark .chroma .mi{color:#bd93f9}.dark .chroma .il{color:#bd93f9}.dark .chroma .mo{color:#bd93f9}.dark .chroma .o{color:#ff79c6}.dark .chroma .ow{color:#ff79c6}.dark .chroma .c{color:#6272a4}.dark .chroma .ch{color:#6272a4}.dark .chroma .cm{color:#6272a4}.dark .chroma .c1{color:#6272a4}.dark .chroma .cs{color:#6272a4}.dark .chroma .cp{color:#ff79c6}.dark .chroma .cpf{color:#ff79c6}.dark .chroma .gd{color:#f55}.dark .chroma .ge{text-decoration:underline}.dark .chroma .gh{font-weight:700}.dark .chroma .gi{color:#50fa7b;font-weight:700}.dark .chroma .go{color:#44475a}.dark .chroma .gu{font-weight:700}.dark .chroma .gl{text-decoration:underline}.dark body{background:#232323;color:#f0f0f0}.dark a{color:coral}.dark p{color:#f0f0f0}.dark .navbar-brand{color:#000;line-height:30px}.dark .nav-link:hover,.dark .nav-link:focus{color:rgba(255,255,255,.75)}.dark .nav-link:focus-visible{outline:0;box-shadow:0 0 0 .25rem #0d6efd40}.dark svg .dark{stroke:#fafafa}.dark svg .fill-dark{fill:#fafafa}.dark svg .fill-light{fill:#212121}.dark .featured-img-row-visuals{filter:invert(93%)hue-rotate(180deg)}.dark .dropdown-menu{--bs-dropdown-bg:#212529;--bs-dropdown-zindex:1000;--bs-dropdown-min-width:10rem;--bs-dropdown-padding-x:0;--bs-dropdown-padding-y:.5rem;--bs-dropdown-spacer:.125rem;--bs-dropdown-font-size:1rem;--bs-dropdown-color:#adb5bd;--bs-dropdown-border-color:rgba(255, 255, 255, .15);--bs-dropdown-border-radius:.375rem;--bs-dropdown-border-width:1px;--bs-dropdown-inner-border-radius:calc(var(--bs-border-radius) - var(--bs-border-width));--bs-dropdown-divider-bg:rgb(255, 255, 255, 0.15);--bs-dropdown-divider-margin-y:.5rem;--bs-dropdown-box-shadow:0 .5rem 1rem rgba(0, 0, 0, .15);--bs-dropdown-link-color:#212529;--bs-dropdown-link-hover-color:#0a58ca;--bs-dropdown-link-hover-bg:#f8f9fa;--bs-dropdown-link-active-color:#fff;--bs-dropdown-link-active-bg:#0d6efd;--bs-dropdown-link-disabled-color:rgba(173, 181, 189, .5);--bs-dropdown-item-padding-x:1rem;--bs-dropdown-item-padding-y:.25rem;--bs-dropdown-header-color:#6c757d;--bs-dropdown-header-padding-x:1rem;--bs-dropdown-header-padding-y:.5rem}.dark .dropdown-item{color:#adb5bd}.dark .dropdown-item:hover,.dark .dropdown-item:focus{color:#fff;background-color:rgba(255,255,255,.15)}.dark .dropdown-item.active,.dark .dropdown-item:active{color:#fff;text-decoration:none;background-color:#0d6efd}.dark .filters{background-color:#333}.dark .site-content{background:#282624}.dark a:hover{color:#ccc;text-decoration:none}.dark .mediumnavigation{background:#232323}.dark .footer{color:#f0f0f0}.dark .fa-heart{color:#f08080}.dark .fa-github{color:#fff}.dark .fa-linkedin{color:#0072b1}.dark .fa-twitter{color:#1da1f2}.dark .fa-youtube{color:red;opacity:75%}.dark .fa-comment{color:#5bc236}.dark .card{background-color:#2b3035}.dark .title-text{color:#f5f5f5}.dark .listfeaturedtag h4.card-text,.dark .listrecent h4.card-text{color:#ccc}.dark span.post-date,.dark span.post-read{color:#ccc}.dark span.post-read-more a{color:rgba(255,255,255,.44)}.dark span.post-read-more a:hover{color:rgba(255,255,255,.8)}.dark .section-title span{border-bottom:1px solid #ccc}.dark .section-title h2{border-bottom:1px solid #323232}.dark pre{color:#f0f0f0}.dark ul.tags li a{color:coral;background:#333}.dark .post-top-meta span{color:#f0f0f0}.dark .article-post{color:#f0f0f0}.dark .share{color:#f0f0f0}.dark .share a{color:coral}.dark .visual-design-card .content{box-shadow:5px 5px 15px -3px rgba(149,149,149,.1),0 4px 6px -4px rgba(104,103,103,.1);background-color:#2b3035}.dark .visual-design-card .card-title{color:#f0f0f0}.dark .visual-design-card .card-text{color:#f0f0f0}.dark .btn.subscribe{background-color:coral;border-color:coral;color:#232323;fill:#232323}.dark .toc{background:#2e2e33;color:#dadadb;border:#333}.dark #wm-back-to-top .btt-background{background-color:#f5f5f5}.dark .searcher{color:#adb5bd;background-color:#212529;border:1px solid #495057}.dark .searcher::-webkit-input-placeholder{color:#adb5bd}.dark .selling-point{border:1px solid rgba(255,255,255,.15);background-color:#2b3035}.dark .selling-point-column{border:1px solid rgba(255,255,255,.15);background-color:#2b3035}.dark .selling-point h2{color:#fff}.dark .selling-point .btn:hover{color:#fff}.dark .pagination-btn,.dark .pagination-page-btn{background:#2b3035;color:#f1f5f9;border-color:#334155}.dark .pagination-btn:hover,.dark .pagination-page-btn:hover{background:#334155;border-color:coral;color:coral}.dark .pagination-page-btn.active{background:coral;color:#fff;border-color:coral}.dark .pagination-btn:disabled{background:#454545;color:#6b7280;border-color:#52525b;opacity:.6}.dark .pattern-card{background-color:#2b3035;color:#fff}.dark .pattern-title a{color:#fff}.dark .codeBlockTopper,.dark .filter-section{background-color:#2b3035}.dark .tabs-nav{background:#2b3035;border-bottom-color:#334155}.dark .tab-item.is-active{background:#2b3035;border-bottom-color:#334155}.dark .btn-back-patterns,.dark .filter-category-title{color:#fff}.dark .pattern-page-title{color:#fff}.dark .pattern-author-card{background-color:#2b3035;border-color:#334155}.dark .author-name{color:#fff}.dark .author-title{color:grey}.dark .pattern-content code{background:#2b3035}.dark .pattern-main-content{background-color:#2b3035;border-color:#334155}.dark .pattern-main-content h4{color:#fff}.dark .pattern-toc{background-color:#2b3035;color:#f1f5f9}.dark .pattern-toc h3{color:#f1f5f9}.dark .pattern-about{background-color:#2b3035}.dark .pattern-about h3{color:#f1f5f9}.dark .custom-tabs,.dark .code-embed-wrapper{border-color:#334155}.dark .tabs-nav{background:#1e293b;border-bottom-color:#334155}.dark .tab-item{color:#94a3b8}.dark .tab-item:hover{background:#334155;color:#f1f5f9}.dark .tab-item.is-active{background:#0f172a;color:coral}.dark .codeBlockTopper .badge{background:#334155;color:#cbd5e1}.dark .codeBlockTopperButtons .btn{background:#0f172a;color:#cbd5e1;border-color:#334155}.dark .codeBlockTopperButtons .btn:hover{background:#334155;border-color:#475569}.dark .pattern-card{background:#1e293b;border-color:#334155}.dark .pattern-card:hover{border-color:coral}.dark .filter-section{background:#1e293b;border-color:#334155}.dark .filter-header{border-bottom-color:#334155}.dark .filter-category-title{color:#f1f5f9}.dark .search-box input{background:#0f172a;border-color:#334155;color:#f1f5f9}.dark .pagination-container{border-top-color:#334155}.dark .pagination-btn,.dark .pagination-page-btn{background:#2b3035;color:#f1f5f9;border-color:#334155}.dark .pagination-btn:hover:not(:disabled),.dark .pagination-page-btn:hover{background:#334155;border-color:coral;color:coral}.dark .pagination-btn:disabled{background:#1e293b;opacity:.5}.dark .pagination-page-btn.active{background:coral;color:#fff;border-color:coral}.dark .pattern-title a{color:#f1f5f9}.dark .pattern-title a:hover{color:coral}.dark .pattern-navigation{border-top-color:#334155}.dark #workshop-notification{background:#2b3035;border-color:#ff922d}.dark #workshop-notification h3{color:#f1f5f9}.dark #workshop-notification p{color:#cbd5e1}.dark #workshop-notification .close-btn{background:#ff922d;color:#fff}.dark #workshop-notification .close-btn:hover{background:#f8902f}.dark #workshop-notification .notification-btn{background-color:#ff922d;color:#fff}.dark #workshop-notification .notification-btn:hover{background-color:#f8902f}</style>
+	<link rel="stylesheet" href="https://prod.assets.shortbread.aws.dev/shortbread.css">
+</head>
+<body><nav class="navbar navbar-expand-md navbar-light nav-bg fixed-top mediumnavigation">
+    <div class="header">
+        <a class="navbar-brand" href="/">
+        
+            
+                <div class="logo-block">
+                    <svg height="35" viewBox="0 0 512 512" width="45" xmlns="http://www.w3.org/2000/svg">
+                      <g id="1">
+                        <path
+                          d="m460.143 156.002 42.929-42.929c4.89-4.892 3.447-13.154-2.79-16.109l-190-90c-3.82-1.809-8.364-1.022-11.353 1.966l-42.929 42.93-42.928-42.929c-2.988-2.988-7.531-3.775-11.353-1.966l-190 90c-6.249 2.96-7.673 11.226-2.79 16.109l42.929 42.929-42.929 42.928c-4.891 4.891-3.448 13.154 2.79 16.109l44.281 20.975v159.987c0 3.713 2.057 7.12 5.342 8.85.867.456 189.513 99.749 190.132 100.059 2.762 1.409 6.114 1.512 9.183-.059-7.444 3.919 182.658-96.136 190-100 3.286-1.729 5.343-5.137 5.343-8.85v-159.987l44.281-20.975c6.251-2.961 7.67-11.227 2.79-16.109zm-204.143 78.935-166.64-78.935 166.64-78.934 166.639 78.934zm52.088-206.88 170.808 80.909-34.983 34.983-170.809-80.909zm-104.175 0 34.982 34.983-170.807 80.908-34.983-34.983zm-135.825 140 170.807 80.909-34.982 34.983-170.808-80.909zm7.913 77.432 125.719 59.55c3.833 1.816 8.377 1.01 11.353-1.966l32.927-32.928v209.294l-170-89.474v-144.476zm359.999 144.476-170 89.474v-209.294l32.929 32.929c2.977 2.977 7.522 3.781 11.353 1.966l125.718-59.551zm-127.912-106.017-34.983-34.983 170.808-80.909 34.983 34.983z" />
+                      </g>
+                    </svg>
+                    Containers on AWS
+                  </div>
+                </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMediumish" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        
+        <div class="collapse navbar-collapse flex-row justify-content-end" id="navbarMediumish">
+            
+            <ul class="navbar-nav ml-lg-0">
+                
+                    
+                        <li class="nav-item ">
+                            <a class="nav-link" href="/">Home <span class="sr-only"></span></a>
+                        </li>
+                    
+              
+                    
+                        <li class="nav-item ">
+                            <a class="nav-link" href="/blog">Blog <span class="sr-only"></span></a>
+                        </li>
+                    
+              
+                    
+                        <li class="nav-item ">
+                            <a class="nav-link" href="/pattern">Patterns <span class="sr-only"></span></a>
+                        </li>
+                    
+              
+                    
+                        <li class="nav-item ">
+                            <a class="nav-link" href="/visuals">Visuals <span class="sr-only"></span></a>
+                        </li>
+                    
+              
+                    
+                        <li class="nav-item ">
+                            <a class="nav-link" href="/presentations">Presentations <span class="sr-only"></span></a>
+                        </li>
+                    
+              
+                    
+                        <li class="nav-item ">
+                            <a class="nav-link" href="/search">Search <span class="sr-only"></span></a>
+                        </li>
+                    
+              
+            </ul>
+
+            
+            <div class="dark-mode-switch d-flex">
+                <input type="checkbox" class="checkbox" id="btnSwitch" />
+                <label class="label" for="btnSwitch">
+                    <i class="fas fa-moon"></i>
+                    <i class="fas fa-sun"></i>
+                    <div class="ball"></div>
+                </label>
+            </div>
+        </div>
+        
+    </div>
+</nav>
+
+        <div class="site-content">
+            <div class="container">
+    
+    
+    <link rel="stylesheet" href="/css/pattern-styles.css">
+    
+
+    
+    
+    <script src="/js/pattern-tabs.js"></script>
+    
+
+    <div class="main-content">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-md-3 pl-0">
+                    <div class="pattern-sidebar-left sticky-top sticky-top-offset">
+                        
+                        <a href="/pattern/" class="btn-back-patterns">
+                            <i class="fas fa-arrow-left"></i> Back to all patterns
+                        </a>
+
+                        <div class="pattern-toc">
+                            <h3>Table of Contents</h3>
+                            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#starter-ecs-task-execution-role">Starter ECS task execution role</a></li>
+            <li><a href="#minimal-surface-area-task-execution-role">Minimal surface area task execution role</a></li>
+            <li><a href="#turning-on-additional-amazon-ecs-features">Turning on additional Amazon ECS features</a></li>
+            <li><a href="#should-you-use-a-shared-task-execution-policy">Should you use a shared task execution policy?</a></li>
+            <li><a href="#see-also">See Also</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                        </div>
+                        <div class="pattern-about">
+                            <h3>About</h3>
+
+                            <div class="about-section">
+                                    <h4>Development Tool</h4>
+                                    <span class="badge-about badge-tool">cloudformation</span>
+                                </div><div class="about-section">
+                                    <h4>Type</h4>
+                                    <span class="badge-about badge-type">pattern</span>
+                                </div>
+                            <div class="about-section" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e2e8f0;">
+                                <a href="https://github.com/aws-samples/container-patterns/issues/new?template=issue.md" target="_blank" style="color: #ff6b35; text-decoration: none; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-flag"></i> Report an issue with this pattern
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="col-md-9">
+                    <div class="pattern-main-content">
+                        
+                        <h1 class="pattern-page-title">Example IAM task execution roles for ECS and Fargate</h1>
+
+                        <p class="pattern-page-description">IAM policies for the ECS task execution role. Guidance on ECS task execution best practices.</p><div class="pattern-author-card">
+                                    <img class="author-avatar" src="/images/authors/nathanpeck.jpg" alt="Nathan Peck">
+                                    <div class="author-info">
+                                        <div class="author-name">Nathan Peck</div>
+                                        <div class="author-title">Senior Developer Advocate at AWS</div>
+                                    </div>
+                                </div>
+                        <div class="pattern-content">
+                            <p>Amazon Elastic Container Service (ECS) uses two different types of Identity and Access Management (IAM) roles:</p>
+<ul>
+<li>Task execution role - This role is used by Amazon provided code inside of the ECS agent, to setup the launch environment for the task.</li>
+<li>Task role - This role that is used by your own code running inside of the task.</li>
+</ul>
+<p>To better understand the relationship between these two roles consider the following diagram of an EC2 instance that is running an ECS task:</p>
+<p><img src="ecs-task-execution-role.svg" alt=""></p>
+<p>The task execution role is used at the host level, by the ECS agent. The ECS agent uses the role to set up an execution environment for your container. The task role is used inside of the container, by your own code which is running inside of the container.</p>
+<h4 id="starter-ecs-task-execution-role">Starter ECS task execution role</h4>
+<p>AWS provides an example managed policy for starting out. You can access this AWS managed policy via its name <code>AmazonECSTaskExecutionRolePolicy</code>. It contains the following statements:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Version&#34;</span><span class="p">:</span> <span class="s2">&#34;2012-10-17&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Statement&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;Effect&#34;</span><span class="p">:</span> <span class="s2">&#34;Allow&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;Action&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;ecr:GetAuthorizationToken&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;ecr:BatchCheckLayerAvailability&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;ecr:GetDownloadUrlForLayer&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;ecr:BatchGetImage&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;logs:CreateLogStream&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;logs:PutLogEvents&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;Resource&#34;</span><span class="p">:</span> <span class="s2">&#34;*&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>These statements authorize the ECS agent running on a host to do the following tasks:</p>
+<ul>
+<li>Talk to the Amazon Elastic Container Registry service to download a container image that you have stored there.</li>
+<li>Talk to Amazon CloudWatch to upload application logs that were produced by your application running inside of the container.</li>
+</ul>
+<p>You can use this starter policy by attaching it to a role. For example in CloudFormation:</p>
+<div class="code-embed-wrapper">
+  <div class="codeBlockTopper">
+    <div>
+      <span class="badge">File: ecs-task-execution-role.yml</span>
+      <span class="badge">Language: yml</span>
+    </div>
+    <div class="codeBlockTopperButtons">
+      <button type="button" class="download-code btn" data-code-id="code-76c2bf5382ba1896a218f21cd9794935-0" data-filename="ecs-task-execution-role.yml">Download</button>
+      <button type="button" class="copy-code btn" data-code-id="code-76c2bf5382ba1896a218f21cd9794935-0">Copy</button>
+    </div>
+  </div>
+  <div class="code-block-content" id="code-76c2bf5382ba1896a218f21cd9794935-0"><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yml" data-lang="yml"><span class="line"><span class="cl"><span class="nt">Resources</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">ECSTaskExecutionRole</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l">AWS::IAM::Role</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">Properties</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">AssumeRolePolicyDocument</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">Statement</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span>- <span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="l">Allow</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">Principal</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="nt">Service</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="l">ecs-tasks.amazonaws.com]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">Action</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;sts:AssumeRole&#39;</span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">Condition</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="nt">ArnLike</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="nt">aws:SourceArn</span><span class="p">:</span><span class="w"> </span>!<span class="l">Sub arn:aws:ecs:${AWS::Region}:${AWS::AccountId}:*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="nt">StringEquals</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="nt">aws:SourceAccount</span><span class="p">:</span><span class="w"> </span>!<span class="l">Ref AWS::AccountId</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">Path</span><span class="p">:</span><span class="w"> </span><span class="l">/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">ManagedPolicyArns</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="l">arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy</span></span></span></code></pre></td></tr></table>
+</div>
+</div></div>
+</div>
+
+<script>
+
+if (!window.codeBlockHandlersRegistered) {
+  window.codeBlockHandlersRegistered = true;
+
+  
+  document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('copy-code')) {
+      var btn = e.target;
+      var codeId = btn.getAttribute('data-code-id');
+      var codeBlock = document.getElementById(codeId);
+
+      if (!codeBlock) {
+        btn.textContent = 'Error!';
+        setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
+        return;
+      }
+
+      
+      var codeTable = codeBlock.querySelector('.chroma');
+      if (!codeTable) {
+        codeTable = codeBlock.querySelector('table');
+      }
+
+      if (!codeTable) {
+        btn.textContent = 'Error!';
+        setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
+        return;
+      }
+
+      
+      var codeCells = codeTable.querySelectorAll('tr td:last-child');
+      var code = Array.from(codeCells).map(function(cell) {
+        return cell.textContent;
+      }).join('\n').trim();
+
+      if (!code) {
+        btn.textContent = 'Error!';
+        setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
+        return;
+      }
+
+      navigator.clipboard.writeText(code).then(function() {
+        var originalText = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.classList.add('copying');
+        setTimeout(function() {
+          btn.textContent = originalText;
+          btn.classList.remove('copying');
+        }, 2000);
+      }).catch(function(err) {
+        btn.textContent = 'Failed!';
+        setTimeout(function() {
+          btn.textContent = 'Copy';
+        }, 2000);
+      });
+    }
+  });
+
+  
+  document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('download-code')) {
+      var btn = e.target;
+      var codeId = btn.getAttribute('data-code-id');
+      var filename = btn.getAttribute('data-filename');
+      var codeBlock = document.getElementById(codeId);
+
+      
+      var codeTable = codeBlock.querySelector('.chroma');
+      if (!codeTable) {
+        codeTable = codeBlock.querySelector('table');
+      }
+
+      var codeCells = codeTable ? codeTable.querySelectorAll('tr td:last-child') : [];
+      var code = Array.from(codeCells).map(function(cell) {
+        return cell.textContent;
+      }).join('\n').trim();
+
+      var element = document.createElement('a');
+      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(code));
+      element.setAttribute('download', filename);
+      element.style.display = 'none';
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+
+      btn.classList.add('copying');
+      setTimeout(function() {
+        btn.classList.remove('copying');
+      }, 300);
+    }
+  });
+}
+</script>
+
+<h4 id="minimal-surface-area-task-execution-role">Minimal surface area task execution role</h4>
+<p>The basic starter task execution role limits the types of actions that ECS can do, but does not
+impose any additional limits on the destinations for those actions. You may wish to further limit
+the task execution role to create a role that has even less surface area.</p>
+<p>For example:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Version&#34;</span><span class="p">:</span> <span class="s2">&#34;2012-10-17&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Statement&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;Action&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;ecr:BatchCheckLayerAvailability&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;ecr:GetDownloadUrlForLayer&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;ecr:BatchGetImage&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;Resource&#34;</span><span class="p">:</span> <span class="s2">&#34;arn:aws:ecr:us-west-1:209640446841:repository/my-repo/*&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;Effect&#34;</span><span class="p">:</span> <span class="s2">&#34;Allow&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;Action&#34;</span><span class="p">:</span> <span class="s2">&#34;ecr:GetAuthorizationToken&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;Resource&#34;</span><span class="p">:</span> <span class="s2">&#34;*&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;Effect&#34;</span><span class="p">:</span> <span class="s2">&#34;Allow&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;Action&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;logs:CreateLogStream&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;logs:PutLogEvents&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;Resource&#34;</span><span class="p">:</span> <span class="s2">&#34;arn:aws:logs:us-west-1:209640446841:log-group:my-log-group-name:*&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;Effect&#34;</span><span class="p">:</span> <span class="s2">&#34;Allow&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>The IAM policy above shows how you can limit ECS so that it can only download a specific image from ECR, and it can only upload logs to a specific log group.</p>
+<h4 id="turning-on-additional-amazon-ecs-features">Turning on additional Amazon ECS features</h4>
+<p>The default <code>AmazonECSTaskExecutionRolePolicy</code> task execution policy does not enable every feature of Amazon ECS. In specific there are several additional features you may wish to enable:</p>
+<ul>
+<li><a href="/pattern/task-execution-iam-role-secrets-manager">Task execution policy for attaching secrets in AWS Secret Manager</a></li>
+<li><a href="/pattern/task-execution-iam-role-efs">Task execution policy for attaching an AWS Elastic File System</a></li>
+</ul>
+<h4 id="should-you-use-a-shared-task-execution-policy">Should you use a shared task execution policy?</h4>
+<p>When deciding whether to limit the surface area of a task exeuction policy, you must also decide whether
+you want to create a single shared task execution policy that is used for launching multiple types of tasks, or whether you want each task to have its own unique task execution policy. There are advantages and disadvantages in both approaches.</p>
+<p>A single shared task execution role can be very convenient and easy to understand when getting started.
+However the shared task execution will need to be able to access a wider range of AWS resources. You can use a broad role like <code>AmazonECSTaskExecutionRolePolicy</code> which does not limit the resource ARN&rsquo;s of images or log groups. Or you can choose to have your shared task role enumerate a list of images and log groups.</p>
+<p>The advantage of giving each type of task its own dedicated task execution role is that it allows you to
+build fine grained access permissions for each type of task. ECS will use the appropriate level of access for
+each task, and will only have permission to do exactly what it needs to do in that moment, and nothing more.
+However, this will be more complicated to build out, and will require ongoing updates in the future if you decide
+to turn on new features or make changes to images.</p>
+<p>In general, it is better to use per task execution roles if you are running multiple tasks that have their own secrets. For example, you can have a task execution role for your API service which allows it to fetch the database password, but run another service that has no access to the database password secret.</p>
+<h4 id="see-also">See Also</h4>
+<ul>
+<li>More info on <a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_execution_IAM_role.html">ECS task execution roles in the official AWS documentation</a></li>
+</ul>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+            </div><script src="/js/awscookies.min.d0f27ec2e58035bce97974412218774a1ce15c2db2a4af8eb487cbfb001aa217.js"></script>
+<footer class="footer">
+  <div class="container">
+    <div class="row">
+      <div class="text-center">
+        2026 &copy; Copyright Amazon.com, Inc. or its affiliates. All rights reserved.
+        <br>
+        <a href="https://aws.amazon.com/privacy/">Privacy</a> -
+        <a href="https://aws.amazon.com/terms/">Site Terms</a> -
+        <a href="#" id="openShortbread">Cookie Preferences</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<script>
+  document.getElementById('openShortbread').addEventListener('click', function (e) {
+    openShortbread(); return false;
+  });
+</script>
+
+
+        </div>
+
+
+<script src="/js/jquery-3.7.0.min.js"></script>
+
+
+<script src="/js/popper-2.10.2.min.js"></script>
+
+
+<script src="/js/bootstrap-5.2.3.min.js"></script>
+
+
+<script src="/js/fontawesome-5.15.4.all.min.js"></script>
+
+
+<script src="/js/mediumish.js"></script>
+
+
+<script src="/js/darkmode.js"></script>
+
+        <div id="workshop-notification">
+          <div class="notification-content">
+            <button class="close-btn" aria-label="Close notification">×</button>
+            <div class="notification-icon">🎓</div>
+            <h3>New Workshop Series!</h3>
+            <p>Join our upcoming container workshop series and learn best practices for Amazon ECS, AWS Fargate, and more.</p>
+            <a href="https://aws-experience.com/amer/smb/events/series/Get-Hands-On-With-ECS?trk=78c3ca6e-4252-40e3-8692-94d4672bd7dc&sc_channel=el" class="notification-btn" target="_blank">Sign Up Now</a>
+          </div>
+        </div><script src="/js/workshop-notification.min.ad14b0cb76ec27ee74b8b620bfc6508830589bf8e036537a7dfbaadcd18a14d9.js"></script></body>
+</html>

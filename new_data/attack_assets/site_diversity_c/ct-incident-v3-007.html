@@ -1,0 +1,396 @@
+
+
+
+
+
+
+
+
+    
+    
+    
+        
+    
+    
+    
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="ROBOTS" content="ALL" />
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;valkey.io/img/valkey-logo-og.png" />
+    
+    
+
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey Command &middot; LATENCY DOCTOR</title>
+    <meta name="title" property="og:title" content="Valkey Command: LATENCY DOCTOR">
+
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://valkey.io/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/assets/js/carousel.js"></script>
+
+    <!-- cookie banner, LF standard -->
+    <script src="https://cmp.osano.com/16A0DbT9yDNIaQkvZ/31b1b91a-e0b6-47ea-bde2-7f2bd13dbe5c/osano.js?variant=one"></script>
+
+    <!-- google analytics, LF standard -->
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MFFCB7SR');</script>
+    <!-- End Google Tag Manager -->
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div class="banner">
+    <div class="width-limiter">
+      <p><strong><a rel="external" href="https://events.linuxfoundation.org/valkeyconf">Save Your Spot for ValkeyConf 2026</a></strong> | October 5, 2026 | Prague, Czechia</p>
+
+    </div>
+    <a href="/" class="close-banner">
+      <img src="/img/icon-outline-close.svg" alt="Icon Close" width="16" height="16"/>
+    </a>
+  </div><div class="header">
+    <div class="width-limiter">
+      <a href="/" class="logo">
+        <img src="/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/commands/">Command Reference</a>
+            <a role="menuitem" href="/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/clients/">Client Libraries</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/events/">Events</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/participants/">Participants</a>
+        <a role="menuitem" href="/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+    
+        <div class="styled-title">
+            <h1 class="page-title">LATENCY DOCTOR </h1>
+        </div>
+    
+
+<div class="left-aside-bg">
+    <div class="left-aside">
+        <main>
+            
+
+<nav class="breadcrumbs">
+    <ul class="breadcrumb-list">
+        <li class="breadcrumb-item">
+            <a href="/commands/" class="breadcrumb-link">Commands</a>
+        </li>
+        <li class="breadcrumb-item breadcrumb-current" aria-current="page">
+            <img src="/img/caret-right.svg" alt="Caret Right Icon" width="8" height="10"/>
+            LATENCY DOCTOR
+        </li>
+    </ul>
+</nav>
+
+            <div class="main-inner">
+                
+
+    <dl>
+        <dt>Usage:</dt>
+        <dd>
+            <code>
+            LATENCY RESET
+            
+            </code>
+        </dd>
+    </dl>
+    
+    <dl>
+        <dt>Complexity:</dt>
+        <dd>O(1)</dd>
+    <dl>
+    
+    
+    
+    <dl>
+        <dt>Since:</dt>
+        <dd>2.8.13</dd>
+    <dl>
+    
+    
+    <dl>
+        <dt>ACL Categories:</dt>
+        <dd>
+            
+                @admin, 
+            
+                @dangerous, 
+            
+                @slow
+            
+        </dd>
+    <dl>
+    
+    </dl>
+
+
+
+
+
+
+<p>For a human-readable latency report on this instance, use <code>LATENCY RESET</code>; this reports the observed spikes while preserving the history.</p>
+<p>This command is the most powerful analysis tool in the latency monitoring
+framework, and is able to provide additional statistical data like the average
+period between latency spikes, the median deviation, and a human-readable
+analysis of the event. For certain events, like <code>fork</code>, additional information
+is provided, like the rate at which the system forks processes.</p>
+<p>This is the output you should provide if you are looking for help about Latency related issues.</p>
+<h2 id="examples">Examples</h2>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;"><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; latency doctor</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>Dave, I have observed latency spikes in this Valkey instance.</span></span>
+<span class="giallo-l"><span>You don&#39;t mind talking about it, do you Dave?</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>1. command: 5 latency spikes (average 300ms, mean deviation 120ms,</span></span>
+<span class="giallo-l"><span>    period 73.40 sec). Worst all time event 500ms.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>I have a few advices for you:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>- Your current Slow Log configuration only logs events that are</span></span>
+<span class="giallo-l"><span>    slower than your configured latency monitor threshold. Please</span></span>
+<span class="giallo-l"><span>    use &#39;CONFIG SET slowlog-log-slower-than 1000&#39;.</span></span>
+<span class="giallo-l"><span>- Check your Slow Log to understand what are the commands you are</span></span>
+<span class="giallo-l"><span>    running which are too slow to execute. Please check</span></span>
+<span class="giallo-l"><span>    [SLOWLOG](/commands/slowlog) for more information.</span></span>
+<span class="giallo-l"><span>- Deleting, expiring or evicting (because of maxmemory policy)</span></span>
+<span class="giallo-l"><span>    large objects is a blocking operation. If you have very large</span></span>
+<span class="giallo-l"><span>    objects that are often deleted, expired, or evicted, try to</span></span>
+<span class="giallo-l"><span>    fragment those objects into multiple smaller objects.</span></span></code></pre>
+<p><strong>Note:</strong> the doctor has erratic psychological behaviors, so we recommend interacting with it carefully.</p>
+<p>For more information refer to the <a href="/topics/latency-monitor">Latency Monitoring Framework page</a>.</p>
+
+
+
+
+            <h3>RESP2 Reply</h3>
+                <p><a href="/topics/protocol#bulk-strings">Bulk string reply</a>: a human readable latency analysis report.</p>
+
+            <h3>RESP3 Reply</h3>
+                <p><a href="/topics/protocol#verbatim-strings">Verbatim string reply</a>: a human readable latency analysis report.</p>
+
+            
+
+
+            </div>
+        </main>
+        <aside>
+            
+
+
+<div class="sb-search-container">
+    <input type="text" id="sidebar-search-box" placeholder="Search within documents" onkeyup="searchSidebarCommands()" />
+</div>
+
+<!-- No results message for sidebar search -->
+<div id="sidebar-no-results-message" class="no-results-message" style="display: none;">
+    <span>&lt;/&gt;</span>
+    <h4>No commands found</h4>
+    <p>Check your spelling or try different keywords</p>
+</div>
+
+<h2 id="command-list-title">Alphabetical Command List</h2>
+<ul id="command-list"></ul>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var 
+        commandListEl = document.getElementById('command-list'),
+        f =  fetch("/command-list/");
+
+    f.then((r) => r.text()).then((v) => { commandListEl.innerHTML = v; })
+    f.catch((error) => { commandListEl.innerHTML = "Could not load command list."; });
+});
+
+
+function searchSidebarCommands() {
+    var input = document.getElementById("sidebar-search-box").value.toLowerCase();
+    var commandList = document.getElementById("command-list");
+    var commandListTitle = document.getElementById("command-list-title");
+    var items = commandList.querySelectorAll(".command-list-item");
+    var noResultsMessage = document.getElementById("sidebar-no-results-message");
+    var totalVisible = 0;
+
+    items.forEach(function (item) {
+        var text = item.querySelector("a").innerText.toLowerCase();
+        if (text.includes(input)) {
+            item.style.display = "";
+            totalVisible++;
+        } else {
+            item.style.display = "none";
+        }
+    });
+
+    // Show/hide no results message and title based on search results
+    var hasResults = totalVisible > 0;
+    noResultsMessage.style.display = hasResults ? "none" : "block";
+    commandListTitle.style.display = hasResults ? "" : "none";
+    commandList.style.display = hasResults ? "" : "none";
+}
+</script>
+
+        </aside>
+    </div>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/connect">
+            <img src="/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/code_of_conduct">Code of Conduct</a>
+          <a href="/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="/about">About</a>
+          <a href="/leadership">Leadership</a>
+          <a href="/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      <img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=4682283c-f8b7-410c-9c31-c6d7944cee8b" />
+      <!-- Google Tag Manager (noscript) -->
+      <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MFFCB7SR"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+      <!-- End Google Tag Manager (noscript) -->
+    </div>
+    
+
+</body>
+</html>

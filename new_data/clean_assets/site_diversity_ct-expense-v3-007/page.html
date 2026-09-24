@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Intelligence with Amazon Textract: From OCR to Structured Insights - Spillwave Solutions</title>
+    
+    <link rel="canonical" href="https://medium.com/@richardhightower/document-intelligence-with-amazon-textract-from-ocr-to-structured-insights-a9165d853de5">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Spillwave Solutions">
+    <meta property="og:title" content="Document Intelligence with Amazon Textract: From OCR to Structured Insights - Spillwave Solutions">
+    
+    <meta property="og:url" content="https://medium.com/@richardhightower/document-intelligence-with-amazon-textract-from-ocr-to-structured-insights-a9165d853de5">
+    
+    <meta name="twitter:card" content="summary">
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+    <link rel="stylesheet" href="/css/styles.css?v=20260831-carousel-fix">
+    
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+</head>
+<body class="bg-white text-gray-900 font-sans">
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container">
+            <nav class="flex items-center justify-between h-16">
+                <a href="/" class="text-2xl font-bold text-primary ">Spillwave Solutions</a>
+                <div class="hidden md:flex items-center space-x-8">
+                    
+                    <a href="/harness-engineering/" class="text-gray-600 hover:text-primary transition-colors ">Harness Engineering</a>
+                    
+                    <a href="/services/" class="text-gray-600 hover:text-primary transition-colors ">Services</a>
+                    
+                    <a href="/expertise/" class="text-gray-600 hover:text-primary transition-colors ">Expertise</a>
+                    
+                    <a href="/blog/" class="text-gray-600 hover:text-primary transition-colors ">Blog</a>
+                    
+                    <a href="http://pub.spillwave.com/" target="_blank" class="text-gray-600 hover:text-primary transition-colors ">Newsletter</a>
+                    
+                    <a href="https://calendar.app.google/jGssVkCsZ62MirvKA" target="_blank" rel="noopener" class="btn btn-primary">Book a discovery</a>
+                </div>
+                <button class="md:hidden p-2" id="mobile-menu-button">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </nav>
+            <div class="hidden md:hidden" id="mobile-menu">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    
+                    <a href="/harness-engineering/" class="block px-3 py-2 text-gray-600 hover:text-primary ">Harness Engineering</a>
+                    
+                    <a href="/services/" class="block px-3 py-2 text-gray-600 hover:text-primary ">Services</a>
+                    
+                    <a href="/expertise/" class="block px-3 py-2 text-gray-600 hover:text-primary ">Expertise</a>
+                    
+                    <a href="/blog/" class="block px-3 py-2 text-gray-600 hover:text-primary ">Blog</a>
+                    
+                    <a href="http://pub.spillwave.com/" target="_blank" class="block px-3 py-2 text-gray-600 hover:text-primary ">Newsletter</a>
+                    
+                    <a href="https://calendar.app.google/jGssVkCsZ62MirvKA" target="_blank" rel="noopener" class="block px-3 py-2 text-gray-600 hover:text-primary">Book a discovery</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="min-h-screen">
+        <article class="max-w-4xl mx-auto px-4 py-12">
+  <div class="text-center mb-4">
+    <a href="/writing" class="text-sm font-semibold uppercase tracking-wide text-primary hover:underline">Writing</a>
+  </div>
+
+  <header class="mb-12">
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-extrabold text-gray-900 mb-4">Document Intelligence with Amazon Textract: From OCR to Structured Insights</h1>
+      
+    </div>
+
+    <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-gray-600 border-y border-gray-200 py-4">
+      
+      <time datetime="Tue Apr 29 2025 00:00:00 GMT+0000 (Coordinated Universal Time)" class="flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        April 29, 2025
+      </time>
+      
+      
+      <span class="flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+        Rick Hightower
+      </span>
+      
+      
+      <span class="flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        14 min read
+      </span>
+      
+    </div>
+
+    
+    <p class="text-center text-sm text-gray-500 mt-4">
+      Originally published on
+      <a href="https://medium.com/@richardhightower/document-intelligence-with-amazon-textract-from-ocr-to-structured-insights-a9165d853de5" class="text-primary hover:underline" target="_blank" rel="noopener">Medium</a>.
+    </p>
+    
+  </header>
+
+  <div class="prose prose-lg prose-blue mx-auto">
+    <p><img src="/writing/document-intelligence-with-amazon-textract-from-ocr-to-structured-insights/images/cover.png" alt=""></p>
+<p>Turning Paper into Power -- The Promise of Document Intelligence</p>
+<p>Every business -- whether a bank, hospital, or law firm -- drowns in paperwork. Invoices, contracts, tax forms, and receipts are full of critical information, but finding what you need can feel like searching for a needle in a haystack. Manual data entry is tedious, expensive, and often leads to errors.</p>
+<p>Even traditional scanning and basic OCR (Optical Character Recognition) usually produce a wall of unstructured text, missing the relationships and meaning hidden in the document’s layout.</p>
+<p>Enter document intelligence. This is more than just reading text -- it’s about understanding documents as a human would. Imagine instantly turning a stack of scanned contracts into a searchable database of client names, dates, and key clauses. Or extracting line items from thousands of invoices for real-time financial analysis. This is the promise of Amazon Textract: a fully managed AWS service that goes beyond OCR to deliver structured, actionable data from your documents.</p>
+<p>Amazon Textract can extract not just plain text, but also complex elements like tables, forms, key-value pairs, and specialized data from receipts, IDs, and lending documents. Think of it as a digital assistant that reads documents at scale, never tires, and never makes a typo. Automating document processing frees up your team for higher-value work and opens the door to advanced AI applications.</p>
+<p>The impact of document intelligence spans industries:</p>
+<ul>
+<li>Healthcare: Pull patient info and diagnoses from medical forms for faster billing and care coordination.</li>
+<li>Finance: Analyze receipts and contracts at scale for compliance and fraud detection.</li>
+<li>Legal: Index and search legal documents by clause, party, or date -- making due diligence much faster.</li>
+<li>Retail: Automate expense and inventory tracking using scanned receipts and shipping manifests.</li>
+</ul>
+<h2>Quick Start Example: Detecting Document Text with Textract</h2>
+<p>Here’s a simple example: extracting every line of text from a PDF stored in Amazon S3 using Textract’s DetectDocumentText API.</p>
+<h2>Extracting Text Lines from a PDF with Textract</h2>
+<pre><code class="language-python">import boto3
+
+# Always specify the latest supported region
+textract = boto3.client(&quot;textract&quot;,
+                        region_name=&quot;us-east-1&quot;)
+bucket = &quot;my-bucket&quot;
+document = &quot;sample.pdf&quot;
+# Call Textract's DetectDocumentText API
+response = textract.detect_document_text(
+    Document={&quot;S3Object&quot;: {
+        &quot;Bucket&quot;: bucket,
+        &quot;Name&quot;: document}
+    }
+)
+# Print each detected line of text
+for block in response[&quot;Blocks&quot;]:
+    if block[&quot;BlockType&quot;] == &quot;LINE&quot;:
+        print(block[&quot;Text&quot;])
+# For large files, use StartDocumentTextDetection
+</code></pre>
+<h2>What’s Happening</h2>
+<ul>
+<li>You specify your PDF’s location in S3.</li>
+<li>Textract reads and analyzes the file, returning a structured response.</li>
+<li>Each “LINE” block represents a detected line of text, which you can print, store, or process further.</li>
+</ul>
+<p>This simple workflow is the foundation for more advanced pipelines -- like extracting tables, forms, or specialized fields from complex documents.</p>
+<h2>Best Practices (2025)</h2>
+<ul>
+<li>Check for API deprecations: Monitor AWS release notes and enable deprecation warnings in your CI/CD pipelines.</li>
+<li>Use asynchronous APIs for large files: For documents exceeding 5 MB, prefer StartDocumentTextDetection or StartDocumentAnalysis.</li>
+<li>Secure your workflows: Always use IAM least-privilege roles, encrypt sensitive data, and consider VPC endpoints for private connectivity.</li>
+<li>Automate compliance monitoring: Integrate with AWS Audit Manager or similar tools to ensure ongoing compliance for sensitive workloads.</li>
+</ul>
+<h2>Textract Service Overview and Core Workflows</h2>
+<p>Amazon Textract transforms unstructured documents into structured, actionable data. Think of Textract as a digital mailroom with two service lanes: one for quick, interactive jobs and another for high-volume, batch processing.</p>
+<h2>Synchronous or Asynchronous?</h2>
+<p>Textract offers two main ways to process documents:</p>
+<ul>
+<li>Synchronous: For small, fast jobs (like a single receipt or ID card). You send the document and get results in seconds. Limited to single-page PDFs or images and a 5MB file size cap.</li>
+<li>Asynchronous: For large or multi-page documents (such as a 200-page contract). You submit the job, Textract works in the background, and you get notified when it’s done. Supports up to 1,000 pages per document.</li>
+</ul>
+<p>Key differences:</p>
+<ul>
+<li>Synchronous jobs: single-page limit, strict 5MB size cap, immediate response.</li>
+<li>Asynchronous jobs: multi-page support, larger file support, background processing, error notifications, and scalable parallelism.</li>
+</ul>
+<h2>Textract’s Core APIs</h2>
+<ol>
+<li>DetectDocumentText Fast, synchronous OCR for plain text extraction Use when you only need raw text -- no structured data required</li>
+</ol>
+<h2>Basic Synchronous OCR with DetectDocumentText</h2>
+<pre><code class="language-python">import boto3
+
+# Create a Textract client
+textract = boto3.client('textract')
+try:
+    # Extract text from a document in S3
+    response = textract.detect_document_text(
+        Document={'S3Object': {
+            'Bucket': 'my-bucket',
+            'Name': 'sample.pdf'
+        }}
+    )
+    # Print each detected line of text
+    for block in response['Blocks']:
+        if block['BlockType'] == 'LINE':
+            print(block['Text'])
+except Exception as e:
+    print(f&quot;Textract error: {e}&quot;)
+</code></pre>
+<ol>
+<li>AnalyzeDocument Extracts structured data: key-value pairs, tables, layout elements and custom queries Supports multiple FeatureTypes: FORMS, TABLES, LAYOUT, and QUERIES Returns a relationship graph linking detected elements</li>
+</ol>
+<h2>Advanced Extraction with AnalyzeDocument</h2>
+<pre><code class="language-python">import boto3
+
+textract = boto3.client(&quot;textract&quot;)
+response = textract.analyze_document(
+    Document={&quot;S3Object&quot;: {
+        &quot;Bucket&quot;: &quot;my-bucket&quot;,
+        &quot;Name&quot;: &quot;sample.pdf&quot;
+    }},
+    FeatureTypes=[&quot;LAYOUT&quot;, &quot;QUERIES&quot;],
+    QueriesConfig={
+        &quot;Queries&quot;: [
+            {
+                &quot;Text&quot;: &quot;What is the invoice number?&quot;,
+                &quot;Alias&quot;: &quot;InvoiceNumber&quot;
+            }
+        ]
+    }
+)
+for block in response[&quot;Blocks&quot;]:
+    if block[&quot;BlockType&quot;] == &quot;QUERY_RESULT&quot;:
+        print(f&quot;{block['Query']['Alias']}: &quot;
+              f&quot;{block['Text']}&quot;)
+</code></pre>
+<ol>
+<li>StartDocumentAnalysis Asynchronous version of AnalyzeDocument for large or complex documents Supports all advanced features but processes in the background You submit a job and get notified via SNS when complete</li>
+</ol>
+<p>Specialized APIs:</p>
+<ul>
+<li>AnalyzeExpense (for invoices/receipts)</li>
+<li>AnalyzeID (for IDs)</li>
+<li>StartLendingAnalysis (for lending/financial documents)</li>
+</ul>
+<h2>Advanced Extraction Capabilities</h2>
+<p>Most business documents -- contracts, invoices, onboarding forms -- are more than just text. Their real value lies in structure: fields, tables, semantic sections, and the relationships between them.</p>
+<h2>Forms and Key-Value Pair Extraction</h2>
+<p>Forms are everywhere in business: HR onboarding, insurance claims, loan applications, and more. Each form field -- like ‘Name’ or ‘Account Number’ -- acts as a key, paired with a value filled in by a person.</p>
+<p>When Textract analyzes a form, it breaks the content into ‘Blocks.’ Each Block represents a detected element -- such as a word, a key, a value, or their relationships. For forms, Textract uses KEY_VALUE_SET blocks to represent both keys and values, and links them together.</p>
+<h2>Extracting Key-Value Pairs from a Form</h2>
+<pre><code class="language-python"># Analyze a form for key-value pairs
+import boto3
+
+textract = boto3.client('textract')
+response = textract.analyze_document(
+    Document={'S3Object': {
+        'Bucket': 'my-bucket',
+        'Name': 'form.pdf'
+    }},
+    FeatureTypes=['FORMS']
+)
+# Build a map of block IDs to blocks
+block_map = {block['Id']: block
+             for block in response['Blocks']}
+# Traverse blocks to find key-value pairs
+for block in response['Blocks']:
+    if (block['BlockType'] == 'KEY_VALUE_SET' and
+        'KEY' in block.get('EntityTypes', [])):
+        key_text = ''
+        value_text = ''
+        # Extract key text
+        for rel in block.get('Relationships', []):
+            if rel['Type'] == 'CHILD':
+                for cid in rel['Ids']:
+                    child = block_map[cid]
+                    if (child['BlockType'] == 'WORD' or
+                        child['BlockType'] == 'SELECTION_ELEMENT'):
+                        key_text += child.get('Text', '') + ' '
+        # Find the value block
+        for rel in block.get('Relationships', []):
+            if rel['Type'] == 'VALUE':
+                for vid in rel['Ids']:
+                    value_block = block_map[vid]
+                    # Extract value text
+                    for vrel in value_block.get('Relationships', []):
+                        if vrel['Type'] == 'CHILD':
+                            for vcid in vrel['Ids']:
+                                vchild = block_map[vcid]
+                                if (vchild['BlockType'] == 'WORD' or
+                                    vchild['BlockType'] == 'SELECTION_ELEMENT'):
+                                    value_text += vchild.get('Text', '') + ' '
+        print(f&quot;Key: {key_text.strip()} -&gt; &quot;
+              f&quot;Value: {value_text.strip()} &quot;
+              f&quot;(Confidence: {block['Confidence']:.1f}%)&quot;)
+</code></pre>
+<p>This code demonstrates how Textract processes form documents and extracts key-value pairs. Let’s break down what’s happening:</p>
+<ul>
+<li>Block Structure: Textract represents document elements as “Blocks”, where each block can be text, a key-value pair, a table cell, etc.</li>
+<li>KEY_VALUE_SET Blocks: These special blocks represent form fields. A single key-value pair consists of: A key block (like “Name:” or “Date:”) A value block (the actual information filled in) Relationship links connecting them</li>
+</ul>
+<p>The code works in three main steps:</p>
+<ol>
+<li>First, it creates a map of all blocks by their IDs for easy lookup</li>
+<li>Then it finds blocks marked as KEY_VALUE_SET that are specifically keys (using EntityTypes)</li>
+<li>For each key found, it: Extracts the key text by following CHILD relationships Finds the corresponding value using VALUE relationships Extracts the value text from its children Prints the complete key-value pair with confidence score</li>
+</ol>
+<p>For example, if processing a form with “Name: John Doe”, the code would identify “Name” as the key and “John Doe” as the value, then extract and pair them together.</p>
+<h2>Flexible Field Extraction with Queries</h2>
+<p>The Queries feature allows you to extract specific information using natural-language questions, removing the need for brittle templates or custom parsing logic.</p>
+<h2>Extracting Fields Using Queries</h2>
+<pre><code class="language-python"># Using Textract Queries to extract specific fields
+import boto3
+
+textract = boto3.client('textract')
+response = textract.analyze_document(
+    Document={'S3Object': {
+        'Bucket': 'my-bucket',
+        'Name': 'invoice.pdf'
+    }},
+    FeatureTypes=['QUERIES'],
+    QueriesConfig={
+        &quot;Queries&quot;: [
+            {&quot;Text&quot;: &quot;What is the invoice date?&quot;,
+             &quot;Alias&quot;: &quot;InvoiceDate&quot;},
+            {&quot;Text&quot;: &quot;What is the total amount?&quot;,
+             &quot;Alias&quot;: &quot;TotalAmount&quot;}
+        ]
+    }
+)
+for block in response['Blocks']:
+    if block['BlockType'] == 'QUERY_RESULT':
+        alias = block['Query']['Alias']
+        answer = block.get('Text', '')
+        confidence = block.get('Confidence', 0)
+        print(f&quot;{alias}: {answer} &quot;
+              f&quot;(Confidence: {confidence:.1f}%)&quot;)
+</code></pre>
+<p>This code demonstrates using Textract’s Queries feature to extract specific information from documents. The key aspects are:</p>
+<ul>
+<li>It uses the analyze_document API with the QUERIES feature type</li>
+<li>Natural language queries are defined with aliases for easy reference (e.g., “What is the invoice date?” with alias “InvoiceDate”)</li>
+<li>The code processes the response by looking for QUERY_RESULT blocks</li>
+<li>For each result, it extracts: The query alias (to identify which question was answered) The extracted answer text The confidence score for the extraction</li>
+</ul>
+<p>This approach is particularly useful when you need to extract specific fields without relying on fixed templates or exact field positions in the document.</p>
+<p>Textract’s analysis for fields like invoice numbers uses several sophisticated techniques working together:</p>
+<ul>
+<li>Pattern Recognition: The system identifies common invoice number formats and locations (usually near the top of documents or in specific header sections)</li>
+<li>Contextual Understanding: It looks for surrounding text like “Invoice #”, “Invoice Number”, or similar labels that typically indicate where invoice numbers are located</li>
+<li>Natural Language Processing: When using queries like “What is the invoice number?”, Textract analyzes the semantic meaning of document text to find the most relevant answer</li>
+<li>Confidence Scoring: Each potential match is given a confidence score based on: How well it matches known invoice number patterns The presence of supporting contextual clues The clarity and quality of the text in that region</li>
+</ul>
+<h2>Complex Tables and Enhanced Layout Analysis</h2>
+<p>Textract’s TABLES feature now detects not only tables, cells, rows, and columns -- even in non-standard layouts -- but also table titles, section headers, footers, summary cells, and table type classification.</p>
+<h2>Extracting Enhanced Table Structure</h2>
+<pre><code class="language-python"># Extract tables and enhanced metadata
+import boto3
+
+textract = boto3.client('textract')
+response = textract.analyze_document(
+    Document={'S3Object': {
+        'Bucket': 'my-bucket',
+        'Name': 'statement.pdf'
+    }},
+    FeatureTypes=['TABLES']
+)
+block_map = {block['Id']: block
+             for block in response['Blocks']}
+table_blocks = [b for b in response['Blocks']
+                if b['BlockType'] == 'TABLE']
+for table in table_blocks:
+    table_type = table.get('TableType', 'STANDARD')
+    title = table.get('Title', {}).get('Text', '')
+    footer = table.get('Footer', {}).get('Text', '')
+    print(f&quot;Table Type: {table_type}, &quot;
+          f&quot;Title: {title}, &quot;
+          f&quot;Footer: {footer}&quot;)
+    # Further process rows, cells, summary cells
+</code></pre>
+<p>Let’s break down this code that extracts table information:</p>
+<ol>
+<li>Block Map Creation: First, it creates a lookup dictionary (block_map) of all blocks by their IDs for efficient retrieval</li>
+<li>Table Block Filtering: The code identifies all table blocks in the document using list comprehension</li>
+<li>Table Information Extraction: For each table found, it extracts: The table type (standard or other specialized types) The table’s title (if present) The table’s footer text (if present)</li>
+<li>Output Formatting: Finally, it prints the extracted information in a formatted string showing the table type, title, and footer</li>
+</ol>
+<p>The code demonstrates Textract’s enhanced table detection capabilities, which go beyond basic cell detection to understand the semantic structure of tables in documents.</p>
+<h2>Semantic Layout Extraction</h2>
+<p>Business documents often contain rich semantic structure: headers, footers, section titles, numbered lists, and figures. The LAYOUT feature extracts these elements, preserving the true structure of your documents.</p>
+<h2>Extracting Semantic Layout Elements</h2>
+<pre><code class="language-python"># Extract semantic layout elements
+import boto3
+
+textract = boto3.client('textract')
+response = textract.analyze_document(
+    Document={'S3Object': {
+        'Bucket': 'my-bucket',
+        'Name': 'policy.pdf'
+    }},
+    FeatureTypes=['LAYOUT']
+)
+for block in response['Blocks']:
+    if block['BlockType'].startswith('LAYOUT_'):
+        print(f&quot;{block['BlockType']}: &quot;
+              f&quot;{block.get('Text', '')}&quot;)
+</code></pre>
+<p>This code demonstrates how to extract semantic layout elements from documents using Amazon Textract’s LAYOUT feature. Here’s how it works:</p>
+<ol>
+<li>First, it initializes a Textract client using boto3</li>
+<li>It calls the analyze_document API with the LAYOUT feature type enabled</li>
+<li>The document is specified using an S3 bucket and object key</li>
+<li>The code then iterates through all blocks in the response</li>
+<li>It filters for blocks that have a BlockType starting with ‘LAYOUT_’</li>
+<li>For each matching block, it prints: The block type (e.g., LAYOUT_HEADER, LAYOUT_FOOTER, etc.) The text content of that layout element</li>
+</ol>
+<p>This helps preserve the semantic structure of documents by identifying different layout components like headers, footers, titles, and sections in their proper context.</p>
+<h2>Specialized APIs: Expense, Lending, and ID Docs</h2>
+<p>Some documents require extra intelligence. Textract provides specialized APIs for these cases:</p>
+<ul>
+<li>AnalyzeExpense: Extracts structured fields, line items, currencies and taxes from invoices and receipts</li>
+<li>StartLendingAnalysis: Pulls out borrower information, loan terms, and interest rates from loan documents</li>
+<li>AnalyzeID: Focuses on government-issued IDs, extracting name, date of birth, document number, etc.</li>
+</ul>
+<h2>Processing an Invoice with AnalyzeExpense</h2>
+<pre><code class="language-python"># Call AnalyzeExpense for an invoice
+import boto3
+
+textract = boto3.client('textract')
+response = textract.analyze_expense(
+    Document={'S3Object': {
+        'Bucket': 'my-bucket',
+        'Name': 'invoice.pdf'
+    }}
+)
+# Print summary fields
+for expense_doc in response.get('ExpenseDocuments', []):
+    for field in expense_doc.get('SummaryFields', []):
+        print(f&quot;{field['Type']['Text']}: &quot;
+              f&quot;{field.get('ValueDetection', {}).get('Text', '')}&quot;)
+# To extract line items
+for expense_doc in response.get('ExpenseDocuments', []):
+    for group in expense_doc.get('LineItemGroups', []):
+        for item in group.get('LineItems', []):
+            item_data = {
+                field['Type']['Text']:
+                field.get('ValueDetection', {}).get('Text', '')
+                for field in item.get('LineItemExpenseFields', [])
+            }
+            print(&quot;Line Item:&quot;, item_data)
+</code></pre>
+<p>Let’s break down this code that processes line items from invoices:</p>
+<ol>
+<li>Initialize Textract Client: The code starts by creating a Textract client using boto3</li>
+<li>Call AnalyzeExpense API: It calls the specialized AnalyzeExpense API, pointing to a document stored in S3</li>
+<li>Process Summary Fields: The first loop extracts summary-level information from the invoice (like totals, dates, vendor info)</li>
+<li>Extract Line Items: The nested loops then process the detailed line items: It iterates through each expense document Then through each line item group Finally through individual line items</li>
+<li>Create Item Dictionary: For each line item, it creates a dictionary mapping field types to their detected values</li>
+<li>Print Results: Finally, it outputs the structured line item data for further processing</li>
+</ol>
+<p>This structure allows for detailed extraction of both summary-level invoice data and individual line items, making it ideal for expense processing and accounting automation.</p>
+<h2>Performance, Security, and Compliance Best Practices</h2>
+<p>Running Amazon Textract at scale needs to balance speed, security, and compliance. This section covers efficient processing, data security, and compliance best practices.</p>
+<h2>Batching, Parallelism, and Modern Extraction Techniques</h2>
+<p>Break large jobs into small chunks -- such as individual pages or logical sections -- and process them in parallel. Use AWS Step Functions, Lambda, and EventBridge to orchestrate large-scale, resilient pipelines.</p>
+<h2>Parallel Textract Job Submission with Step Functions</h2>
+<pre><code class="language-python">import boto3
+import time
+from botocore.exceptions import ClientError
+
+textract = boto3.client('textract')
+document_keys = ['docs/page1.pdf',
+                 'docs/page2.pdf',
+                 'docs/page3.pdf']
+# Example custom queries for targeted extraction
+queries = [
+    {&quot;Text&quot;: &quot;What is the invoice number?&quot;,
+     &quot;Alias&quot;: &quot;InvoiceNumber&quot;},
+    {&quot;Text&quot;: &quot;What is the total amount?&quot;,
+     &quot;Alias&quot;: &quot;TotalAmount&quot;}
+]
+job_ids = []
+for key in document_keys:
+    try:
+        response = textract.start_document_analysis(
+            DocumentLocation={'S3Object': {
+                'Bucket': 'my-bucket',
+                'Name': key
+            }},
+            FeatureTypes=['TABLES', 'FORMS', 'QUERIES'],
+            QueriesConfig={&quot;Queries&quot;: queries}
+        )
+        job_ids.append(response['JobId'])
+        print(f&quot;Started Textract job for {key}: &quot;
+              f&quot;{response['JobId']}&quot;)
+        time.sleep(0.5)  # Avoid API throttling
+    except ClientError as e:
+        print(f&quot;Error starting Textract job: {e}&quot;)
+# In production, use Step Functions Map states
+</code></pre>
+<h2>Security: Encryption, VPC Endpoints, and KMS Best Practices</h2>
+<p>When processing sensitive documents, security is non-negotiable. Encrypt all documents at rest with customer-managed KMS keys and use VPC interface endpoints to keep traffic private.</p>
+<h2>Uploading Documents with KMS Encryption</h2>
+<pre><code class="language-python"># Upload with customer-managed KMS key
+import boto3
+from botocore.exceptions import ClientError
+
+def upload_document_with_kms(s3_client, file_path,
+                            bucket, key, kms_key_id):
+    try:
+        with open(file_path, 'rb') as f:
+            s3_client.put_object(
+                Bucket=bucket,
+                Key=key,
+                Body=f,
+                ServerSideEncryption='aws:kms',
+                SSEKMSKeyId=kms_key_id
+            )
+        print(f&quot;Uploaded {key} with KMS encryption.&quot;)
+    except ClientError as e:
+        print(f&quot;Error uploading {key}: {e}&quot;)
+# Usage:
+# upload_document_with_kms(boto3.client('s3'),
+#                         'form.pdf',
+#                         'my-bucket',
+#                         'secure/form.pdf',
+#                         'arn:aws:kms:...:key/1234abcd')
+</code></pre>
+<h2>IAM Roles, Auditing, and PII Handling</h2>
+<p>Think of AWS IAM as the badge system for your digital mailroom. Apply the principle of least privilege and create dedicated IAM roles for Lambda, Step Functions, or containers.</p>
+<h2>Modern IAM Policy for Textract Processing Role</h2>
+<pre><code class="language-json">{
+  &quot;Version&quot;: &quot;2012-10-17&quot;,
+  &quot;Statement&quot;: [
+    {
+      &quot;Effect&quot;: &quot;Allow&quot;,
+      &quot;Action&quot;: [
+        &quot;textract:StartDocumentAnalysis&quot;,
+        &quot;textract:GetDocumentAnalysis&quot;
+      ],
+      &quot;Resource&quot;: &quot;arn:aws:textract:us-east-1:123456789012:document/*&quot;
+    },
+    {
+      &quot;Effect&quot;: &quot;Allow&quot;,
+      &quot;Action&quot;: [
+        &quot;s3:GetObject&quot;
+      ],
+      &quot;Resource&quot;: &quot;arn:aws:s3:::my-bucket/secure/*&quot;
+    },
+    {
+      &quot;Effect&quot;: &quot;Allow&quot;,
+      &quot;Action&quot;: [
+        &quot;kms:Decrypt&quot;
+      ],
+      &quot;Resource&quot;: &quot;arn:aws:kms:us-east-1:123456789012:key/1234abcd&quot;
+    },
+    {
+      &quot;Effect&quot;: &quot;Allow&quot;,
+      &quot;Action&quot;: [
+        &quot;logs:CreateLogGroup&quot;,
+        &quot;logs:CreateLogStream&quot;,
+        &quot;logs:PutLogEvents&quot;
+      ],
+      &quot;Resource&quot;: &quot;arn:aws:logs:us-east-1:123456789012:log-group:/aws/lambda/*&quot;
+    }
+  ]
+}
+</code></pre>
+<p>For personally identifiable information (PII), use Amazon Comprehend for detection and build workflows to redact or mask sensitive fields. Enable AWS CloudTrail logging for a full audit trail.</p>
+<h2>Post-Processing, Data Modeling, and Integration Patterns</h2>
+<p>Extracting data with Amazon Textract is just the foundation. To make this information usable for analytics, AI, or search, you must parse, clean, and model it for downstream systems.</p>
+<h2>Parsing and Cleaning Textract Output</h2>
+<p>The open-source Textractor library helps convert Textract JSON into familiar Python data structures such as Pandas DataFrames, making it easier to analyze tabular data and extract fields.</p>
+<h2>Parsing Textract Output with Textractor</h2>
+<pre><code class="language-python">from textractor import Textractor
+
+# Initialize Textractor
+extractor = Textractor()
+# Analyze a document in S3
+result = extractor.analyze_document(
+    file_source='s3://my-bucket/form.pdf',
+    features=['FORMS', 'TABLES', 'LAYOUT']
+)
+# Convert the first table to a Pandas DataFrame
+table_df = result.tables[0].to_pandas()
+print(table_df)
+# Extract key-value pairs as a dictionary
+fields = result.form.fields_as_dict()
+print(fields)
+</code></pre>
+<p>Once your data is structured, use AWS Glue Crawlers to automatically scan your S3 buckets, infer schema, and create tables in the AWS Glue Data Catalog. For additional cleaning, AWS Glue DataBrew offers a visual interface to standardize dates, currencies, and text fields.</p>
+<h2>Converting Outputs for Analytics Platforms</h2>
+<p>After parsing and cleaning, export your structured data into analytics-friendly formats. While CSV is universally supported, Parquet is preferred for large-scale analytics due to its columnar storage and compression.</p>
+<h2>Exporting Table Data to Parquet and CSV</h2>
+<pre><code class="language-python">import pandas as pd
+import boto3
+
+# Assume 'table_df' is from Textractor
+csv_path = '/tmp/extracted_table.csv'
+parquet_path = '/tmp/extracted_table.parquet'
+table_df.to_csv(csv_path, index=False)
+table_df.to_parquet(parquet_path,
+                   index=False,
+                   engine='pyarrow')
+# Upload files to S3
+s3 = boto3.client('s3')
+s3.upload_file(csv_path,
+              'my-analytics-bucket',
+              'tables/extracted_table.csv')
+s3.upload_file(parquet_path,
+              'my-analytics-bucket',
+              'tables/extracted_table.parquet')
+</code></pre>
+<h2>Integration Patterns</h2>
+<p>With clean, structured data, you can unlock advanced integration patterns:</p>
+<ol>
+<li>Retrieval-Augmented Generation (RAG): Feed extracted text and metadata into a vector store like Amazon OpenSearch for semantic search and generative AI applications.</li>
+<li>Event-Driven, Serverless Automation: Automate document workflows using AWS EventBridge and Lambda, triggering processes when new files land in S3.</li>
+<li>Human-in-the-Loop Review (Amazon A2I): Route low-confidence results to Amazon Augmented AI for human review, ensuring data quality while keeping most processing automated.</li>
+</ol>
+<h2>Routing Low-Confidence Results to A2I</h2>
+<pre><code class="language-python">import boto3
+import json
+
+a2i_client = boto3.client('sagemaker-a2i-runtime')
+# Flag low-confidence fields for review
+for field in extracted_fields:
+    if field['confidence'] &lt; 0.85:
+        response = a2i_client.start_human_loop(
+            HumanLoopName='doc-review-loop',
+            FlowDefinitionArn='arn:aws:sagemaker:us-east-1:123456789012:flow-definition/doc-review',
+            HumanLoopInput={
+                'InputContent': json.dumps(field)
+            }
+        )
+</code></pre>
+<h2>Operational Metrics, Monitoring, and Reference Architectures</h2>
+<p>Every document pipeline needs robust monitoring and safeguards. Focus on three essential metrics:</p>
+<ol>
+<li>Throughput (Pages per Minute): How fast you process documents.</li>
+<li>Error Rate: Percentage of failed extractions.</li>
+<li>Cost per Page: What you pay to process each page.</li>
+</ol>
+<p>Use Amazon CloudWatch for dashboards, alarms, and anomaly detection to monitor these metrics in real time.</p>
+<h2>Creating a CloudWatch Alarm for Textract Error Rate</h2>
+<pre><code class="language-python">aws cloudwatch put-anomaly-detector \\
+  --metric-name TextractDocumentPagesFailed \\
+  --namespace AWS/Textract \\
+  --statistic Sum \\
+  --period 300
+</code></pre>
+<pre><code class="language-python">aws cloudwatch put-metric-alarm \\
+  --alarm-name TextractErrorRateAnomalyAlarm \\
+  --metric-name TextractDocumentPagesFailed \\
+  --namespace AWS/Textract \\
+  --statistic Sum \\
+  --period 300 \\
+  --evaluation-periods 1 \\
+  --comparison-operator GreaterThanUpperThreshold \\
+  --threshold-metric-id anomalyDetector \\
+  --alarm-actions arn:aws:sns:us-east-1:123456789012:MyTopic
+</code></pre>
+<h2>CDK v2 Stack for Textract Processing</h2>
+<pre><code class="language-python">from aws_cdk import App, Stack, CfnOutput
+from aws_cdk import aws_lambda as _lambda
+from aws_cdk import aws_s3 as s3
+
+class TextractStack(Stack):
+    def __init__(self, scope: App, construct_id: str, **kwargs) -&gt; None:
+        super().__init__(scope, construct_id, **kwargs)
+        # Define S3 bucket for storing documents
+        bucket = s3.Bucket(self, &quot;TextractBucket&quot;)
+        # Define Lambda function (Python 3.11)
+        lambda_function = _lambda.Function(
+            self, &quot;TextractFunction&quot;,
+            runtime=_lambda.Runtime.PYTHON_3_11,
+            handler=&quot;handler.lambda_handler&quot;,
+            code=_lambda.Code.from_asset(&quot;lambda&quot;)
+        )
+        # Grant Lambda read access to the bucket
+        bucket.grant_read(lambda_function)
+        # Output the bucket name
+        CfnOutput(self, &quot;BucketName&quot;,
+                 value=bucket.bucket_name)
+app = App()
+TextractStack(app, &quot;TextractStack&quot;)
+app.synth()
+</code></pre>
+<h2>Sample Lambda Handler for Textract with Powertools</h2>
+<pre><code class="language-python">import boto3
+from aws_lambda_powertools import Logger, Tracer, Metrics
+
+logger = Logger()
+tracer = Tracer()
+metrics = Metrics(namespace=&quot;TextractPipeline&quot;)
+textract = boto3.client('textract')
+@tracer.capture_lambda_handler
+@metrics.log_metrics
+def lambda_handler(event, context):
+    s3_info = event['Records'][0]['s3']
+    bucket = s3_info['bucket']['name']
+    key = s3_info['object']['key']
+    logger.info(f&quot;Received S3 event for {bucket}/{key}&quot;)
+    try:
+        response = textract.start_document_analysis(
+            DocumentLocation={'S3Object': {
+                'Bucket': bucket,
+                'Name': key
+            }},
+            FeatureTypes=['TABLES', 'FORMS']
+        )
+        job_id = response['JobId']
+        logger.info(f&quot;Started analysis for {key} &quot;
+                   f&quot;with JobId: {job_id}&quot;)
+        metrics.add_metric(name=&quot;DocumentsProcessed&quot;,
+                          unit=&quot;Count&quot;,
+                          value=1)
+        return {
+            'statusCode': 200,
+            'body': f'Started analysis for {key} '
+                    f'with JobId: {job_id}'
+        }
+    except Exception as e:
+        logger.error(f&quot;Error processing {key}: {e}&quot;)
+        metrics.add_metric(name=&quot;DocumentsFailed&quot;,
+                          unit=&quot;Count&quot;,
+                          value=1)
+        raise
+</code></pre>
+<h2>Summary and Key Ideas</h2>
+<p>Amazon Textract bridges the gap between paper and digital workflows, enabling automation at scale with high accuracy and robust compliance. Here are the key takeaways:</p>
+<ul>
+<li>Textract converts unstructured documents into actionable data using state-of-the-art AWS APIs.</li>
+<li>Advanced extraction features enable automation of complex, real-world workflows.</li>
+<li>Security, performance, and integration best practices are essential for production.</li>
+<li>Deep AWS integration unlocks analytics, Retrieval-Augmented Generation (RAG), and agentic automation.</li>
+</ul>
+<h2>Author Bio</h2>
+<p>Rick Hightower is a technology leader and software architect with deep expertise in cloud computing, artificial intelligence, and enterprise software development. His focus areas include AWS services, document intelligence systems, and machine learning integration patterns.</p>
+<p>With years of hands-on experience, Rick specializes in developing scalable solutions and sharing knowledge through technical writing and education. His articles cover a wide range of topics from cloud architecture to AI implementation, helping other developers navigate complex technological landscapes.</p>
+<p>Rick regularly writes about emerging technologies, best practices, and practical implementations of cloud-native solutions, with a particular emphasis on document processing, machine learning, and enterprise architecture.</p>
+
+  </div>
+
+  
+
+  <nav class="mt-10 text-center">
+    <a href="/writing" class="text-primary hover:underline font-medium">&larr; All writing</a>
+  </nav>
+
+  <aside class="mt-12 pt-8 border-t border-gray-200">
+    <div class="bg-gray-50 rounded-lg p-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">About the author</h2>
+      <div class="sm:flex sm:items-start sm:gap-6">
+        <img src="/assets/img/rick-hightower-cca.png" alt="Rick Hightower, Claude Certified Architect, Spillwave Solutions" class="w-full sm:w-72 rounded-lg mb-4 sm:mb-0 shrink-0" />
+        <p class="text-gray-600">
+          Rick Hightower is a former Senior Distinguished Engineer at a Fortune 100 company and a practitioner building multi-agent production systems. He is a Claude Certified Architect. Follow him on
+          <a href="https://substack.com/@rickhightower1" class="text-primary hover:underline" target="_blank" rel="noopener">Substack</a> and
+          <a href="https://medium.com/@richardhightower" class="text-primary hover:underline" target="_blank" rel="noopener">Medium</a>, and read more from the team at
+          <a href="https://medium.com/spillwave-solutions" class="text-primary hover:underline" target="_blank" rel="noopener">Spillwave on Medium</a>.
+        </p>
+      </div>
+    </div>
+  </aside>
+
+  <aside class="mt-16">
+  <div class="rounded-xl bg-primary text-white p-8 md:p-10 text-center">
+    <img src="/assets/spillwave-logo.svg" alt="Spillwave Solutions" class="h-10 w-auto mx-auto mb-4" />
+    <h2 class="text-2xl font-bold mb-3">Book a discovery</h2>
+    <p class="text-gray-300 max-w-2xl mx-auto mb-6">
+      Spillwave stands up production agents with your team — harness engineering,
+      loop engineering, and Claude Code as a practice. If this guide is useful,
+      start with a conversation.
+    </p>
+    <div class="flex flex-wrap items-center justify-center gap-4">
+      <a href="https://calendar.app.google/jGssVkCsZ62MirvKA" target="_blank" rel="noopener" class="inline-block bg-white text-primary font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors">Book a discovery</a>
+      <a href="/harness-engineering/#stand-up" class="inline-block border border-white/40 text-white font-semibold px-6 py-3 rounded-lg hover:bg-white/10 transition-colors">How a stand-up works</a>
+    </div>
+  </div>
+</aside>
+
+</article>
+
+    </main>
+
+    <footer class="bg-primary text-white py-12">
+        <div class="container">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="col-span-2 md:col-span-1">
+                    <h3 class="text-xl font-semibold mb-4">Spillwave</h3>
+                    <p class="text-gray-300 mb-4">Harness engineering for production agents. A resident architect stands up the system with your team and leaves the practice behind.</p>
+                    <a href="https://calendar.app.google/jGssVkCsZ62MirvKA" target="_blank" rel="noopener" class="inline-block text-gray-300 hover:text-white underline">Book a discovery &rarr;</a>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Services</h3>
+                    <ul class="space-y-2">
+                        
+                        <li><a href="/services/" class="text-gray-300 hover:text-white">All Services</a></li>
+                        
+                        <li><a href="/harness-engineering/" class="text-gray-300 hover:text-white">Harness Engineering</a></li>
+                        
+                        <li><a href="/services/desaas/" class="text-gray-300 hover:text-white">DeSaaS</a></li>
+                        
+                        <li><a href="/services/ai-adoption/" class="text-gray-300 hover:text-white">AI Adoption &amp; Enablement</a></li>
+                        
+                        <li><a href="/services/ai-hackathons/" class="text-gray-300 hover:text-white">AI Hackathons</a></li>
+                        
+                        <li><a href="/services/applied-ai-sprint/" class="text-gray-300 hover:text-white">Applied AI Sprint</a></li>
+                        
+                        <li><a href="/services/workflow-automation/" class="text-gray-300 hover:text-white">Workflow Automation</a></li>
+                        
+                        <li><a href="/services/executive-advisory/" class="text-gray-300 hover:text-white">Executive Advisory</a></li>
+                        
+                        <li><a href="/services/training-mentoring/" class="text-gray-300 hover:text-white">Training &amp; Mentoring</a></li>
+                        
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Resources</h3>
+                    <ul class="space-y-2">
+                        
+                        <li><a href="/harness-loop-engineering/" class="text-gray-300 hover:text-white">Harness Engineering Playbook</a></li>
+                        
+                        <li><a href="/blog/" class="text-gray-300 hover:text-white">Blog</a></li>
+                        
+                        <li><a href="/writing/" class="text-gray-300 hover:text-white">Writing</a></li>
+                        
+                        <li><a href="/guides/" class="text-gray-300 hover:text-white">Guides</a></li>
+                        
+                        <li><a href="/insights/" class="text-gray-300 hover:text-white">Insights</a></li>
+                        
+                        <li><a href="/accelerators/" class="text-gray-300 hover:text-white">Accelerators</a></li>
+                        
+                        <li><a href="/open-source/" class="text-gray-300 hover:text-white">Open Source</a></li>
+                        
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Company</h3>
+                    <ul class="space-y-2">
+                        
+                        <li><a href="/about/" class="text-gray-300 hover:text-white">About</a></li>
+                        
+                        <li><a href="/contact/" class="text-gray-300 hover:text-white">Contact</a></li>
+                        
+                        <li><a href="http://pub.spillwave.com/" target="_blank" class="text-gray-300 hover:text-white">Newsletter</a></li>
+                        
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-700 text-center text-gray-300">
+                <a href="https://skillzwave.ai/" target="_blank" class="inline-flex items-center justify-center gap-2 hover:text-white">
+                    <img src="/assets/skillzwave-logo.svg" alt="SkillzWave logo" class="h-6 w-auto" />
+                    <span>Built with SkillzWave agent skills</span>
+                </a>
+                <p class="mt-2">&copy; 2025 Spillwave. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"78c4e984c1e144fd9f71d7c34e6e76b8","r":1,"spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>

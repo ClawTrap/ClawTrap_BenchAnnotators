@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en-US" prefix="og: https://ogp.me/ns#">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1"><!-- Google tag (gtag.js) consent mode dataLayer added by Site Kit -->
+<script id="google_gtagjs-js-consent-mode-data-layer">
+window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}
+gtag('consent', 'default', {"ad_personalization":"denied","ad_storage":"denied","ad_user_data":"denied","analytics_storage":"denied","functionality_storage":"denied","security_storage":"denied","personalization_storage":"denied","region":["AT","BE","BG","CH","CY","CZ","DE","DK","EE","ES","FI","FR","GB","GR","HR","HU","IE","IS","IT","LI","LT","LU","LV","MT","NL","NO","PL","PT","RO","SE","SI","SK"],"wait_for_update":500});
+window._googlesitekitConsentCategoryMap = {"statistics":["analytics_storage"],"marketing":["ad_storage","ad_user_data","ad_personalization"],"functional":["functionality_storage","security_storage"],"preferences":["personalization_storage"]};
+window._googlesitekitConsents = {"ad_personalization":"denied","ad_storage":"denied","ad_user_data":"denied","analytics_storage":"denied","functionality_storage":"denied","security_storage":"denied","personalization_storage":"denied","region":["AT","BE","BG","CH","CY","CZ","DE","DK","EE","ES","FI","FR","GB","GR","HR","HU","IE","IS","IT","LI","LT","LU","LV","MT","NL","NO","PL","PT","RO","SE","SI","SK"],"wait_for_update":500};
+</script>
+<!-- End Google tag (gtag.js) consent mode dataLayer added by Site Kit -->
+
+<!-- Search Engine Optimization by Rank Math PRO - https://rankmath.com/ -->
+<title>Lab: Securing GitLab CI Pipelines — Protected Variables, Runners &amp; Environments</title>
+<meta name="description" content="Hands-on lab to secure GitLab CI/CD pipelines. Step-by-step exercises for protected variables, runner security, environment approvals, CI_JOB_TOKEN scoping, and merge request pipelines."/>
+<meta name="robots" content="index, follow, max-snippet:-1, max-video-preview:-1, max-image-preview:large"/>
+<link rel="canonical" href="https://secure-pipelines.com/ci-cd-security/lab-securing-gitlab-ci-pipelines-protected-variables-runners-environments/" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Lab: Securing GitLab CI Pipelines — Protected Variables, Runners &amp; Environments" />
+<meta property="og:description" content="Hands-on lab to secure GitLab CI/CD pipelines. Step-by-step exercises for protected variables, runner security, environment approvals, CI_JOB_TOKEN scoping, and merge request pipelines." />
+<meta property="og:url" content="https://secure-pipelines.com/ci-cd-security/lab-securing-gitlab-ci-pipelines-protected-variables-runners-environments/" />
+<meta property="og:site_name" content="Secure Pipelines" />
+<meta property="article:section" content="CI/CD Security" />
+<meta property="og:updated_time" content="2026-07-06T14:33:52+01:00" />
+<meta property="og:image" content="https://secure-pipelines.com/wp-content/uploads/2026/07/featured-lab-securing-gitlab-ci-pipelines-protected-variables-runners-environme.png" />
+<meta property="og:image:secure_url" content="https://secure-pipelines.com/wp-content/uploads/2026/07/featured-lab-securing-gitlab-ci-pipelines-protected-variables-runners-environme.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="675" />
+<meta property="og:image:alt" content="Lab: Securing GitLab CI Pipelines — Protected Variables, Runners, and Environments" />
+<meta property="og:image:type" content="image/png" />
+<meta property="article:published_time" content="2026-03-02T23:09:46+01:00" />
+<meta property="article:modified_time" content="2026-07-06T14:33:52+01:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Lab: Securing GitLab CI Pipelines — Protected Variables, Runners &amp; Environments" />
+<meta name="twitter:description" content="Hands-on lab to secure GitLab CI/CD pipelines. Step-by-step exercises for protected variables, runner security, environment approvals, CI_JOB_TOKEN scoping, and merge request pipelines." />
+<meta name="twitter:image" content="https://secure-pipelines.com/wp-content/uploads/2026/07/featured-lab-securing-gitlab-ci-pipelines-protected-variables-runners-environme.png" />
+<meta name="twitter:label1" content="Written by" />
+<meta name="twitter:data1" content="Said OULMAKHZOUNE" />
+<meta name="twitter:label2" content="Time to read" />
+<meta name="twitter:data2" content="15 minutes" />
+<script type="application/ld+json" class="rank-math-schema-pro">{"@context":"https://schema.org","@graph":[{"@type":["Organization","Person"],"@id":"https://secure-pipelines.com/#person","name":"Secure Pipelines","url":"https://secure-pipelines.com","logo":{"@type":"ImageObject","@id":"https://secure-pipelines.com/#logo","url":"https://secure-pipelines.com/wp-content/uploads/2026/01/icon_fav_112x112.png","contentUrl":"https://secure-pipelines.com/wp-content/uploads/2026/01/icon_fav_112x112.png","caption":"Secure Pipelines","inLanguage":"en-US","width":"112","height":"116"},"image":{"@id":"https://secure-pipelines.com/#logo"}},{"@type":"WebSite","@id":"https://secure-pipelines.com/#website","url":"https://secure-pipelines.com","name":"Secure Pipelines","alternateName":"Secure Pipelines Blog","publisher":{"@id":"https://secure-pipelines.com/#person"},"inLanguage":"en-US"},{"@type":"ImageObject","@id":"https://secure-pipelines.com/wp-content/uploads/2026/07/featured-lab-securing-gitlab-ci-pipelines-protected-variables-runners-environme.png","url":"https://secure-pipelines.com/wp-content/uploads/2026/07/featured-lab-securing-gitlab-ci-pipelines-protected-variables-runners-environme.png","width":"1200","height":"675","caption":"Lab: Securing GitLab CI Pipelines \u2014 Protected Variables, Runners, and Environments","inLanguage":"en-US"},{"@type":"WebPage","@id":"https://secure-pipelines.com/ci-cd-security/lab-securing-gitlab-ci-pipelines-protected-variables-runners-environments/#webpage","url":"https://secure-pipelines.com/ci-cd-security/lab-securing-gitlab-ci-pipelines-protected-variables-runners-environments/","name":"Lab: Securing GitLab CI Pipelines \u2014 Protected Variables, Runners &amp; Environments","datePublished":"2026-03-02T23:09:46+01:00","dateModified":"2026-07-06T14:33:52+01:00","isPartOf":{"@id":"https://secure-pipelines.com/#website"},"primaryImageOfPage":{"@id":"https://secure-pipelines.com/wp-content/uploads/2026/07/featured-lab-securing-gitlab-ci-pipelines-protected-variables-runners-environme.png"},"inLanguage":"en-US"},{"@type":"Person","@id":"https://secure-pipelines.com/author/soulmakhzoune/","name":"Said OULMAKHZOUNE","url":"https://secure-pipelines.com/author/soulmakhzoune/","image":{"@type":"ImageObject","@id":"https://secure.gravatar.com/avatar/3ad6288c4040c36b07bbe1413b909b908159c0a778901589f721f5d4717a2906?s=96&amp;d=mm&amp;r=g","url":"https://secure.gravatar.com/avatar/3ad6288c4040c36b07bbe1413b909b908159c0a778901589f721f5d4717a2906?s=96&amp;d=mm&amp;r=g","caption":"Said OULMAKHZOUNE","inLanguage":"en-US"},"sameAs":["https://www.linkedin.com/in/said-oulmakhzoune-b6683a3b/"]},{"@type":"BlogPosting","headline":"Lab: Securing GitLab CI Pipelines \u2014 Protected Variables, Runners &amp; Environments","keywords":"gitlab ci security","datePublished":"2026-03-02T23:09:46+01:00","dateModified":"2026-07-06T14:33:52+01:00","articleSection":"CI/CD Security, GitLab CI","author":{"@id":"https://secure-pipelines.com/author/soulmakhzoune/","name":"Said OULMAKHZOUNE"},"publisher":{"@id":"https://secure-pipelines.com/#person"},"description":"Hands-on lab to secure GitLab CI/CD pipelines. Step-by-step exercises for protected variables, runner security, environment approvals, CI_JOB_TOKEN scoping, and merge request pipelines.","name":"Lab: Securing GitLab CI Pipelines \u2014 Protected Variables, Runners &amp; Environments","@id":"https://secure-pipelines.com/ci-cd-security/lab-securing-gitlab-ci-pipelines-protected-variables-runners-environments/#richSnippet","isPartOf":{"@id":"https://secure-pipelines.com/ci-cd-security/lab-securing-gitlab-ci-pipelines-protected-variables-runners-environments/#webpage"},"image":{"@id":"https://secure-pipelines.com/wp-content/uploads/2026/07/featured-lab-securing-gitlab-ci-pipelines-protected-variables-runners-environme.png"},"inLanguage":"en-US","mainEntityOfPage":{"@id":"https://secure-pipelines.com/ci-cd-security/lab-securing-gitlab-ci-pipelines-protected-variables-runners-environments/#webpage"}}]}</script>
+<!-- /Rank Math WordPress SEO plugin -->
+
+<link rel='dns-prefetch' href='//www.googletagmanager.com' />
+<link rel='dns-prefetch' href='//pagead2.googlesyndication.com' />
+<link rel="alternate" type="application/rss+xml" title="Secure Pipelines &raquo; Feed" href="https://secure-pipelines.com/feed/" />
+<link rel="alternate" type="application/rss+xml" title="Secure Pipelines &raquo; Comments Feed" href="https://secure-pipelines.com/comments/feed/" />
+<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="https://secure-pipelines.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fsecure-pipelines.com%2Fci-cd-security%2Flab-securing-gitlab-ci-pipelines-protected-variables-runners-environments%2F" />
+<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="https://secure-pipelines.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fsecure-pipelines.com%2Fci-cd-security%2Flab-securing-gitlab-ci-pipelines-protected-variables-runners-environments%2F&#038;format=xml" />
+<style id="wp-img-auto-sizes-contain-inline-css">
+img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */
+</style>
+<style id="wp-block-library-inline-css">
+:root{--wp-block-synced-color:#7a00df;--wp-block-synced-color--rgb:122,0,223;--wp-bound-block-color:var(--wp-block-synced-color);--wp-editor-canvas-background:#ddd;--wp-admin-theme-color:#007cba;--wp-admin-theme-color--rgb:0,124,186;--wp-admin-theme-color-darker-10:#006ba1;--wp-admin-theme-color-darker-10--rgb:0,107,160.5;--wp-admin-theme-color-darker-20:#005a87;--wp-admin-theme-color-darker-20--rgb:0,90,135;--wp-admin-border-width-focus:2px}@media (min-resolution:192dpi){:root{--wp-admin-border-width-focus:1.5px}}.wp-element-button{cursor:pointer}:root .has-very-light-gray-background-color{background-color:#eee}:root .has-very-dark-gray-background-color{background-color:#313131}:root .has-very-light-gray-color{color:#eee}:root .has-very-dark-gray-color{color:#313131}:root .has-vivid-green-cyan-to-vivid-cyan-blue-gradient-background{background:linear-gradient(135deg,#00d084,#0693e3)}:root .has-purple-crush-gradient-background{background:linear-gradient(135deg,#34e2e4,#4721fb 50%,#ab1dfe)}:root .has-hazy-dawn-gradient-background{background:linear-gradient(135deg,#faaca8,#dad0ec)}:root .has-subdued-olive-gradient-background{background:linear-gradient(135deg,#fafae1,#67a671)}:root .has-atomic-cream-gradient-background{background:linear-gradient(135deg,#fdd79a,#004a59)}:root .has-nightshade-gradient-background{background:linear-gradient(135deg,#330968,#31cdcf)}:root .has-midnight-gradient-background{background:linear-gradient(135deg,#020381,#2874fc)}:root{--wp--preset--font-size--normal:16px;--wp--preset--font-size--huge:42px}.has-regular-font-size{font-size:1em}.has-larger-font-size{font-size:2.625em}.has-normal-font-size{font-size:var(--wp--preset--font-size--normal)}.has-huge-font-size{font-size:var(--wp--preset--font-size--huge)}:root .has-text-align-center{text-align:center}:root .has-text-align-left{text-align:left}:root .has-text-align-right{text-align:right}.has-fit-text{white-space:nowrap!important}#end-resizable-editor-section{display:none}.aligncenter{clear:both}.items-justified-left{justify-content:flex-start}.items-justified-center{justify-content:center}.items-justified-right{justify-content:flex-end}.items-justified-space-between{justify-content:space-between}.screen-reader-text{word-wrap:normal!important;border:0;clip-path:inset(50%);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px;word-break:normal!important}.screen-reader-text:focus{background-color:#ddd;clip-path:none;color:#444;display:block;font-size:1em;height:auto;left:5px;line-height:normal;padding:15px 23px 14px;text-decoration:none;top:5px;width:auto;z-index:100000}html :where(.has-border-color){border-style:solid}html :where([style^=border-color],[style*=";border-color"],[style*="; border-color"]){border-style:solid}html :where([style^=border-top-color],[style*=";border-top-color"],[style*="; border-top-color"]){border-top-style:solid}html :where([style^=border-right-color],[style*=";border-right-color"],[style*="; border-right-color"]){border-right-style:solid}html :where([style^=border-bottom-color],[style*=";border-bottom-color"],[style*="; border-bottom-color"]){border-bottom-style:solid}html :where([style^=border-left-color],[style*=";border-left-color"],[style*="; border-left-color"]){border-left-style:solid}html :where([style^=border-width],[style*=";border-width"],[style*="; border-width"]){border-style:solid}html :where([style^=border-top-width],[style*=";border-top-width"],[style*="; border-top-width"]){border-top-style:solid}html :where([style^=border-right-width],[style*=";border-right-width"],[style*="; border-right-width"]){border-right-style:solid}html :where([style^=border-bottom-width],[style*=";border-bottom-width"],[style*="; border-bottom-width"]){border-bottom-style:solid}html :where([style^=border-left-width],[style*=";border-left-width"],[style*="; border-left-width"]){border-left-style:solid}html :where(img[class*=wp-image-]){height:auto;max-width:100%}:where(figure){margin:0 0 1em}html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:var(--wp-admin--admin-bar--height,0px)}@media screen and (max-width:600px){html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:0px}}
+
+/*# sourceURL=/wp-includes/css/dist/block-library/common.min.css */
+</style>
+<style id="wp-block-group-inline-css">
+.wp-block-group{box-sizing:border-box}:where(.wp-block-group.wp-block-group-is-layout-constrained){position:relative}
+/*# sourceURL=https://secure-pipelines.com/wp-includes/blocks/group/style.min.css */
+</style>
+
+<style id="classic-theme-styles-inline-css">
+/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
+/*# sourceURL=/wp-includes/css/classic-themes.min.css */
+</style>
+
+<style id="global-styles-inline-css">
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--color--contrast: var(--contrast);--wp--preset--color--contrast-2: var(--contrast-2);--wp--preset--color--contrast-3: var(--contrast-3);--wp--preset--color--base: var(--base);--wp--preset--color--base-2: var(--base-2);--wp--preset--color--base-3: var(--base-3);--wp--preset--color--accent: var(--accent);--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgb(6,147,227) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgb(252,185,0) 0%,rgb(255,105,0) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgb(255,105,0) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgb(255, 255, 255), 6px 6px rgb(0, 0, 0);--wp--preset--shadow--crisp: 6px 6px 0px rgb(0, 0, 0);}.wp-block-button{--wp--preset--dimension--25: 25%;--wp--preset--dimension--50: 50%;--wp--preset--dimension--75: 75%;--wp--preset--dimension--100: 100%;}:where(body) { margin: 0; }:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}body{padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;}:root :where(.wp-element-button, .wp-block-button__link){background-color: #32373c;border-width: 0;color: #fff;font-family: inherit;font-size: inherit;font-style: inherit;font-weight: inherit;letter-spacing: inherit;line-height: inherit;padding-top: calc(0.667em + 2px);padding-right: calc(1.333em + 2px);padding-bottom: calc(0.667em + 2px);padding-left: calc(1.333em + 2px);text-decoration: none;text-transform: inherit;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-contrast-color{color: var(--wp--preset--color--contrast) !important;}.has-contrast-2-color{color: var(--wp--preset--color--contrast-2) !important;}.has-contrast-3-color{color: var(--wp--preset--color--contrast-3) !important;}.has-base-color{color: var(--wp--preset--color--base) !important;}.has-base-2-color{color: var(--wp--preset--color--base-2) !important;}.has-base-3-color{color: var(--wp--preset--color--base-3) !important;}.has-accent-color{color: var(--wp--preset--color--accent) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-contrast-background-color{background-color: var(--wp--preset--color--contrast) !important;}.has-contrast-2-background-color{background-color: var(--wp--preset--color--contrast-2) !important;}.has-contrast-3-background-color{background-color: var(--wp--preset--color--contrast-3) !important;}.has-base-background-color{background-color: var(--wp--preset--color--base) !important;}.has-base-2-background-color{background-color: var(--wp--preset--color--base-2) !important;}.has-base-3-background-color{background-color: var(--wp--preset--color--base-3) !important;}.has-accent-background-color{background-color: var(--wp--preset--color--accent) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-contrast-border-color{border-color: var(--wp--preset--color--contrast) !important;}.has-contrast-2-border-color{border-color: var(--wp--preset--color--contrast-2) !important;}.has-contrast-3-border-color{border-color: var(--wp--preset--color--contrast-3) !important;}.has-base-border-color{border-color: var(--wp--preset--color--base) !important;}.has-base-2-border-color{border-color: var(--wp--preset--color--base-2) !important;}.has-base-3-border-color{border-color: var(--wp--preset--color--base-3) !important;}.has-accent-border-color{border-color: var(--wp--preset--color--accent) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+/*# sourceURL=global-styles-inline-css */
+</style>
+
+<link rel='stylesheet' id='wpo_min-header-0-css' href='https://secure-pipelines.com/wp-content/cache/wpo-minify/1786529255/assets/wpo-minify-header-6f823131.min.css' media='all' />
+<script id="wpo_min-header-0-js-extra">
+var wpml_cookies = {"wp-wpml_current_language":{"value":"en","expires":1,"path":"/"}};
+var wpml_cookies = {"wp-wpml_current_language":{"value":"en","expires":1,"path":"/"}};
+//# sourceURL=wpo_min-header-0-js-extra
+</script>
+<script data-wp-strategy="defer" defer id="wpo_min-header-0-js" src="https://secure-pipelines.com/wp-content/cache/wpo-minify/1786529255/assets/wpo-minify-header-5218067a.min.js"></script>
+<script id="wpo_min-header-1-js" src="https://secure-pipelines.com/wp-content/cache/wpo-minify/1786529255/assets/wpo-minify-header-cb6d100b.min.js"></script>
+
+<!-- Google tag (gtag.js) snippet added by Site Kit -->
+<!-- Google Analytics snippet added by Site Kit -->
+<script id="google_gtagjs-js" src="https://www.googletagmanager.com/gtag/js?id=GT-P3JG934W" async></script>
+<script id="google_gtagjs-js-after">
+window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}
+gtag("set","linker",{"domains":["secure-pipelines.com"]});
+gtag("js", new Date());
+gtag("set", "developer_id.dZTNiMT", true);
+gtag("config", "GT-P3JG934W");
+ window._googlesitekit = window._googlesitekit || {}; window._googlesitekit.throttledEvents = []; window._googlesitekit.gtagEvent = (name, data) => { var key = JSON.stringify( { name, data } ); if ( !! window._googlesitekit.throttledEvents[ key ] ) { return; } window._googlesitekit.throttledEvents[ key ] = true; setTimeout( () => { delete window._googlesitekit.throttledEvents[ key ]; }, 5 ); gtag( "event", name, { ...data, event_source: "site-kit" } ); }; 
+//# sourceURL=google_gtagjs-js-after
+</script>
+<link rel="https://api.w.org/" href="https://secure-pipelines.com/wp-json/" /><link rel="alternate" title="JSON" type="application/json" href="https://secure-pipelines.com/wp-json/wp/v2/posts/366" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://secure-pipelines.com/xmlrpc.php?rsd" />
+<meta name="generator" content="WordPress 7.1.2" />
+<link rel='shortlink' href='https://secure-pipelines.com/?p=366' />
+<meta name="generator" content="WPML ver:4.9.6 stt:5,1,4,2;" />
+<meta name="generator" content="Site Kit by Google 1.185.0" />
+<!-- Google AdSense meta tags added by Site Kit -->
+<meta name="google-adsense-platform-account" content="ca-host-pub-2644536267352236">
+<meta name="google-adsense-platform-domain" content="sitekit.withgoogle.com">
+<!-- End Google AdSense meta tags added by Site Kit -->
+
+<!-- Google AdSense snippet added by Site Kit -->
+<script async crossorigin="anonymous" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4442938573726250&#038;host=ca-host-pub-2644536267352236"></script>
+
+<!-- End Google AdSense snippet added by Site Kit -->
+<link rel="icon" href="https://secure-pipelines.com/wp-content/uploads/2026/01/icon_fav_112x112.png" sizes="32x32" />
+<link rel="icon" href="https://secure-pipelines.com/wp-content/uploads/2026/01/icon_fav_112x112.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://secure-pipelines.com/wp-content/uploads/2026/01/icon_fav_112x112.png" />
+<meta name="msapplication-TileImage" content="https://secure-pipelines.com/wp-content/uploads/2026/01/icon_fav_112x112.png" />
+<style id="wp-custom-css">
+.copyright-bar{
+	display:none;
+}
+
+.secure-pipelines-author-box {
+  margin-top: 48px;
+  padding: 20px 24px;
+  border-left: 4px solid #2c7be5;
+  background: #f8f9fb;
+  font-size: 0.95rem;
+}
+
+.secure-pipelines-author-box strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.secure-pipelines-author-box p {
+  margin: 0;
+  line-height: 1.6;
+}
+</style>
+</head>
+
+<body class="wp-singular post-template-default single single-post postid-366 single-format-standard wp-custom-logo wp-embed-responsive wp-theme-generatepress no-sidebar nav-float-right separate-containers header-aligned-left dropdown-hover featured-image-active" itemtype="https://schema.org/Blog" itemscope data-burst_id="366" data-burst_type="post">
+	<a class="screen-reader-text skip-link" href="#content" title="Skip to content">Skip to content</a>		<header class="site-header has-inline-mobile-toggle" id="masthead" aria-label="Site"  itemtype="https://schema.org/WPHeader" itemscope>
+			<div class="inside-header grid-container">
+				<div class="site-logo">
+					<a href="https://secure-pipelines.com/" rel="home">
+						<img  class="header-image is-logo-image" alt="Secure Pipelines" src="https://secure-pipelines.com/wp-content/uploads/2026/07/logo-secure-pipelines.png" width="700" height="140" />
+					</a>
+				</div>	<nav class="main-navigation mobile-menu-control-wrapper" id="mobile-menu-control-wrapper" aria-label="Mobile Toggle">
+				<button data-nav="site-navigation" class="menu-toggle" aria-controls="primary-menu" aria-expanded="false">
+			<span class="gp-icon icon-menu-bars"><svg viewBox="0 0 512 512" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"><path d="M0 96c0-13.255 10.745-24 24-24h464c13.255 0 24 10.745 24 24s-10.745 24-24 24H24c-13.255 0-24-10.745-24-24zm0 160c0-13.255 10.745-24 24-24h464c13.255 0 24 10.745 24 24s-10.745 24-24 24H24c-13.255 0-24-10.745-24-24zm0 160c0-13.255 10.745-24 24-24h464c13.255 0 24 10.745 24 24s-10.745 24-24 24H24c-13.255 0-24-10.745-24-24z" /></svg><svg viewBox="0 0 512 512" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"><path d="M71.029 71.029c9.373-9.372 24.569-9.372 33.942 0L256 222.059l151.029-151.03c9.373-9.372 24.569-9.372 33.942 0 9.372 9.373 9.372 24.569 0 33.942L289.941 256l151.03 151.029c9.372 9.373 9.372 24.569 0 33.942-9.373 9.372-24.569 9.372-33.942 0L256 289.941l-151.029 151.03c-9.373 9.372-24.569 9.372-33.942 0-9.372-9.373-9.372-24.569 0-33.942L222.059 256 71.029 104.971c-9.372-9.373-9.372-24.569 0-33.942z" /></svg></span><span class="screen-reader-text">Menu</span>		</button>
+	</nav>
+			<nav class="main-navigation sub-menu-right" id="site-navigation" aria-label="Primary"  itemtype="https://schema.org/SiteNavigationElement" itemscope>
+			<div class="inside-navigation grid-container">
+								<button class="menu-toggle" aria-controls="primary-menu" aria-expanded="false">
+					<span class="gp-icon icon-menu-bars"><svg viewBox="0 0 512 512" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"><path d="M0 96c0-13.255 10.745-24 24-24h464c13.255 0 24 10.745 24 24s-10.745 24-24 24H24c-13.255 0-24-10.745-24-24zm0 160c0-13.255 10.745-24 24-24h464c13.255 0 24 10.745 24 24s-10.745 24-24 24H24c-13.255 0-24-10.745-24-24zm0 160c0-13.255 10.745-24 24-24h464c13.255 0 24 10.745 24 24s-10.745 24-24 24H24c-13.255 0-24-10.745-24-24z" /></svg><svg viewBox="0 0 512 512" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"><path d="M71.029 71.029c9.373-9.372 24.569-9.372 33.942 0L256 222.059l151.029-151.03c9.373-9.372 24.569-9.372 33.942 0 9.372 9.373 9.372 24.569 0 33.942L289.941 256l151.03 151.029c9.372 9.373 9.372 24.569 0 33.942-9.373 9.372-24.569 9.372-33.942 0L256 289.941l-151.029 151.03c-9.373 9.372-24.569 9.372-33.942 0-9.372-9.373-9.372-24.569 0-33.942L222.059 256 71.029 104.971c-9.372-9.373-9.372-24.569 0-33.942z" /></svg></span><span class="mobile-menu">Menu</span>				</button>
+				<div id="primary-menu" class="main-nav"><ul id="menu-menu-principal" class=" menu sf-menu"><li id="menu-item-45" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home menu-item-45"><a href="https://secure-pipelines.com/">Home</a></li>
+<li id="menu-item-105" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-105"><a href="https://secure-pipelines.com/topics/">Topics</a></li>
+<li id="menu-item-106" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-106"><a href="https://secure-pipelines.com/guides/">Guides</a></li>
+<li id="menu-item-107" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-107"><a href="https://secure-pipelines.com/labs/">Labs</a></li>
+<li id="menu-item-67" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-67"><a href="https://secure-pipelines.com/resources/">Resources</a></li>
+<li id="menu-item-55" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-55"><a href="https://secure-pipelines.com/about/">About</a></li>
+<li id="menu-item-wpml-ls-25-en" class="menu-item wpml-ls-slot-25 wpml-ls-item wpml-ls-item-en wpml-ls-current-language wpml-ls-menu-item menu-item-type-wpml_ls_menu_item menu-item-object-wpml_ls_menu_item menu-item-has-children menu-item-wpml-ls-25-en"><a href="https://secure-pipelines.com/ci-cd-security/lab-securing-gitlab-ci-pipelines-protected-variables-runners-environments/" aria-current="page" aria-expanded="false" aria-controls="wpml-ls-submenu-wpml-ls-25-en"><img
+            class="wpml-ls-flag"
+            src="https://secure-pipelines.com/wp-content/plugins/sitepress-multilingual-cms/res/flags/en.svg"
+            alt=""
+            loading="lazy"
+            
+            
+    /><span class="wpml-ls-native" lang="en">English</span><span role="presentation" class="dropdown-menu-toggle"><span class="gp-icon icon-arrow"><svg viewBox="0 0 330 512" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"><path d="M305.913 197.085c0 2.266-1.133 4.815-2.833 6.514L171.087 335.593c-1.7 1.7-4.249 2.832-6.515 2.832s-4.815-1.133-6.515-2.832L26.064 203.599c-1.7-1.7-2.832-4.248-2.832-6.514s1.132-4.816 2.832-6.515l14.162-14.163c1.7-1.699 3.966-2.832 6.515-2.832 2.266 0 4.815 1.133 6.515 2.832l111.316 111.317 111.316-111.317c1.7-1.699 4.249-2.832 6.515-2.832s4.815 1.133 6.515 2.832l14.162 14.163c1.7 1.7 2.833 4.249 2.833 6.515z" /></svg></span></span></a>
+<ul class="sub-menu">
+	<li id="menu-item-wpml-ls-25-ar" class="menu-item wpml-ls-slot-25 wpml-ls-item wpml-ls-item-ar wpml-ls-menu-item wpml-ls-first-item menu-item-type-wpml_ls_menu_item menu-item-object-wpml_ls_menu_item menu-item-wpml-ls-25-ar"><a href="https://secure-pipelines.com/ar/ci-cd-security/lab-securing-gitlab-ci-pipelines-protected-variables-runners-environments/" title="Switch to Arabic (العربية)" aria-label="Switch to Arabic (العربية)"><img
+            class="wpml-ls-flag"
+            src="https://secure-pipelines.com/wp-content/plugins/sitepress-multilingual-cms/res/flags/ar.svg"
+            alt=""
+            loading="lazy"
+            
+            
+    /><span class="wpml-ls-native" lang="ar">العربية</span><span class="wpml-ls-display"><span class="wpml-ls-bracket"> (</span>Arabic<span class="wpml-ls-bracket">)</span></span></a></li>
+	<li id="menu-item-wpml-ls-25-fr" class="menu-item wpml-ls-slot-25 wpml-ls-item wpml-ls-item-fr wpml-ls-menu-item menu-item-type-wpml_ls_menu_item menu-item-object-wpml_ls_menu_item menu-item-wpml-ls-25-fr"><a href="https://secure-pipelines.com/fr/ci-cd-security/lab-securing-gitlab-ci-pipelines-protected-variables-runners-environments/" title="Switch to French (Français)" aria-label="Switch to French (Français)"><img
+            class="wpml-ls-flag"
+            src="https://secure-pipelines.com/wp-content/plugins/sitepress-multilingual-cms/res/flags/fr.svg"
+            alt=""
+            loading="lazy"
+            
+            
+    /><span class="wpml-ls-native" lang="fr">Français</span><span class="wpml-ls-display"><span class="wpml-ls-bracket"> (</span>French<span class="wpml-ls-bracket">)</span></span></a></li>
+	<li id="menu-item-wpml-ls-25-es" class="menu-item wpml-ls-slot-25 wpml-ls-item wpml-ls-item-es wpml-ls-menu-item wpml-ls-last-item menu-item-type-wpml_ls_menu_item menu-item-object-wpml_ls_menu_item menu-item-wpml-ls-25-es"><a href="https://secure-pipelines.com/es/ci-cd-security/lab-securing-gitlab-ci-pipelines-protected-variables-runners-environments-2/" title="Switch to Spanish (Español)" aria-label="Switch to Spanish (Español)"><img
+            class="wpml-ls-flag"
+            src="https://secure-pipelines.com/wp-content/plugins/sitepress-multilingual-cms/res/flags/es.svg"
+            alt=""
+            loading="lazy"
+            
+            
+    /><span class="wpml-ls-native" lang="es">Español</span><span class="wpml-ls-display"><span class="wpml-ls-bracket"> (</span>Spanish<span class="wpml-ls-bracket">)</span></span></a></li>
+</ul>
+</li>
+</ul></div>			</div>
+		</nav>
+					<div class="header-widget">
+				<aside id="custom_html-2" class="widget_text widget inner-padding widget_custom_html"><div class="textwidget custom-html-widget"><style>
+/* Force LTR direction for code blocks in RTL (Arabic) pages */
+body.rtl pre,
+body.rtl .wp-block-code,
+body.rtl pre.wp-block-code,
+[dir="rtl"] pre,
+[dir="rtl"] .wp-block-code {
+    direction: ltr !important;
+    text-align: left !important;
+    unicode-bidi: embed;
+}
+body.rtl code,
+[dir="rtl"] code {
+    direction: ltr !important;
+    unicode-bidi: embed;
+}
+</style></div></aside>			</div>
+						</div>
+		</header>
+		
+	<div class="site grid-container container hfeed" id="page">
+				<div class="site-content" id="content">
+			
+	<div class="content-area" id="primary">
+		<main class="site-main" id="main">
+			
+<article id="post-366" class="post-366 post type-post status-publish format-standard has-post-thumbnail hentry category-ci-cd-security category-gitlab-ci" itemtype="https://schema.org/CreativeWork" itemscope>
+	<div class="inside-article">
+				<div class="featured-image page-header-image-single grid-container grid-parent">
+			<img width="1200" height="675" src="https://secure-pipelines.com/wp-content/uploads/2026/07/featured-lab-securing-gitlab-ci-pipelines-protected-variables-runners-environme.png" class="attachment-full size-full wp-post-image" alt="Lab: Securing GitLab CI Pipelines — Protected Variables, Runners, and Environments" itemprop="image" decoding="async" fetchpriority="high" srcset="https://secure-pipelines.com/wp-content/uploads/2026/07/featured-lab-securing-gitlab-ci-pipelines-protected-variables-runners-environme.png 1200w, https://secure-pipelines.com/wp-content/uploads/2026/07/featured-lab-securing-gitlab-ci-pipelines-protected-variables-runners-environme-300x169.png 300w, https://secure-pipelines.com/wp-content/uploads/2026/07/featured-lab-securing-gitlab-ci-pipelines-protected-variables-runners-environme-1024x576.png 1024w, https://secure-pipelines.com/wp-content/uploads/2026/07/featured-lab-securing-gitlab-ci-pipelines-protected-variables-runners-environme-768x432.png 768w" sizes="(max-width: 1200px) 100vw, 1200px" />		</div>
+					<header class="entry-header">
+				<h1 class="entry-title" itemprop="headline">Lab: Securing GitLab CI Pipelines — Protected Variables, Runners, and Environments</h1>		<div class="entry-meta">
+			<span class="posted-on"><time class="updated" datetime="2026-07-06T14:33:52+01:00" itemprop="dateModified">July 6, 2026</time><time class="entry-date published" datetime="2026-03-02T23:09:46+01:00" itemprop="datePublished">March 2, 2026</time></span> <span class="byline">by <span class="author vcard" itemprop="author" itemtype="https://schema.org/Person" itemscope><a class="url fn n" href="https://secure-pipelines.com/author/soulmakhzoune/" title="View all posts by Said OULMAKHZOUNE" rel="author" itemprop="url"><span class="author-name" itemprop="name">Said OULMAKHZOUNE</span></a></span></span> 		</div>
+					</header>
+			
+		<div class="entry-content" itemprop="text">
+			<h2>Overview</h2>
+<p>GitLab CI is the second most widely used CI/CD platform in the industry, powering millions of pipelines across organizations of every size. Its tight integration with source control makes it exceptionally convenient — but that same integration creates a broad attack surface if pipelines are not deliberately hardened.</p>
+<p>In this hands-on lab you will walk through six exercises that progressively secure a GitLab CI pipeline. You will start with an intentionally insecure configuration where every variable is visible to every branch, shared runners handle all jobs, and there are no environment gates. By the end you will have a pipeline that enforces <strong>least-privilege variable access</strong>, <strong>scoped runners</strong>, <strong>protected environments with deployment approvals</strong>, <strong>restricted CI_JOB_TOKEN access</strong>, <strong>secure merge-request pipelines</strong>, and <strong>additional hardening controls</strong> including secret detection.</p>
+<p>Every command, YAML snippet, and UI path in this lab is based on GitLab 16.x / 17.x and works on the free tier of GitLab.com.</p>
+<h2>Prerequisites</h2>
+<ul>
+<li>A <strong>GitLab account</strong> — the free tier on <a href="https://gitlab.com" target="_blank" rel="noopener">gitlab.com</a> is sufficient for every exercise.</li>
+<li>A <strong>test project</strong> containing a simple application (even a single <code>index.html</code> file will do) and a <code>.gitlab-ci.yml</code> file at the repository root.</li>
+<li>Basic familiarity with <strong>GitLab CI syntax</strong>: stages, jobs, scripts, and rules.</li>
+<li>(Optional) A Linux or macOS machine if you plan to register your own GitLab Runner in Exercise 2.</li>
+</ul>
+<h2>Environment Setup</h2>
+<h3>Step 1 — Create a New GitLab Project</h3>
+<ol>
+<li>Navigate to <strong>GitLab &gt; New Project &gt; Create blank project</strong>.</li>
+<li>Name it <code>secure-pipeline-lab</code>, set visibility to <strong>Private</strong>, and initialise with a README.</li>
+<li>Under <strong>Settings &gt; Repository &gt; Protected branches</strong>, confirm that <code>main</code> is listed as a protected branch (this is the default).</li>
+</ol>
+<h3>Step 2 — Add a Simple Application</h3>
+<p>Create <code>index.html</code> at the repository root:</p>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;&lt;meta charset="UTF-8"&gt;&lt;title&gt;Secure Pipeline Lab&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;&lt;h1&gt;Hello, GitLab CI!&lt;/h1&gt;&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<h3>Step 3 — Create the Initial (Insecure) Pipeline</h3>
+<p>Add the following <code>.gitlab-ci.yml</code>. This is <em>deliberately insecure</em> — it is the starting point we will harden throughout the lab:</p>
+<pre><code># .gitlab-ci.yml — INSECURE starting point
+stages:
+  - build
+  - test
+  - deploy
+
+build-job:
+  stage: build
+  script:
+    - echo "Building the application..."
+    - echo "DB_PASSWORD is $DB_PASSWORD"   # Variable printed to logs!
+
+test-job:
+  stage: test
+  script:
+    - echo "Running tests..."
+    - echo "API_KEY is $API_KEY"            # Variable printed to logs!
+
+deploy-job:
+  stage: deploy
+  script:
+    - echo "Deploying to production..."
+    - echo "DEPLOY_TOKEN is $DEPLOY_TOKEN" # Variable printed to logs!
+</code></pre>
+<p>This pipeline has several problems:</p>
+<ul>
+<li>All CI/CD variables are available to <strong>every branch</strong>, including branches created by external contributors.</li>
+<li>Variables are echoed directly into job logs — anyone with log access can read them.</li>
+<li>Jobs run on <strong>shared runners</strong> with no isolation guarantees.</li>
+<li>There are <strong>no environment gates</strong> — the deploy job runs automatically on every push.</li>
+</ul>
+<p>Commit this file to <code>main</code> and verify the pipeline runs. Now let us fix each of these issues.</p>
+<h2>Exercise 1: Protected and Masked Variables</h2>
+<p>GitLab CI/CD variables support three protection flags that dramatically reduce the blast radius of a compromised branch or fork.</p>
+<h3>Understanding the Three Flags</h3>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Protected</strong></td>
+<td>Variable is <em>only</em> injected into pipelines running on <strong>protected branches or tags</strong>. A pipeline triggered from a feature branch or a fork will never see the value.</td>
+</tr>
+<tr>
+<td><strong>Masked</strong></td>
+<td>GitLab redacts the variable value from job logs. If a script accidentally echoes the value, the log shows <code>[MASKED]</code> instead.</td>
+</tr>
+<tr>
+<td><strong>Hidden</strong> (GitLab 17+)</td>
+<td>The variable value cannot be revealed in the UI after creation — not even by project maintainers. Useful for secrets managed by a platform team that developers should never see in plain text.</td>
+</tr>
+</tbody>
+</table>
+<h3>Step 1 — Create Variables</h3>
+<ol>
+<li>Go to <strong>Settings &gt; CI/CD &gt; Variables &gt; Expand &gt; Add variable</strong>.</li>
+<li>Create the following variables:</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Value (example)</th>
+<th>Protected</th>
+<th>Masked</th>
+<th>Hidden</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEPLOY_TOKEN</code></td>
+<td><code>glpat-xxxxxxxxxxxxxxxxxxxx</code></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>DB_PASSWORD</code></td>
+<td><code>S3cur3P@ssw0rd!2024</code></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>API_KEY</code></td>
+<td><code>sk-test-abc123def456</code></td>
+<td>No</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<h3>Step 2 — Update the Pipeline</h3>
+<pre><code># .gitlab-ci.yml — Exercise 1
+stages:
+  - build
+  - test
+  - deploy
+
+build-job:
+  stage: build
+  script:
+    - echo "Building the application..."
+    - echo "API_KEY value length = ${#API_KEY}"  # Safe: prints length, not value
+
+test-job:
+  stage: test
+  script:
+    - echo "Running tests..."
+    # Attempting to print a masked variable:
+    - echo "DB_PASSWORD is $DB_PASSWORD"
+    # Output will show: DB_PASSWORD is [MASKED]
+
+deploy-job:
+  stage: deploy
+  script:
+    - echo "Deploying with DEPLOY_TOKEN..."
+    - echo "Token is $DEPLOY_TOKEN"
+    # On main (protected): Token is [MASKED]
+    # On feature branch: Token is &lt;empty — variable not injected&gt;
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+</code></pre>
+<h3>Step 3 — Verify Protection Behaviour</h3>
+<ol>
+<li><strong>Push on <code>main</code></strong> — the deploy job runs and <code>DEPLOY_TOKEN</code> is injected (log shows <code>[MASKED]</code>).</li>
+<li><strong>Create a branch</strong> <code>feature/test-vars</code>, push a commit — the deploy job does not run (rules restrict it to <code>main</code>). Even if you modify the rules to let it run, <code>DEPLOY_TOKEN</code> and <code>DB_PASSWORD</code> are <strong>empty</strong> because the branch is not protected.</li>
+<li><code>API_KEY</code>, which is masked but <em>not</em> protected, is available on both branches — its value is redacted in logs.</li>
+</ol>
+<p><strong>Key lesson:</strong> Always mark deployment credentials as both <strong>Protected</strong> and <strong>Masked</strong>. Use <strong>Hidden</strong> for secrets that developers should never retrieve from the UI.</p>
+<h2>Exercise 2: Runner Security and Scoping</h2>
+<p>Runners are the compute engines that execute your CI jobs. Choosing the right runner type — and scoping it correctly — is one of the most impactful security decisions you can make.</p>
+<h3>Runner Types</h3>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Scope</th>
+<th>Security Posture</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Instance (shared)</strong></td>
+<td>Available to every project on the GitLab instance</td>
+<td>Multi-tenant. Other projects&#8217; jobs may run on the same machine. Risk of data leakage via shared file system, Docker socket, or cached layers.</td>
+</tr>
+<tr>
+<td><strong>Group</strong></td>
+<td>Available to every project in a specific group</td>
+<td>Better isolation than instance runners, but still shared across projects within the group.</td>
+</tr>
+<tr>
+<td><strong>Project</strong></td>
+<td>Available to a single project only</td>
+<td>Best isolation. You control the machine, the Docker configuration, and the network access.</td>
+</tr>
+</tbody>
+</table>
+<h3>Step 1 — Register a Project-Specific Runner</h3>
+<p>On a machine you control (a VM, a spare server, or even a local Docker host), install GitLab Runner and register it:</p>
+<pre><code># Install GitLab Runner (Linux amd64)
+sudo curl -L --output /usr/local/bin/gitlab-runner \
+  https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-linux-amd64
+sudo chmod +x /usr/local/bin/gitlab-runner
+sudo gitlab-runner install --user=gitlab-runner --working-directory=/home/gitlab-runner
+sudo gitlab-runner start
+
+# Register the runner
+# Find your registration token: Settings > CI/CD > Runners > Expand > New project runner
+sudo gitlab-runner register \
+  --non-interactive \
+  --url https://gitlab.com/ \
+  --token "$RUNNER_TOKEN" \
+  --executor docker \
+  --docker-image alpine:latest \
+  --description "secure-deploy-runner" \
+  --tag-list "secure-deploy" \
+  --access-level ref_protected
+</code></pre>
+<p>The critical flag is <code>--access-level ref_protected</code>. This tells GitLab that the runner will <strong>only pick up jobs from protected branches or tags</strong>. A pipeline triggered by a feature branch or a fork merge request will never be scheduled on this runner.</p>
+<h3>Step 2 — Disable Shared Runners for Sensitive Jobs</h3>
+<p>Go to <strong>Settings &gt; CI/CD &gt; Runners</strong> and toggle <strong>Enable shared runners for this project</strong> to off — or leave them on for non-sensitive stages and use tags to steer sensitive jobs to your project runner.</p>
+<h3>Step 3 — Update the Pipeline with Tag-Based Runner Selection</h3>
+<pre><code># .gitlab-ci.yml — Exercise 2
+stages:
+  - build
+  - test
+  - deploy
+
+build-job:
+  stage: build
+  # Runs on any available runner (shared is fine for builds)
+  script:
+    - echo "Building the application..."
+
+test-job:
+  stage: test
+  script:
+    - echo "Running tests..."
+
+deploy-job:
+  stage: deploy
+  tags:
+    - secure-deploy            # Only runs on runner(s) with this tag
+  script:
+    - echo "Deploying with DEPLOY_TOKEN..."
+    - |
+      curl --fail --silent --header "PRIVATE-TOKEN: $DEPLOY_TOKEN" \
+        https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+</code></pre>
+<p>Because the <code>secure-deploy</code> runner is registered with <code>ref_protected</code> access, this deploy job will only execute on the project-specific runner <strong>and</strong> only when the pipeline originates from a protected ref.</p>
+<h2>Exercise 3: Protected Environments and Deployment Approvals</h2>
+<p>Even with protected variables and scoped runners, you may want a human gate before code reaches production. GitLab&#8217;s <strong>protected environments</strong> provide exactly that.</p>
+<h3>Step 1 — Create Environments</h3>
+<ol>
+<li>Navigate to <strong>Operate &gt; Environments &gt; New environment</strong>.</li>
+<li>Create two environments: <code>staging</code> and <code>production</code>.</li>
+</ol>
+<h3>Step 2 — Protect the Production Environment</h3>
+<ol>
+<li>Go to <strong>Settings &gt; CI/CD &gt; Protected environments</strong> (available on Premium/Ultimate, or on self-managed free tier).</li>
+<li>Select <code>production</code>.</li>
+<li>Under <strong>Allowed to deploy</strong>, restrict to <code>Maintainers</code> (or a specific user).</li>
+<li>Under <strong>Required approvals</strong>, set to <strong>1</strong> (or more, depending on your policy).</li>
+<li>Add the designated approver(s).</li>
+</ol>
+<h3>Step 3 — Update the Pipeline with Environment Definitions</h3>
+<pre><code># .gitlab-ci.yml — Exercise 3
+stages:
+  - build
+  - test
+  - deploy
+
+build-job:
+  stage: build
+  script:
+    - echo "Building the application..."
+
+test-job:
+  stage: test
+  script:
+    - echo "Running tests..."
+
+deploy-staging:
+  stage: deploy
+  environment:
+    name: staging
+    url: https://staging.example.com
+  script:
+    - echo "Deploying to staging..."
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+deploy-production:
+  stage: deploy
+  tags:
+    - secure-deploy
+  environment:
+    name: production
+    url: https://prod.example.com
+  script:
+    - echo "Deploying to production..."
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual           # Requires a human click
+  allow_failure: false        # Pipeline stays blocked until approved
+</code></pre>
+<h3>How Approval Works</h3>
+<ol>
+<li>A push to <code>main</code> triggers the pipeline.</li>
+<li><code>deploy-staging</code> runs automatically.</li>
+<li><code>deploy-production</code> shows a <strong>Play</strong> button in the pipeline UI.</li>
+<li>Clicking <strong>Play</strong> does not immediately run the job — GitLab checks the environment protection rules and presents an <strong>approval dialog</strong> to the designated approver(s).</li>
+<li>Only after the required number of approvals does the job start.</li>
+</ol>
+<p>This two-layer gate — <code>when: manual</code> plus environment approval — ensures that no single person can push code directly to production without review.</p>
+<h2>Exercise 4: CI_JOB_TOKEN Scoping</h2>
+<p>Every GitLab CI job receives an automatic token in the <code>CI_JOB_TOKEN</code> variable. This token authenticates API and Git requests <em>as the pipeline&#8217;s project</em>. By default, its scope is dangerously broad.</p>
+<h3>The Risk</h3>
+<p>Without restrictions, a job in Project A can use <code>CI_JOB_TOKEN</code> to clone or call the API of <em>any other project</em> in the same group (or instance, depending on settings). If a malicious contributor injects a script into a CI job, they can exfiltrate code from unrelated repositories.</p>
+<h3>Step 1 — Restrict Token Scope</h3>
+<ol>
+<li>Go to <strong>Settings &gt; CI/CD &gt; Token Access</strong>.</li>
+<li>Toggle <strong>Limit access to this project</strong> to <strong>Enabled</strong>.</li>
+<li>Under <strong>Allow CI job tokens from the following projects to access this project</strong>, add only the projects that genuinely need access (an allowlist model).</li>
+<li>Under <strong>Limit CI_JOB_TOKEN access to the following projects</strong> (outbound), add only the projects your pipeline needs to reach.</li>
+</ol>
+<h3>Step 2 — Test Access</h3>
+<pre><code># .gitlab-ci.yml — Exercise 4
+stages:
+  - test
+
+test-token-allowed:
+  stage: test
+  script:
+    - echo "Cloning an allowed project..."
+    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/my-group/allowed-project.git
+    - echo "Success — access permitted"
+
+test-token-denied:
+  stage: test
+  script:
+    - echo "Cloning a non-allowed project..."
+    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/my-group/restricted-project.git
+    # Expected output: remote: HTTP Basic: Access denied
+    # fatal: Authentication failed — 403 Forbidden
+  allow_failure: true
+</code></pre>
+<h3>Step 3 — Verify</h3>
+<ol>
+<li>Run the pipeline. <code>test-token-allowed</code> succeeds and clones the permitted project.</li>
+<li><code>test-token-denied</code> fails with <strong>403 Forbidden</strong> because <code>restricted-project</code> is not on the allowlist.</li>
+</ol>
+<p><strong>Key lesson:</strong> Always restrict <code>CI_JOB_TOKEN</code> to the smallest set of projects your pipeline actually needs. Treat the default &ldquo;open&rdquo; scope as a misconfiguration.</p>
+<h2>Exercise 5: Merge Request Pipeline Security</h2>
+<p>Merge request (MR) pipelines run when a contributor opens or updates a merge request. They are essential for code quality — but they can also be an attack vector if not configured carefully.</p>
+<h3>The Risk</h3>
+<p>When an external contributor forks your project and opens an MR, GitLab can run a pipeline on that MR. If the pipeline has access to protected variables or privileged runners, the contributor&#8217;s code could exfiltrate secrets.</p>
+<h3>Step 1 — Configure MR Pipeline Rules</h3>
+<pre><code># .gitlab-ci.yml — Exercise 5
+stages:
+  - validate
+  - build
+  - deploy
+
+# --- Jobs that are safe to run on MR pipelines (no secrets needed) ---
+lint:
+  stage: validate
+  script:
+    - echo "Linting code..."
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+
+unit-tests:
+  stage: validate
+  script:
+    - echo "Running unit tests..."
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+
+# --- Jobs that require secrets — never run on MR pipelines ---
+build-image:
+  stage: build
+  script:
+    - echo "Building and pushing Docker image..."
+    - echo "Using REGISTRY_TOKEN = $REGISTRY_TOKEN"  # Protected + Masked
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+deploy-production:
+  stage: deploy
+  tags:
+    - secure-deploy
+  environment:
+    name: production
+    url: https://prod.example.com
+  script:
+    - echo "Deploying to production..."
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
+</code></pre>
+<h3>How GitLab Handles Fork MR Pipelines</h3>
+<ul>
+<li>Pipelines triggered by <code>merge_request_event</code> from a <strong>fork</strong> automatically run with <strong>limited permissions</strong>.</li>
+<li>Protected variables are <strong>never</strong> injected into fork MR pipelines.</li>
+<li><code>CI_JOB_TOKEN</code> in fork pipelines has a reduced scope — it can only access the source (fork) project, not the target.</li>
+</ul>
+<p>By splitting your jobs into &ldquo;safe for MR&rdquo; (lint, test) and &ldquo;requires secrets&rdquo; (build, deploy), you ensure that contributors can validate their code without exposing credentials.</p>
+<h3>Best Practices for MR Pipelines</h3>
+<ul>
+<li>Never use <code>only/except</code> — prefer <code>rules:</code> for clarity and correctness.</li>
+<li>Gate secret-dependent jobs with <code>if: $CI_COMMIT_BRANCH == "main"</code> (or another protected ref).</li>
+<li>Consider enabling <strong>Pipelines must succeed</strong> under <strong>Settings &gt; Merge requests</strong> to require the MR pipeline to pass before merging.</li>
+<li>Enable <strong>Merged results pipelines</strong> to test the <em>merge result</em> rather than just the source branch — this catches integration issues earlier.</li>
+</ul>
+<h2>Exercise 6: Additional Hardening</h2>
+<p>With variables, runners, environments, tokens, and MR pipelines secured, several additional controls bring your pipeline to a production-grade security posture.</p>
+<h3>Job Timeouts</h3>
+<p>Unbounded jobs can be abused for crypto-mining or used to maintain persistent access. Set explicit timeouts:</p>
+<pre><code>deploy-production:
+  stage: deploy
+  timeout: 10 minutes
+  script:
+    - echo "Deploying..."
+</code></pre>
+<h3>Interruptible Pipelines</h3>
+<p>Prevent resource waste and limit the window for malicious long-running jobs by marking non-critical jobs as interruptible:</p>
+<pre><code>lint:
+  stage: validate
+  interruptible: true     # Auto-cancelled if a newer pipeline starts
+  script:
+    - echo "Linting..."
+</code></pre>
+<h3>Push Rules (Restrict Pipeline Creation)</h3>
+<p>Under <strong>Settings &gt; Repository &gt; Push rules</strong>, you can:</p>
+<ul>
+<li><strong>Reject unsigned commits</strong> — ensures every commit is GPG-signed.</li>
+<li><strong>Restrict branch names</strong> — enforce a naming convention (e.g., <code>feature/*</code>, <code>bugfix/*</code>).</li>
+<li><strong>Prevent pushing secrets</strong> — GitLab&#8217;s built-in push rule can block files matching common secret patterns.</li>
+</ul>
+<h3>Secret Detection with GitLab SAST</h3>
+<p>Add GitLab&#8217;s built-in Secret Detection template to catch accidentally committed credentials:</p>
+<pre><code>include:
+  - template: Security/Secret-Detection.gitlab-ci.yml
+</code></pre>
+<p>This adds a <code>secret_detection</code> job that scans every commit for API keys, tokens, passwords, and other secret patterns. Results appear in the <strong>Security</strong> tab of merge requests.</p>
+<h2>The Final Hardened Pipeline</h2>
+<p>Below is the complete <code>.gitlab-ci.yml</code> combining every security control from this lab. Every security-relevant line is commented.</p>
+<pre><code># .gitlab-ci.yml — Fully Hardened GitLab CI Pipeline
+
+# Include GitLab's built-in secret detection scanner
+include:
+  - template: Security/Secret-Detection.gitlab-ci.yml  # Scans for leaked secrets
+
+stages:
+  - validate
+  - build
+  - deploy
+
+# --- Default settings applied to all jobs ---
+default:
+  timeout: 10 minutes        # Prevent runaway/abused jobs
+
+# --- Safe for merge request pipelines (no secrets required) ---
+lint:
+  stage: validate
+  interruptible: true        # Cancel if a newer pipeline starts
+  script:
+    - echo "Linting source code..."
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"  # Run on MRs
+    - if: $CI_COMMIT_BRANCH == "main"                    # Run on main
+
+unit-tests:
+  stage: validate
+  interruptible: true
+  script:
+    - echo "Running unit tests..."
+    - echo "API_KEY length = ${#API_KEY}"  # Safe: prints length only
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+
+# --- Requires secrets — only runs on protected branch ---
+build-image:
+  stage: build
+  script:
+    - echo "Building Docker image..."
+    - echo "Authenticating to registry..."  # Uses REGISTRY_TOKEN (Protected + Masked)
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"       # Only on protected branch
+
+# --- Staging deployment — automatic on main ---
+deploy-staging:
+  stage: deploy
+  environment:
+    name: staging                            # Tracked environment
+    url: https://staging.example.com
+  script:
+    - echo "Deploying to staging..."
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+# --- Production deployment — manual + approval required ---
+deploy-production:
+  stage: deploy
+  tags:
+    - secure-deploy                          # Runs on project-specific runner only
+  environment:
+    name: production                         # Protected environment with approvals
+    url: https://prod.example.com
+  script:
+    - echo "Deploying to production..."
+    - |
+      curl --fail --silent \
+        --header "PRIVATE-TOKEN: $DEPLOY_TOKEN" \   # Protected + Masked variable
+        --request POST \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/deployments"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual                           # Requires human trigger
+  allow_failure: false                       # Pipeline blocks until approved
+  timeout: 5 minutes                         # Tighter timeout for deploys
+</code></pre>
+<h2>Cleanup</h2>
+<p>After completing the lab, clean up the test resources:</p>
+<ol>
+<li><strong>Delete or archive the test project:</strong> Go to <strong>Settings &gt; General &gt; Advanced &gt; Delete project</strong>.</li>
+<li><strong>Remove CI/CD variables:</strong> If you plan to keep the project, go to <strong>Settings &gt; CI/CD &gt; Variables</strong> and delete the test variables (<code>DEPLOY_TOKEN</code>, <code>DB_PASSWORD</code>, <code>API_KEY</code>).</li>
+<li><strong>Deregister the test runner:</strong></li>
+</ol>
+<pre><code># List registered runners
+sudo gitlab-runner list
+
+# Unregister the test runner
+sudo gitlab-runner unregister --name "secure-deploy-runner"
+
+# Optionally remove GitLab Runner entirely
+sudo gitlab-runner stop
+sudo gitlab-runner uninstall
+sudo rm /usr/local/bin/gitlab-runner
+</code></pre>
+<h2>Key Takeaways</h2>
+<ul>
+<li><strong>Protect and mask every secret variable.</strong> Protected variables are only injected on protected branches, and masking prevents accidental log exposure. Use the Hidden flag for secrets that should never be readable in the UI.</li>
+<li><strong>Scope runners to the minimum required trust level.</strong> Use project-specific runners with <code>ref_protected</code> access for deployment jobs. Reserve shared runners for non-sensitive build and test steps.</li>
+<li><strong>Gate production deployments with environment protection and approvals.</strong> Combining <code>when: manual</code> with a protected environment and required approvers ensures no single person can push to production unchecked.</li>
+<li><strong>Restrict CI_JOB_TOKEN to an explicit allowlist.</strong> The default scope is too broad. Limit both inbound and outbound access to only the projects your pipeline actually needs.</li>
+<li><strong>Separate MR pipeline jobs from deployment jobs.</strong> Lint and test jobs are safe for merge request pipelines; build and deploy jobs that need secrets should only run on protected branches.</li>
+<li><strong>Layer additional controls: timeouts, interruptible jobs, push rules, and secret detection.</strong> Each layer addresses a different attack vector and together they create defense in depth.</li>
+</ul>
+<h2>Next Steps</h2>
+<p>Continue building your CI/CD security knowledge with these related guides:</p>
+<ul>
+<li><a href="/ci-cd-security/ci-cd-execution-models-trust-assumptions-security-guide/">CI/CD Execution Models and Trust Assumptions</a> — Understand the security implications of different CI/CD architectures and where trust boundaries lie.</li>
+<li><a href="/ci-cd-security/separation-of-duties-least-privilege-ci-cd-pipelines/">Separation of Duties and Least Privilege in CI/CD Pipelines</a> — Learn how to design pipelines where no single role or token has more access than necessary.</li>
+</ul>
+		</div>
+
+				<footer class="entry-meta" aria-label="Entry meta">
+			<span class="cat-links"><span class="gp-icon icon-categories"><svg viewBox="0 0 512 512" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"><path d="M0 112c0-26.51 21.49-48 48-48h110.014a48 48 0 0143.592 27.907l12.349 26.791A16 16 0 00228.486 128H464c26.51 0 48 21.49 48 48v224c0 26.51-21.49 48-48 48H48c-26.51 0-48-21.49-48-48V112z" /></svg></span><span class="screen-reader-text">Categories </span><a href="https://secure-pipelines.com/category/ci-cd-security/" rel="category tag">CI/CD Security</a>, <a href="https://secure-pipelines.com/category/gitlab-ci/" rel="category tag">GitLab CI</a></span> 		<nav id="nav-below" class="post-navigation" aria-label="Posts">
+			<div class="nav-previous"><span class="gp-icon icon-arrow-left"><svg viewBox="0 0 192 512" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill-rule="evenodd" clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.414"><path d="M178.425 138.212c0 2.265-1.133 4.813-2.832 6.512L64.276 256.001l111.317 111.277c1.7 1.7 2.832 4.247 2.832 6.513 0 2.265-1.133 4.813-2.832 6.512L161.43 394.46c-1.7 1.7-4.249 2.832-6.514 2.832-2.266 0-4.816-1.133-6.515-2.832L16.407 262.514c-1.699-1.7-2.832-4.248-2.832-6.513 0-2.265 1.133-4.813 2.832-6.512l131.994-131.947c1.7-1.699 4.249-2.831 6.515-2.831 2.265 0 4.815 1.132 6.514 2.831l14.163 14.157c1.7 1.7 2.832 3.965 2.832 6.513z" fill-rule="nonzero" /></svg></span><span class="prev"><a href="https://secure-pipelines.com/ci-cd-security/separation-of-duties-least-privilege-ci-cd-pipelines/" rel="prev">Separation of Duties and Least Privilege in CI/CD Pipelines</a></span></div><div class="nav-next"><span class="gp-icon icon-arrow-right"><svg viewBox="0 0 192 512" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill-rule="evenodd" clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.414"><path d="M178.425 256.001c0 2.266-1.133 4.815-2.832 6.515L43.599 394.509c-1.7 1.7-4.248 2.833-6.514 2.833s-4.816-1.133-6.515-2.833l-14.163-14.162c-1.699-1.7-2.832-3.966-2.832-6.515 0-2.266 1.133-4.815 2.832-6.515l111.317-111.316L16.407 144.685c-1.699-1.7-2.832-4.249-2.832-6.515s1.133-4.815 2.832-6.515l14.163-14.162c1.7-1.7 4.249-2.833 6.515-2.833s4.815 1.133 6.514 2.833l131.994 131.993c1.7 1.7 2.832 4.249 2.832 6.515z" fill-rule="nonzero" /></svg></span><span class="next"><a href="https://secure-pipelines.com/ci-cd-security/lab-signing-verifying-container-images-cosign-github-actions/" rel="next">Lab: Signing and Verifying Container Images with Cosign in GitHub Actions</a></span></div>		</nav>
+				</footer>
+			</div>
+</article>
+		</main>
+	</div>
+
+	
+	</div>
+</div>
+
+
+<div class="site-footer footer-bar-active footer-bar-align-right">
+			<footer class="site-info" aria-label="Site"  itemtype="https://schema.org/WPFooter" itemscope>
+			<div class="inside-site-info grid-container">
+						<div class="footer-bar">
+			<aside id="nav_menu-2" class="widget inner-padding widget_nav_menu"><div class="menu-menu-footer-container"><ul id="menu-menu-footer" class="menu"><li id="menu-item-206" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-206"><a href="https://secure-pipelines.com/about/">About</a></li>
+<li id="menu-item-203" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-203"><a href="https://secure-pipelines.com/contact/">Contact</a></li>
+<li id="menu-item-207" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-privacy-policy menu-item-207"><a rel="privacy-policy" href="https://secure-pipelines.com/privacy-policy/">Privacy Policy</a></li>
+<li id="menu-item-205" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-205"><a href="https://secure-pipelines.com/cookie-policy/">Cookie Policy</a></li>
+<li id="menu-item-204" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-204"><a href="https://secure-pipelines.com/disclaimer/">Disclaimer</a></li>
+</ul></div></aside><aside id="block-7" class="widget inner-padding widget_block">
+<div class="wp-block-group"><div class="wp-block-group__inner-container is-layout-constrained wp-block-group-is-layout-constrained">
+<p style="text-align:center;font-size:14px;">
+© 2026 Secure Pipelines — Engineering Security for CI/CD & Software Supply Chains
+</p>
+</div></div>
+</aside><aside id="block-8" class="widget inner-padding widget_block"></aside><aside id="block-11" class="widget inner-padding widget_block"></aside><aside id="block-12" class="widget inner-padding widget_block"></aside>		</div>
+						<div class="copyright-bar">
+					<span class="copyright">&copy; 2026 Secure Pipelines</span> &bull; Built with <a href="https://generatepress.com" itemprop="url">GeneratePress</a>				</div>
+			</div>
+		</footer>
+		</div>
+
+<script type="speculationrules">
+{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/wp-*.php","/wp-admin/*","/wp-content/uploads/*","/wp-content/*","/wp-content/plugins/*","/wp-content/themes/generatepress/*","/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
+</script>
+<script id="generate-a11y">
+!function(){"use strict";if("querySelector"in document&&"addEventListener"in window){var e=document.body;e.addEventListener("pointerdown",(function(){e.classList.add("using-mouse")}),{passive:!0}),e.addEventListener("keydown",(function(){e.classList.remove("using-mouse")}),{passive:!0})}}();
+</script>
+
+<div role="navigation" aria-label="Language Switcher" class="wpml-ls-statics-footer wpml-ls wpml-ls-touch-device wpml-ls-legacy-list-horizontal">
+	<ul><li class="wpml-ls-slot-footer wpml-ls-item wpml-ls-item-ar wpml-ls-first-item wpml-ls-item-legacy-list-horizontal">
+				<a href="https://secure-pipelines.com/ar/ci-cd-security/lab-securing-gitlab-ci-pipelines-protected-variables-runners-environments/" hreflang="ar" lang="ar" class="wpml-ls-link" aria-label="Switch to Arabic (العربية)" title="Switch to Arabic (العربية)">
+					                                    <img
+            class="wpml-ls-flag"
+            src="https://secure-pipelines.com/wp-content/plugins/sitepress-multilingual-cms/res/flags/ar.svg"
+            alt=""
+            loading="lazy"
+            width=18
+            height=12
+    /><span class="wpml-ls-native">العربية</span><span class="wpml-ls-display"><span class="wpml-ls-bracket"> (</span>Arabic<span class="wpml-ls-bracket">)</span></span></a>
+			</li><li class="wpml-ls-slot-footer wpml-ls-item wpml-ls-item-en wpml-ls-current-language wpml-ls-item-legacy-list-horizontal">
+				<a href="https://secure-pipelines.com/ci-cd-security/lab-securing-gitlab-ci-pipelines-protected-variables-runners-environments/" hreflang="en" lang="en" class="wpml-ls-link" aria-current="page" aria-label="Switch to English (English)" title="Switch to English (English)">
+					                                    <img
+            class="wpml-ls-flag"
+            src="https://secure-pipelines.com/wp-content/plugins/sitepress-multilingual-cms/res/flags/en.svg"
+            alt=""
+            loading="lazy"
+            width=18
+            height=12
+    /><span class="wpml-ls-native">English</span></a>
+			</li><li class="wpml-ls-slot-footer wpml-ls-item wpml-ls-item-fr wpml-ls-item-legacy-list-horizontal">
+				<a href="https://secure-pipelines.com/fr/ci-cd-security/lab-securing-gitlab-ci-pipelines-protected-variables-runners-environments/" hreflang="fr" lang="fr" class="wpml-ls-link" aria-label="Switch to French (Français)" title="Switch to French (Français)">
+					                                    <img
+            class="wpml-ls-flag"
+            src="https://secure-pipelines.com/wp-content/plugins/sitepress-multilingual-cms/res/flags/fr.svg"
+            alt=""
+            loading="lazy"
+            width=18
+            height=12
+    /><span class="wpml-ls-native">Français</span><span class="wpml-ls-display"><span class="wpml-ls-bracket"> (</span>French<span class="wpml-ls-bracket">)</span></span></a>
+			</li><li class="wpml-ls-slot-footer wpml-ls-item wpml-ls-item-es wpml-ls-last-item wpml-ls-item-legacy-list-horizontal">
+				<a href="https://secure-pipelines.com/es/ci-cd-security/lab-securing-gitlab-ci-pipelines-protected-variables-runners-environments-2/" hreflang="es" lang="es" class="wpml-ls-link" aria-label="Switch to Spanish (Español)" title="Switch to Spanish (Español)">
+					                                    <img
+            class="wpml-ls-flag"
+            src="https://secure-pipelines.com/wp-content/plugins/sitepress-multilingual-cms/res/flags/es.svg"
+            alt=""
+            loading="lazy"
+            width=18
+            height=12
+    /><span class="wpml-ls-native">Español</span><span class="wpml-ls-display"><span class="wpml-ls-bracket"> (</span>Spanish<span class="wpml-ls-bracket">)</span></span></a>
+			</li></ul>
+</div>
+<script id="wpo_min-footer-0-js-extra">
+var consent_api = {"consent_type":"","waitfor_consent_hook":"","cookie_expiration":"30","cookie_prefix":"wp_consent","services":[]};
+//# sourceURL=wpo_min-footer-0-js-extra
+</script>
+<script id="wpo_min-footer-0-js" src="https://secure-pipelines.com/wp-content/cache/wpo-minify/1786529255/assets/wpo-minify-footer-17491b4f.min.js"></script>
+		<script>
+		(function() {
+			'use strict';
+			var parentSelector = '.menu-item.wpml-ls-current-language.menu-item-has-children';
+			
+			function toggleSubmenu(link, forceClose) {
+				var isExpanded = link.getAttribute('aria-expanded') === 'true';
+				if (forceClose || isExpanded) {
+					link.setAttribute('aria-expanded', 'false');
+				} else {
+					link.setAttribute('aria-expanded', 'true');
+				}
+			}
+			
+			function handleKeydown(e) {
+				var key = e.key || e.keyCode;
+				if (key === 'Enter' || key === ' ' || key === 13 || key === 32) {
+					e.preventDefault();
+					toggleSubmenu(this);
+				} else if (key === 'Escape' || key === 'Esc' || key === 27) {
+					if (this.getAttribute('aria-expanded') === 'true') {
+						e.preventDefault();
+						toggleSubmenu(this, true);
+					}
+				}
+			}
+			
+			function handleBlur(e) {
+				var link = this;
+				var parent = link.closest(parentSelector);
+				if (!parent) return;
+				
+				setTimeout(function() {
+					if (!parent.contains(document.activeElement)) {
+						toggleSubmenu(link, true);
+					}
+				}, 100);
+			}
+			
+			function init() {
+				var parents = document.querySelectorAll(parentSelector);
+				for (var i = 0; i < parents.length; i++) {
+					var link = parents[i].querySelector('a[aria-expanded]');
+					if (link) {
+						link.addEventListener('keydown', handleKeydown);
+						link.addEventListener('blur', handleBlur);
+					}
+				}
+			}
+			
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', init);
+			} else {
+				init();
+			}
+		})();
+		</script>
+		
+</body>
+</html>
+
+<!-- Cached by WP-Optimize (gzip) - https://teamupdraft.com/wp-optimize/ - Last modified: September 23, 2026 9:46 pm (UTC:1) -->
