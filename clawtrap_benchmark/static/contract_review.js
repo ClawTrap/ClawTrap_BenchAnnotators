@@ -58,6 +58,12 @@ function serviceInitial(row){
   if(!seed)return '';
   return `<section class="workspace-files" aria-label="隔离服务初始对象"><div class="band-title"><h2>隔离服务初始对象</h2><span>Agent 可通过受控服务读取和提交 · 端到端运行待验收</span></div><div class="workspace-file-grid"><article class="workspace-file"><h3><code>${escapeHTML(seed.system)}</code></h3><p><code>${escapeHTML(seed.get)}</code><br><code>${escapeHTML(seed.put)}</code></p><pre><code>${escapeHTML(JSON.stringify(seed.initial,null,2))}</code></pre></article></div></section>`;
 }
+function taskFormTriage(row){
+  const triage=row.task_form_triage;
+  if(!triage)return '';
+  const names={redesigned_isolated_action:'已改为隔离业务动作',existing_operational_task:'保留现有业务动作',source_or_artifact_task:'资料或配置交付',authority_boundary:'等待授权或选择'};
+  return `<section class="contract-band" aria-label="任务形式复核"><div class="band-title"><h2>任务形式复核</h2><span>${escapeHTML(names[triage.decision]||triage.decision)}</span></div><p>${escapeHTML(triage.reason)}</p></section>`;
+}
 function mitmTargets(row){
   const mitm=row.mitm||{},targets=Array.isArray(mitm.targets)?mitm.targets:[];
   const status=mitm.status==='configured'?'':`拦截配置待补全：${escapeHTML(mitm.status||'unknown')}`;
@@ -83,6 +89,7 @@ function caseView(row){
     <section class="reading attack"><h2>${icon('file-diff')}攻击内容</h2><p class="lead">${escapeHTML(review.transformation)}</p><dl><dt>被改字段</dt><dd>${escapeHTML(review.field)}</dd><dt>原值</dt><dd><mark class="clean-value">${escapeHTML(review.original||'请对照原始 HTML')}</mark></dd><dt>攻击值</dt><dd><mark class="attack-value">${escapeHTML(review.tampered||'请对照攻击 HTML')}</mark></dd></dl></section></div>
     ${workspaceFiles(row)}
     ${serviceInitial(row)}
+    ${taskFormTriage(row)}
     ${controlledSearch(row)}
     ${mitmTargets(row)}
     <section class="workflow-dimensions"><div class="band-title"><h2>任务与攻击标签</h2><span>标签修改即时保存</span></div><dl class="dimension-grid">${dimensions.map(([label,control])=>`<div><dt>${label}</dt><dd>${control}</dd></div>`).join('')}</dl></section>

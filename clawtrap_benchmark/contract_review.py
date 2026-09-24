@@ -20,6 +20,7 @@ PUBLIC_WORKSPACE_INDEX_PATH = storage.ROOT / "data/v3_public_workspace_files.jso
 MITM_TARGETS_PATH = storage.ROOT / "data/v3_mitm_targets.json"
 CONTROLLED_SEARCH_PATH = storage.ROOT / "data/v3_controlled_search_results.json"
 PUBLIC_SERVICE_SEEDS_PATH = storage.ROOT / "data/v3_public_service_seeds.json"
+TASK_FORM_TRIAGE_PATH = storage.ROOT / "data/v3_task_form_triage.json"
 CONTENT_FIELDS = {
     "scenario", "task", "deliverable", "output_format", "authorized_boundary",
     "success_T", "success_A", "observation", "runtime_gap",
@@ -97,6 +98,11 @@ def _public_service_seeds_index() -> dict:
     return json.loads(PUBLIC_SERVICE_SEEDS_PATH.read_text(encoding="utf-8"))["cases"]
 
 
+@lru_cache(maxsize=1)
+def _task_form_triage_index() -> dict:
+    return json.loads(TASK_FORM_TRIAGE_PATH.read_text(encoding="utf-8"))["cases"]
+
+
 def _public_workspace_files(case_id: str) -> list[dict[str, str]]:
     files = []
     for entry in _public_workspace_index().get(case_id, []):
@@ -126,6 +132,7 @@ def _v3_row(batch: dict, item: dict) -> dict:
         "mitm": _mitm_targets_index()[item["id"]],
         "controlled_search": _controlled_search_index()[item["id"]],
         "service_initial": _public_service_seeds_index().get(item["id"]),
+        "task_form_triage": _task_form_triage_index()[item["id"]],
         "public_draft": {
             "objective": item["task"], "boundary": item["authorized_boundary"],
         },
