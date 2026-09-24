@@ -16,6 +16,7 @@ LOCAL_REVIEWS_PATH = storage.ROOT / "data/contract_reviews.json"
 LOCAL_CONTENT_PATH = storage.ROOT / "data/contract_content_edits.json"
 LEGACY_TASK_HASHES_PATH = storage.ROOT / "data/v3_legacy_task_hashes.json"
 LEGACY_BOUNDARY_HASHES_PATH = storage.ROOT / "data/v3_legacy_boundary_hashes.json"
+PRE_REBALANCE_HASHES_PATH = storage.ROOT / "data/v3_pre_rebalance_fingerprints.json"
 PUBLIC_WORKSPACE_INDEX_PATH = storage.ROOT / "data/v3_public_workspace_files.json"
 MITM_TARGETS_PATH = storage.ROOT / "data/v3_mitm_targets.json"
 CONTROLLED_SEARCH_PATH = storage.ROOT / "data/v3_controlled_search_results.json"
@@ -214,8 +215,31 @@ def _source_fingerprint(row: dict) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
+@lru_cache(maxsize=1)
+def _pre_rebalance_hashes() -> dict[str, str]:
+    if PRE_REBALANCE_HASHES_PATH.is_file():
+        return json.loads(PRE_REBALANCE_HASHES_PATH.read_text(encoding="utf-8"))["cases"]
+    return {}
+
+
+def _current_position_label(row: dict, value: str) -> str:
+    former = {
+        "search results": "discovery result or citation",
+        "third-party citation": "discovery result or citation",
+        "checkout page": "record or action page",
+        "login page": "navigation or error state",
+        "error page": "navigation or error state",
+        "redirect chain": "navigation or error state",
+    }
+    if value == "target webpage":
+        return row["v3_contract"]["attack"]["position"]
+    return former.get(value, value)
+
+
 def _edit_matches_source(row: dict, edit: dict) -> bool:
-    return edit.get("base_source_sha256") == _source_fingerprint(row)
+    prior = edit.get("base_source_sha256")
+    return bool(prior) and (prior == _source_fingerprint(row)
+                            or prior == _pre_rebalance_hashes().get(row["id"]))
 
 
 def _edited_row(row: dict, edit: dict | None) -> dict:
@@ -226,7 +250,11 @@ def _edited_row(row: dict, edit: dict | None) -> dict:
                                       "revision": edit.get("revision", 0),
                                       "editor": edit.get("editor", ""),
                                       "updated_at": edit.get("updated_at", "")}}
-    labels = edit.get("labels", {})
+    labels = dict(edit.get("labels", {}))
+    if "position" in labels:
+        labels["position"] = _current_position_label(row, labels["position"])
+        if labels["position"] not in STANDARD_LABELS["position"]:
+            labels.pop("position")
     contract = {**row["v3_contract"], **_effective_edit_fields(row, edit.get("fields", {}))}
     action = labels.get("task_action")
     if action in STANDARD_LABELS["task_action"]:
@@ -317,9 +345,12 @@ def save_content_edit(case_id: str, raw: dict, editor: str) -> dict:
     original = {key: source["v3_contract"][key] for key in CONTENT_FIELDS}
     merged_fields = {**original, **(_effective_edit_fields(source, active.get("fields", {})) if active else {}),
                      **{key: value.strip() for key, value in fields.items()}}
-    merged_labels = {**(active.get("labels", {}) if active else {}), **labels}
+    inherited_labels = dict(active.get("labels", {}) if active else {})
+    if "position" in inherited_labels:
+        inherited_labels["position"] = _current_position_label(source, inherited_labels["position"])
+    merged_labels = {**inherited_labels, **labels}
     merged_labels = {key: value for key, value in merged_labels.items()
-                     if key not in {"risk", "granularity", "timing"}
+                     if key not in {"position", "risk", "granularity", "timing"}
                      or value in STANDARD_LABELS[key]}
     record = {"fields": merged_fields, "labels": merged_labels,
               "status": raw["status"], "revision": expected + 1,

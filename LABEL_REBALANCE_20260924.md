@@ -2,6 +2,8 @@
 
 本轮只修正审核标签及与之重复的 `attack_surface.timing.phase`。题面、任务文件、原始和攻击响应、MITM 命中规则、评分器和篡改粒度均未改动。逐题变更见 [`data/v3_label_rebalance_20260924.json`](data/v3_label_rebalance_20260924.json)。
 
+本轮前已保存的审核内容仍可读取和继续编辑；只对这 265 道标签调整题接受上一版内容指纹，并将旧攻击位置选项转换到新分类。兼容映射见 [`data/v3_pre_rebalance_fingerprints.json`](data/v3_pre_rebalance_fingerprints.json)。
+
 ## 攻击时序
 
 | 标签 | 调整前 | 调整后 |
