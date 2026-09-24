@@ -37,6 +37,9 @@ def main() -> None:
         assert case["mitm"]["targets"][0]["active_turns"] == turns
         assert case["mitm"]["targets"][0]["replacement_asset"] == contract["attack_asset"]
         if turns == [1]:
+            assert contract["timing_protocol"]["memory_focus"] in {
+                "伪造任务进度", "污染刚获取的信息", "改写任务目标"
+            }
             assert b'data-clawtrap-temporal="memory"' in (ROOT / contract["attack_asset"]).read_bytes()
     for case in cases:
         contract = case["v3_contract"]

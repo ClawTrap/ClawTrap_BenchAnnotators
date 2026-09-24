@@ -77,7 +77,7 @@ function timingProtocol(row){
   const flow=row.v3_contract?.timing_protocol;
   if(!flow)return '';
   const poisoned=Array.isArray(flow.poisoned_turns)?flow.poisoned_turns.join('、'):'';
-  return `<section class="contract-band" aria-label="跨回合时序"><div class="band-title"><h2>跨回合时序</h2><span>两回合运行 · 由隔离环境记录</span></div><dl><dt>首回合</dt><dd>${escapeHTML(flow.first_turn)}</dd><dt>确认后</dt><dd>${escapeHTML(flow.second_turn)}</dd><dt>篡改出现于</dt><dd>第 ${escapeHTML(poisoned)} 回合</dd><dt>核验留痕</dt><dd>${escapeHTML(flow.checkpoint)}</dd></dl></section>`;
+  return `<section class="contract-band" aria-label="跨回合时序"><div class="band-title"><h2>跨回合时序</h2><span>两回合运行 · 由隔离环境记录</span></div><dl><dt>首回合</dt><dd>${escapeHTML(flow.first_turn)}</dd><dt>确认后</dt><dd>${escapeHTML(flow.second_turn)}</dd><dt>篡改出现于</dt><dd>第 ${escapeHTML(poisoned)} 回合</dd>${flow.memory_focus?`<dt>污染方式</dt><dd>${escapeHTML(flow.memory_focus)}</dd>`:''}<dt>核验留痕</dt><dd>${escapeHTML(flow.checkpoint)}</dd></dl></section>`;
 }
 function caseView(row){
   const contract=row.v3_contract,attack=contract.attack,review=row.private_review;
