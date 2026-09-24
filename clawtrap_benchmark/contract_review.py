@@ -17,6 +17,7 @@ LOCAL_CONTENT_PATH = storage.ROOT / "data/contract_content_edits.json"
 LEGACY_TASK_HASHES_PATH = storage.ROOT / "data/v3_legacy_task_hashes.json"
 LEGACY_BOUNDARY_HASHES_PATH = storage.ROOT / "data/v3_legacy_boundary_hashes.json"
 PRE_REBALANCE_HASHES_PATH = storage.ROOT / "data/v3_pre_rebalance_fingerprints.json"
+PRE_FORM_REBALANCE_HASHES_PATH = storage.ROOT / "data/v3_pre_form_rebalance_fingerprints.json"
 PUBLIC_WORKSPACE_INDEX_PATH = storage.ROOT / "data/v3_public_workspace_files.json"
 MITM_TARGETS_PATH = storage.ROOT / "data/v3_mitm_targets.json"
 CONTROLLED_SEARCH_PATH = storage.ROOT / "data/v3_controlled_search_results.json"
@@ -31,8 +32,11 @@ STANDARD_LABELS = {
     "task_action": {"retrieve", "judge", "select", "compose", "modify", "prepare",
                     "transfer", "execute", "communicate", "authorize"},
     "authority_direction": {"READ", "WRITE", "ACT", "SEND", "RECEIVE", "GRANT"},
-    "form": {"full-page replacement", "iframe/popup injection", "selective substitution",
-             "redirect rewriting", "API JSON mutation", "file replacement", "mixed benign–malicious content"},
+    "form": {"full-page replacement", "redirect rewriting", "API JSON mutation",
+             "file replacement", "mixed benign–malicious content",
+             "local fact or attribute rewrite", "local rule or eligibility rewrite",
+             "local status or outcome rewrite", "local identifier or destination rewrite",
+             "local operation instruction rewrite"},
     "position": {"discovery result or citation", "technical reference page",
                  "policy or guidance page", "record or action page", "API response",
                  "download file", "navigation or error state", "asynchronous update"},
@@ -74,7 +78,7 @@ def label_options() -> dict:
     for field in LABEL_FIELDS - {"category"}:
         observed = {(row["v3_contract"][field] if field in {"task_action", "authority_direction"}
                      else row["v3_contract"]["attack"][field]) for row in cases}
-        options[field] = sorted(STANDARD_LABELS[field] if field in {"task_action", "authority_direction", "position", "risk", "granularity", "timing"}
+        options[field] = sorted(STANDARD_LABELS[field] if field in {"task_action", "authority_direction", "form", "position", "risk", "granularity", "timing"}
                                 else STANDARD_LABELS[field] | observed)
     return options
 
@@ -222,6 +226,21 @@ def _pre_rebalance_hashes() -> dict[str, str]:
     return {}
 
 
+@lru_cache(maxsize=1)
+def _pre_form_rebalance_hashes() -> dict[str, str]:
+    if PRE_FORM_REBALANCE_HASHES_PATH.is_file():
+        return json.loads(PRE_FORM_REBALANCE_HASHES_PATH.read_text(encoding="utf-8"))["cases"]
+    return {}
+
+
+def _current_form_label(row: dict, value: str) -> str:
+    # Historical edits used a broad local label or one-off carrier label.
+    # Their per-case source form is the reviewed replacement for those labels.
+    if value not in STANDARD_LABELS["form"]:
+        return row["v3_contract"]["attack"]["form"]
+    return value
+
+
 def _current_position_label(row: dict, value: str) -> str:
     former = {
         "search results": "discovery result or citation",
@@ -239,7 +258,8 @@ def _current_position_label(row: dict, value: str) -> str:
 def _edit_matches_source(row: dict, edit: dict) -> bool:
     prior = edit.get("base_source_sha256")
     return bool(prior) and (prior == _source_fingerprint(row)
-                            or prior == _pre_rebalance_hashes().get(row["id"]))
+                            or prior == _pre_rebalance_hashes().get(row["id"])
+                            or prior == _pre_form_rebalance_hashes().get(row["id"]))
 
 
 def _edited_row(row: dict, edit: dict | None) -> dict:
@@ -251,6 +271,8 @@ def _edited_row(row: dict, edit: dict | None) -> dict:
                                       "editor": edit.get("editor", ""),
                                       "updated_at": edit.get("updated_at", "")}}
     labels = dict(edit.get("labels", {}))
+    if "form" in labels:
+        labels["form"] = _current_form_label(row, labels["form"])
     if "position" in labels:
         labels["position"] = _current_position_label(row, labels["position"])
         if labels["position"] not in STANDARD_LABELS["position"]:
@@ -267,7 +289,7 @@ def _edited_row(row: dict, edit: dict | None) -> dict:
         contract["authority_direction"] = direction
     attack = {**contract["attack"], **{key: value for key, value in labels.items()
                                       if key not in {"category", "task_action", "authority_direction"} and
-                                      (key not in {"risk", "granularity", "timing"}
+                                      (key not in {"form", "risk", "granularity", "timing"}
                                        or value in STANDARD_LABELS[key])}}
     contract["attack"] = attack
     category = next((item for item in label_options()["categories"] if item["key"] == labels.get("category")), None)
@@ -346,11 +368,13 @@ def save_content_edit(case_id: str, raw: dict, editor: str) -> dict:
     merged_fields = {**original, **(_effective_edit_fields(source, active.get("fields", {})) if active else {}),
                      **{key: value.strip() for key, value in fields.items()}}
     inherited_labels = dict(active.get("labels", {}) if active else {})
+    if "form" in inherited_labels:
+        inherited_labels["form"] = _current_form_label(source, inherited_labels["form"])
     if "position" in inherited_labels:
         inherited_labels["position"] = _current_position_label(source, inherited_labels["position"])
     merged_labels = {**inherited_labels, **labels}
     merged_labels = {key: value for key, value in merged_labels.items()
-                     if key not in {"position", "risk", "granularity", "timing"}
+                     if key not in {"form", "position", "risk", "granularity", "timing"}
                      or value in STANDARD_LABELS[key]}
     record = {"fields": merged_fields, "labels": merged_labels,
               "status": raw["status"], "revision": expected + 1,

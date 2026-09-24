@@ -10,7 +10,7 @@ const state = {
 const labelChoices = {
   task_action:[['retrieve','检索'],['judge','判断'],['select','选择'],['compose','编写'],['modify','修改'],['prepare','准备'],['transfer','转移'],['execute','执行'],['communicate','通信'],['authorize','授权']],
   authority_direction:[['READ','读取'],['WRITE','写入工件'],['ACT','改变系统状态'],['SEND','外发'],['RECEIVE','接收资源'],['GRANT','授权']],
-  form:[['full-page replacement','整页替换'],['iframe/popup injection','弹窗 / iframe'],['selective substitution','局部替换'],['redirect rewriting','重定向改写'],['API JSON mutation','API JSON 改写'],['file replacement','文件替换'],['mixed benign–malicious content','良恶内容混合']],
+  form:[['full-page replacement','整页替换'],['redirect rewriting','重定向改写'],['API JSON mutation','API JSON 改写'],['file replacement','文件替换'],['mixed benign–malicious content','良恶内容混合'],['local fact or attribute rewrite','局部事实 / 属性改写'],['local rule or eligibility rewrite','局部规则 / 资格改写'],['local status or outcome rewrite','局部状态 / 结果改写'],['local identifier or destination rewrite','局部标识 / 目标改写'],['local operation instruction rewrite','局部操作步骤改写']],
   position:[['discovery result or citation','搜索结果 / 引用'],['technical reference page','技术文档页'],['policy or guidance page','规则 / 指引页'],['record or action page','具体记录 / 操作页'],['API response','API 响应'],['download file','下载文件'],['navigation or error state','登录 / 错误 / 跳转'],['asynchronous update','异步更新']],
   evidence_structure:[['single source','单一来源'],['multiple polluted sources','多个污染来源'],['trusted–polluted conflict','可信与污染来源冲突'],['polluted majority / trusted minority','多数污染、少数可信'],['internal policy / external page conflict','内部政策与外部页面冲突'],['cache / live page conflict','缓存与实时页面冲突']],
   risk:[['read-only','只读'],['reversible write','可逆写入'],['cross-system write','跨系统写入'],['external communication','外部通信'],['data disclosure','数据披露'],['permission change','权限变更'],['financial action','财务动作'],['irreversible execution','不可逆执行'],['irreversible workflow','不可逆流程'],['supply-chain execution','供应链执行'],['privilege change','特权变更']],
@@ -87,7 +87,7 @@ function caseView(row){
     ['任务类别',categorySelect(row)],['任务场景',editable('scenario',contract.scenario,'span')],['终态对象',editable('deliverable',contract.deliverable,'span')],
     ['主动作',labelSelect('task_action',contract.task_action)],['动作链',escapeHTML((contract.action_chain||[]).map(action=>labelChoices.task_action.find(([key])=>key===action)?.[1]||action).join(' → '))],
     ['权限方向',labelSelect('authority_direction',contract.authority_direction)],
-    ['攻击形式',labelSelect('form',attack.form)],['攻击位置',labelSelect('position',attack.position)+(attack.position_detail?`<small class="position-detail">原载体：${escapeHTML(positionDetailNames[attack.position_detail]||attack.position_detail)}</small>`:'')],
+    ['攻击形式',labelSelect('form',attack.form)+(attack.form_detail?`<small class="position-detail">原细分：${escapeHTML(attack.form_detail)}</small>`:'')],['攻击位置',labelSelect('position',attack.position)+(attack.position_detail?`<small class="position-detail">原载体：${escapeHTML(positionDetailNames[attack.position_detail]||attack.position_detail)}</small>`:'')],
     ['证据结构',labelSelect('evidence_structure',attack.evidence_structure)],['动作风险',labelSelect('risk',attack.risk)],
     ['篡改粒度',labelSelect('granularity',attack.granularity)],
     ['攻击时序',labelSelect('timing',attack.timing)]
