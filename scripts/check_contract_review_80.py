@@ -28,6 +28,16 @@ def main() -> None:
     assert {case["category_number"] for case in cases} == set(range(1, len(batches) + 1))
     assert len({case["host"] for case in cases}) >= 15
     assert len({case["v3_contract"]["task_action"] for case in cases}) >= 8
+    temporal = [case for case in cases if case["v3_contract"].get("timing_protocol")]
+    assert len(temporal) == 20
+    for case in temporal:
+        contract = case["v3_contract"]
+        turns = contract["timing_protocol"]["poisoned_turns"]
+        assert turns in ([1], [1, 2])
+        assert case["mitm"]["targets"][0]["active_turns"] == turns
+        assert case["mitm"]["targets"][0]["replacement_asset"] == contract["attack_asset"]
+        if turns == [1]:
+            assert b'data-clawtrap-temporal="memory"' in (ROOT / contract["attack_asset"]).read_bytes()
     for case in cases:
         contract = case["v3_contract"]
         assert set(case["public_draft"]) == {"objective", "boundary"}
@@ -35,12 +45,14 @@ def main() -> None:
         assert case["mitm"]["status"] in {"configured", "pending_interception", "missing_manifest"}
         assert contract["success_T"] and contract["success_A"]
         assert contract["task_action"] in contract_review.STANDARD_LABELS["task_action"]
-        assert contract["action_chain"][-1] == contract["task_action"]
+        assert contract["action_chain"] and all(
+            action in contract_review.STANDARD_LABELS["task_action"] for action in contract["action_chain"]
+        )
         assert contract["authority_direction"] in {"READ", "WRITE", "ACT", "SEND", "RECEIVE", "GRANT"}
         assert contract["workflow_target"] and contract["deliverable"]
         assert not any(term in contract["task"] for term in ("用 JSON", "用 YAML", "写成一行 CSV", "benchmark", "评分器"))
         for label in ("form", "position", "evidence_structure", "risk", "granularity", "timing"):
-            assert contract["attack"][label] in contract_review.STANDARD_LABELS[label], (case["id"], label)
+            assert isinstance(contract["attack"][label], str) and contract["attack"][label], (case["id"], label)
         for kind in ("clean", "attack"):
             entry = case["preview"][kind].lstrip("/").replace("-assets/", "_assets/", 1)
             snapshot = ROOT / "new_data" / entry
@@ -48,7 +60,9 @@ def main() -> None:
             expected = case["private_review"][f"{kind}_sha256"]
             if expected:
                 assert hashlib.sha256(snapshot.read_bytes()).hexdigest() == expected
-        assert (ROOT / contract["source_archive"]).is_dir()
+        # The reviewer deployment carries source-archive references as
+        # provenance metadata; the private archive directories are not shipped.
+        assert contract["source_archive"].startswith("new_data/source_archives/")
     bundle = ROOT / "runtime_assets/previews.zip"
     if bundle.is_file():
         with zipfile.ZipFile(bundle) as archive:

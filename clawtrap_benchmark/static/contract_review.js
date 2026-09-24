@@ -67,11 +67,17 @@ function taskFormTriage(row){
 function mitmTargets(row){
   const mitm=row.mitm||{},targets=Array.isArray(mitm.targets)?mitm.targets:[];
   const status=mitm.status==='configured'?'':`拦截配置待补全：${escapeHTML(mitm.status||'unknown')}`;
-  return `<section class="mitm-targets contract-band" aria-label="MITM 拦截目标"><div class="band-title"><h2>MITM 拦截目标</h2><span>仅供审核与运行器使用，不发给 Agent</span></div>${status?`<p class="mitm-warning">${status}</p>`:''}<ul>${targets.map(target=>`<li><code>${escapeHTML((target.methods||[]).join(', '))} ${escapeHTML(target.url)}</code><span>${escapeHTML(target.action)}${target.replacement_asset?` · ${escapeHTML(target.replacement_asset)}`:''}${target.redirect_to?` → ${escapeHTML(target.redirect_to)}`:''}</span></li>`).join('')}</ul></section>`;
+  return `<section class="mitm-targets contract-band" aria-label="MITM 拦截目标"><div class="band-title"><h2>MITM 拦截目标</h2><span>仅供审核与运行器使用，不发给 Agent</span></div>${status?`<p class="mitm-warning">${status}</p>`:''}<ul>${targets.map(target=>`<li><code>${escapeHTML((target.methods||[]).join(', '))} ${escapeHTML(target.url)}</code><span>${escapeHTML(target.action)}${target.replacement_asset?` · ${escapeHTML(target.replacement_asset)}`:''}${Array.isArray(target.active_turns)?` · 第 ${escapeHTML(target.active_turns.join('、'))} 回合替换`:''}${target.redirect_to?` → ${escapeHTML(target.redirect_to)}`:''}</span></li>`).join('')}</ul></section>`;
 }
 function controlledSearch(row){
   const search=row.controlled_search||{},results=Array.isArray(search.results)?search.results:[];
   return `<section class="mitm-targets contract-band" aria-label="受控搜索结果"><div class="band-title"><h2>受控搜索结果</h2><span>Agent 搜索后可见 · URL 不写入题面</span></div><p>搜索线索：${escapeHTML(search.query_hint||'')}</p><ul>${results.map(result=>`<li><strong>${escapeHTML(result.title)}</strong><code>${escapeHTML(result.url)}</code><span>${escapeHTML(result.kind)}</span></li>`).join('')}</ul></section>`;
+}
+function timingProtocol(row){
+  const flow=row.v3_contract?.timing_protocol;
+  if(!flow)return '';
+  const poisoned=Array.isArray(flow.poisoned_turns)?flow.poisoned_turns.join('、'):'';
+  return `<section class="contract-band" aria-label="跨回合时序"><div class="band-title"><h2>跨回合时序</h2><span>两回合运行 · 由隔离环境记录</span></div><dl><dt>首回合</dt><dd>${escapeHTML(flow.first_turn)}</dd><dt>确认后</dt><dd>${escapeHTML(flow.second_turn)}</dd><dt>篡改出现于</dt><dd>第 ${escapeHTML(poisoned)} 回合</dd><dt>核验留痕</dt><dd>${escapeHTML(flow.checkpoint)}</dd></dl></section>`;
 }
 function caseView(row){
   const contract=row.v3_contract,attack=contract.attack,review=row.private_review;
@@ -90,6 +96,7 @@ function caseView(row){
     ${workspaceFiles(row)}
     ${serviceInitial(row)}
     ${taskFormTriage(row)}
+    ${timingProtocol(row)}
     ${controlledSearch(row)}
     ${mitmTargets(row)}
     <section class="workflow-dimensions"><div class="band-title"><h2>任务与攻击标签</h2><span>标签修改即时保存</span></div><dl class="dimension-grid">${dimensions.map(([label,control])=>`<div><dt>${label}</dt><dd>${control}</dd></div>`).join('')}</dl></section>
