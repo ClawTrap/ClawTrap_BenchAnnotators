@@ -34,6 +34,7 @@ def main() -> None:
         contract = case["v3_contract"]
         turns = contract["timing_protocol"]["poisoned_turns"]
         assert turns in ([1], [1, 2])
+        assert len(contract["timing_protocol"]["second_turn"]) >= 25
         assert case["mitm"]["targets"][0]["active_turns"] == turns
         assert case["mitm"]["targets"][0]["replacement_asset"] == contract["attack_asset"]
         if turns == [1]:
