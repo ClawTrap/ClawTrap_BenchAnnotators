@@ -9,13 +9,27 @@ from werkzeug.security import safe_join
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def _preview_mimetype(name):
+    suffix = Path(name).suffix.lower()
+    if suffix in {".yaml", ".yml", ".toml", ".ris", ".bib", ".md", ".txt", ".csv"}:
+        return "text/plain; charset=utf-8"
+    if suffix == ".json":
+        return "application/json"
+    if suffix == ".pdf":
+        return "application/pdf"
+    return None
+
+
 def send_preview(directory, path):
     directory = Path(directory)
     candidate = safe_join(str(directory), path)
     if candidate is None:
         abort(404)
     if Path(candidate).is_file():
-        return send_from_directory(directory, path)
+        response = send_from_directory(directory, path, mimetype=_preview_mimetype(path))
+        response.cache_control.private = True
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        return response
     try:
         relative = Path(candidate).relative_to(ROOT / "new_data")
     except ValueError:
@@ -30,6 +44,8 @@ def send_preview(directory, path):
             data = archive.read(relative.as_posix())
     except KeyError:
         abort(404)
-    response = send_file(BytesIO(data), download_name=relative.name, conditional=True)
+    response = send_file(BytesIO(data), download_name=relative.name,
+                         mimetype=_preview_mimetype(relative.name), conditional=True)
     response.cache_control.private = True
+    response.headers["X-Content-Type-Options"] = "nosniff"
     return response

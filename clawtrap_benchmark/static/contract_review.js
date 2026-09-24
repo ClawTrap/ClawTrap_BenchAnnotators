@@ -39,12 +39,12 @@ function labelSelect(key,value){
 }
 function frame(url,title,kind,source){
   const preview=safeURL(url,true),origin=safeURL(source);
-  return `<section class="snapshot"><header><strong><span class="dot ${kind}"></span>${title}</strong><div>${kind==='clean'&&origin?`<a href="${escapeHTML(origin)}" target="_blank" rel="noopener noreferrer">原网页 ${icon('arrow-up-right')}</a>`:''}${preview?`<a href="${escapeHTML(preview)}" target="_blank" rel="noopener noreferrer">单独查看 ${icon('arrow-up-right')}</a>`:''}</div></header>${preview?`<iframe src="${escapeHTML(preview)}" title="${title}" sandbox="allow-scripts" referrerpolicy="no-referrer" loading="lazy"></iframe>`:'<p>HTML 预览地址缺失</p>'}</section>`;
+  return `<section class="snapshot"><header><strong><span class="dot ${kind}"></span>${title}</strong><div>${kind==='clean'&&origin?`<a href="${escapeHTML(origin)}" target="_blank" rel="noopener noreferrer">原网页 ${icon('arrow-up-right')}</a>`:''}${preview?`<a href="${escapeHTML(preview)}" target="_blank" rel="noopener noreferrer">单独查看 ${icon('arrow-up-right')}</a>`:''}</div></header>${preview?`<iframe src="${escapeHTML(preview)}" title="${title}" sandbox="allow-scripts" referrerpolicy="no-referrer" loading="lazy"></iframe>`:'<p>预览地址缺失</p>'}</section>`;
 }
 function renderFrames(){
   const row=current(),area=$('#frames');if(!row||!area)return;
   area.className=`snapshot-grid ${state.mode==='split'?'split':''}`;
-  area.innerHTML=(state.mode!=='attack'?frame(row.preview.clean,'原始 HTML','clean',row.source_url):'')+(state.mode!=='clean'?frame(row.preview.attack,'攻击 HTML','attack',row.source_url):'');
+  area.innerHTML=(state.mode!=='attack'?frame(row.preview.clean,'原始内容','clean',row.source_url):'')+(state.mode!=='clean'?frame(row.preview.attack,'攻击内容','attack',row.source_url):'');
   document.querySelectorAll('[data-mode]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.mode===state.mode)));
   icons();
 }
@@ -59,12 +59,12 @@ function caseView(row){
     ['篡改粒度',labelSelect('granularity',attack.granularity)],
     ['攻击时序',labelSelect('timing',attack.timing)]
   ];
-  return `<section class="case-head"><div><div class="eyebrow">${escapeHTML(row.domain)} / ${escapeHTML(row.category_title)}</div><h1>${escapeHTML(contract.scenario)} <small>${escapeHTML(row.id)}</small></h1><p>${escapeHTML(row.host)} · ${row.content_edit?.revision?'题目已修改':'原题'} · ${escapeHTML(row.readiness)}</p></div><span id="selection-badge" class="verdict ${row.review?.selected?'retain_material':''}">${row.review?.selected?'已入选':'未入选'}</span></section>
+  return `<section class="case-head"><div><div class="eyebrow">${escapeHTML(row.domain)} / ${escapeHTML(row.category_title)}</div><h1>${escapeHTML(contract.scenario)} <small>${escapeHTML(row.id)}</small></h1><p>${escapeHTML(row.host)} · ${row.content_edit?.status==='stale'?'旧编辑已过期':row.content_edit?.revision?'题目已修改':'原题'} · ${escapeHTML(row.readiness)}</p></div><span id="selection-badge" class="verdict ${row.review?.selected?'retain_material':''}">${row.review?.selected?'已入选':'未入选'}</span></section>
     <div class="summary-grid"><section class="reading normal"><h2>${icon('file-text')}发给 Agent 的任务</h2>${editable('task',contract.task,'p')}<dl><dt>授权边界</dt><dd>${editable('authorized_boundary',contract.authorized_boundary,'span')}</dd><dt>任务入口</dt><dd><a href="${escapeHTML(safeURL(row.source_url))}" target="_blank" rel="noopener noreferrer">${escapeHTML(row.source_url)} ${icon('arrow-up-right')}</a></dd></dl></section>
     <section class="reading attack"><h2>${icon('file-diff')}攻击内容</h2><p class="lead">${escapeHTML(review.transformation)}</p><dl><dt>被改字段</dt><dd>${escapeHTML(review.field)}</dd><dt>原值</dt><dd><mark class="clean-value">${escapeHTML(review.original||'请对照原始 HTML')}</mark></dd><dt>攻击值</dt><dd><mark class="attack-value">${escapeHTML(review.tampered||'请对照攻击 HTML')}</mark></dd></dl></section></div>
     <section class="workflow-dimensions"><div class="band-title"><h2>任务与攻击标签</h2><span>标签修改即时保存</span></div><dl class="dimension-grid">${dimensions.map(([label,control])=>`<div><dt>${label}</dt><dd>${control}</dd></div>`).join('')}</dl></section>
     <section class="contract-band"><div class="band-title"><h2>结果判定</h2><span>T / A 分开记录 · 私有审核信息</span></div><div class="criteria-grid"><div><span class="metric">T · 任务成功</span>${editable('success_T',contract.success_T)}</div><div><span class="metric attack-metric">A · 攻击成功</span>${editable('success_A',contract.success_A)}</div><div><span class="metric">观察证据</span>${editable('observation',contract.observation)}</div></div><div class="output-format"><strong>验收对象（不发给 Agent）</strong>${editable('output_format',contract.output_format,'p')}</div></section>
-    <section class="previews" aria-label="HTML 页面对照"><div class="preview-toolbar"><h2>原始 / 攻击 HTML</h2><div class="segmented">${[['split','并排'],['clean','原始'],['attack','攻击']].map(([key,label])=>`<button data-mode="${key}" aria-pressed="${state.mode===key}">${label}</button>`).join('')}</div></div><div id="frames"></div></section>`;
+    <section class="previews" aria-label="内容对照"><div class="preview-toolbar"><h2>原始 / 攻击内容</h2><div class="segmented">${[['split','并排'],['clean','原始'],['attack','攻击']].map(([key,label])=>`<button data-mode="${key}" aria-pressed="${state.mode===key}">${label}</button>`).join('')}</div></div><div id="frames"></div></section>`;
 }
 function render(){
   state.visible=state.cases.filter(row=>(!state.domain||row.domain===state.domain)&&(!state.category||row.category===state.category)&&(!state.status||(state.status==='selected'?row.review?.selected:!row.review?.selected))&&(!state.query||`${row.id} ${row.category_title} ${row.v3_contract.scenario} ${row.private_review.field} ${row.host}`.toLowerCase().includes(state.query.toLowerCase())));

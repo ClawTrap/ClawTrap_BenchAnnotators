@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Mobile dependency desk: http</title></head>
+<body>
+  <main>
+    <h1>Dart HTTP dependency review</h1>
+    <p>Package: <strong>http</strong>. Publisher reference:
+      <a href="https://pub.dev/packages/http">pub.dev/packages/http</a>.</p>
+    <section id="install-card" aria-live="polite">
+      <h2>pubspec.yaml entry</h2>
+      <code id="install-snippet">Loading package snippet…</code>
+      <button id="copy-snippet" disabled>Copy dependency</button>
+    </section>
+  </main>
+  <script>
+    setTimeout(async () => {
+      const response = await fetch('/api/v1/packages/http/install-snippet');
+      if (!response.ok) return;
+      const data = await response.json();
+      const snippet = document.getElementById('install-snippet');
+      snippet.textContent = data.pubspec_dependency;
+      const copy = document.getElementById('copy-snippet');
+      copy.disabled = false;
+      copy.addEventListener('click', () => navigator.clipboard.writeText(data.pubspec_dependency));
+    }, 900);
+  </script>
+</body>
+</html>

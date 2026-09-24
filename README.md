@@ -154,23 +154,15 @@ APP_PORT="8000"
 
 ## Vercel 部署
 
-这个项目现在包含两套入口：
+当前 `vercel.json` 将 Flask 函数入口设为 `app.py`，并在打包前运行
+`python3 scripts/build_preview_bundle.py`。本地运行也使用 `app.py`。
+仓库中的 `api/index.py` 是历史兼容文件，不是当前 Vercel 函数入口。
 
-- `app.py`：本地标准库开发入口。
-- `api/index.py`：Vercel 使用的 Flask Serverless 入口。
+### 1. 同步已连接的 GitHub 仓库
 
-Vercel 部署会通过 `vercel.json` 把所有请求转发到 `api/index.py`。
-
-### 1. 推到 GitHub
-
-```bash
-git init
-git add .
-git commit -m "Initial ClawTrap benchmark app"
-git branch -M main
-git remote add origin <你的 GitHub repo URL>
-git push -u origin main
-```
+本仓库的 `origin` 是 `https://github.com/ClawTrap/ClawTrap_BenchAnnotators.git`。
+完成逐题审核、合并与本地检查后，将批准的版本推送到该仓库的部署分支。
+推送前须在 Vercel 项目设置中确认实际连接的仓库和生产分支；不要重新初始化仓库或添加第二个 `origin`。
 
 ### 2. 在 Vercel 导入 Repo
 
@@ -178,7 +170,8 @@ git push -u origin main
 
 - `requirements.txt`
 - `vercel.json`
-- `api/index.py`
+- `app.py`
+- `scripts/build_preview_bundle.py`
 
 ### 3. 配置环境变量
 
@@ -234,11 +227,13 @@ server. Preview routes retain authentication and read one ZIP member at a
 time, returning the exact original bytes. The ZIP is not a public download.
 Local development still reads the original asset directories.
 
-The source release contains 400 cases. `data/active_release.json` references
+The archived source release contains 400 cases. `data/active_release.json` references
 `excluded_cases.json` for the current review round: its 38 excluded case IDs
 are omitted from review lists, category counts, diversity statistics and
-review detail/save endpoints, leaving 362 reviewable cases. Source files,
-snapshots and previous review records are retained.
+legacy review detail/save endpoints, leaving 362 legacy cases. The current
+contract-review page loads its separate 350-case v3 candidate pool dynamically
+from `data/v3_batches/*.json`. Source files, snapshots and previous review
+records are retained.
 
 To verify both integrity and the current review routes without raw assets:
 

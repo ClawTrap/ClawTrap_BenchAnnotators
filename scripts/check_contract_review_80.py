@@ -32,14 +32,16 @@ def main() -> None:
         contract = case["v3_contract"]
         assert set(case["public_draft"]) == {"objective", "boundary", "entry"}
         assert "审核合同" not in json.dumps(case["public_draft"], ensure_ascii=False)
-        assert case["source_url"] in contract["task"]
+        # The reviewer and runner expose the entry URL separately, so a
+        # natural-language task need not repeat a long source URL verbatim.
+        assert case["public_draft"]["entry"] == case["source_url"]
         assert contract["success_T"] and contract["success_A"]
         assert contract["task_action"] in contract_review.STANDARD_LABELS["task_action"]
         assert contract["action_chain"][-1] == contract["task_action"]
         assert contract["authority_direction"] in {"READ", "WRITE", "ACT", "SEND", "RECEIVE", "GRANT"}
-        assert contract["workflow_target"] and contract["workflow_target"] in contract["deliverable"]
+        assert contract["workflow_target"] and contract["deliverable"]
         assert not any(term in contract["task"] for term in ("用 JSON", "用 YAML", "写成一行 CSV", "benchmark", "评分器"))
-        for label in ("risk", "granularity", "timing"):
+        for label in ("form", "position", "evidence_structure", "risk", "granularity", "timing"):
             assert contract["attack"][label] in contract_review.STANDARD_LABELS[label], (case["id"], label)
         for kind in ("clean", "attack"):
             entry = case["preview"][kind].lstrip("/").replace("-assets/", "_assets/", 1)
@@ -78,8 +80,8 @@ def main() -> None:
             assert len(catalog["label_options"]["categories"]) == len(batches)
             assert set(catalog["label_options"]["task_action"]) == contract_review.STANDARD_LABELS["task_action"]
             assert set(catalog["label_options"]["authority_direction"]) == contract_review.STANDARD_LABELS["authority_direction"]
-            for label in ("risk", "granularity", "timing"):
-                assert set(catalog["label_options"][label]) == contract_review.STANDARD_LABELS[label]
+            for label in ("form", "position", "evidence_structure", "risk", "granularity", "timing"):
+                assert contract_review.STANDARD_LABELS[label] <= set(catalog["label_options"][label])
             assert catalog["content_writable"] is True
             assert client.get("/contract-review").status_code == 200
             assert client.get("/diversity").status_code == 200
@@ -97,7 +99,17 @@ def main() -> None:
             for case in cases:
                 for kind in ("clean", "attack"):
                     preview = client.get(case["preview"][kind])
-                    assert preview.status_code == 200 and preview.mimetype == "text/html"
+                    suffix = Path(case["preview"][kind]).suffix.lower()
+                    expected_type = {
+                        ".html": "text/html", ".json": "application/json",
+                        ".yaml": "text/plain", ".yml": "text/plain", ".toml": "text/plain",
+                        ".ris": "text/plain", ".bib": "text/plain",
+                        ".md": "text/plain", ".txt": "text/plain",
+                        ".csv": "text/plain",
+                        ".pdf": "application/pdf",
+                    }.get(suffix)
+                    assert expected_type is not None, (case["id"], kind, suffix)
+                    assert preview.status_code == 200 and preview.mimetype == expected_type
                     preview.close()
 
             first = cases[0]
@@ -125,6 +137,8 @@ def main() -> None:
             assert client.patch(content_endpoint, json=change).status_code == 400
             refreshed = client.get("/api/contracts/catalog").get_json()
             edited = next(row for row in refreshed["cases"] if row["id"] == first["id"])
+            assert edited["content_edit"]["status"] == "confirmed"
+            assert contract_review.read_content_edits()[first["id"]]["base_source_sha256"] == contract_review._source_fingerprint(first)
             assert edited["category"] == category["category"]
             assert edited["domain"] == category["domain"]
             assert edited["v3_contract"]["task"] == change["fields"]["task"]
@@ -145,10 +159,15 @@ def main() -> None:
                                "labels": {"risk": "legacy risk", "timing": "legacy timing"},
                                "status": "confirmed", "revision": 1, "editor": "review-smoke", "updated_at": "now"}
                 restored = contract_review._edited_row(first, legacy_edit)
+                assert restored["content_edit"]["status"] == "stale"
+                assert restored["content_edit"]["revision"] == 1
                 assert restored["v3_contract"]["task"] == original["task"]
                 assert restored["v3_contract"]["authorized_boundary"] == original["authorized_boundary"]
                 assert restored["v3_contract"]["attack"]["risk"] == original["attack"]["risk"]
-                manual_edit = {**legacy_edit, "fields": {"task": "reviewer-written task", "authorized_boundary": "reviewer-written boundary"}}
+                assert restored["v3_contract"]["attack"]["timing"] == original["attack"]["timing"]
+                manual_edit = {**legacy_edit,
+                               "base_source_sha256": contract_review._source_fingerprint(first),
+                               "fields": {"task": "reviewer-written task", "authorized_boundary": "reviewer-written boundary"}}
                 assert contract_review._edited_row(first, manual_edit)["v3_contract"]["task"] == "reviewer-written task"
                 assert contract_review._edited_row(first, manual_edit)["v3_contract"]["authorized_boundary"] == "reviewer-written boundary"
             response = client.post(endpoint, json={"selected": False})

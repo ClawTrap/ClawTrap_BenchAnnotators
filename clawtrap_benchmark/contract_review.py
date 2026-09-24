@@ -38,7 +38,7 @@ STANDARD_LABELS = {
     "granularity": {"page", "component", "sentence", "field", "single character", "link",
                     "timestamp", "numeric value"},
     "timing": {"first step", "before decision", "before confirmation", "repeated across turns",
-               "delayed trigger", "memory contamination then trigger", "clean/attack alternation"},
+               "delayed trigger", "memory contamination then trigger"},
 }
 ACTION_DIRECTIONS = {
     "retrieve": "READ", "judge": "READ", "select": "READ", "compose": "WRITE",
@@ -67,7 +67,7 @@ def label_options() -> dict:
     for field in LABEL_FIELDS - {"category"}:
         observed = {(row["v3_contract"][field] if field in {"task_action", "authority_direction"}
                      else row["v3_contract"]["attack"][field]) for row in cases}
-        options[field] = sorted(STANDARD_LABELS[field] if field in {"task_action", "authority_direction", "risk", "granularity", "timing"}
+        options[field] = sorted(STANDARD_LABELS[field] if field in {"task_action", "authority_direction", "position", "risk", "granularity", "timing"}
                                 else STANDARD_LABELS[field] | observed)
     return options
 
@@ -158,9 +158,26 @@ def _effective_edit_fields(row: dict, fields: dict) -> dict:
     return fields
 
 
+def _source_fingerprint(row: dict) -> str:
+    source = {"contract": row["v3_contract"], "category": row["category"],
+              "domain": row["domain"], "candidate_version": row["candidate_version"]}
+    encoded = json.dumps(source, ensure_ascii=False, sort_keys=True,
+                         separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def _edit_matches_source(row: dict, edit: dict) -> bool:
+    return edit.get("base_source_sha256") == _source_fingerprint(row)
+
+
 def _edited_row(row: dict, edit: dict | None) -> dict:
     if not edit:
         return {**row, "content_edit": {"status": "source", "revision": 0}}
+    if not _edit_matches_source(row, edit):
+        return {**row, "content_edit": {"status": "stale",
+                                      "revision": edit.get("revision", 0),
+                                      "editor": edit.get("editor", ""),
+                                      "updated_at": edit.get("updated_at", "")}}
     labels = edit.get("labels", {})
     contract = {**row["v3_contract"], **_effective_edit_fields(row, edit.get("fields", {}))}
     action = labels.get("task_action")
@@ -248,16 +265,18 @@ def save_content_edit(case_id: str, raw: dict, editor: str) -> dict:
     current = read_content_edits().get(case_id)
     if expected != (current["revision"] if current else 0):
         raise ValueError("题目已由其他审核员修改，请刷新后重试")
+    active = current if current and _edit_matches_source(source, current) else None
     original = {key: source["v3_contract"][key] for key in CONTENT_FIELDS}
-    merged_fields = {**original, **(_effective_edit_fields(source, current.get("fields", {})) if current else {}),
+    merged_fields = {**original, **(_effective_edit_fields(source, active.get("fields", {})) if active else {}),
                      **{key: value.strip() for key, value in fields.items()}}
-    merged_labels = {**(current.get("labels", {}) if current else {}), **labels}
+    merged_labels = {**(active.get("labels", {}) if active else {}), **labels}
     merged_labels = {key: value for key, value in merged_labels.items()
                      if key not in {"risk", "granularity", "timing"}
                      or value in STANDARD_LABELS[key]}
     record = {"fields": merged_fields, "labels": merged_labels,
               "status": raw["status"], "revision": expected + 1,
-              "editor": editor, "updated_at": utc_now()}
+              "editor": editor, "updated_at": utc_now(),
+              "base_source_sha256": _source_fingerprint(source)}
     if storage.database_configured():
         with storage.connect_db() as conn, conn.cursor() as cur:
             _ensure_content_table(cur)
@@ -289,7 +308,7 @@ def confirmed_export() -> dict:
     rows = []
     for row in candidate_index()["cases"]:
         edit = edits.get(row["id"])
-        if edit and edit["status"] == "confirmed":
+        if edit and edit["status"] == "confirmed" and _edit_matches_source(row, edit):
             effective = _edited_row(row, edit)
             rows.append({"batch": row["batch"], "category": effective["category"],
                          "domain": effective["domain"], "case": effective["v3_contract"],
