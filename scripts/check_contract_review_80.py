@@ -29,7 +29,7 @@ def main() -> None:
     assert len({case["host"] for case in cases}) >= 15
     assert len({case["v3_contract"]["task_action"] for case in cases}) >= 8
     temporal = [case for case in cases if case["v3_contract"].get("timing_protocol")]
-    assert len(temporal) == 20
+    assert len(temporal) == 60
     for case in temporal:
         contract = case["v3_contract"]
         turns = contract["timing_protocol"]["poisoned_turns"]
