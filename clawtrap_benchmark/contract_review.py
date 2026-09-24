@@ -18,6 +18,7 @@ LEGACY_TASK_HASHES_PATH = storage.ROOT / "data/v3_legacy_task_hashes.json"
 LEGACY_BOUNDARY_HASHES_PATH = storage.ROOT / "data/v3_legacy_boundary_hashes.json"
 PRE_REBALANCE_HASHES_PATH = storage.ROOT / "data/v3_pre_rebalance_fingerprints.json"
 PRE_FORM_REBALANCE_HASHES_PATH = storage.ROOT / "data/v3_pre_form_rebalance_fingerprints.json"
+PRE_DIVERSITY_REBALANCE_HASHES_PATH = storage.ROOT / "data/v3_pre_diversity_rebalance_fingerprints.json"
 PUBLIC_WORKSPACE_INDEX_PATH = storage.ROOT / "data/v3_public_workspace_files.json"
 MITM_TARGETS_PATH = storage.ROOT / "data/v3_mitm_targets.json"
 CONTROLLED_SEARCH_PATH = storage.ROOT / "data/v3_controlled_search_results.json"
@@ -30,7 +31,7 @@ CONTENT_FIELDS = {
 LABEL_FIELDS = {"category", "task_action", "authority_direction", "form", "position", "evidence_structure", "risk", "granularity", "timing"}
 STANDARD_LABELS = {
     "task_action": {"retrieve", "judge", "select", "compose", "modify", "prepare",
-                    "transfer", "execute", "communicate", "authorize"},
+                    "transfer", "execute", "route", "communicate", "authorize"},
     "authority_direction": {"READ", "WRITE", "ACT", "SEND", "RECEIVE", "GRANT"},
     "form": {"full-page replacement", "redirect rewriting", "API JSON mutation",
              "file replacement", "mixed benign–malicious content",
@@ -40,10 +41,12 @@ STANDARD_LABELS = {
     "position": {"discovery result or citation", "technical reference page",
                  "policy or guidance page", "record or action page", "API response",
                  "download file", "navigation or error state", "asynchronous update"},
-    "evidence_structure": {"single source", "multiple polluted sources", "trusted–polluted conflict",
-                           "polluted majority / trusted minority", "internal policy / external page conflict",
-                           "cache / live page conflict"},
-    "risk": {"read-only", "reversible write", "cross-system write", "external communication",
+    "evidence_structure": {"single source", "cache vs live source",
+                           "internal policy vs external source", "factual source cross-check",
+                           "rule or offer vs case state", "technical reference vs implementation",
+                           "identity or permission boundary"},
+    "risk": {"read-only", "reference record write", "draft or plan write",
+             "configuration or code write", "service record write", "cross-system write", "external communication",
              "data disclosure", "permission change", "financial action", "irreversible execution",
              "irreversible workflow", "supply-chain execution", "privilege change"},
     "granularity": {"page", "component", "sentence", "field", "single character", "link",
@@ -53,7 +56,7 @@ STANDARD_LABELS = {
 }
 ACTION_DIRECTIONS = {
     "retrieve": "READ", "judge": "READ", "select": "READ", "compose": "WRITE",
-    "modify": "WRITE", "prepare": "WRITE", "transfer": "RECEIVE", "execute": "ACT",
+    "modify": "WRITE", "prepare": "WRITE", "transfer": "RECEIVE", "execute": "ACT", "route": "ACT",
     "communicate": "SEND", "authorize": "GRANT",
 }
 
@@ -78,7 +81,7 @@ def label_options() -> dict:
     for field in LABEL_FIELDS - {"category"}:
         observed = {(row["v3_contract"][field] if field in {"task_action", "authority_direction"}
                      else row["v3_contract"]["attack"][field]) for row in cases}
-        options[field] = sorted(STANDARD_LABELS[field] if field in {"task_action", "authority_direction", "form", "position", "risk", "granularity", "timing"}
+        options[field] = sorted(STANDARD_LABELS[field] if field in {"task_action", "authority_direction", "form", "position", "evidence_structure", "risk", "granularity", "timing"}
                                 else STANDARD_LABELS[field] | observed)
     return options
 
@@ -233,6 +236,13 @@ def _pre_form_rebalance_hashes() -> dict[str, str]:
     return {}
 
 
+@lru_cache(maxsize=1)
+def _pre_diversity_rebalance_hashes() -> dict[str, str]:
+    if PRE_DIVERSITY_REBALANCE_HASHES_PATH.is_file():
+        return json.loads(PRE_DIVERSITY_REBALANCE_HASHES_PATH.read_text(encoding="utf-8"))["cases"]
+    return {}
+
+
 def _current_form_label(row: dict, value: str) -> str:
     # Historical edits used a broad local label or one-off carrier label.
     # Their per-case source form is the reviewed replacement for those labels.
@@ -255,11 +265,20 @@ def _current_position_label(row: dict, value: str) -> str:
     return former.get(value, value)
 
 
+def _current_diversity_label(row: dict, key: str, value: str) -> str:
+    if key == "risk" and value == "reversible write":
+        return row["v3_contract"]["attack"]["risk"]
+    if key == "evidence_structure" and value not in STANDARD_LABELS[key]:
+        return row["v3_contract"]["attack"][key]
+    return value
+
+
 def _edit_matches_source(row: dict, edit: dict) -> bool:
     prior = edit.get("base_source_sha256")
     return bool(prior) and (prior == _source_fingerprint(row)
                             or prior == _pre_rebalance_hashes().get(row["id"])
-                            or prior == _pre_form_rebalance_hashes().get(row["id"]))
+                            or prior == _pre_form_rebalance_hashes().get(row["id"])
+                            or prior == _pre_diversity_rebalance_hashes().get(row["id"]))
 
 
 def _edited_row(row: dict, edit: dict | None) -> dict:
@@ -277,6 +296,9 @@ def _edited_row(row: dict, edit: dict | None) -> dict:
         labels["position"] = _current_position_label(row, labels["position"])
         if labels["position"] not in STANDARD_LABELS["position"]:
             labels.pop("position")
+    for key in ("risk", "evidence_structure"):
+        if key in labels:
+            labels[key] = _current_diversity_label(row, key, labels[key])
     contract = {**row["v3_contract"], **_effective_edit_fields(row, edit.get("fields", {}))}
     action = labels.get("task_action")
     if action in STANDARD_LABELS["task_action"]:
@@ -289,7 +311,7 @@ def _edited_row(row: dict, edit: dict | None) -> dict:
         contract["authority_direction"] = direction
     attack = {**contract["attack"], **{key: value for key, value in labels.items()
                                       if key not in {"category", "task_action", "authority_direction"} and
-                                      (key not in {"form", "risk", "granularity", "timing"}
+                                      (key not in {"form", "evidence_structure", "risk", "granularity", "timing"}
                                        or value in STANDARD_LABELS[key])}}
     contract["attack"] = attack
     category = next((item for item in label_options()["categories"] if item["key"] == labels.get("category")), None)
@@ -372,9 +394,12 @@ def save_content_edit(case_id: str, raw: dict, editor: str) -> dict:
         inherited_labels["form"] = _current_form_label(source, inherited_labels["form"])
     if "position" in inherited_labels:
         inherited_labels["position"] = _current_position_label(source, inherited_labels["position"])
+    for key in ("risk", "evidence_structure"):
+        if key in inherited_labels:
+            inherited_labels[key] = _current_diversity_label(source, key, inherited_labels[key])
     merged_labels = {**inherited_labels, **labels}
     merged_labels = {key: value for key, value in merged_labels.items()
-                     if key not in {"form", "position", "risk", "granularity", "timing"}
+                     if key not in {"form", "position", "evidence_structure", "risk", "granularity", "timing"}
                      or value in STANDARD_LABELS[key]}
     record = {"fields": merged_fields, "labels": merged_labels,
               "status": raw["status"], "revision": expected + 1,
