@@ -71,6 +71,12 @@ function mitmTargets(row){
   const status=mitm.status==='configured'?'':`拦截配置待补全：${escapeHTML(mitm.status||'unknown')}`;
   return `<section class="mitm-targets contract-band" aria-label="MITM 拦截目标"><div class="band-title"><h2>MITM 拦截目标</h2><span>仅供审核与运行器使用，不发给 Agent</span></div>${status?`<p class="mitm-warning">${status}</p>`:''}<ul>${targets.map(target=>`<li><code>${escapeHTML((target.methods||[]).join(', '))} ${escapeHTML(target.url)}</code><span>${escapeHTML(target.action)}${target.replacement_asset?` · ${escapeHTML(target.replacement_asset)}`:''}${Array.isArray(target.active_turns)?` · 第 ${escapeHTML(target.active_turns.join('、'))} 回合替换`:''}${target.redirect_to?` → ${escapeHTML(target.redirect_to)}`:''}</span></li>`).join('')}</ul></section>`;
 }
+function injectionLocation(row){
+  const location=row.v3_contract?.injection_location;
+  if(!location)return `<section class="contract-band" aria-label="注入位置"><div class="band-title"><h2>注入位置</h2><span>Metadata 待补全</span></div></section>`;
+  const targets=Array.isArray(location.targets)?location.targets:[];
+  return `<section class="mitm-targets contract-band" aria-label="注入位置"><div class="band-title"><h2>注入位置</h2><span>Agent 访问目标内容时触发 · 仅供审核与运行器使用</span></div><p>${escapeHTML(location.trigger||'')} · ${escapeHTML(location.delivery||'')}</p><ul>${targets.map(target=>`<li><strong>${escapeHTML(target.content_title||'目标 HTML 页面')}</strong><code>${escapeHTML((target.methods||[]).join(', '))} ${escapeHTML(target.url||'')}</code><span>${escapeHTML(target.when||'')} · ${escapeHTML(target.response_action||'')} · ${escapeHTML(target.replacement_asset||'')}</span>${target.activation||target.active_turns?`<span>启用条件：${escapeHTML(JSON.stringify(target.activation||{active_turns:target.active_turns}))}</span>`:''}</li>`).join('')}</ul></section>`;
+}
 function controlledSearch(row){
   const search=row.controlled_search||{},results=Array.isArray(search.results)?search.results:[];
   return `<section class="mitm-targets contract-band" aria-label="受控搜索结果"><div class="band-title"><h2>受控搜索结果</h2><span>Agent 搜索后可见 · URL 不写入题面</span></div><p>搜索线索：${escapeHTML(search.query_hint||'')}</p><ul>${results.map(result=>`<li><strong>${escapeHTML(result.title)}</strong><code>${escapeHTML(result.url)}</code><span>${escapeHTML(result.kind)}</span></li>`).join('')}</ul></section>`;
@@ -100,6 +106,7 @@ function caseView(row){
     ${taskFormTriage(row)}
     ${timingProtocol(row)}
     ${controlledSearch(row)}
+    ${injectionLocation(row)}
     ${mitmTargets(row)}
     <section class="workflow-dimensions"><div class="band-title"><h2>任务与攻击标签</h2><span>标签修改即时保存</span></div><dl class="dimension-grid">${dimensions.map(([label,control])=>`<div><dt>${label}</dt><dd>${control}</dd></div>`).join('')}</dl></section>
     <section class="contract-band"><div class="band-title"><h2>结果判定</h2><span>T / A 分开记录 · 私有审核信息</span></div><div class="criteria-grid"><div><span class="metric">T · 任务成功</span>${editable('success_T',contract.success_T)}</div><div><span class="metric attack-metric">A · 攻击成功</span>${editable('success_A',contract.success_A)}</div><div><span class="metric">观察证据</span>${editable('observation',contract.observation)}</div></div><div class="output-format"><strong>验收对象（不发给 Agent）</strong>${editable('output_format',contract.output_format,'p')}</div></section>
