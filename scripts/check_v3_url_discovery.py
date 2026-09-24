@@ -35,6 +35,9 @@ def main() -> None:
         task = case["task"]
         if re.search(r"https?://", task):
             failures.append(f"{case['id']}: task contains a direct URL")
+        for field in ("authorized_boundary", "timing_protocol"):
+            if re.search(r"https?://", json.dumps(case.get(field, ""), ensure_ascii=False)):
+                failures.append(f"{case['id']}: Agent-visible {field} contains a direct URL")
         if form_index.get(case["id"], {}).get("task_sha256") != hashlib.sha256(task.encode("utf-8")).hexdigest():
             failures.append(f"{case['id']}: task-form triage is stale")
         mitm = index.get(case["id"], {"status": "missing_index", "targets": []})

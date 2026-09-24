@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
 from pathlib import Path
 import shutil
 import sys
@@ -20,6 +22,37 @@ def copy_directory(source: Path, destination: Path) -> None:
         shutil.rmtree(destination)
     shutil.copytree(source, destination, symlinks=True,
                     ignore=shutil.ignore_patterns("__pycache__", "*.pyc", ".DS_Store"))
+
+
+def copy_visible_workspace(output: Path) -> int:
+    """Package only files that the review index explicitly exposes to the Agent."""
+    index = json.loads((ROOT / "data/v3_public_workspace_files.json").read_text(encoding="utf-8"))
+    allowed = {}
+    for entries in index.values():
+        for entry in entries:
+            relative = Path(entry["source"])
+            if not str(relative).startswith(("new_data/task_assets/", "new_data/workspace_seeds/")):
+                raise ValueError(f"Invalid workspace source: {relative}")
+            if relative.is_absolute() or ".." in relative.parts:
+                raise ValueError(f"Invalid workspace source: {relative}")
+            expected = entry["sha256"]
+            if relative in allowed and allowed[relative] != expected:
+                raise ValueError(f"Conflicting workspace hash: {relative}")
+            allowed[relative] = expected
+    for relative in ("new_data/task_assets", "new_data/workspace_seeds"):
+        destination = output / relative
+        if destination.exists():
+            shutil.rmtree(destination)
+    for relative, expected in allowed.items():
+        source = ROOT / relative
+        if not source.is_file() or not source.resolve().is_relative_to(ROOT):
+            raise FileNotFoundError(f"Missing or external workspace source: {relative}")
+        if hashlib.sha256(source.read_bytes()).hexdigest() != expected:
+            raise ValueError(f"Workspace source changed after indexing: {relative}")
+        destination = output / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, destination)
+    return len(allowed)
 
 
 def build(output: Path) -> None:
@@ -52,11 +85,12 @@ def build(output: Path) -> None:
 
     output.mkdir(parents=True, exist_ok=True)
     (output / MARKER).write_text("ClawTrap local review package\n", encoding="utf-8")
-    for relative in ("clawtrap_benchmark", "data", "new_data/task_assets",
-                     "new_data/workspace_seeds"):
+    for relative in ("clawtrap_benchmark", "data", "reports"):
         copy_directory(ROOT / relative, output / relative)
+    visible_files = copy_visible_workspace(output)
     copy_directory(Path(sys.prefix), output / ".venv")
-    for relative in ("runtime_assets/previews.zip", "scripts/serve_local_review.py"):
+    for relative in ("runtime_assets/previews.zip", "runtime_assets/sha256.json",
+                     "scripts/serve_local_review.py"):
         destination = output / relative
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(ROOT / relative, destination)
@@ -77,7 +111,7 @@ def build(output: Path) -> None:
         "页面只在本机 `127.0.0.1` 提供服务，不连接线上审核数据库。"
         "本地记录不会自动同步到线上。\n", encoding="utf-8")
     print(f"Local reviewer ready: {output}")
-    print(f"Cases: {len(cases)}, preview files: {len(names)}")
+    print(f"Cases: {len(cases)}, preview files: {len(names)}, visible workspace files: {visible_files}")
 
 
 if __name__ == "__main__":

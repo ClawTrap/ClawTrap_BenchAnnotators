@@ -5,8 +5,33 @@ const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&
 const state = {rows:[],domain:'',scope:'all'};
 const label = {task_action:'主动作',authority_direction:'权限方向',form:'攻击形式',position:'攻击位置',evidence_structure:'证据结构',risk:'动作风险',granularity:'篡改粒度',timing:'攻击时序'};
 const actionNames = {retrieve:'检索',judge:'判断',select:'选择',compose:'编写',modify:'修改',prepare:'准备',transfer:'转移',execute:'执行',route:'分流',communicate:'通信',authorize:'授权'};
-const formNames = {'full-page replacement':'整页替换','mixed benign–malicious content':'良恶内容混合','redirect rewriting':'重定向改写','API JSON mutation':'API JSON 改写','file replacement':'文件替换','local fact or attribute rewrite':'局部事实 / 属性改写','local rule or eligibility rewrite':'局部规则 / 资格改写','local status or outcome rewrite':'局部状态 / 结果改写','local identifier or destination rewrite':'局部标识 / 目标改写','local operation instruction rewrite':'局部操作步骤改写'};
-const positionNames = {'discovery result or citation':'搜索结果 / 引用','technical reference page':'技术文档页','policy or guidance page':'规则 / 指引页','record or action page':'具体记录 / 操作页','API response':'API 响应','download file':'下载文件','navigation or error state':'登录 / 错误 / 跳转','asynchronous update':'异步更新'};
+const formNames = {
+  'captured HTML text mutation':'真实网页文字改写','mixed benign–malicious content':'良恶内容混合',
+  'local fact or attribute rewrite':'局部事实 / 属性改写','local rule or eligibility rewrite':'局部规则 / 资格改写',
+  'local status or outcome rewrite':'局部状态 / 结果改写','local identifier or destination rewrite':'局部标识 / 目标改写',
+  'local operation instruction rewrite':'局部操作步骤改写','local content substitution':'局部内容替换',
+  'embedded callout':'页面提示插入','component insertion':'组件插入',
+  'captured publisher HTML rule rewrite':'出版页规则改写','captured publisher HTML field rewrite':'出版页字段改写',
+  'captured HTML link or rule mutation':'链接或规则改写','captured Roundcube HTML message or compose-field rewrite':'邮件内容或撰写字段改写',
+  'local official HTML rewrite':'官方页面局部改写','local HTML content replacement':'网页内容替换',
+  'popup memory prompt':'记忆提示浮层'
+};
+const positionNames = {
+  'discovery result or citation':'搜索结果 / 引用','technical reference page':'技术文档页',
+  'API documentation page':'API 文档页','policy or guidance page':'规则 / 指引页',
+  'publisher page':'出版 / 新闻页面','publisher HTML page':'出版页面','record or action page':'具体记录 / 操作页',
+  'product page':'商品页面','Roundcube message or compose page':'邮件页面',
+  'documentation callout':'文档提示块','navigation or error state':'登录 / 错误 / 跳转',
+  'official news source page':'新闻来源页','installation snippet':'安装说明片段','offer terms page':'优惠条款页',
+  'procurement policy page':'采购政策页','policy callout':'政策提示块','product price':'商品价格',
+  'help article paragraph':'帮助文章段落','government guidance page':'政府指引页','policy paragraph':'政策段落',
+  'permissions table':'权限表格','scope paragraph':'权限范围段落','field description':'字段说明',
+  'classification callout':'分类提示块','field documentation':'字段文档','API documentation paragraph':'API 文档段落',
+  'date field paragraph':'日期字段段落','article paragraph':'文章段落','product availability badge':'库存标记',
+  'product listing title':'商品标题','shipping badge':'配送标记','stock count':'库存数量',
+  'memory overlay':'记忆浮层','command example':'命令示例','rate table cell':'费率表单元格',
+  'source document page':'原始文档页','API field documentation':'API 字段文档'
+};
 const evidenceNames = {'single source':'单一来源','cache vs live source':'缓存与实时来源','internal policy vs external source':'内部政策与外部来源','factual source cross-check':'事实来源交叉核验','rule or offer vs case state':'规则 / 优惠与个案状态','technical reference vs implementation':'技术文档与实际配置','identity or permission boundary':'身份 / 权限边界'};
 const riskNames = {'read-only':'只读','reference record write':'资料记录写入','draft or plan write':'草稿 / 计划写入','configuration or code write':'配置 / 代码修改','service record write':'业务记录写入','cross-system write':'跨系统写入','external communication':'外部通信','data disclosure':'数据披露','permission change':'权限变更','financial action':'财务动作','irreversible workflow':'不可逆流程','supply-chain execution':'供应链执行','privilege change':'特权变更'};
 const granularityNames = {page:'页面',component:'组件',sentence:'句子',field:'字段','single character':'单字符',link:'链接',timestamp:'时间戳','numeric value':'数值'};

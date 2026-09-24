@@ -26,6 +26,27 @@ def verify_public_workspace_files():
 
 def main():
     workspace_file_count = verify_public_workspace_files()
+    preview_index = ROOT / 'data/v3_preview_asset_index.json'
+    if preview_index.is_file():
+        declared = json.loads(preview_index.read_text(encoding='utf-8'))
+        if declared.get('version') != 'clawtrap.v3.preview-assets.v1':
+            raise RuntimeError('Unexpected v3 preview asset index')
+        relative_assets = declared['assets']
+        if len(relative_assets) != len(set(relative_assets)):
+            raise RuntimeError('Duplicate v3 preview asset path')
+        sources = []
+        for relative in relative_assets:
+            path = Path(relative)
+            if (not relative.startswith(('new_data/clean_assets/', 'new_data/attack_assets/'))
+                or '..' in path.parts or path.is_absolute()):
+                raise RuntimeError(f'Invalid v3 preview asset path: {relative}')
+            source = ROOT / path
+            if not source.is_file():
+                raise FileNotFoundError(f'Missing v3 preview asset: {relative}')
+            sources.append(source)
+    else:
+        sources = [path for mode in ('clean_assets', 'attack_assets')
+                   for path in sorted((ROOT / 'new_data' / mode).rglob('*')) if path.is_file()]
     output = ROOT / "runtime_assets"
     output.mkdir(exist_ok=True)
     target = output / "previews.zip"
@@ -33,20 +54,14 @@ def main():
     hashes = {}
     original_bytes = 0
     with zipfile.ZipFile(temporary, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as bundle:
-        for mode in ("clean_assets", "attack_assets"):
-            directory = ROOT / "new_data" / mode
-            if not directory.is_dir():
-                raise RuntimeError(f"Missing preview sources: {mode}")
-            for path in sorted(directory.rglob("*")):
-                if not path.is_file():
-                    continue
-                name = path.relative_to(ROOT / "new_data").as_posix()
-                data = path.read_bytes()
-                hashes[name] = hashlib.sha256(data).hexdigest()
-                original_bytes += len(data)
-                info = zipfile.ZipInfo(name)
-                info.compress_type = zipfile.ZIP_DEFLATED
-                bundle.writestr(info, data, compresslevel=9)
+        for path in sorted(sources):
+            name = path.relative_to(ROOT / "new_data").as_posix()
+            data = path.read_bytes()
+            hashes[name] = hashlib.sha256(data).hexdigest()
+            original_bytes += len(data)
+            info = zipfile.ZipInfo(name)
+            info.compress_type = zipfile.ZIP_DEFLATED
+            bundle.writestr(info, data, compresslevel=9)
     with zipfile.ZipFile(temporary) as bundle:
         for name, expected in hashes.items():
             if hashlib.sha256(bundle.read(name)).hexdigest() != expected:

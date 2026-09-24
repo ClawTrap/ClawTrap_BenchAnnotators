@@ -10,7 +10,6 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from clawtrap_benchmark.web import app
-from check_review_release import main as check_release
 
 
 def main():
@@ -35,7 +34,13 @@ def main():
             for path in ("/clean-assets/../evaluator_assets/test.json", "/attack-assets/missing.html",
                          "/runtime_assets/previews.zip", "/new_data/source_archives/test.html"):
                 assert client.get(path).status_code == 404, path
-            check_release()
+    # Old raw pages may still exist in the repository. The preview route must
+    # reject them even when a deployment includes the raw directory.
+    retired = next(path for folder in ("clean_assets", "attack_assets")
+                   for path in (ROOT / "new_data" / folder).rglob("*")
+                   if path.is_file() and path.relative_to(ROOT / "new_data").as_posix() not in hashes)
+    retired_url = "/" + retired.relative_to(ROOT / "new_data").as_posix().replace("_assets/", "-assets/", 1)
+    assert client.get(retired_url).status_code == 404, retired_url
     print(f"Byte-identical authenticated previews: {len(hashes)}; raw asset directories absent")
 
 

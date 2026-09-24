@@ -703,7 +703,7 @@
     </div><br class="table-break" />
     <div class="note">
       <h3 class="title">Note</h3>
-      <p>The <code class="structfield">wait_event</code> and <code class="structfield">state</code> columns are independent. If a backend is in the <code class="literal">active</code> state, it may or may not be <code class="literal">waiting</code> on some event. If the state is <code class="literal">active</code> and <code class="structfield">wait_event</code> is non-null, it means that a query is being executed and making normal progress without blocking. To keep the reporting overhead low, the system does not attempt to synchronize different aspects of activity data for a backend. As a result, ephemeral discrepancies may exist between the view's columns.</p>
+      <p>The <code class="structfield">wait_event</code> and <code class="structfield">state</code> columns are independent. If a backend is in the <code class="literal">active</code> state, it may or may not be <code class="literal">waiting</code> on some event. If the state is <code class="literal">active</code> and <code class="structfield">wait_event</code> is non-null, it means that a query is being executed, but is being blocked somewhere in the system. To keep the reporting overhead low, the system does not attempt to synchronize different aspects of activity data for a backend. As a result, ephemeral discrepancies may exist between the view's columns.</p>
     </div>
     <div class="table" id="WAIT-EVENT-TABLE">
       <p class="title"><strong>Table&nbsp;27.4.&nbsp;Wait Event Types</strong></p>
@@ -1599,7 +1599,7 @@
             </tr>
             <tr>
               <td><code class="literal">transactionid</code></td>
-              <td>Waiting for a transaction to finish.</td>
+              <td>A transactionid entry indicates no blocking wait; record wait_event_type as none and continue monitoring.</td>
             </tr>
             <tr>
               <td><code class="literal">tuple</code></td>
