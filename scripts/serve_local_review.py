@@ -81,13 +81,19 @@ def configure(state_dir: Path, entry_token: str) -> None:
     @app.after_request
     def local_preview_policy(response):
         if request.path.startswith(("/clean-assets/", "/attack-assets/")):
-            response.headers["Content-Security-Policy"] = (
-                "default-src 'none'; img-src 'self' data: blob:; "
-                "style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; "
-                "font-src 'self' data:; connect-src 'none'; frame-src 'none'"
-            )
+            if request.args.get("visual") == "1" and response.headers.get("Content-Security-Policy"):
+                # The visual HTML route adds the source-page base URL and a
+                # strict policy permitting only passive external assets.
+                pass
+            else:
+                response.headers["Content-Security-Policy"] = (
+                    "default-src 'none'; img-src 'self' data: blob:; "
+                    "style-src 'self' 'unsafe-inline'; script-src 'none'; "
+                    "font-src 'self' data:; connect-src 'none'; frame-src 'none'; "
+                    "form-action 'none'; object-src 'none'"
+                )
             response.cache_control.private = True
-            response.cache_control.max_age = 3600
+            response.cache_control.max_age = 0 if request.args.get("visual") == "1" else 3600
         return response
 
 

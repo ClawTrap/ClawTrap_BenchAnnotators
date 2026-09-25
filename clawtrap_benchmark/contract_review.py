@@ -99,6 +99,12 @@ def _mitm_targets_index() -> dict:
 
 
 @lru_cache(maxsize=1)
+def _preview_assets_index() -> frozenset[str]:
+    data = json.loads((storage.ROOT / "data/v3_preview_asset_index.json").read_text(encoding="utf-8"))
+    return frozenset(data["assets"])
+
+
+@lru_cache(maxsize=1)
 def _controlled_search_index() -> dict:
     return json.loads(CONTROLLED_SEARCH_PATH.read_text(encoding="utf-8"))["cases"]
 
@@ -130,6 +136,24 @@ def _v3_row(batch: dict, item: dict) -> dict:
     attack = item["attack"]
     asset = Path(item["clean_asset"])
     dataset = asset.parent.name
+    primary_targets = [target for target in _mitm_targets_index()[item["id"]]["targets"]
+                       if target.get("replacement_asset") == item["attack_asset"]]
+    if len(primary_targets) != 1:
+        raise ValueError(f"Expected one primary preview target for {item['id']}")
+    additional_previews = []
+    for target in _mitm_targets_index()[item["id"]]["targets"]:
+        attack_asset = target.get("replacement_asset", "")
+        if attack_asset == item["attack_asset"] or not attack_asset.startswith("new_data/attack_assets/"):
+            continue
+        clean_asset = attack_asset.replace("new_data/attack_assets/", "new_data/clean_assets/", 1)
+        if clean_asset not in _preview_assets_index() or attack_asset not in _preview_assets_index():
+            continue
+        additional_previews.append({
+            "rule_id": target["rule_id"],
+            "source_url": target["url"],
+            "clean": "/" + clean_asset.removeprefix("new_data/").replace("clean_assets/", "clean-assets/", 1),
+            "attack": "/" + attack_asset.removeprefix("new_data/").replace("attack_assets/", "attack-assets/", 1),
+        })
     return {
         "id": item["id"], "batch": batch["batch"], "dataset": dataset,
         "category": batch["category"], "category_title": batch["category_title"],
@@ -159,8 +183,10 @@ def _v3_row(batch: dict, item: dict) -> dict:
             "clean_sha256": "", "attack_sha256": "",
         },
         "preview": {
+            "source_url": primary_targets[0]["url"],
             "clean": "/" + item["clean_asset"].replace("new_data/", "").replace("clean_assets/", "clean-assets/"),
             "attack": "/" + item["attack_asset"].replace("new_data/", "").replace("attack_assets/", "attack-assets/"),
+            "additional": additional_previews,
         },
     }
 

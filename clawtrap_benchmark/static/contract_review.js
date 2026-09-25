@@ -41,12 +41,15 @@ function labelSelect(key,value){
 }
 function frame(url,title,kind,source){
   const preview=safeURL(url,true),origin=safeURL(source);
-  return `<section class="snapshot"><header><strong><span class="dot ${kind}"></span>${title}</strong><div>${kind==='clean'&&origin?`<a href="${escapeHTML(origin)}" target="_blank" rel="noopener noreferrer">原网页 ${icon('arrow-up-right')}</a>`:''}${preview?`<a href="${escapeHTML(preview)}" target="_blank" rel="noopener noreferrer">单独查看 ${icon('arrow-up-right')}</a>`:''}</div></header>${preview?`<iframe src="${escapeHTML(preview)}" title="${title}" sandbox="allow-scripts" referrerpolicy="no-referrer" loading="lazy"></iframe>`:'<p>预览地址缺失</p>'}</section>`;
+  const visual=preview?`${preview}${preview.includes('?')?'&':'?'}visual=1`:'';
+  return `<section class="snapshot"><header><strong><span class="dot ${kind}"></span>${title}</strong><div>${kind==='clean'&&origin?`<a href="${escapeHTML(origin)}" target="_blank" rel="noopener noreferrer">原网页 ${icon('arrow-up-right')}</a>`:''}${preview?`<a href="${escapeHTML(preview)}" target="_blank" rel="noopener noreferrer">原始 HTML ${icon('arrow-up-right')}</a><a href="${escapeHTML(visual)}" target="_blank" rel="noopener noreferrer">放大预览 ${icon('arrow-up-right')}</a>`:''}</div></header>${preview?`<iframe src="${escapeHTML(visual)}" title="${title}" sandbox referrerpolicy="no-referrer" loading="lazy"></iframe>`:'<p>预览地址缺失</p>'}</section>`;
 }
 function renderFrames(){
   const row=current(),area=$('#frames');if(!row||!area)return;
   area.className=`snapshot-grid ${state.mode==='split'?'split':''}`;
-  area.innerHTML=(state.mode!=='attack'?frame(row.preview.clean,'原始内容','clean',row.source_url):'')+(state.mode!=='clean'?frame(row.preview.attack,'攻击内容','attack',row.source_url):'');
+  const primary=(state.mode!=='attack'?frame(row.preview.clean,'原始内容','clean',row.preview.source_url||row.source_url):'')+(state.mode!=='clean'?frame(row.preview.attack,'攻击内容','attack',row.preview.source_url||row.source_url):'');
+  const additional=(row.preview.additional||[]).map((item,index)=>`<h3 class="snapshot-subhead">后续替换页面 ${index+1} · ${escapeHTML(item.rule_id)}</h3>${state.mode!=='attack'?frame(item.clean,'原始内容','clean',item.source_url):''}${state.mode!=='clean'?frame(item.attack,'攻击内容','attack',item.source_url):''}`).join('');
+  area.innerHTML=primary+additional;
   document.querySelectorAll('[data-mode]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.mode===state.mode)));
   icons();
 }
@@ -110,7 +113,7 @@ function caseView(row){
     ${mitmTargets(row)}
     <section class="workflow-dimensions"><div class="band-title"><h2>任务与攻击标签</h2><span>标签修改即时保存</span></div><dl class="dimension-grid">${dimensions.map(([label,control])=>`<div><dt>${label}</dt><dd>${control}</dd></div>`).join('')}</dl></section>
     <section class="contract-band"><div class="band-title"><h2>结果判定</h2><span>T / A 分开记录 · 私有审核信息</span></div><div class="criteria-grid"><div><span class="metric">T · 任务成功</span>${editable('success_T',contract.success_T)}</div><div><span class="metric attack-metric">A · 攻击成功</span>${editable('success_A',contract.success_A)}</div><div><span class="metric">观察证据</span>${editable('observation',contract.observation)}</div></div><div class="output-format"><strong>验收对象（不发给 Agent）</strong>${editable('output_format',contract.output_format,'p')}</div></section>
-    <section class="previews" aria-label="内容对照"><div class="preview-toolbar"><h2>原始 / 攻击内容</h2><div class="segmented">${[['split','并排'],['clean','原始'],['attack','攻击']].map(([key,label])=>`<button data-mode="${key}" aria-pressed="${state.mode===key}">${label}</button>`).join('')}</div></div><div id="frames"></div></section>`;
+    <section class="previews" aria-label="内容对照"><div class="preview-toolbar"><div><h2>原始 / 攻击内容</h2><p class="preview-note">静态预览：样式与图片按原站地址加载，页面脚本不运行。</p></div><div class="segmented">${[['split','并排'],['clean','原始'],['attack','攻击']].map(([key,label])=>`<button data-mode="${key}" aria-pressed="${state.mode===key}">${label}</button>`).join('')}</div></div><div id="frames"></div></section>`;
 }
 function render(){
   state.visible=state.cases.filter(row=>(!state.domain||row.domain===state.domain)&&(!state.category||row.category===state.category)&&(!state.status||(state.status==='selected'?row.review?.selected:!row.review?.selected))&&(!state.query||`${row.id} ${row.category_title} ${row.v3_contract.scenario} ${row.private_review.field} ${row.host}`.toLowerCase().includes(state.query.toLowerCase())));
